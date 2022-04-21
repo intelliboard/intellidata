@@ -1,0 +1,38 @@
+<form action="{{endpoint}}" name="ltiLaunchForm" id="ltiLaunchForm" method="post" encType="application/x-www-form-urlencoded">
+    {{#inputs}}
+        <input {{#name}}name="{{name}}"{{/name}} type="{{type}}" value="{{value}}"/>
+    {{/inputs}}
+
+    {{#debug}}
+        <script>
+            //<![CDATA[
+            function basicltiDebugToggle() {
+                var ele = document.getElementById("basicltiDebug");
+                if (ele.style.display == "block") {
+                    ele.style.display = "none";
+                } else {
+                    ele.style.display = "block";
+                }
+            }
+            //]]>
+        </script>
+
+        <a id="displayText" href="javascript:basicltiDebugToggle();">{{#str}}lti_toggle_debug_data, local_intellidata{{/str}}</a>
+        <div id="basicltiDebug" style="display:none">
+        <b>{{#str}}lti_basiclti_endpoint, local_intellidata{{/str}}</b><br/>
+        {{endpoint}} <br/>&nbsp;<br/>
+        <b>{{#str}}lti_basiclti_parameters, local_intellidata{{/str}}</b><br/>
+            {{#inputs}}
+                {{#name}}name="{{name}}"{{/name}} --- type="{{type}}" --- value="{{value}}" <br/>
+            {{/inputs}}
+        &nbsp;<br/>
+        </div>
+    {{/debug}}
+    {{^debug}}
+        <script>
+            //<![CDATA[
+                document.ltiLaunchForm.submit();
+            //]]>
+        </script>
+    {{/debug}}
+</form>

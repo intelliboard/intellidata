@@ -1,0 +1,220 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @website    http://intelliboard.net/
+ */
+
+namespace local_intellidata\repositories;
+
+use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\persistent\export_logs;
+use local_intellidata\services\dbschema_service;
+use local_intellidata\services\datatypes_service;
+
+class export_log_repository
+{
+
+    /**
+     * @param $datatype
+     * @return int|mixed
+     */
+    private function get_migration_records_count($datatype, $lastrecordid = null) {
+        $datatypeconfig = datatypes_service::get_datatype($datatype);
+
+        if (!empty($datatypeconfig['migration'])) {
+            $migration = datatypes_service::init_migration($datatypeconfig['migration']);
+
+            return $migration->get_records_count($lastrecordid);
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param $datatype
+     * @return array|int[]
+     * @throws \coding_exception
+     */
+    public function get_last_processed_data($datatype) {
+
+        $record = export_logs::get_record(['datatype' => $datatype]);
+
+        if ($record) {
+            return [$record->get('last_exported_time'), $record->get('last_exported_id')];
+        }
+
+        return [0, 0];
+    }
+
+    /**
+     * @param $datatype
+     * @param $lastrecord
+     * @param $lastexportedtime
+     * @throws \coding_exception
+     */
+    public function save_last_processed_data($datatype, $lastrecord, $lastexportedtime) {
+
+        $record = export_logs::get_record(['datatype' => $datatype]);
+
+        if (!$record) {
+            $record = new export_logs();
+            $record->set('datatype', $datatype);
+            $record->set('migrated', 0);
+        }
+
+        if (!$record->get('timestart')) {
+            $record->set('timestart', time());
+        }
+
+        $record->set('last_exported_time', $lastexportedtime);
+        $record->set('recordscount', $this->get_migration_records_count($datatype));
+
+        if (isset($lastrecord->id)) {
+            $record->set('last_exported_id', $lastrecord->id);
+            $record->set('recordsmigrated', $this->get_migration_records_count($datatype, $lastrecord->id));
+        }
+
+        $record->save();
+    }
+
+    /**
+     * @param $datatype
+     * @throws \coding_exception
+     */
+    public function save_migrated($datatype) {
+
+        $record = export_logs::get_record(['datatype' => $datatype]);
+
+        if (!$record) {
+            $record = new export_logs();
+            $record->set('datatype', $datatype);
+        }
+        $record->set('migrated', 1);
+        $record->save();
+    }
+
+    /**
+     * @param $key
+     * @param array $params
+     * @return array
+     * @throws \coding_exception
+     */
+    public function get_assoc_datatypes($key, $params = array()) {
+        $records = export_logs::get_records($params);
+        $result = array();
+
+        foreach ($records as $record) {
+            $recordkey = $record->get($key);
+
+            $result[$recordkey] = $record;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return int[]|string[]
+     * @throws \dml_exception
+     */
+    public function get_migrated_datatypes() {
+        global $DB;
+
+        return array_keys(
+            $DB->get_records_menu(
+                'local_intellidata_export_log',
+                ['migrated' => 1, 'tabletype' => export_logs::TABLE_TYPE_UNIFIED],
+            '', 'datatype'
+            )
+        );
+    }
+
+    /**
+     * @return bool
+     * @throws \dml_exception
+     */
+    public function clear_migrated() {
+        global $DB;
+
+        return $DB->execute('UPDATE {local_intellidata_export_log}
+                                    SET migrated = 0,
+                                        timestart = 0,
+                                        recordsmigrated = 0,
+                                        recordscount = 0,
+                                        last_exported_id = 0,
+                                        last_exported_time = 0');
+    }
+
+    /**
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_optional_datatypes() {
+        $records = export_logs::get_records(['tabletype' => export_logs::TABLE_TYPE_CUSTOM]);
+        $config = config_repository::get_optional_datatypes();
+
+        $result = [];
+        $dbschema = new dbschema_service();
+
+        foreach ($records as $record) {
+            $datatype = $record->get('datatype');
+
+            // Exclude disabled datatypes.
+            if (isset($config[$datatype]) && $config[$datatype]->status == datatypeconfig::STATUS_DISABLED) {
+                continue;
+            }
+
+            // Exclude datatype if there is no tables in DB.
+            if (!$dbschema->table_exists($datatype)) {
+                continue;
+            }
+
+            $result[$datatype] = $record;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $datatype
+     * @throws \coding_exception
+     */
+    public function insert_datatype($datatype) {
+
+        $record = export_logs::get_record(['datatype' => $datatype]);
+
+        if (!$record) {
+            $record = new export_logs();
+            $record->set('datatype', $datatype);
+            $record->set('migrated', 0);
+            $record->set('timestart', 0);
+            $record->set('tabletype', export_logs::TABLE_TYPE_CUSTOM);
+        }
+
+        $record->set('last_exported_time', 0);
+        $record->set('recordsmigrated', 0);
+        $record->set('recordscount', 0);
+        $record->set('last_exported_id', 0);
+
+        return $record->save();
+    }
+}

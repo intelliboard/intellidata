@@ -1,0 +1,263 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @website    http://intelliboard.net/
+ */
+
+namespace local_intellidata\repositories;
+
+use local_intellidata\helpers\StorageHelper;
+
+class file_storage_repository {
+
+    const STORAGE_FOLDER_NAME       = 'ibdata';
+    const STORAGE_FILE_TYPE         = 'csv';
+    const STORAGE_FILES_COMPONENT   = 'local_intellidata';
+
+    public $storagefolder   = null;
+    public $storagefile     = null;
+    public $datatype        = null;
+
+    public function __construct($datatype) {
+        $this->datatype = $datatype;
+        $this->storagefolder = self::get_storage_folder();
+        $this->storagefile = self::get_storage_file();
+    }
+
+    protected function get_storage_folder() {
+        return make_temp_directory(self::STORAGE_FOLDER_NAME);
+    }
+
+    protected function get_storage_file() {
+        return $this->storagefolder . '/' . $this->datatype['name'] . '.' . self::STORAGE_FILE_TYPE;
+    }
+
+    public function get_temp_file() {
+        return $this->storagefolder . '/' . $this->datatype['name'] . '_temp.' . self::STORAGE_FILE_TYPE;
+    }
+
+    public function save_data($data) {
+        StorageHelper::save_in_file($this->storagefile, $data);
+    }
+
+    public function save_file() {
+
+        $tempfile = $this->get_temp_file();
+
+        if (!file_exists($this->storagefile)) {
+            return null;
+        }
+
+        // Rename temp file to process.
+        StorageHelper::rename_file($this->storagefile, $tempfile);
+
+        // Save file to filedir and database.
+        $params = [
+            'datatype'  => $this->datatype['name'],
+            'filename'  => StorageHelper::generate_filename(),
+            'tempdir'   => $this->storagefolder,
+            'tempfile'  => $tempfile
+        ];
+
+        if ($this->datatype['rewritable']) {
+            $this->delete_files();
+        }
+
+        return StorageHelper::save_file($params);
+    }
+
+    public function get_files($params = []) {
+        global $CFG;
+        require_once("$CFG->libdir/externallib.php");
+
+        $context = \context_system::instance();
+        $component = self::STORAGE_FILES_COMPONENT;
+
+        $timestart = (!empty($params['timestart'])) ? $params['timestart'] : 0;
+        $timeend = (!empty($params['timeend'])) ? $params['timeend'] : 0;
+
+        return self::get_area_files(
+            $context->id, $component, $this->datatype['name'], false, "timecreated", true, $timestart, $timeend
+        );
+    }
+
+    public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "timecreated",
+                                   $includedirs = true, $timestart = 0, $timeend = 0, $limitfrom = 0,
+                                   $limitnum = 0, $order = 'ASC') {
+        global $DB;
+
+        $fs = get_file_storage();
+
+        list($areasql, $conditions) = $DB->get_in_or_equal($filearea, SQL_PARAMS_NAMED);
+        $conditions['contextid'] = $contextid;
+        $conditions['component'] = $component;
+
+        if ($itemid !== false && is_array($filearea)) {
+            throw new coding_exception('You cannot specify multiple fileareas as well as an itemid.');
+        } else if ($itemid !== false) {
+            $itemidsql = ' AND f.itemid = :itemid ';
+            $conditions['itemid'] = $itemid;
+        } else {
+            $itemidsql = '';
+        }
+
+        $timefiltersql = '';
+        if (!empty($timestart)) {
+            $conditions['timestart'] = $timestart;
+            $timefiltersql .= 'AND f.timemodified >= :timestart';
+        }
+        if (!empty($timeend)) {
+            $conditions['timeend'] = $timeend;
+            $timefiltersql .= ' AND f.timemodified <= :timeend';
+        }
+
+        $includedirssql = '';
+        if (!$includedirs) {
+            $includedirssql = 'AND f.filename != :dot';
+            $conditions['dot'] = '.';
+        }
+
+        if ($limitfrom && !$limitnum) {
+            throw new coding_exception('If specifying $limitfrom you must also specify $limitnum');
+        }
+
+        $sql = "SELECT ".self::instance_sql_fields('f', 'r')."
+                  FROM {files} f
+             LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE f.contextid = :contextid
+                       AND f.component = :component
+                       AND mimetype IS NOT NULL
+                       AND f.filearea $areasql
+                       $includedirssql
+                       $timefiltersql
+                       $itemidsql";
+        if (!empty($sort)) {
+            $sql .= " ORDER BY {$sort} {$order}";
+        }
+
+        $files = [];
+        $filerecords = $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
+        foreach ($filerecords as $filerecord) {
+            $areafile = $fs->get_file_instance($filerecord);
+
+            $file = [];
+            $file['filename'] = $areafile->get_filename();
+            $file['filearea'] = $areafile->get_filearea();
+            $file['itemid'] = $areafile->get_itemid();
+            $file['filepath'] = $areafile->get_filepath();
+            $file['mimetype'] = $areafile->get_mimetype();
+            $file['filesize'] = $areafile->get_filesize();
+            $file['timemodified'] = $areafile->get_timemodified();
+            $file['isexternalfile'] = $areafile->is_external_file();
+            if ($file['isexternalfile']) {
+                $file['repositorytype'] = $areafile->get_repository_type();
+            }
+            $fileitemid = $areafile->get_itemid();
+            $file['fileurl'] = \moodle_url::make_webservice_pluginfile_url($contextid, $component, $filearea,
+                $fileitemid, $areafile->get_filepath(), $areafile->get_filename())->out(false);
+            $files[] = $file;
+        }
+
+        return $files;
+    }
+
+    /**
+     * Get the sql formated fields for a file instance to be created from a
+     * {files} and {files_refernece} join.
+     *
+     * @param string $filesprefix the table prefix for the {files} table
+     * @param string $filesreferenceprefix the table prefix for the {files_reference} table
+     * @return string the sql to go after a SELECT
+     */
+    private static function instance_sql_fields($filesprefix, $filesreferenceprefix) {
+        $filefields = array('contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
+            'itemid', 'filepath', 'filename', 'userid', 'filesize', 'mimetype', 'status', 'source',
+            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid');
+
+        $referencefields = array('repositoryid' => 'repositoryid',
+            'reference' => 'reference',
+            'lastsync' => 'referencelastsync');
+        $fields = array();
+        $fields[] = $filesprefix.'.id AS id';
+        foreach ($filefields as $field) {
+            $fields[] = "{$filesprefix}.{$field}";
+        }
+
+        foreach ($referencefields as $field => $alias) {
+            $fields[] = "{$filesreferenceprefix}.{$field} AS {$alias}";
+        }
+
+        return implode(', ', $fields);
+    }
+
+    public function delete_files($params = null) {
+        global $DB;
+
+        $fs = get_file_storage();
+        $context = \context_system::instance();
+
+        $conditions = [
+            'contextid = :contextid',
+            'component = :component',
+            'filearea = :filearea'
+        ];
+        $sqlparams = [
+            'contextid' => $context->id,
+            'component' => self::STORAGE_FILES_COMPONENT,
+            'filearea' => $this->datatype['name'],
+        ];
+
+        if (!empty($params['timemodified'])) {
+            $conditions[] = 'timemodified < :timemodified';
+            $sqlparams['timemodified'] = $params['timemodified'];
+        }
+
+        if (!empty($params['itemid'])) {
+            $conditions[] = 'itemid = :itemid';
+            $sqlparams['itemid'] = $params['itemid'];
+        }
+
+        $wheresql = implode(' AND ', $conditions);
+
+        $filerecords = $DB->get_records_sql(
+            "SELECT *
+                   FROM {files}
+                  WHERE $wheresql
+               ORDER BY itemid",
+            $sqlparams
+        );
+
+        foreach ($filerecords as $filerecord) {
+            $fs->get_file_instance($filerecord)->delete();
+        }
+
+        return count($filerecords);
+    }
+
+    public function delete_temp_files() {
+
+        // Delete temp files.
+        return StorageHelper::delete_all_files($this->storagefolder);
+    }
+}

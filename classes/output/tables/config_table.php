@@ -1,0 +1,308 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * local_intellidata
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2022 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
+
+namespace local_intellidata\output\tables;
+
+defined('MOODLE_INTERNAL') || die();
+
+use html_writer;
+use local_intellidata\persistent\datatypeconfig;
+
+require_once($CFG->libdir.'/tablelib.php');
+
+class config_table extends \table_sql {
+
+    public $fields     = [];
+    protected $prefs   = [];
+    protected $context = null;
+
+    public function __construct($uniqueid) {
+        global $PAGE;
+
+        $this->context = \context_system::instance();
+        parent::__construct($uniqueid);
+
+        $this->fields = $this->get_fields();
+        $sqlparams = [];
+
+        $this->sortable(true, 'id', SORT_ASC);
+        $this->is_collapsible = false;
+
+        $this->define_columns(array_keys($this->fields));
+        $this->define_headers($this->get_headers());
+
+        $fields = "c.*";
+        $from = "{" . datatypeconfig::TABLE . "} c";
+
+        $where = 'c.id > 1';
+
+        $this->set_sql($fields, $from, $where, $sqlparams);
+        $this->define_baseurl($PAGE->url);
+    }
+
+    /**
+     * @return array[]
+     * @throws \coding_exception
+     */
+    public function get_fields() {
+        $fields = [
+            'datatype' => [
+                'label' => get_string('datatype', 'local_intellidata'),
+            ],
+            'tabletype' => [
+                'label' => get_string('tabletype', 'local_intellidata'),
+            ],
+            'events_tracking' => [
+                'label' => get_string('events_tracking', 'local_intellidata'),
+            ],
+            'timemodified_field' => [
+                'label' => get_string('timemodified_field', 'local_intellidata'),
+            ],
+            'filterbyid' => [
+                'label' => get_string('filterbyid', 'local_intellidata'),
+            ],
+            'rewritable' => [
+                'label' => get_string('rewritable', 'local_intellidata'),
+            ],
+            'status' => [
+                'label' => get_string('status', 'local_intellidata'),
+            ],
+            'actions' => [
+                'label' => get_string('actions', 'local_intellidata'),
+            ],
+        ];
+
+        return $fields;
+    }
+
+    /**
+     * @return array
+     * @throws \coding_exception
+     */
+    public function get_headers() {
+
+        $headers = [];
+
+        if (count($this->fields)) {
+            foreach ($this->fields as $options) {
+                $headers[] = $options['label'];
+            }
+        }
+
+        $headers[] = get_string('actions', 'local_intellidata');
+
+        return$headers;
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_datatype($values) {
+        if (get_string_manager()->string_exists('datatype_' . $values->datatype, 'local_intellidata')) {
+            return get_string('datatype_' . $values->datatype, 'local_intellidata');
+        } else {
+            return $values->datatype;
+        }
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_tabletype($values) {
+        return ($values->tabletype == datatypeconfig::TABLETYPE_REQUIRED)
+            ? get_string('required', 'local_intellidata')
+            : get_string('optional', 'local_intellidata');
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_events_tracking($values) {
+        return $this->yes_or_now_column($values->events_tracking);
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_filterbyid($values) {
+        return $this->yes_or_now_column($values->filterbyid);
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_rewritable($values) {
+        return $this->yes_or_now_column($values->rewritable);
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_status($values) {
+        return ($values->status)
+            ? get_string('enabled', 'local_intellidata')
+            : get_string('disabled', 'local_intellidata');
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_timemodified_field($values) {
+        return !empty($values->timemodified_field)
+            ? $values->timemodified_field
+            : '';
+    }
+
+    /**
+     * @param $values
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function col_actions($values) {
+        global $OUTPUT;
+
+        if ($values->tabletype == datatypeconfig::TABLETYPE_REQUIRED ||
+            !has_capability('local/intellidata:editconfig', $this->context)) {
+            return '';
+        }
+
+        $buttons = [];
+        $urlparams = ['datatype' => $values->datatype];
+
+        $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
+        $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
+            'core', ['class' => 'iconsmall']), null
+        );
+
+        return implode(' ', $buttons);
+    }
+
+    public function start_html() {
+
+        echo html_writer::start_tag('div', ['class' => 'custom-filtering-table']);
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        // Do we need to print initial bars?
+        $this->print_initials_bar();
+
+        if (in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
+            echo $this->download_buttons();
+        }
+
+        echo html_writer::start_tag('div', ['class' => 'form-group']);
+
+        // Render config reset button.
+        echo $this->reset_button();
+
+        // Render import button.
+        echo $this->import_button();
+
+        echo html_writer::end_tag('div');
+
+        $this->wrap_html_start();
+        // Start of main data table.
+
+        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
+        echo html_writer::start_tag('table', $this->attributes);
+    }
+
+    /**
+     * This function is not part of the public api.
+     */
+    function print_nothing_to_display() {
+        global $OUTPUT;
+
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        $this->print_initials_bar();
+
+        // Render import button.
+        echo $this->import_button();
+
+        echo $OUTPUT->heading(get_string('nothingtodisplay'));
+
+        // Render the dynamic table footer.
+        echo $this->get_dynamic_table_html_end();
+    }
+
+    /**
+     * Get the html for the download buttons
+     *
+     * Usually only use internally
+     */
+    public function reset_button() {
+
+        $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'reset']);
+        $output = \html_writer::link($reseturl, get_string('resettodefault', 'local_intellidata'),
+            ['class' => 'btn btn-primary']);
+
+        return $output;
+    }
+
+    /**
+     * Get the html for the download buttons
+     *
+     * Usually only use internally
+     */
+    public function import_button() {
+
+        $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'import']);
+        $output = \html_writer::link($reseturl, get_string('importconfig', 'local_intellidata'),
+            ['class' => 'btn btn-primary']);
+
+        return $output;
+    }
+
+    /**
+     * @param $value
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function yes_or_now_column($value) {
+        return ($value) ? get_string('yes') : get_string('no');
+    }
+}
+

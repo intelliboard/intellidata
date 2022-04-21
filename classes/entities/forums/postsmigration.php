@@ -1,0 +1,84 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Class for migration Forum Posts.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace local_intellidata\entities\forums;
+use local_intellidata\services\dbschema_service;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Class for migration Forum Posts.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class postsmigration extends \local_intellidata\entities\migration {
+
+    public $entity      = '\local_intellidata\entities\forums\forumpost';
+    public $eventname   = '\mod_forum\event\post_created';
+    public $table       = 'forum_posts';
+    public $tablealias  = 'p';
+
+    /**
+     * @param false $count
+     * @param null $condition
+     * @param array $conditionparams
+     * @return array
+     */
+    public function get_sql($count = false, $condition = null, $conditionparams = []) {
+
+        $where = 'p.id > 0';
+        $params = [];
+
+        $select = ($count) ?
+            "SELECT COUNT(p.id) as recordscount" :
+            "SELECT p.id, p.userid, p.discussion, p.parent, p.created, p.modified, d.forum";
+
+        // Validate deleted field.
+        $dbschema = new dbschema_service();
+        if ($dbschema->column_exists('forumposts', 'deleted')) {
+            if (!$count) {
+                $select .= ', p.deleted';
+            }
+            $where .= ' AND p.deleted = :deleted';
+            $params += [
+                'deleted' => 0
+            ];
+        }
+
+        $sql = "$select
+                  FROM {forum_posts} p
+             LEFT JOIN {forum_discussions} d ON d.id = p.discussion
+                 WHERE $where";
+
+        if ($condition) {
+            $sql .= " AND " . $condition;
+            $params += $conditionparams;
+        }
+
+        return [$sql, $params];
+    }
+}
