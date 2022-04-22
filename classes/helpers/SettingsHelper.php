@@ -34,7 +34,7 @@ class SettingsHelper
      * @return database_storage_repository|file_storage_repository
      * @throws \dml_exception
      */
-    public static function get_export_dataformat($defaultformat = 'csv') {
+    public static function get_export_dataformat($defaultformat = 'json') {
         return !empty(get_config('local_intellidata', 'exportdataformat'))
             ? get_config('local_intellidata', 'exportdataformat')
             : $defaultformat;
