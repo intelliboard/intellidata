@@ -28,8 +28,7 @@ namespace local_intellidata\repositories;
 
 use local_intellidata\persistent\datatypeconfig;
 
-class config_repository
-{
+class config_repository {
     /**
      * @param array $params
      * @return config[]

@@ -27,11 +27,16 @@
 namespace local_intellidata\repositories;
 
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\helpers\SettingsHelper;
 
 class database_storage_repository extends file_storage_repository {
 
     const STORAGE_TABLE   = 'local_intellidata_storage';
 
+    /**
+     * @param $data
+     * @throws \dml_exception
+     */
     public function save_data($data) {
         global $DB;
 
@@ -43,6 +48,14 @@ class database_storage_repository extends file_storage_repository {
         $DB->insert_record(self::STORAGE_TABLE, $record);
     }
 
+    /**
+     * @return \stored_file|null
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \file_exception
+     * @throws \moodle_exception
+     * @throws \stored_file_creation_exception
+     */
     public function save_file() {
 
         // Get records from database storage.
@@ -51,7 +64,7 @@ class database_storage_repository extends file_storage_repository {
             return null;
         }
 
-        $recordslimits = (int)get_config('local_intellidata', 'migrationrecordslimit');
+        $recordslimits = (int)SettingsHelper::get_setting('migrationrecordslimit');
         $tempfile = $this->get_temp_file();
 
         $sqlparams = ['limit' => $recordslimits];
@@ -85,6 +98,11 @@ class database_storage_repository extends file_storage_repository {
         return StorageHelper::save_file($params);
     }
 
+    /**
+     * @param null $params
+     * @return int|void
+     * @throws \dml_exception
+     */
     public function delete_files($params = null) {
         global $DB;
         $DB->delete_records(self::STORAGE_TABLE, ['datatype' => $this->datatype['name']]);
@@ -92,6 +110,10 @@ class database_storage_repository extends file_storage_repository {
         return parent::delete_files($params);
     }
 
+    /**
+     * @param false $count
+     * @return string
+     */
     public function get_records_sql($count = false) {
         $select = ($count) ?
             "SELECT COUNT(id) as recordscount" :
@@ -104,6 +126,10 @@ class database_storage_repository extends file_storage_repository {
         return $sql;
     }
 
+    /**
+     * @return int
+     * @throws \dml_exception
+     */
     public function get_records_count() {
         global $DB;
 
@@ -111,6 +137,11 @@ class database_storage_repository extends file_storage_repository {
         return $DB->count_records_sql($sql, ['datatype' => $this->datatype['name']]);
     }
 
+    /**
+     * @param $params
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
     public function get_records($params) {
         global $DB;
 
@@ -124,8 +155,14 @@ class database_storage_repository extends file_storage_repository {
         return $records;
     }
 
+    /**
+     * @param $tempfile
+     * @param $records
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     protected function export_data($tempfile, $records) {
-        $writerecordslimits = (int)get_config('local_intellidata', 'migrationwriterecordslimit');
+        $writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
         $lastrecordid = 0; $data = [];
         if ($records) {
             $i = 0;
@@ -155,6 +192,10 @@ class database_storage_repository extends file_storage_repository {
         }
     }
 
+    /**
+     * @param $lastrecordid
+     * @throws \dml_exception
+     */
     private function clean_storage($lastrecordid) {
         global $DB;
 
@@ -170,6 +211,12 @@ class database_storage_repository extends file_storage_repository {
         );
     }
 
+    /**
+     * @param string $eventname
+     * @param array $params
+     * @return false|mixed
+     * @throws \dml_exception
+     */
     public function get_log_entity_data(string $eventname, array $params = []) {
         global $DB;
 

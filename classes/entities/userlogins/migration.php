@@ -26,8 +26,8 @@ namespace local_intellidata\entities\userlogins;
 
 defined('MOODLE_INTERNAL') || die();
 
-class migration extends \local_intellidata\entities\migration
-{
+class migration extends \local_intellidata\entities\migration {
+
     public $entity = '\local_intellidata\entities\userlogins\userlogin';
     public $eventname = '\core\event\user_loggedin';
     public $table = 'logstore_standard_log';

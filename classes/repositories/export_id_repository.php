@@ -26,8 +26,14 @@
 
 namespace local_intellidata\repositories;
 
-class export_id_repository
-{
+class export_id_repository {
+
+    /**
+     * @param $datatype
+     * @param $table
+     * @return array
+     * @throws \dml_exception
+     */
     public function filterids($datatype, $table) {
         global $DB;
         $deletedrecords = $DB->get_records_sql("
@@ -54,6 +60,12 @@ class export_id_repository
         );
     }
 
+    /**
+     * @param $datatype
+     * @param $filteredids
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function save($datatype, $filteredids) {
         global $DB;
 

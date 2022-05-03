@@ -26,13 +26,20 @@
 
 namespace local_intellidata\helpers;
 
-class DebugHelper
-{
+class DebugHelper {
 
+    /**
+     * @return bool
+     * @throws \dml_exception
+     */
     public static function enabled() {
         return get_config('local_intellidata', 'debugenabled') ? true : false;
     }
 
+    /**
+     * @param $errorstring
+     * @throws \dml_exception
+     */
     public static function error_log($errorstring) {
         if (self::enabled()) {
             syslog(LOG_ERR, 'IntelliData Debug: ' . $errorstring);

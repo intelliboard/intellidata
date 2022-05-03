@@ -32,6 +32,11 @@ use local_intellidata\services\export_service;
 
 class events_repository {
 
+    /**
+     * @param $eventtype
+     * @param $eventdata
+     * @throws \dml_exception
+     */
     public static function create_record($eventtype, $eventdata) {
         $eventdata = StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $eventdata);
 

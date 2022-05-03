@@ -47,6 +47,11 @@ class quizquestionanswer extends \local_intellidata\entities\entity {
      */
     protected static function define_properties() {
         return array(
+            'id' => array(
+                'type' => PARAM_INT,
+                'description' => 'Record ID.',
+                'default' => 0,
+            ),
             'attemptid' => array(
                 'type' => PARAM_INT,
                 'description' => 'Quiz Attempt ID.',

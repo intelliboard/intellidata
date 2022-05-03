@@ -50,6 +50,7 @@ class migration extends \local_intellidata\entities\migration {
                    WHERE crud IN('c', 'u') AND userid > 0 AND contextinstanceid > 0 $where";
         } else {
             $sql = "SELECT
+                    max(id) as id,
                     concat(userid, '_', contextinstanceid, '_', contextlevel) AS uid,
                     userid,
                     contextlevel,
@@ -66,7 +67,7 @@ class migration extends \local_intellidata\entities\migration {
     public function prepare_records_iterable($records) {
         foreach ($records as $record) {
             $record->type = ($record->contextlevel == CONTEXT_MODULE) ? 'activity' : 'course';
-            $record->id = (int)$record->contextinstanceid;
+            $record->objectid = (int)$record->contextinstanceid;
 
             $entity = new $this->entity($record);
             $userdata = $entity->export();

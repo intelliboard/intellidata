@@ -29,8 +29,7 @@ namespace local_intellidata\repositories;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\repositories\config_repository;
 
-class optional_tables_repository extends base_tables_repository
-{
+class optional_tables_repository extends base_tables_repository {
     /**
      * @param $dbtables
      * @return mixed

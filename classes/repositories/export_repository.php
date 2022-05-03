@@ -28,6 +28,11 @@ namespace local_intellidata\repositories;
 
 class export_repository {
 
+    const STORAGE_FILE_TYPE         = 'csv';
+
+    /**
+     * @return string
+     */
     protected function get_storage_file() {
         return $this->storagefolder . '/' . $this->datatype . '.' . self::STORAGE_FILE_TYPE;
     }

@@ -26,8 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-class PageParamsHelper
-{
+class PageParamsHelper {
 
     const PAGETYPE_MODULE = 'module';
     const PAGETYPE_COURSE = 'course';
@@ -36,6 +35,10 @@ class PageParamsHelper
 
     const PAGEPARAM_SYSTEM = 1;
 
+    /**
+     * @param $pageparams
+     * @return mixed
+     */
     public static function get_params($pageparams) {
         global $PAGE, $SITE;
 
@@ -55,6 +58,10 @@ class PageParamsHelper
         return $pageparams;
     }
 
+    /**
+     * @param $pageparams
+     * @return false|int|mixed
+     */
     public static function get_courseid($pageparams) {
 
         switch($pageparams['page']) {
@@ -71,6 +78,11 @@ class PageParamsHelper
         return $courseid;
     }
 
+    /**
+     * @param $cmid
+     * @return false|mixed
+     * @throws \dml_exception
+     */
     public static function get_courseid_by_module($cmid) {
         global $DB;
         return $DB->get_field_sql("SELECT c.id

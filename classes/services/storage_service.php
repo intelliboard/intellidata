@@ -34,22 +34,39 @@ class storage_service {
         $this->repo = StorageHelper::get_storage_service($datatype);
     }
 
+    /**
+     * @param $data
+     */
     public function save_data($data) {
         $this->repo->save_data($data);
     }
 
+    /**
+     * @return \stored_file|null
+     */
     public function save_file() {
         return $this->repo->save_file();
     }
 
+    /**
+     * @param array $params
+     * @return array
+     */
     public function get_files($params = []) {
         return $this->repo->get_files($params);
     }
 
+    /**
+     * @param array $params
+     * @return int|void
+     */
     public function delete_files($params = []) {
         return $this->repo->delete_files($params);
     }
 
+    /**
+     * @return bool
+     */
     public function delete_temp_files() {
         return $this->repo->delete_temp_files();
     }

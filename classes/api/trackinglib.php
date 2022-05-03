@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use local_intellidata\helpers\SettingsHelper;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
@@ -50,7 +52,7 @@ class local_intellidata_trackinglib extends external_api {
         self::validate_context($context);
         require_capability('local/intellidata:trackdata', $context);
 
-        $ajaxfrequency = (int) get_config('local_intellidata', 'ajaxfrequency');
+        $ajaxfrequency = (int)SettingsHelper::get_setting('ajaxfrequency');
         $params['time'] = 0;
         if (isset($SESSION->local_intellidata_last_tracked_time)
             && $SESSION->local_intellidata_last_tracked_time <= time()

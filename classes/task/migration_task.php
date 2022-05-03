@@ -27,6 +27,7 @@ namespace local_intellidata\task;
 defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\migration_service;
 use local_intellidata\services\export_service;
 use local_intellidata\repositories\export_log_repository;
@@ -63,7 +64,7 @@ class migration_task extends \core\task\scheduled_task {
         $params = [];
 
         // Reset migration process if enabled.
-        if (get_config('local_intellidata', 'resetmigrationprogress')) {
+        if (SettingsHelper::get_setting('resetmigrationprogress')) {
             set_config('resetmigrationprogress', 0, 'local_intellidata');
             set_config('migrationdatatype', '', 'local_intellidata');
             set_config('migrationstart', 0, 'local_intellidata');
@@ -84,7 +85,7 @@ class migration_task extends \core\task\scheduled_task {
         // Set migration time.
         set_config('lastmigrationdate', time(), 'local_intellidata');
 
-        $migrationdatatype = get_config('local_intellidata', 'migrationdatatype');
+        $migrationdatatype = SettingsHelper::get_setting('migrationdatatype');
         if ($migrationdatatype) {
 
             // Ignore if migration completed.
@@ -95,7 +96,7 @@ class migration_task extends \core\task\scheduled_task {
             $params['datatype'] = $migrationdatatype;
         }
 
-        $migrationstart = (int)get_config('local_intellidata', 'migrationstart');
+        $migrationstart = (int)SettingsHelper::get_setting('migrationstart');
         $params['migrationstart'] = $migrationstart;
 
         mtrace("IntelliData Migration CRON started!");
@@ -104,7 +105,7 @@ class migration_task extends \core\task\scheduled_task {
         $migrationservice = new migration_service();
         $migrationservice->process($params, true);
 
-        if ((bool)get_config('local_intellidata', 'exportfilesduringmigration')) {
+        if ((bool)SettingsHelper::get_setting('exportfilesduringmigration')) {
             $exportservice = new export_service(true);
             $exportservice->save_files();
         }

@@ -25,6 +25,7 @@ use local_intellidata\output\forms\local_intellidata_edit_config;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\config_service;
+use local_intellidata\helpers\SettingsHelper;
 
 require('../../../config.php');
 
@@ -38,13 +39,13 @@ require_capability('local/intellidata:editconfig', $context);
 $returnurl = new \moodle_url('/local/intellidata/config/index.php');
 $pageurl = new \moodle_url('/local/intellidata/config/edit.php', ['datatype' => $datatype]);
 $PAGE->set_url($pageurl);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context($context);
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 $record = datatypeconfig::get_record(['datatype' => $datatype]);
 
 if (!$record || $record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
-    print_error('wrongdatatype', 'local_intellidata');
+    throw new \moodle_exception('wrongdatatype', 'local_intellidata');
 }
 
 $datatypeconfig = datatypes_service::get_datatype($datatype);
@@ -87,7 +88,8 @@ if ($editform->is_cancelled()) {
             $data->rewritable = datatypeconfig::STATUS_ENABLED;
         }
 
-        $record->set('events_tracking', (!empty($data->events_tracking)) ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED);
+        $record->set('events_tracking', (!empty($data->events_tracking))
+            ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED);
         $record->set('timemodified_field', $data->timemodified_field);
         $record->set('filterbyid', $data->filterbyid);
         $record->set('rewritable', $data->rewritable);

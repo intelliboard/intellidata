@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 use local_intellidata\lti\OAuthConsumer;
 use local_intellidata\lti\OAuthRequest;
 use local_intellidata\lti\OAuthSignatureMethod_HMAC_SHA1;
+use local_intellidata\helpers\SettingsHelper;
 
 class lti_service {
     /** @var mixed LTI endpoint */
@@ -55,10 +56,10 @@ class lti_service {
      * @throws \dml_exception
      */
     public function __construct() {
-        $this->endpoint = get_config('local_intellidata', 'ltitoolurl');
-        $this->key = get_config('local_intellidata', 'lticonsumerkey');
-        $this->secret = get_config('local_intellidata', 'ltisharedsecret');
-        $this->debug = get_config('local_intellidata', 'ltidebug');
+        $this->endpoint = SettingsHelper::get_setting('ltitoolurl');
+        $this->key = SettingsHelper::get_setting('lticonsumerkey');
+        $this->secret = SettingsHelper::get_setting('ltisharedsecret');
+        $this->debug = SettingsHelper::get_setting('ltidebug');
 
     }
 
@@ -119,7 +120,7 @@ class lti_service {
             $parms = $this->lti_request_params($customparams);
 
             $endpointurl = new \moodle_url(
-                get_config('local_intellidata', 'ltitoolurl')
+                SettingsHelper::get_setting('ltitoolurl')
             );
             $endpointparams = $endpointurl->params();
 

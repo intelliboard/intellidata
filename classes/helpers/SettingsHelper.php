@@ -26,18 +26,133 @@
 
 namespace local_intellidata\helpers;
 
-class SettingsHelper
-{
+use local_intellidata\constants;
+use local_intellidata\repositories\tracking\tracking_repository;
+
+class SettingsHelper {
+
+    const DEFAULT_VALUES = [
+        // General settings.
+        'enabled' => 1,
+        'trackingstorage' => 0,
+        'encryptionkey' => '',
+        'clientidentifier' => '',
+        'cleaner_duration' => 0,
+        'migrationrecordslimit' => '2000000',
+        'migrationwriterecordslimit' => '10000',
+        'exportfilesduringmigration' => 0,
+        'resetmigrationprogress' => 0,
+        'exportdataformat' => 'csv',
+        'defaultlayout' => 'standard',
+        // User Tracking.
+        'compresstracking' => tracking_repository::TYPE_CACHE,
+        'tracklogs' => 1,
+        'trackdetails' => 1,
+        'inactivity' => '60',
+        'ajaxfrequency' => '30',
+        'trackadmin' => 0,
+        'trackmedia' => 0,
+        // BBB meetings.
+        'enablebbbmeetings' => 0,
+        'enablebbbdebug' => 0,
+        'bbbapiendpoint' => '',
+        'bbbserversecret' => '',
+        // IB Next LTI.
+        'ltitoolurl' => '',
+        'lticonsumerkey' => '',
+        'ltisharedsecret' => '',
+        'ltititle' => '',
+        'debug' => 0,
+        // Internal settings.
+        'lastmigrationdate' => 0,
+        'resetmigrationprogress' => 0,
+        'migrationstart' => 0,
+        'migrationdatatype' => ''
+    ];
 
     /**
+     * Get config for export format.
+     *
      * @param $datatype
      * @return database_storage_repository|file_storage_repository
      * @throws \dml_exception
      */
-    public static function get_export_dataformat($defaultformat = 'json') {
-        return !empty(get_config('local_intellidata', 'exportdataformat'))
-            ? get_config('local_intellidata', 'exportdataformat')
-            : $defaultformat;
+    public static function get_export_dataformat() {
+        return self::get_setting('exportdataformat');
     }
 
+    /**
+     * Get default value for config.
+     *
+     * @param $configname
+     * @return mixed|string
+     */
+    public static function get_defaut_config_value($configname) {
+        return isset(self::DEFAULT_VALUES[$configname]) ? self::DEFAULT_VALUES[$configname] : '';
+    }
+
+    /**
+     * Get config value.
+     *
+     * @param $configname
+     * @return false|mixed|object|string
+     * @throws \dml_exception
+     */
+    public static function get_setting($configname) {
+        $config = get_config(constants::PLUGIN, $configname);
+
+        // Config did not set or doesn't exist.
+        if ($config === null || $config === false) {
+            return self::get_defaut_config_value($configname);
+        }
+
+        return $config;
+    }
+
+    /**
+     * @return false|\lang_string|mixed|object|string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function get_lti_title() {
+        if ($config = self::get_setting('ltititle')) {
+            return $config;
+        }
+
+        return get_string('ltimenutitle', constants::PLUGIN);
+    }
+
+    /**
+     * @return string[]
+     */
+    public static function get_layouts_options() {
+        global $PAGE;
+
+        $options = ['standard' => 'standard'];
+
+        if (!empty($PAGE->theme->layouts)) {
+            foreach (array_keys($PAGE->theme->layouts) as $layout) {
+                $options[$layout] = $layout;
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * @return string
+     * @throws \dml_exception
+     */
+    public static function get_page_layout() {
+
+        $defaultlayout = self::get_setting('defaultlayout');
+
+        $layoutoptions = self::get_layouts_options();
+
+        if (isset($layoutoptions[$defaultlayout])) {
+            return $layoutoptions[$defaultlayout];
+        }
+
+        return 'standard';
+    }
 }

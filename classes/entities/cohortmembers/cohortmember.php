@@ -47,6 +47,11 @@ class cohortmember extends \local_intellidata\entities\entity {
      */
     protected static function define_properties() {
         return array(
+            'id' => array(
+                'type' => PARAM_INT,
+                'description' => 'Cohort Member internal ID.',
+                'default' => 0,
+            ),
             'cohortid' => array(
                 'type' => PARAM_INT,
                 'description' => 'Cohort ID.',

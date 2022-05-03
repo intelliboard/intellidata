@@ -26,226 +26,350 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_intellidata\helpers\SettingsHelper;
+
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
 
+    $pluginname = local_intellidata\constants::PLUGIN;
 
-    $settings = new admin_settingpage('local_intellidata', get_string('general', 'local_intellidata'));
+    $settings = new admin_settingpage($pluginname, get_string('general', $pluginname));
 
-    $ADMIN->add('localplugins', new admin_category('intellidata', get_string('pluginname', 'local_intellidata')));
+    $ADMIN->add('localplugins', new admin_category('intellidata', get_string('pluginname', $pluginname)));
     $ADMIN->add('intellidata', $settings);
 
     // General settings.
-    $name = 'local_intellidata/enabled';
-    $title = get_string('enabled', 'local_intellidata');
-    $setting = new admin_setting_configcheckbox($name, $title, '', true, true, false);
+    $name = 'enabled';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
     $options = [
-        0 => get_string('file', 'local_intellidata'),
-        1 => get_string('database', 'local_intellidata'),
+        0 => get_string('file', $pluginname),
+        1 => get_string('database', $pluginname),
     ];
-    $name = 'local_intellidata/trackingstorage';
-    $title = get_string('trackingstorage', 'local_intellidata');
-    $setting = new admin_setting_configselect($name, $title, '', 0, $options);
+    $name = 'trackingstorage';
+    $setting = new admin_setting_configselect(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        $options
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/encryptionkey';
-    $title = get_string('encryptionkey', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configpasswordunmask($name, $title, $description, '', PARAM_TEXT);
+    $name = 'encryptionkey';
+    $setting = new admin_setting_configpasswordunmask(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/clientidentifier';
-    $title = get_string('clientidentifier', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configpasswordunmask($name, $title, $description, '', PARAM_TEXT);
+    $name = 'clientidentifier';
+    $setting = new admin_setting_configpasswordunmask(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/cleaner_duration';
-    $title = get_string('cleaner_duration', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configduration($name, $title, $description, 0, 86400);
+    $name = 'cleaner_duration';
+    $setting = new admin_setting_configduration(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        86400
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/migrationrecordslimit';
-    $title = get_string('migrationrecordslimit', 'local_intellidata');
-    $description = get_string('migrationrecordslimit_desc', 'local_intellidata');
-    $setting = new admin_setting_configtext($name, $title, $description, '1000000');
+    $name = 'migrationrecordslimit';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name)
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/migrationwriterecordslimit';
-    $title = get_string('migrationwriterecordslimit', 'local_intellidata');
-    $description = get_string('migrationwriterecordslimit_desc', 'local_intellidata');
-    $setting = new admin_setting_configtext($name, $title, $description, '10000');
+    $name = 'migrationwriterecordslimit';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name)
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/exportfilesduringmigration';
-    $title = get_string('exportfilesduringmigration', 'local_intellidata');
-    $description = get_string('exportfilesduringmigration_desc', 'local_intellidata');
-    $default = false;
-    $setting = new admin_setting_configcheckbox($name, $title, $description, $default, true, false);
+    $name = 'exportfilesduringmigration';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/resetmigrationprogress';
-    $title = get_string('resetmigrationprogress', 'local_intellidata');
-    $description = get_string('resetmigrationprogress_desc', 'local_intellidata');
-    $default = false;
-    $setting = new admin_setting_configcheckbox($name, $title, $description, $default, true, false);
+    $name = 'resetmigrationprogress';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/exportdataformat';
-    $title = get_string('exportdataformat', 'local_intellidata');
-    $description = get_string('exportdataformat_desc', 'local_intellidata');
-    $options = local_intellidata\services\migration_service::ACCEPTABLE_FORMAT_TYPES;
-    $setting = new admin_setting_configselect($name, $title, $description, current(array_keys($options)), $options);
+    $name = 'exportdataformat';
+    $setting = new admin_setting_configselect(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        local_intellidata\services\migration_service::ACCEPTABLE_FORMAT_TYPES
+    );
+    $settings->add($setting);
+
+    $name = 'defaultlayout';
+    $setting = new admin_setting_configselect(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        SettingsHelper::get_layouts_options()
+    );
     $settings->add($setting);
 
     // User Tracking.
     $settings->add(new admin_setting_heading(
-        'local_intellidata/usertracking', get_string('usertracking', 'local_intellidata'), ''
+        $pluginname . 'usertracking', get_string('usertracking', $pluginname), ''
     ));
 
-    $name = 'local_intellidata/compresstracking';
-    $title = new lang_string('compresstracking', 'local_intellidata');
-    $description = new lang_string('compresstracking_desc', 'local_intellidata');
-    $default = local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE;
+    $name = 'compresstracking';
     $options = array(
         local_intellidata\repositories\tracking\tracking_repository::TYPE_LIVE =>
-            new lang_string('do_not_use_compresstracking', 'local_intellidata'),
+            new lang_string('do_not_use_compresstracking', $pluginname),
         local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE =>
-            new lang_string('cache_compresstracking', 'local_intellidata'),
+            new lang_string('cache_compresstracking', $pluginname),
         local_intellidata\repositories\tracking\tracking_repository::TYPE_FILE =>
-            new lang_string('file_compresstracking', 'local_intellidata')
+            new lang_string('file_compresstracking', $pluginname)
     );
-    $setting = new admin_setting_configselect($name, $title, $description, $default, $options);
+    $setting = new admin_setting_configselect(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        $options
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/tracklogs';
-    $title = new lang_string('tracklogs', 'local_intellidata');
-    $setting = new admin_setting_configcheckbox($name, $title, '', true, true, false);
+    $name = 'tracklogs';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/trackdetails';
-    $title = new lang_string('trackdetails', 'local_intellidata');
-    $setting = new admin_setting_configcheckbox($name, $title, '', true, true, false);
+    $name = 'trackdetails';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/inactivity';
-    $title = get_string('inactivity', 'local_intellidata');
-    $description = get_string('inactivity_desc', 'local_intellidata');
-    $default = '60';
-    $setting = new admin_setting_configtext($name, $title, $description, $default);
+    $name = 'inactivity';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name)
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/ajaxfrequency';
-    $title = get_string('ajaxfrequency', 'local_intellidata');
-    $description = get_string('ajaxfrequency_desc', 'local_intellidata');
-    $default = '30';
-    $setting = new admin_setting_configtext($name, $title, $description, $default);
+    $name = 'ajaxfrequency';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name)
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/trackadmin';
-    $title = get_string('trackadmin', 'local_intellidata');
-    $description = get_string('trackadmin_desc', 'local_intellidata');
-    $default = false;
-    $setting = new admin_setting_configcheckbox($name, $title, $description, $default, true, false);
+    $name = 'trackadmin';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/trackmedia';
-    $title = get_string('trackmedia', 'local_intellidata');
-    $description = get_string('trackmedia_desc', 'local_intellidata');
-    $default = false;
-    $setting = new admin_setting_configcheckbox($name, $title, $description, $default, true, false);
+    $name = 'trackmedia';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
 
     // BBB meetings.
     $settings->add(new admin_setting_heading(
-        'local_intellidata/bbbmeetings', get_string('bbbmeetings', 'local_intellidata'), ''
+        $pluginname . '/bbbmeetings', get_string('bbbmeetings', $pluginname), ''
     ));
 
-    $name = 'local_intellidata/enablebbbmeetings';
-    $title = get_string('enablebbbmeetings', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configcheckbox($name, $title, $description, false, true, false);
+    $name = 'enablebbbmeetings';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
     // BBB debug.
-    $name = 'local_intellidata/bbb_debug';
-    $title = get_string('enablebbbdebug', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configcheckbox($name, $title, $description, false, true, false);
+    $name = 'bbb_debug';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string('enablebbbdebug', $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
     $settings->add($setting);
 
     // BBB API endpoint.
-    $name = 'local_intellidata/bbbapiendpoint';
-    $title = get_string('bbbapiendpoint', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+    $name = 'bbbapiendpoint';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
     // BBB server secret.
-    $name = 'local_intellidata/bbbserversecret';
-    $title = get_string('bbbserversecret', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+    $name = 'bbbserversecret';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
     // IB Next LTI.
     $settings->add(new admin_setting_heading(
-        'local_intellidata/lti', get_string('ltititle', 'local_intellidata'), ''
+        $pluginname . '/lti', get_string('lticonfiguration', $pluginname), ''
     ));
 
-    $name = 'local_intellidata/ltitoolurl';
-    $title = get_string('ltitoolurl', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+    $name = 'ltitoolurl';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/lticonsumerkey';
-    $title = get_string('lticonsumerkey', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+    $name = 'lticonsumerkey';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/ltisharedsecret';
-    $title = get_string('ltisharedsecret', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+    $name = 'ltisharedsecret';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
-    $name = 'local_intellidata/debug';
-    $title = get_string('ltidebug', 'local_intellidata');
-    $description = '';
-    $setting = new admin_setting_configcheckbox($name, $title, $description, '', PARAM_TEXT);
+    $name = 'ltititle';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
+    $settings->add($setting);
+
+    $name = 'debug';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string('ltidebug', $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
     $settings->add($setting);
 
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidatamigrations',
-            new lang_string('migrations', 'local_intellidata'),
+            new lang_string('migrations', $pluginname),
             $CFG->wwwroot.'/local/intellidata/migrations/index.php')
     );
 
     // Temporary solution to review exported files.
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidataexportlogs',
-            new lang_string('exportlogs', 'local_intellidata'),
+            new lang_string('exportlogs', $pluginname),
             $CFG->wwwroot.'/local/intellidata/logs/index.php')
     );
 
     if (!$ADMIN->locate('intellibdata') && $ADMIN->locate('localplugins')) {
         $ADMIN->add('intellidata', new admin_externalpage(
             'intellidatasql',
-            new lang_string('sqlreports', 'local_intellidata'),
+            new lang_string('sqlreports', $pluginname),
             $CFG->wwwroot.'/local/intellidata/sql_reports/index.php')
         );
     }
 
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidataconfig',
-            new lang_string('configuration', 'local_intellidata'),
+            new lang_string('configuration', $pluginname),
             $CFG->wwwroot.'/local/intellidata/config/index.php')
     );
 

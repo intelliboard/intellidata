@@ -23,17 +23,23 @@
 
 namespace local_intellidata\adapters;
 
+use local_intellidata\helpers\SettingsHelper;
+
 class big_blue_button_adapter {
+
     private $apiendpoint;
     private $bbbserversecret;
 
+    /**
+     * @throws \dml_exception
+     */
     public function __construct() {
         global $CFG;
 
         require_once($CFG->dirroot . '/lib/filelib.php');
 
-        $this->apiendpoint = rtrim(get_config('local_intellidata', 'bbbapiendpoint'), '/') . '/api';
-        $this->bbbserversecret = trim(get_config('local_intellidata', 'bbbserversecret'));
+        $this->apiendpoint = rtrim(SettingsHelper::get_setting('bbbapiendpoint'), '/') . '/api';
+        $this->bbbserversecret = trim(SettingsHelper::get_setting('bbbserversecret'));
 
         if (!$this->apiendpoint or !$this->bbbserversecret) {
             throw new \Exception('Please set BBB server secret and endpoint');
@@ -52,7 +58,7 @@ class big_blue_button_adapter {
         $requeststring = "";
         $checksum = sha1($requestaction . $requeststring . $this->bbbserversecret);
 
-        if (get_config('local_intellidata', 'bbb_debug')) {
+        if (SettingsHelper::get_setting('bbb_debug')) {
             ob_start();
             $curl = new \curl(['debug' => true]);
             $out = fopen('php://output', 'w');
@@ -66,7 +72,7 @@ class big_blue_button_adapter {
             'checksum' => $checksum
         ]);
 
-        if (get_config('local_intellidata', 'bbb_debug')) {
+        if (SettingsHelper::get_setting('bbb_debug')) {
             fclose($out);
             echo '<pre>';
             var_dump(ob_get_clean());
@@ -81,6 +87,10 @@ class big_blue_button_adapter {
         return $meetings;
     }
 
+    /**
+     * @param null $meetingid
+     * @return \$1|false|\SimpleXMLElement
+     */
     public function get_meetings_records($meetingid = null) {
         $requestaction = 'getRecordings';
         $requeststring = $meetingid ? "meetingID={$meetingid}" : "";

@@ -26,24 +26,39 @@
 
 namespace local_intellidata\tests;
 
-class setup_helper
-{
+class setup_helper {
+
+    /**
+     * Enable intellidata plugin.
+     */
     public static function enable_plugin() {
         set_config('enabled', true, 'local_intellidata');
     }
 
+    /**
+     * Enable db storage.
+     */
     public static function enable_db_storage() {
         set_config('trackingstorage', 1, 'local_intellidata');
     }
 
+    /**
+     * Enable files storage.
+     */
     public static function enable_file_storage() {
         set_config('trackingstorage', 0, 'local_intellidata');
     }
 
+    /**
+     * Set json export format.
+     */
     public static function setup_json_exportformat() {
         set_config('exportdataformat', 'json', 'local_intellidata');
     }
 
+    /**
+     * Set csv export format.
+     */
     public static function setup_csv_exportformat() {
         set_config('exportdataformat', 'csv', 'local_intellidata');
     }

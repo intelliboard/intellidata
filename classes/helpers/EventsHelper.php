@@ -26,8 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-class EventsHelper
-{
+class EventsHelper {
 
     const CRUD_CREATED = 'c';
     const CRUD_READ = 'r';

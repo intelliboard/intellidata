@@ -102,8 +102,9 @@ class config_service {
         if (isset($config->timemodified_field)) {
             if (!empty($config->timemodified_field)) {
                 if ($config->tabletype == datatypeconfig::TABLETYPE_OPTIONAL) {
-                    $this->datatypes[$datatypename]['timemodified_field'] = ($this->dbschema->column_exists($datatypename, $config->timemodified_field))
-                        ? $config->timemodified_field : '';
+                    $this->datatypes[$datatypename]['timemodified_field'] = (
+                        $this->dbschema->column_exists($datatypename, $config->timemodified_field)
+                    ) ? $config->timemodified_field : '';
                 } else {
                     $this->datatypes[$datatypename]['timemodified_field'] = $config->timemodified_field;
                 }
@@ -134,9 +135,12 @@ class config_service {
         $config->datatype = $datatypename;
         $config->status = self::get_config_status($defaultconfig);
         $config->timemodified_field = ($defaultconfig['timemodified_field'] === false) ? '' : $defaultconfig['timemodified_field'];
-        $config->rewritable = ($defaultconfig['rewritable']) ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
-        $config->filterbyid = ($defaultconfig['filterbyid']) ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
-        $config->events_tracking = (!empty($defaultconfig['observer'])) ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
+        $config->rewritable = ($defaultconfig['rewritable'])
+            ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
+        $config->filterbyid = ($defaultconfig['filterbyid'])
+            ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
+        $config->events_tracking = (!empty($defaultconfig['observer']))
+            ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
 
         return $this->repo->save($datatypename, $config);
     }

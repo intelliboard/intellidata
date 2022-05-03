@@ -28,6 +28,7 @@ namespace local_intellidata\repositories\tracking;
 
 use core_message\helper;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\SettingsHelper;
 
 class cache_storage_repository extends storage_repository {
 
@@ -53,8 +54,8 @@ class cache_storage_repository extends storage_repository {
 
         $this->fill_tracking($data, $trackdata);
 
-        $tracklogs = get_config('local_intellidata', 'tracklogs');
-        $trackdetails = get_config('local_intellidata', 'trackdetails');
+        $tracklogs = SettingsHelper::get_setting('tracklogs');
+        $trackdetails = SettingsHelper::get_setting('trackdetails');
         $currentstamp = strtotime('today');
 
         if ($tracklogs) {

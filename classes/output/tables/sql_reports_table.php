@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/tablelib.php');
 
 class sql_reports_table extends \table_sql {
+
     public function __construct($uniqueid) {
         global $PAGE;
 
@@ -48,10 +49,19 @@ class sql_reports_table extends \table_sql {
         $this->define_baseurl($PAGE->url);
     }
 
+    /**
+     * @param $values
+     * @return false|string
+     */
     public function col_timecreated($values) {
         return date('m/d/Y', $values->timecreated);
     }
 
+    /**
+     * @param $values
+     * @return mixed
+     * @throws \coding_exception
+     */
     public function col_status($values) {
         return [
             get_string('sql_report_inactive', 'local_intellidata'),
@@ -59,6 +69,12 @@ class sql_reports_table extends \table_sql {
         ][$values->status];
     }
 
+    /**
+     * @param $values
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public function col_actions($values) {
         global $CFG;
 

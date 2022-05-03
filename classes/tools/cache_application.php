@@ -29,14 +29,25 @@ use cache_application as moodle_cache_application;
 
 class cache_application extends moodle_cache_application {
 
+    /**
+     * @return bool
+     */
     public function purge() {
         return true;
     }
 
+    /**
+     * @param array $keys
+     * @param bool $recurse
+     * @return bool
+     */
     public function delete_many(array $keys, $recurse = true) {
         return true;
     }
 
+    /**
+     * @return array
+     */
     public function get_all_keys() {
         $rawkeys = $this->get_store()->find_all();
         $keys = [];

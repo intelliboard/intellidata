@@ -27,9 +27,10 @@ namespace local_intellidata\entities\assignments;
 
 defined('MOODLE_INTERNAL') || die();
 
-use \local_intellidata\entities\assignments\submission;
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\entities\assignments\submission;
+use local_intellidata\helpers\DBManagerHelper;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -83,6 +84,7 @@ class observer {
             $eventdata = $event->get_data();
 
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+            $submission->submission_type = self::get_submission_type($submission->id);
 
             self::export_event($eventdata, $submission);
         }
@@ -98,6 +100,7 @@ class observer {
             $eventdata = $event->get_data();
 
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+            $submission->submission_type = self::get_submission_type($submission->id);
 
             self::export_event($eventdata, $submission);
         }
@@ -123,6 +126,7 @@ class observer {
             $submission->grade = ((float)$gradedata->grade > 0) ? $gradedata->grade : 0;
             $submission->feedback_at = $gradedata->timemodified;
             $submission->feedback_by = $gradedata->grader;
+            $submission->submission_type = self::get_submission_type($submission->id);
 
             $feedback = $DB->get_record('assignfeedback_comments', [
                 'assignment' => $gradedata->assignment,
@@ -148,6 +152,7 @@ class observer {
 
             $eventdata = $event->get_data();
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+            $submission->submission_type = self::get_submission_type($submission->id);
             $gradedata = $DB->get_record('assign_grades', [
                 'assignment' => $submission->assignment,
                 'userid' => $submission->userid,
@@ -172,6 +177,12 @@ class observer {
         }
     }
 
+    /**
+     * @param $eventdata
+     * @param $submission
+     * @param array $fields
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($eventdata, $submission, $fields = []) {
         $entity = new submission($submission, $fields);
         $data = $entity->export();
@@ -182,5 +193,44 @@ class observer {
         $tracking->track($data);
     }
 
-}
+    /**
+     * @param $submissionid
+     * @return string
+     * @throws \dml_exception
+     */
+    private static function get_submission_type($submissionid) {
+        global $DB;
 
+        $xmltables = DBManagerHelper::get_install_xml_tables();
+
+        $select = $join = [];
+        foreach ($xmltables as $xmltable) {
+            if ($xmltable['plugintype'] == 'assignsubmission') {
+                $select[] = "CASE WHEN MAX({$xmltable['name']}.id) IS NOT NULL THEN '{$xmltable['plugin']}' ELSE '' END";
+                $join[] = "LEFT JOIN {{$xmltable['name']}} {$xmltable['name']} on {$xmltable['name']}.submission=s.id";
+            }
+        }
+
+        if (!empty($select)) {
+            $select = implode(",',',", $select);
+            $join = implode(' ', $join);
+            $innerwhere = " WHERE s.id=:submissionid ";
+            $condition['submissionid'] = $submissionid;
+
+            $submissionssql = "SELECT
+                        s.id AS submission_id,
+                        TRIM(BOTH ',' FROM CONCAT($select)) AS submission_type
+                    FROM {assign_submission} s
+                         $join
+                    $innerwhere
+                    GROUP BY s.id";
+
+            $record = $DB->get_record_sql($submissionssql, $condition);
+
+            return (isset($record->submission_type)) ? $record->submission_type : '';
+        } else {
+            return '';
+        }
+    }
+
+}

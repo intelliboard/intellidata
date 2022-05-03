@@ -26,8 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-class RolesHelper
-{
+class RolesHelper {
 
     const CONTEXTLIST = [
         CONTEXT_COURSE      => ParamsHelper::CONTEXT_COURSE,

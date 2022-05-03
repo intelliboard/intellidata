@@ -23,6 +23,7 @@
 
 use local_intellidata\services\export_service;
 use local_intellidata\output\tables\migrations_table;
+use local_intellidata\helpers\SettingsHelper;
 
 require('../../../config.php');
 
@@ -36,8 +37,8 @@ require_capability('local/intellidata:viewlogs', $context);
 
 $pageurl = new \moodle_url('/local/intellidata/migrations/index.php');
 $PAGE->set_url($pageurl);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context($context);
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 $redirect = false;
 

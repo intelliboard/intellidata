@@ -99,7 +99,8 @@ class database_service {
         $this->repo->export_ids($datatype);
 
         if ($this->showlogs) {
-            mtrace("Datatype '" . $datatype['name'] . "' export completed at " . date('r') . ". Exported '$recordsexported' records.");
+            mtrace("Datatype '" . $datatype['name'] . "' export completed at " .
+                date('r') . ". Exported '$recordsexported' records.");
             $difftime = microtime_diff($starttime, microtime());
             mtrace("Execution took ".$difftime." seconds.");
             mtrace("-------------------------------------------");

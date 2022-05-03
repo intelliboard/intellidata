@@ -44,22 +44,43 @@ class file_storage_repository {
         $this->storagefile = self::get_storage_file();
     }
 
+    /**
+     * @return false|string
+     */
     protected function get_storage_folder() {
         return make_temp_directory(self::STORAGE_FOLDER_NAME);
     }
 
+    /**
+     * @return string
+     */
     protected function get_storage_file() {
         return $this->storagefolder . '/' . $this->datatype['name'] . '.' . self::STORAGE_FILE_TYPE;
     }
 
+    /**
+     * @return string
+     */
     public function get_temp_file() {
         return $this->storagefolder . '/' . $this->datatype['name'] . '_temp.' . self::STORAGE_FILE_TYPE;
     }
 
+    /**
+     * @param $data
+     * @throws \moodle_exception
+     */
     public function save_data($data) {
         StorageHelper::save_in_file($this->storagefile, $data);
     }
 
+    /**
+     * @return \stored_file|null
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \file_exception
+     * @throws \moodle_exception
+     * @throws \stored_file_creation_exception
+     */
     public function save_file() {
 
         $tempfile = $this->get_temp_file();
@@ -86,6 +107,11 @@ class file_storage_repository {
         return StorageHelper::save_file($params);
     }
 
+    /**
+     * @param array $params
+     * @return array
+     * @throws \dml_exception
+     */
     public function get_files($params = []) {
         global $CFG;
         require_once("$CFG->libdir/externallib.php");
@@ -101,6 +127,22 @@ class file_storage_repository {
         );
     }
 
+    /**
+     * @param $contextid
+     * @param $component
+     * @param $filearea
+     * @param false $itemid
+     * @param string $sort
+     * @param bool $includedirs
+     * @param int $timestart
+     * @param int $timeend
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @param string $order
+     * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "timecreated",
                                    $includedirs = true, $timestart = 0, $timeend = 0, $limitfrom = 0,
                                    $limitnum = 0, $order = 'ASC') {
@@ -211,6 +253,11 @@ class file_storage_repository {
         return implode(', ', $fields);
     }
 
+    /**
+     * @param null $params
+     * @return int|void
+     * @throws \dml_exception
+     */
     public function delete_files($params = null) {
         global $DB;
 
@@ -255,6 +302,9 @@ class file_storage_repository {
         return count($filerecords);
     }
 
+    /**
+     * @return bool
+     */
     public function delete_temp_files() {
 
         // Delete temp files.

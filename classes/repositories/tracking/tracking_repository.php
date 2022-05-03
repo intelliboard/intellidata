@@ -28,6 +28,7 @@ namespace local_intellidata\repositories\tracking;
 
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\PageParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 
 class tracking_repository {
 
@@ -37,7 +38,7 @@ class tracking_repository {
 
     public static function create_record($pageparams, $ajaxrequest = false) {
         global $USER;
-        $compresstracking = get_config('local_intellidata', 'compresstracking');
+        $compresstracking = SettingsHelper::get_setting('compresstracking');
 
         $data = new \stdClass();
         $data->userid       = $USER->id;
@@ -65,7 +66,7 @@ class tracking_repository {
     }
 
     public static function export_records() {
-        $compresstracking = get_config('local_intellidata', 'compresstracking');
+        $compresstracking = SettingsHelper::get_setting('compresstracking');
 
         try {
             $storage = self::get_storage($compresstracking);

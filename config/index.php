@@ -24,6 +24,7 @@
 use local_intellidata\output\tables\config_table;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
+use local_intellidata\helpers\SettingsHelper;
 
 require('../../../config.php');
 
@@ -36,13 +37,13 @@ require_capability('local/intellidata:viewconfig', $context);
 $pageurl = new \moodle_url('/local/intellidata/config/index.php');
 
 $PAGE->set_url($pageurl);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context($context);
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 // Validate config table setup.
 if (!empty($action)) {
     $configservice = new config_service(datatypes_service::get_all_datatypes());
-    $configservice->setup_config($action ==  'reset');
+    $configservice->setup_config($action == 'reset');
     redirect($pageurl, get_string('configurationsaved', 'local_intellidata'));
 }
 

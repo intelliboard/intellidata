@@ -26,8 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-class MigrationHelper
-{
+class MigrationHelper {
     const MIGRATIONS_COMPLETED_STATUS = 'migrationcompleted';
 
     /**

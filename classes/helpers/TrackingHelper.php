@@ -26,12 +26,20 @@
 
 namespace local_intellidata\helpers;
 
-class TrackingHelper
-{
+class TrackingHelper {
+
+    /**
+     * @return bool
+     * @throws \dml_exception
+     */
     public static function enabled() {
         return (get_config('local_intellidata', 'enabled')) ? true : false;
     }
 
+    /**
+     * @return bool
+     * @throws \dml_exception
+     */
     public static function tracking_enabled() {
         $tracking = get_config('local_intellidata', 'enabled');
 
@@ -42,9 +50,16 @@ class TrackingHelper
         return false;
     }
 
+    /**
+     * @return bool
+     */
     public static function enable() {
         return set_config('local_intellidata', true, 'enabled');
     }
+
+    /**
+     * @return bool
+     */
     public static function disable() {
         return set_config('local_intellidata', false, 'enabled');
     }

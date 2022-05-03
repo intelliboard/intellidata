@@ -39,6 +39,11 @@ class participation extends \local_intellidata\entities\entity {
      */
     protected static function define_properties() {
         return array(
+            'id' => array(
+                'type' => PARAM_INT,
+                'description' => 'Log ID.',
+                'default' => 0,
+            ),
             'userid' => array(
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
@@ -48,7 +53,7 @@ class participation extends \local_intellidata\entities\entity {
                 'description' => 'Object type.',
                 'default' => '',
             ),
-            'id' => array(
+            'objectid' => array(
                 'type' => PARAM_INT,
                 'description' => 'Object ID.',
                 'default' => '',

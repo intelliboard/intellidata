@@ -15,24 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class with all constants.
  *
- * @copyright  2021 IntelliBoard, Inc
+ * @package    local
+ * @subpackage intellidata
+ * @copyright  2022
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
  */
 
-namespace local_intellidata\lti;
+namespace local_intellidata;
 
-class OAuthSignatureMethod {
-    /**
-     * @param $request
-     * @param $consumer
-     * @param $token
-     * @param $signature
-     * @return bool
-     */
-    public function check_signature(&$request, $consumer, $token, $signature) {
-        $built = $this->build_signature($request, $consumer, $token);
-        return $built == $signature;
-    }
+defined('MOODLE_INTERNAL') || die;
+
+/**
+ * Class with all constants.
+ *
+ * @package    local
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class constants {
+
+    public const PLUGIN = 'local_intellidata';
+
 }

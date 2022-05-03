@@ -145,8 +145,9 @@ class migrations_table {
 
                     if ($tablerecord->get('recordscount')) {
                         $item['status'] = $this->get_status($tablerecord->get('migrated'));
-                        $item['progress'] = $tablerecord->get('recordsmigrated') . '/' .
-                            $tablerecord->get('recordscount');
+                        $item['progress'] = (($tablerecord->get('migrated'))
+                                ? $tablerecord->get('recordscount')
+                                : $tablerecord->get('recordsmigrated')) . '/' . $tablerecord->get('recordscount');
                         $item['timestart'] = $this->col_datetime($tablerecord->get('timestart'));
                         $item['timeend'] = $this->col_datetime($tablerecord->get('last_exported_time'));
                         $item['actions'] = $this->col_actions($datatypename);

@@ -24,10 +24,20 @@
 namespace local_intellidata\lti;
 
 class OAuthSignatureMethod_HMAC_SHA1 extends OAuthSignatureMethod {
+
+    /**
+     * @return string
+     */
     public function get_name() {
         return "HMAC-SHA1";
     }
 
+    /**
+     * @param $request
+     * @param $consumer
+     * @param $token
+     * @return string
+     */
     public function build_signature($request, $consumer, $token) {
         global $oauthlastcomputedsignature;
         $oauthlastcomputedsignature = false;

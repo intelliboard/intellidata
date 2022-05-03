@@ -22,6 +22,7 @@ use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
+use local_intellidata\helpers\SettingsHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -133,8 +134,7 @@ class local_intellidata_exportlib extends external_api {
         // Get data files list.
         $datafiles = $exportservice->get_files();
         $metadata = [
-            'lastmigrationdate' => (!empty(get_config('local_intellidata', 'lastmigrationdate'))) ?
-                get_config('local_intellidata', 'lastmigrationdate') : 0
+            'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate')
         ];
         $context = [
             'files' => $datafiles,
@@ -212,8 +212,7 @@ class local_intellidata_exportlib extends external_api {
         // Get data files list.
         $datafiles = $exportservice->get_files($params);
         $metadata = [
-            'lastmigrationdate' => (!empty(get_config('local_intellidata', 'lastmigrationdate'))) ?
-                get_config('local_intellidata', 'lastmigrationdate') : 0
+            'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate')
         ];
         $context = [
             'files' => $datafiles,

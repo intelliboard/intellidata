@@ -31,8 +31,7 @@ use local_intellidata\persistent\export_logs;
 use local_intellidata\services\dbschema_service;
 use local_intellidata\services\datatypes_service;
 
-class export_log_repository
-{
+class export_log_repository {
 
     /**
      * @param $datatype
