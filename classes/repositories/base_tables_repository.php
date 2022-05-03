@@ -26,8 +26,8 @@
 
 namespace local_intellidata\repositories;
 
-abstract class base_tables_repository
-{
+abstract class base_tables_repository {
+
     abstract public static function exclude_tables($dbtables);
 
     abstract public static function get_excluded_tables($dbtables);

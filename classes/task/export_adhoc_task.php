@@ -72,7 +72,9 @@ class export_adhoc_task extends \core\task\adhoc_task {
             // Send callback when files ready.
             if (!empty($data->callbackurl)) {
                 $client = new \curl();
-                $client->post($data->callbackurl, ['data' => $encryptionservice->encrypt(json_encode(['datatypes' => $data->datatypes]))]);
+                $client->post($data->callbackurl, [
+                    'data' => $encryptionservice->encrypt(json_encode(['datatypes' => $data->datatypes]))
+                ]);
             }
 
             mtrace("IntelliData Data Files Export CRON ended!");

@@ -62,6 +62,10 @@ class exportlogs_table extends \table_sql {
         $this->define_baseurl($PAGE->url);
     }
 
+    /**
+     * @return array[]
+     * @throws \coding_exception
+     */
     public function get_fields() {
         $fields = [
             'filearea' => [
@@ -84,6 +88,10 @@ class exportlogs_table extends \table_sql {
         return $fields;
     }
 
+    /**
+     * @return array
+     * @throws \coding_exception
+     */
     public function get_headers() {
 
         $headers = [];
@@ -99,10 +107,20 @@ class exportlogs_table extends \table_sql {
         return$headers;
     }
 
+    /**
+     * @param $values
+     * @return string
+     * @throws \coding_exception
+     */
     public function col_timecreated($values) {
         return ($values->timecreated) ? userdate($values->timecreated, get_string('strftimedatetime', 'langconfig')) : '-';
     }
 
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public function col_filearea($values) {
         if (get_string_manager()->string_exists('datatype_' . $values->filearea, 'local_intellidata')) {
             return get_string('datatype_' . $values->filearea, 'local_intellidata');
@@ -111,10 +129,20 @@ class exportlogs_table extends \table_sql {
         }
     }
 
+    /**
+     * @param $values
+     * @return string
+     */
     public function col_filesize($values) {
         return StorageHelper::convert_filesize($values->filesize);
     }
 
+    /**
+     * @param $values
+     * @return string
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
     public function col_actions($values) {
         global $OUTPUT;
 
@@ -138,6 +166,9 @@ class exportlogs_table extends \table_sql {
         return implode(' ', $buttons);
     }
 
+    /**
+     * Start table output
+     */
     public function start_html() {
 
         echo html_writer::start_tag('div', array('class' => 'custom-filtering-table'));
@@ -183,4 +214,3 @@ class exportlogs_table extends \table_sql {
     }
 
 }
-

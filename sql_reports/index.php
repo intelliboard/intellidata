@@ -23,6 +23,7 @@
 require('../../../config.php');
 
 use local_intellidata\output\tables\sql_reports_table;
+use local_intellidata\helpers\SettingsHelper;
 
 require_login();
 
@@ -34,8 +35,8 @@ $title = get_string('sqlreports', 'local_intellidata');
 $pageurl = new \moodle_url('/local/intellidata/sql_reports/index.php');
 
 $PAGE->set_url($pageurl);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);

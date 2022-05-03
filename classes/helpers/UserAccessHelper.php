@@ -26,9 +26,12 @@
 
 namespace local_intellidata\helpers;
 
-class UserAccessHelper
-{
+class UserAccessHelper {
 
+    /**
+     * @return bool
+     * @throws \coding_exception
+     */
     public static function is_user_fully_set_up() {
         global $USER;
 
@@ -36,6 +39,9 @@ class UserAccessHelper
             get_user_preferences('auth_forcepasswordchange')) ? false : true;
     }
 
+    /**
+     * @return bool
+     */
     public static function user_policy_agreed() {
         global $USER;
 
@@ -44,6 +50,10 @@ class UserAccessHelper
                 $manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined()) ? false : true;
     }
 
+    /**
+     * @return bool
+     * @throws \coding_exception
+     */
     public static function is_logged_in() {
         return (isloggedin() and !isguestuser()) ? true : false;
     }

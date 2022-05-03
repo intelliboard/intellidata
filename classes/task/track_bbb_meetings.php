@@ -25,6 +25,7 @@
 
 namespace local_intellidata\task;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\adapters\big_blue_button_adapter;
 use local_intellidata\repositories\bbb_repository;
@@ -47,7 +48,7 @@ class track_bbb_meetings extends \core\task\scheduled_task {
     public function execute() {
         global $DB;
 
-        if (!get_config('local_intellidata', 'enablebbbmeetings')) {
+        if (!SettingsHelper::get_setting('enablebbbmeetings')) {
             return false;
         }
 

@@ -30,6 +30,11 @@ class UpgradeHelper {
 
     const SHOW_MESSAGE_ROWS = 10000;
 
+    /**
+     * @return array
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public static function copy_intelliboard_tracking() {
         global $DB;
 
@@ -93,6 +98,11 @@ class UpgradeHelper {
         return $trackingfixmapper;
     }
 
+    /**
+     * @param $trackingfixmapper
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public static function copy_intelliboard_logs($trackingfixmapper) {
         global $DB;
 
@@ -130,6 +140,10 @@ class UpgradeHelper {
         }
     }
 
+    /**
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public static function copy_intelliboard_details() {
         global $DB;
 

@@ -26,6 +26,8 @@
 
 namespace local_intellidata\repositories\tracking;
 
+use local_intellidata\helpers\SettingsHelper;
+
 
 class live_storage_repository extends storage_repository {
 
@@ -34,8 +36,8 @@ class live_storage_repository extends storage_repository {
         try {
             $transaction = $DB->start_delegated_transaction();
 
-            $tracklogs = get_config('local_intellidata', 'tracklogs');
-            $trackdetails = get_config('local_intellidata', 'trackdetails');
+            $tracklogs = (bool)SettingsHelper::get_setting('tracklogs');
+            $trackdetails = (bool)SettingsHelper::get_setting('trackdetails');
             $trackparams = array(
                 'userid' => $trackdata->userid,
                 'page' => $trackdata->page,

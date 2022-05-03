@@ -24,14 +24,17 @@
 
 require_once('../../config.php');
 
+use local_intellidata\helpers\SettingsHelper;
+
 $context = context_system::instance();
+$title = SettingsHelper::get_lti_title();
 
 $PAGE->set_url(new moodle_url("/local/intellidata/lti.php"));
 $PAGE->set_pagetype('home');
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context($context);
-$PAGE->set_title(get_string('ltititle', 'local_intellidata'));
-$PAGE->set_heading(get_string('ltititle', 'local_intellidata'));
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 
 require_login();
 require_capability('local/intellidata:viewlti', $context);

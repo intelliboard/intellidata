@@ -26,6 +26,7 @@
 namespace local_intellidata\services;
 
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\SettingsHelper;
 
 class encryption_service {
 
@@ -44,8 +45,8 @@ class encryption_service {
     public $clientidentifier;
 
     public function __construct() {
-        $this->encryptionkey    = get_config('local_intellidata', 'encryptionkey');
-        $this->clientidentifier = get_config('local_intellidata', 'clientidentifier');
+        $this->encryptionkey    = SettingsHelper::get_setting('encryptionkey');
+        $this->clientidentifier = SettingsHelper::get_setting('clientidentifier');
     }
 
     /**

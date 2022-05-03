@@ -19,8 +19,23 @@ defined('MOODLE_INTERNAL') || die();
 use local_intellidata\api\apilib;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\encryption_service;
 
+/**
+ * @param $course
+ * @param $cm
+ * @param $context
+ * @param $filearea
+ * @param $args
+ * @param $forcedownload
+ * @param array $options
+ * @return false|void
+ * @throws coding_exception
+ * @throws moodle_exception
+ * @throws require_login_exception
+ * @throws required_capability_exception
+ */
 function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     global $CFG, $PAGE;
     require_once($CFG->dirroot . '/repository/lib.php');
@@ -72,6 +87,10 @@ function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, 
     }
 }
 
+/**
+ * @param global_navigation $nav
+ * @throws dml_exception
+ */
 function local_intellidata_extend_navigation(global_navigation $nav) {
     global $PAGE;
 
@@ -82,10 +101,10 @@ function local_intellidata_extend_navigation(global_navigation $nav) {
 
         $context = context_system::instance();
         if (isloggedin()
-            and !empty(get_config('local_intellidata', 'ltitoolurl'))
-            and has_capability('local/intellidata:viewlti', $context)) {
+            && !empty(SettingsHelper::get_setting('ltitoolurl'))
+            && has_capability('local/intellidata:viewlti', $context)) {
 
-            $name = get_string('ltititle', 'local_intellidata');
+            $name = SettingsHelper::get_lti_title();
             $url = new moodle_url('/local/intellidata/lti.php');
             $nav->add($name, $url);
             $node = $mynode->add($name, $url, 0, null, 'intellidata_lti', new pix_icon('i/area_chart', '', 'local_intellidata'));
@@ -96,12 +115,18 @@ function local_intellidata_extend_navigation(global_navigation $nav) {
     }
 }
 
+/**
+ * @return string[]
+ */
 function local_intellidata_get_fontawesome_icon_map() {
     return array(
         'local_intellidata:i/area_chart' => 'fa-area-chart',
     );
 }
 
+/**
+ * @throws dml_exception
+ */
 function local_intellidata_tracking_init() {
 
     if (TrackingHelper::tracking_enabled()) {

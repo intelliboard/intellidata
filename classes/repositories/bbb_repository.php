@@ -26,8 +26,14 @@
 namespace local_intellidata\repositories;
 
 class bbb_repository {
-    const RECORDS_TRACKING_PERIOD = DAYSECS; // Seconds.
 
+    const RECORDS_TRACKING_PERIOD = DAYSECS;
+
+    /**
+     * @param $meetingid
+     * @return false|mixed
+     * @throws \dml_exception
+     */
     public function meeting_records_tracking($meetingid) {
         global $DB;
 
@@ -39,6 +45,10 @@ class bbb_repository {
         );
     }
 
+    /**
+     * @param $meetingid
+     * @throws \dml_exception
+     */
     public function create_meeting_records_tracking($meetingid) {
         global $DB;
 
@@ -50,6 +60,10 @@ class bbb_repository {
         ]);
     }
 
+    /**
+     * @param $id
+     * @throws \dml_exception
+     */
     public function renew_meeting_records_tracking($id) {
         global $DB;
 
@@ -61,6 +75,10 @@ class bbb_repository {
         ]);
     }
 
+    /**
+     * @return array
+     * @throws \dml_exception
+     */
     public function get_meetings_for_records_tracking() {
         global $DB;
 
@@ -74,6 +92,10 @@ class bbb_repository {
         );
     }
 
+    /**
+     * @param $id
+     * @throws \dml_exception
+     */
     public function track_meeting_records($id) {
         global $DB;
 

@@ -40,14 +40,14 @@ class migration_service {
     protected $exportservice        = null;
     protected $exportfilesduringmigration = false;
 
-    public    $exportdataformat;
+    public $exportdataformat;
 
     public function __construct($exportformatkey = null) {
         $this->tables = $this->get_tables();
         $this->encryptionservice = new encryption_service();
         $this->exportservice = new export_service(true);
-        $this->recordslimits = (int)get_config('local_intellidata', 'migrationrecordslimit');
-        $this->exportfilesduringmigration = (bool)get_config('local_intellidata', 'exportfilesduringmigration');
+        $this->recordslimits = (int)SettingsHelper::get_setting('migrationrecordslimit');
+        $this->exportfilesduringmigration = (bool)SettingsHelper::get_setting('exportfilesduringmigration');
 
         $exportformatkey = $exportformatkey ?? SettingsHelper::get_export_dataformat();
 
@@ -58,6 +58,10 @@ class migration_service {
         $this->exportdataformat = $exportformat;
     }
 
+    /**
+     * @param null $params
+     * @param false $cronprocessing
+     */
     public function process($params = null, $cronprocessing = false) {
 
         $alltables = $this->tables;
@@ -149,6 +153,11 @@ class migration_service {
         mtrace("-------------------------------------------");
     }
 
+    /**
+     * @param $migration
+     * @param $tablename
+     * @param $params
+     */
     public function export_data($migration, $tablename, $params) {
 
         // Migrate records.

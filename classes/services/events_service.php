@@ -33,11 +33,17 @@ class events_service {
     protected $repo                 = null;
     protected $eventtype            = null;
 
+    /**
+     * @param $eventtype
+     */
     public function __construct($eventtype) {
         $this->eventtype = $eventtype;
         $this->repo = new events_repository();
     }
 
+    /**
+     * @param $eventdata
+     */
     public function track($eventdata) {
         $this->repo->create_record($this->eventtype, $eventdata);
     }

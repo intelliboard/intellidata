@@ -56,6 +56,7 @@ $string['exportfilesduringmigration'] = 'Export files during migration';
 $string['exportfilesduringmigration_desc'] = 'If enabled, IntelliData will export file to MoodleData after migration processed';
 $string['exportdataformat'] = 'Export data format';
 $string['exportdataformat_desc'] = 'Setting for migration files data format';
+$string['defaultlayout'] = 'Theme Layout to display';
 $string['exportlogs'] = 'Export Logs';
 $string['intellidata:viewlogs'] = 'View Logs';
 $string['datatype'] = 'Data Type';
@@ -194,13 +195,15 @@ $string['datatype_bbbmeetings'] = 'BBB meetings';
 $string['datatype_bbbrecordings'] = 'BBB recordings';
 
 // IB Next LTI.
-$string['ltititle'] = 'IB Next LTI';
+$string['lticonfiguration'] = 'LTI Configuration';
 $string['lti_toggle_debug_data'] = 'Toggle Debug Data';
 $string['lti_basiclti_endpoint'] = 'Lti Endpoint';
 $string['lti_basiclti_parameters'] = 'Lti Parameters';
 $string['ltitoolurl'] = 'Tool URL';
 $string['lticonsumerkey'] = 'Key';
 $string['ltisharedsecret'] = 'Secret';
+$string['ltititle'] = 'LTI Menu Title';
+$string['ltimenutitle'] = 'Analytics';
 $string['ltidebug'] = 'Debug mode';
 
 $string['intellidata:viewlti'] = 'IntelliBoard LTI View';
@@ -248,3 +251,32 @@ $string['wrongdatatype'] = 'Wrong Datatype';
 $string['configurationsaved'] = 'Configuration Saved';
 $string['resettodefault'] = 'Reset to Default';
 $string['importconfig'] = 'Import Configuration';
+
+$string['privacy:metadata:local_intellidata_tracking'] = 'IntelliBoard alt/logs/all-time table';
+$string['privacy:metadata:local_intellidata_tracking:userid'] = 'User ID who visits Moodle Page.';
+$string['privacy:metadata:local_intellidata_tracking:rel'] = 'Relation.';
+$string['privacy:metadata:local_intellidata_tracking:type'] = 'Tracking Type.';
+$string['privacy:metadata:local_intellidata_tracking:instance'] = 'Tracking instance ID.';
+$string['privacy:metadata:local_intellidata_tracking:timecreated'] = 'Record Timestamp..';
+$string['privacy:metadata:local_intellidata_details'] = 'Intelliboard alt/logs/by-hour table';
+$string['privacy:metadata:local_intellidata_details:logid'] = 'Table ID [local_intellidata_logs].';
+$string['privacy:metadata:local_intellidata_details:visits'] = 'The number of visits, mouse clicks, per day.';
+$string['privacy:metadata:local_intellidata_details:timespend'] = 'The amount of time spent per hour.';
+$string['privacy:metadata:local_intellidata_details:timepoint'] = 'The hour.';
+$string['privacy:metadata:local_intellidata_logs'] = 'Intelliboard alt/logs/by-day table';
+$string['privacy:metadata:local_intellidata_logs:trackid'] = 'The ID of the table [local_intellidata_tracking].';
+$string['privacy:metadata:local_intellidata_logs:visits'] = 'Visits, mouse clicks, per day.';
+$string['privacy:metadata:local_intellidata_logs:timespend'] = 'Timespent, per day.';
+$string['privacy:metadata:local_intellidata_logs:timepoint'] = 'Timestamp of day in year.';
+$string['privacy:metadata:local_intellidata_config'] = 'IntelliData configuration table';
+$string['privacy:metadata:local_intellidata_config:tabletype'] = 'Table Type.';
+$string['privacy:metadata:local_intellidata_config:datatype'] = 'Data Type.';
+$string['privacy:metadata:local_intellidata_config:status'] = 'Table Status.';
+$string['privacy:metadata:local_intellidata_config:timemodified_field'] = 'Timemidified fiel name.';
+$string['privacy:metadata:local_intellidata_config:rewritable'] = 'Rewritable table flag.';
+$string['privacy:metadata:local_intellidata_config:filterbyid'] = 'Filter records by ID flag.';
+$string['privacy:metadata:local_intellidata_config:events_tracking'] = 'Events Tracking flag.';
+$string['privacy:metadata:local_intellidata_config:usermodified'] = 'Admin ID who modified the record.';
+$string['privacy:metadata:local_intellidata_config:timecreated'] = 'Timestemp record creation.';
+$string['privacy:metadata:local_intellidata_config:timemodified'] = 'Timestamp when record updated.';
+

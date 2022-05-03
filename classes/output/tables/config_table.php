@@ -214,6 +214,9 @@ class config_table extends \table_sql {
         return implode(' ', $buttons);
     }
 
+    /**
+     * Start html method.
+     */
     public function start_html() {
 
         echo html_writer::start_tag('div', ['class' => 'custom-filtering-table']);
@@ -248,7 +251,7 @@ class config_table extends \table_sql {
     /**
      * This function is not part of the public api.
      */
-    function print_nothing_to_display() {
+    public function print_nothing_to_display() {
         global $OUTPUT;
 
         // Render the dynamic table header.
@@ -305,4 +308,3 @@ class config_table extends \table_sql {
         return ($value) ? get_string('yes') : get_string('no');
     }
 }
-

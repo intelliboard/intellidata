@@ -24,6 +24,11 @@
 namespace local_intellidata\lti;
 
 class OAuthUtil {
+
+    /**
+     * @param $input
+     * @return array|string|string[]
+     */
     public static function urlencode_rfc3986($input) {
         if (is_array($input)) {
             return array_map(array(
@@ -39,6 +44,10 @@ class OAuthUtil {
         }
     }
 
+    /**
+     * @param $params
+     * @return string
+     */
     public static function build_http_query($params) {
         if (!$params) {
             return '';

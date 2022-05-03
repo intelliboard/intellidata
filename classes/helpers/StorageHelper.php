@@ -30,9 +30,9 @@ use local_intellidata\persistent\logs;
 use local_intellidata\repositories\database_storage_repository;
 use local_intellidata\repositories\file_storage_repository;
 use local_intellidata\services\encryption_service;
+use local_intellidata\helpers\SettingsHelper;
 
-class StorageHelper
-{
+class StorageHelper {
 
     /**
      * @param $datatype
@@ -42,7 +42,7 @@ class StorageHelper
     public static function get_storage_service($datatype) {
 
         if (empty($datatype['migrationmode']) and
-            !empty(get_config('local_intellidata', 'trackingstorage'))) {
+            !empty(SettingsHelper::get_setting('trackingstorage'))) {
             return new database_storage_repository($datatype);
         } else {
             return new file_storage_repository($datatype);

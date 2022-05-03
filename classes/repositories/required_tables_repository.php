@@ -29,8 +29,7 @@ namespace local_intellidata\repositories;
 use local_intellidata\services\export_service;
 use local_intellidata\services\datatypes_service;
 
-class required_tables_repository extends base_tables_repository
-{
+class required_tables_repository extends base_tables_repository {
     /**
      * @param $dbtables
      * @return mixed

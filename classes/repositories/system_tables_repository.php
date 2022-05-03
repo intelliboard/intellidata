@@ -26,8 +26,7 @@
 
 namespace local_intellidata\repositories;
 
-class system_tables_repository extends base_tables_repository
-{
+class system_tables_repository extends base_tables_repository {
     /**
      * @param $dbtables
      * @return mixed

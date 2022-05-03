@@ -22,6 +22,7 @@
  */
 
 use local_intellidata\output\forms\local_intellidata_sql_report;
+use local_intellidata\helpers\SettingsHelper;
 
 require('../../../config.php');
 
@@ -37,8 +38,8 @@ $confirm = optional_param('confirm', 0, PARAM_BOOL);
 $debug   = optional_param('debug', 0, PARAM_BOOL);
 
 $PAGE->set_url(new \moodle_url('/local/intellidata/sql_reports/report.php', ['id' => $id, 'debug' => $debug]));
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context(context_system::instance());
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 $returnurl = new moodle_url('/local/intellidata/sql_reports/index.php');
 

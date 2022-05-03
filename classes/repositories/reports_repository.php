@@ -26,8 +26,13 @@
 
 namespace local_intellidata\repositories;
 
-class reports_repository
-{
+class reports_repository {
+
+    /**
+     * @param $report
+     * @return mixed
+     * @throws \dml_exception
+     */
     public static function update_or_create($report) {
         global $DB;
 
@@ -46,18 +51,32 @@ class reports_repository
         return $report;
     }
 
+    /**
+     * @param $externalidentifier
+     * @throws \dml_exception
+     */
     public static function delete_by_external_identifier($externalidentifier) {
         global $DB;
 
         $DB->delete_records('local_intellidata_reports', ['external_identifier' => $externalidentifier]);
     }
 
+    /**
+     * @param $externalidentifier
+     * @return false|mixed|\stdClass
+     * @throws \dml_exception
+     */
     public static function get_by_external_identifier($externalidentifier) {
         global $DB;
 
         return $DB->get_record('local_intellidata_reports', ['external_identifier' => $externalidentifier]);
     }
 
+    /**
+     * @param $id
+     * @return false|mixed|\stdClass
+     * @throws \dml_exception
+     */
     public static function get_by_id($id) {
         global $DB;
 

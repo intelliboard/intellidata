@@ -26,12 +26,18 @@
 
 namespace local_intellidata\helpers;
 
-class DBHelper
-{
+class DBHelper {
     const MYSQL_TYPE = 'mysqli';
     const POSTGRES_TYPE = 'pgsql';
     const MARIADB_TYPE = 'mariadb';
 
+    /**
+     * @param $id
+     * @param $value
+     * @param array $params
+     * @param null $dbtype
+     * @return string|null
+     */
     public static function get_operator($id, $value, $params = array(), $dbtype = null) {
         global $CFG;
 
@@ -337,6 +343,11 @@ class DBHelper
         }
     }
 
+    /**
+     * @param $sql
+     * @param $params
+     * @return array|string|string[]
+     */
     public static function debug_build_sql($sql, $params) {
         $sql = str_replace(['{', '}'], ['mdl_', ''], $sql);
 
@@ -347,6 +358,9 @@ class DBHelper
         return $sql;
     }
 
+    /**
+     * @return string[]
+     */
     public static function get_row_number() {
         global $CFG;
 

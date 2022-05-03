@@ -26,6 +26,7 @@
 namespace local_intellidata\task;
 use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\SettingsHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -55,12 +56,12 @@ class cleaner_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        if (TrackingHelper::enabled() and
-            $cleanerduration = get_config('local_intellidata', 'cleaner_duration')) {
+        if (TrackingHelper::enabled() &&
+            $cleanerduration = SettingsHelper::get_setting('cleaner_duration')) {
 
             mtrace("IntelliData Cleaner CRON started!");
 
-            $timemodified = time() - $cleanerduration;
+            $timemodified = time() - (int)$cleanerduration;
 
             $exportservice = new export_service();
             $filesrecords = $exportservice->delete_files(['timemodified' => $timemodified]);

@@ -26,9 +26,15 @@
 
 namespace local_intellidata\repositories\tracking;
 
+use local_intellidata\helpers\SettingsHelper;
+
 
 class file_storage_repository extends storage_repository {
 
+    /**
+     * @param $trackdata
+     * @throws \dml_exception
+     */
     public function save_data($trackdata) {
         global $USER;
 
@@ -37,8 +43,8 @@ class file_storage_repository extends storage_repository {
         $data = $this->get_default_file_tracking($trackdata);
         $trackingstorage->save_data(json_encode($data));
 
-        $tracklogs = get_config('local_intellidata', 'tracklogs');
-        $trackdetails = get_config('local_intellidata', 'trackdetails');
+        $tracklogs = SettingsHelper::get_setting('tracklogs');
+        $trackdetails = SettingsHelper::get_setting( 'trackdetails');
 
         $currentstamp = strtotime('today');
         if ($tracklogs) {
@@ -53,6 +59,10 @@ class file_storage_repository extends storage_repository {
         }
     }
 
+    /**
+     * @param $trackdata
+     * @return \stdClass
+     */
     protected function get_default_file_tracking($trackdata) {
         $data = new \stdClass();
         $data->userid = $trackdata->userid;
@@ -75,6 +85,11 @@ class file_storage_repository extends storage_repository {
         return $data;
     }
 
+    /**
+     * @param $trackdata
+     * @param $currentstamp
+     * @return \stdClass
+     */
     protected function get_default_file_log($trackdata, $currentstamp) {
         $log = new \stdClass();
         $log->visits = ($this->ajaxrequest) ? 0 : 1;
@@ -90,6 +105,12 @@ class file_storage_repository extends storage_repository {
         return $log;
     }
 
+    /**
+     * @param $trackdata
+     * @param $currenthour
+     * @param $currentstamp
+     * @return \stdClass
+     */
     protected function get_default_file_log_detail($trackdata, $currenthour, $currentstamp) {
         $detail = new \stdClass();
         $detail->visits = (!$this->ajaxrequest) ? 1 : 0;
@@ -106,6 +127,9 @@ class file_storage_repository extends storage_repository {
         return $detail;
     }
 
+    /*
+     * Export data method.
+     */
     public function export_data() {
         global $DB;
 

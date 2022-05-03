@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 
 use local_intellidata\helpers\PageParamsHelper;
 use local_intellidata\helpers\UserAccessHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\tracking\tracking_repository;
 
 class tracking_service {
@@ -47,11 +48,11 @@ class tracking_service {
     public function __construct($ajaxrequest = false, $trackparameters = []) {
 
         // Get plugin config.
-        $this->enabled          = get_config('local_intellidata', 'enabled');
-        $this->ajaxfrequency    = (int) get_config('local_intellidata', 'ajaxfrequency');
-        $this->inactivity       = (int) get_config('local_intellidata', 'inactivity');
-        $this->trackadmin       = get_config('local_intellidata', 'trackadmin');
-        $this->mediaTrack       = get_config('local_intellidata', 'trackmedia');
+        $this->enabled          = SettingsHelper::get_setting('enabled');
+        $this->ajaxfrequency    = (int) SettingsHelper::get_setting('ajaxfrequency');
+        $this->inactivity       = (int) SettingsHelper::get_setting('inactivity');
+        $this->trackadmin       = SettingsHelper::get_setting('trackadmin');
+        $this->mediaTrack       = SettingsHelper::get_setting('trackmedia');
         $this->path             = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
 
         $this->ajaxrequest      = $ajaxrequest;
@@ -62,6 +63,9 @@ class tracking_service {
         $this->repo = new tracking_repository();
     }
 
+    /**
+     * @return bool
+     */
     protected function istrackable() {
 
         if (!$this->enabled) {
@@ -83,6 +87,9 @@ class tracking_service {
         return true;
     }
 
+    /**
+     * @return false|void
+     */
     public function track() {
         global $SESSION;
 
@@ -106,6 +113,9 @@ class tracking_service {
         }
     }
 
+    /**
+     * @throws \coding_exception
+     */
     public function preparepageparams() {
 
         $pageparams = [];
@@ -130,6 +140,9 @@ class tracking_service {
         $this->pageparams = $pageparams;
     }
 
+    /**
+     * Init tracking.
+     */
     protected function init() {
         global $PAGE;
 

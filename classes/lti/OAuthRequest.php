@@ -24,6 +24,7 @@
 namespace local_intellidata\lti;
 
 class OAuthRequest {
+
     private $parameters;
     private $httpmethod;
     private $httpurl;
@@ -108,6 +109,11 @@ class OAuthRequest {
         return new OAuthRequest($httpmethod, $httpurl, $parameters);
     }
 
+    /**
+     * @param $name
+     * @param $value
+     * @param bool $allowduplicates
+     */
     public function set_parameter($name, $value, $allowduplicates = true) {
         if ($allowduplicates && isset($this->parameters[$name])) {
             // We have already added parameter(s) with this name, so add to the list.
@@ -123,14 +129,24 @@ class OAuthRequest {
         }
     }
 
+    /**
+     * @param $name
+     * @return mixed|null
+     */
     public function get_parameter($name) {
         return isset($this->parameters[$name]) ? $this->parameters[$name] : null;
     }
 
+    /**
+     * @return array|mixed|null
+     */
     public function get_parameters() {
         return $this->parameters;
     }
 
+    /**
+     * @param $name
+     */
     public function unset_parameter($name) {
         unset($this->parameters[$name]);
     }
@@ -239,16 +255,30 @@ class OAuthRequest {
         return $out;
     }
 
+    /**
+     * @return string
+     */
     public function __toString() {
         return $this->to_url();
     }
 
+    /**
+     * @param $signaturemethod
+     * @param $consumer
+     * @param $token
+     */
     public function sign_request($signaturemethod, $consumer, $token) {
         $this->set_parameter("oauth_signature_method", $signaturemethod->get_name(), false);
         $signature = $this->build_signature($signaturemethod, $consumer, $token);
         $this->set_parameter("oauth_signature", $signature, false);
     }
 
+    /**
+     * @param $signaturemethod
+     * @param $consumer
+     * @param $token
+     * @return mixed
+     */
     public function build_signature($signaturemethod, $consumer, $token) {
         $signature = $signaturemethod->build_signature($this, $consumer, $token);
         return $signature;

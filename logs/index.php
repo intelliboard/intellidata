@@ -23,6 +23,7 @@
 
 use local_intellidata\output\tables\exportlogs_table;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\database_service;
 use local_intellidata\services\export_service;
 
@@ -39,8 +40,8 @@ require_capability('local/intellidata:viewlogs', $context);
 
 $pageurl = new \moodle_url('/local/intellidata/logs/index.php');
 $PAGE->set_url($pageurl);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_context($context);
+$PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 if ($id and $action == 'delete') {
 

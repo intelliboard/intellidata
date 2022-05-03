@@ -495,7 +495,8 @@ class datatypes_service {
 
         $timemodifiedfield = config_service::get_timemodified_field($datatype);
         $filterbyidconf = (empty($timemodifiedfield) && config_service::get_filterbyid_config($datatype)) ? true : false;
-        $rewritableconf = ((!$timemodifiedfield && !$filterbyidconf) || config_service::get_rewritable_config($datatype)) ? true : false;
+        $rewritableconf = ((!$timemodifiedfield && !$filterbyidconf) || config_service::get_rewritable_config($datatype))
+            ? true : false;
 
         $data = [
             'name' => $datatype,

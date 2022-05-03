@@ -26,8 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-class ParamsHelper
-{
+class ParamsHelper {
     const STATE_ACTIVE = 1;
     const STATE_INACTIVE = 0;
 

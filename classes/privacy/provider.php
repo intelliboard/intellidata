@@ -34,11 +34,11 @@ use core_privacy\local\request\userlist;
 defined('MOODLE_INTERNAL') || die();
 
 if (interface_exists('\core_privacy\local\request\core_userlist_provider')) {
-    interface ib_userlist_provider extends \core_privacy\local\request\core_userlist_provider {
+    interface id_userlist_provider extends \core_privacy\local\request\core_userlist_provider {
     }
 } else {
-    interface ib_userlist_provider {
-    };
+    interface id_userlist_provider {
+    }
 }
 
 /**
@@ -51,7 +51,7 @@ class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\subsystem\provider,
         \core_privacy\local\request\subsystem\plugin_provider,
-        ib_userlist_provider {
+        id_userlist_provider {
 
     /**
      * Returns meta data about this system.
@@ -66,7 +66,7 @@ class provider implements
             'rel' => 'privacy:metadata:local_intellidata_tracking:rel',
             'type' => 'privacy:metadata:local_intellidata_tracking:type',
             'instance' => 'privacy:metadata:local_intellidata_tracking:instance',
-            'timecreated' => 'privacy:metadata:local_intellidata_tracking:timecreated',
+            'timecreated' => 'privacy:metadata:local_intellidata_tracking:timecreated'
         ], 'privacy:metadata:local_intellidata_tracking');
 
         // The 'local_intellidata_details' table stores the metadata about timespent per-hour.
@@ -74,7 +74,7 @@ class provider implements
             'logid' => 'privacy:metadata:local_intellidata_details:logid',
             'visits' => 'privacy:metadata:local_intellidata_details:visits',
             'timespend' => 'privacy:metadata:local_intellidata_details:timespend',
-            'timepoint' => 'privacy:metadata:local_intellidata_details:timepoint',
+            'timepoint' => 'privacy:metadata:local_intellidata_details:timepoint'
         ], 'privacy:metadata:local_intellidata_details');
 
         // The 'local_intellidata_logs' table stores information about timespent per-day.
@@ -82,8 +82,22 @@ class provider implements
             'trackid' => 'privacy:metadata:local_intellidata_logs:trackid',
             'visits' => 'privacy:metadata:local_intellidata_logs:visits',
             'timespend' => 'privacy:metadata:local_intellidata_logs:timespend',
-            'timepoint' => 'privacy:metadata:local_intellidata_logs:timepoint',
+            'timepoint' => 'privacy:metadata:local_intellidata_logs:timepoint'
         ], 'privacy:metadata:local_intellidata_logs');
+
+        // The 'local_intellidata_config' table stores information about plugin configuration.
+        $items->add_database_table('local_intellidata_config', [
+            'tabletype' => 'privacy:metadata:local_intellidata_config:tabletype',
+            'datatype' => 'privacy:metadata:local_intellidata_config:datatype',
+            'status' => 'privacy:metadata:local_intellidata_config:status',
+            'timemodified_field' => 'privacy:metadata:local_intellidata_config:timemodified_field',
+            'rewritable' => 'privacy:metadata:local_intellidata_config:rewritable',
+            'filterbyid' => 'privacy:metadata:local_intellidata_config:filterbyid',
+            'events_tracking' => 'privacy:metadata:local_intellidata_config:events_tracking',
+            'usermodified' => 'privacy:metadata:local_intellidata_config:usermodified',
+            'timecreated' => 'privacy:metadata:local_intellidata_config:timecreated',
+            'timemodified' => 'privacy:metadata:local_intellidata_config:timemodified'
+        ], 'privacy:metadata:local_intellidata_config');
 
         return $items;
     }

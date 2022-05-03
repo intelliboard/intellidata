@@ -26,10 +26,11 @@
 
 namespace local_intellidata\helpers;
 
+defined('MOODLE_INTERNAL') || die();
+
 require_once($CFG->libdir . '/adminlib.php');
 
-class DBManagerHelper
-{
+class DBManagerHelper {
 
     /**
      * @return array
@@ -112,6 +113,10 @@ class DBManagerHelper
         return $files;
     }
 
+    /**
+     * @param $column
+     * @return mixed|string
+     */
     public static function get_field_default_value($column) {
         return ($column->has_default) ? $column->default_value : '';
     }

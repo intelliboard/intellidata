@@ -29,8 +29,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/formslib.php');
 
+/**
+ * Edit config form.
+ */
 class local_intellidata_edit_config extends \moodleform {
 
+    /**
+     * @throws \coding_exception
+     */
     public function definition() {
         $mform = $this->_form;
         $data = $this->_customdata['data'];
@@ -68,18 +74,23 @@ class local_intellidata_edit_config extends \moodleform {
         $this->set_data($data);
     }
 
-    function add_action_buttons($cancel = true, $submitlabel=null){
-        if (is_null($submitlabel)){
+    /**
+     * @param bool $cancel
+     * @param null $submitlabel
+     * @throws \coding_exception
+     */
+    public function add_action_buttons($cancel = true, $submitlabel = null) {
+        if (is_null($submitlabel)) {
             $submitlabel = get_string('savechanges');
         }
         $mform =& $this->_form;
 
-        //when two elements we need a group
-        $buttonarray=array();
+        // When two elements we need a group.
+        $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
         $buttonarray[] = &$mform->createElement('submit', 'reset', get_string('resettodefault', 'local_intellidata'));
         $buttonarray[] = &$mform->createElement('cancel');
-        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
 }

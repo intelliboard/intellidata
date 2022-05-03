@@ -33,6 +33,9 @@ class OAuthConsumer {
         $this->callback_url = $callbackurl;
     }
 
+    /**
+     * @return string
+     */
     public function __toString() {
         return "OAuthConsumer[key=$this->key,secret=$this->secret]";
     }

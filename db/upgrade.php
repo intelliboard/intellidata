@@ -421,7 +421,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022033000, 'local', 'intellidata');
     }
 
-    if ($oldversion < 2022033101) {
+    if ($oldversion < 2022050300) {
         // Define table local_intellidata_export_ids to be created.
         $table = new xmldb_table('local_intellidata_export_ids');
 
@@ -442,18 +442,14 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Intellidata savepoint reached.
-        upgrade_plugin_savepoint(true, 2022033101, 'local', 'intellidata');
-    }
-
-    if ($oldversion < 2022041200) {
+        // Add column to track migration progress.
         $table = new xmldb_table('local_intellidata_export_log');
         $field = new xmldb_field('recordsmigrated', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
 
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        upgrade_plugin_savepoint(true, 2022041200, 'local', 'intellidata');
+        upgrade_plugin_savepoint(true, 2022050300, 'local', 'intellidata');
     }
 
     return true;

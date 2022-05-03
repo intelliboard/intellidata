@@ -29,6 +29,7 @@ use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\SettingsHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -51,7 +52,7 @@ abstract class migration {
         if ($init) {
             $this->encryptionservice = new encryption_service();
             $this->migrationservice = new migration_service($forceformat);
-            $this->writerecordslimits = (int) get_config('local_intellidata', 'migrationwriterecordslimit');
+            $this->writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
             $this->exportservice = new export_service(true);
         }
     }

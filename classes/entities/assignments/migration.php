@@ -23,7 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\assignments;
+
 defined('MOODLE_INTERNAL') || die();
+
+use local_intellidata\helpers\DBManagerHelper;
 
 /**
  * Class for migration Assignments Submissions.
@@ -48,11 +51,45 @@ class migration extends \local_intellidata\entities\migration {
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
         $where = 's.id > 0';
+        $xmltables = DBManagerHelper::get_install_xml_tables();
+
+        $select = $join = [];
+        foreach ($xmltables as $xmltable) {
+            if ($xmltable['plugintype'] == 'assignsubmission') {
+                $select[] = "CASE WHEN MAX({$xmltable['name']}.id) IS NOT NULL THEN '{$xmltable['plugin']}' ELSE '' END";
+                $join[] = "LEFT JOIN {{$xmltable['name']}} {$xmltable['name']} on {$xmltable['name']}.submission = s.id";
+            }
+        }
+
+        if (!empty($select)) {
+            $select = implode(",',',", $select);
+            $join = implode(' ', $join);
+            $innerwhere = " WHERE $where ";
+
+            if ($condition) {
+                $innerwhere .= " AND " . $condition;
+                foreach ($conditionparams as $key => $value) {
+                    $newkey = $key . '_inner';
+                    $innerwhere = str_replace(':' . $key, ':' . $newkey, $innerwhere);
+                    $conditionparams[$newkey] = $value;
+                }
+            }
+
+            $submissionssql = "SELECT
+                        s.id AS submission_id,
+                        TRIM(BOTH ',' FROM CONCAT($select)) AS submission_type
+                    FROM {assign_submission} s
+                         $join
+                    $innerwhere
+                    GROUP BY s.id";
+        } else {
+            $submissionssql = "SELECT NULL AS submission_id, '' AS submission_type";
+        }
 
         $select = ($count) ?
             "SELECT COUNT(s.id) as recordscount" :
             "SELECT s.id, s.assignment, s.userid, s.timemodified, s.status, s.attemptnumber,
-                    ag.grade, ag.timemodified as feedback_at, ag.grader as feedback_by, sс.commenttext as feedback";
+                    ag.grade, ag.timemodified as feedback_at, ag.grader as feedback_by, sс.commenttext as feedback, subt.submission_type";
 
         $sql = "$select
                   FROM {assign_submission} s
@@ -60,6 +97,7 @@ class migration extends \local_intellidata\entities\migration {
                    AND ag.userid = s.userid AND ag.attemptnumber = s.attemptnumber
              LEFT JOIN {assignfeedback_comments} sс ON sс.assignment = ag.assignment
                    AND sс.grade = ag.id
+             LEFT JOIN ($submissionssql) subt ON subt.submission_id = s.id
                  WHERE $where";
 
         if ($condition) {

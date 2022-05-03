@@ -29,8 +29,11 @@ namespace local_intellidata\helpers;
 /**
  * Helper for deprecated methods.
  */
-class DeprecatedHelper
-{
+class DeprecatedHelper {
+
+    /**
+     * @return array|false|string
+     */
     public static function getallheaders() {
         if (!function_exists('getallheaders')) {
             $headers = [];

@@ -30,6 +30,10 @@ class supernova_sql_reports_api {
     private $report;
     private $debug;
 
+    /**
+     * @param $report
+     * @param false $debug
+     */
     public function __construct($report, $debug = false) {
         global $CFG;
 
@@ -40,6 +44,10 @@ class supernova_sql_reports_api {
         $this->debug = $debug;
     }
 
+    /**
+     * @param array $data
+     * @return bool|void
+     */
     public function save(array $data) {
         $url = rtrim($this->report->service, '/') . "/api/moodle/custom-sql-reports/{$this->report->external_identifier}/save";
         $client = clone $this->client;
@@ -61,6 +69,9 @@ class supernova_sql_reports_api {
         }
     }
 
+    /**
+     * @return bool|void
+     */
     public function delete() {
         $url = rtrim($this->report->service, '/') . "/api/moodle/custom-sql-reports/{$this->report->external_identifier}/delete";
         $client = clone $this->client;

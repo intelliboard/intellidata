@@ -52,12 +52,16 @@ class migration extends \local_intellidata\entities\migration {
             "SELECT COUNT(cc.id) as recordscount" :
             "SELECT cc.*";
 
+        if ($condition) {
+            $where .= " AND " . $condition;
+        }
+
         $sql = "$select
                   FROM {".$this->table."} cc
                  WHERE $where";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
+        if (!$count) {
+            $sql .= " ORDER BY cc.id";
         }
 
         return [$sql, $conditionparams];
