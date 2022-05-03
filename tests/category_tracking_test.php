@@ -47,6 +47,7 @@ class local_intellidata_category_tracking_testcase extends \advanced_testcase {
 
         setup_helper::enable_plugin();
         setup_helper::enable_db_storage();
+        setup_helper::setup_json_exportformat();
     }
 
     public function test_create() {
