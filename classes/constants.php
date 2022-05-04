@@ -37,6 +37,6 @@ defined('MOODLE_INTERNAL') || die;
  */
 class constants {
 
-    public const PLUGIN = 'local_intellidata';
+    const PLUGIN = 'local_intellidata';
 
 }
