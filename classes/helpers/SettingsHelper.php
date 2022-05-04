@@ -38,7 +38,7 @@ class SettingsHelper {
         'encryptionkey' => '',
         'clientidentifier' => '',
         'cleaner_duration' => 0,
-        'migrationrecordslimit' => '2000000',
+        'migrationrecordslimit' => '1000000',
         'migrationwriterecordslimit' => '10000',
         'exportfilesduringmigration' => 0,
         'resetmigrationprogress' => 0,

@@ -53,7 +53,7 @@ class user extends \local_intellidata\entities\entity {
                 'default' => 0,
             ),
             'username' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
                 'description' => 'User username.',
                 'default' => '',
             ),
