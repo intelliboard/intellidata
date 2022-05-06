@@ -90,6 +90,11 @@ class migration_task extends \core\task\scheduled_task {
 
             // Ignore if migration completed.
             if ($migrationdatatype == MigrationHelper::MIGRATIONS_COMPLETED_STATUS) {
+
+                // Disable scheduled migration task.
+                MigrationHelper::disable_sheduled_tasks();
+                MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
+
                 return true;
             }
 

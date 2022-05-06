@@ -36,7 +36,7 @@ class MigrationHelper {
         '\local_intellidata\task\cleaner_task',
         '\local_intellidata\task\export_task',
         '\local_intellidata\task\migration_task',
-        '\local_intellidata\task\track_bbb_meetings',
+        '\local_intellidata\task\track_bbb_meetings'
     ];
 
     /**

@@ -85,8 +85,6 @@ class migrations_table {
             }
         }
 
-        $headers['actions'] = get_string('actions', 'local_intellidata');
-
         return $headers;
     }
 
@@ -150,7 +148,6 @@ class migrations_table {
                                 : $tablerecord->get('recordsmigrated')) . '/' . $tablerecord->get('recordscount');
                         $item['timestart'] = $this->col_datetime($tablerecord->get('timestart'));
                         $item['timeend'] = $this->col_datetime($tablerecord->get('last_exported_time'));
-                        $item['actions'] = $this->col_actions($datatypename);
                     }
                 }
 
@@ -168,26 +165,6 @@ class migrations_table {
      */
     private function col_datetime($timestamp) {
         return ($timestamp) ? userdate($timestamp, get_string('strftimedatetime', 'langconfig')) : '-';
-    }
-
-    /**
-     * @param $datatype
-     * @return string
-     * @throws \coding_exception
-     * @throws \moodle_exception
-     */
-    private function col_actions($datatype) {
-        global $OUTPUT;
-
-        $urlparams = ['datatype' => $datatype];
-
-        $aurl = new \moodle_url('/local/intellidata/migrations/index.php', $urlparams +
-            array('action' => 'reset'));
-        $buttons[] = $OUTPUT->action_icon(
-            $aurl,
-            new \pix_icon('t/reset', get_string('reset'), 'core', array('class' => 'iconsmall'))
-        );
-        return implode(' ', $buttons);
     }
 
     /**
