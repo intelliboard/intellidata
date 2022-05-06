@@ -44,7 +44,7 @@ $tasks = [
     [
         'classname' => 'local_intellidata\task\migration_task',
         'blocking' => 0,
-        'minute' => '*/15',
+        'minute' => '*/10',
         'hour' => '*',
         'day' => '*',
         'month' => '*',

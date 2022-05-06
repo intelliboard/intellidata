@@ -40,15 +40,6 @@ $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
-$redirect = false;
-
-if ($redirect) {
-    if ($datatype and $action == 'reset') {
-        // Reset migration logic.
-        redirect($pageurl);
-    }
-}
-
 $title = get_string('migrations', 'local_intellidata');
 $filenamefordownload = $title;
 

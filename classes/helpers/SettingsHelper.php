@@ -37,7 +37,7 @@ class SettingsHelper {
         'trackingstorage' => 0,
         'encryptionkey' => '',
         'clientidentifier' => '',
-        'cleaner_duration' => 0,
+        'cleaner_duration' => DAYSECS * 14,
         'migrationrecordslimit' => '1000000',
         'migrationwriterecordslimit' => '10000',
         'exportfilesduringmigration' => 0,
