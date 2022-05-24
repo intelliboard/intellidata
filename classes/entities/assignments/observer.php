@@ -232,4 +232,5 @@ class observer {
             return '';
         }
     }
+
 }

@@ -33,6 +33,7 @@ class setup_helper {
      */
     public static function enable_plugin() {
         set_config('enabled', true, 'local_intellidata');
+        set_config('enabledtracking', true, 'local_intellidata');
     }
 
     /**

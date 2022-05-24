@@ -29,6 +29,7 @@ use local_intellidata\services\database_service;
 use local_intellidata\services\dbschema_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
+use local_intellidata\helpers\DebugHelper;
 
 define('CLI_SCRIPT', true);
 
@@ -66,6 +67,8 @@ EOF;
     echo $help;
     exit(0);
 }
+
+DebugHelper::enable_moodle_debug();
 
 $params = [];
 if (!empty($options['datatype'])) {

@@ -38,10 +38,24 @@ class TrackingHelper {
 
     /**
      * @return bool
+     */
+    public static function enable() {
+        return set_config('local_intellidata', true, 'enabled');
+    }
+
+    /**
+     * @return bool
+     */
+    public static function disable() {
+        return set_config('local_intellidata', false, 'enabled');
+    }
+
+    /**
+     * @return bool
      * @throws \dml_exception
      */
     public static function tracking_enabled() {
-        $tracking = get_config('local_intellidata', 'enabled');
+        $tracking = get_config('local_intellidata', 'enabledtracking');
 
         if ($tracking && !CLI_SCRIPT && !AJAX_SCRIPT) {
             return true;
@@ -53,14 +67,14 @@ class TrackingHelper {
     /**
      * @return bool
      */
-    public static function enable() {
-        return set_config('local_intellidata', true, 'enabled');
+    public static function enable_tracking() {
+        return set_config('local_intellidata', true, 'enabledtracking');
     }
 
     /**
      * @return bool
      */
-    public static function disable() {
-        return set_config('local_intellidata', false, 'enabled');
+    public static function disable_tracking() {
+        return set_config('local_intellidata', false, 'enabledtracking');
     }
 }

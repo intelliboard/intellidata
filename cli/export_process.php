@@ -24,10 +24,9 @@
  * @website    https://intelliboard.net/
  */
 
-use local_intellidata\repositories\export_log_repository;
+use local_intellidata\constants;
+use local_intellidata\helpers\DebugHelper;
 use local_intellidata\services\database_service;
-use local_intellidata\services\dbschema_service;
-use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 
 define('CLI_SCRIPT', true);
@@ -69,6 +68,8 @@ EOF;
     exit(0);
 }
 
+DebugHelper::enable_moodle_debug();
+
 $params = [];
 if (!empty($options['datatype'])) {
     $params['datatype'] = $options['datatype'];
@@ -85,7 +86,7 @@ $exportservice = new export_service();
 $exportservice->save_files();
 
 // Generate and save migration files to filesdir.
-$exportservice = new export_service(true);
+$exportservice = new export_service(constants::MIGRATION_MODE_ENABLED);
 $exportservice->save_files();
 $datafiles = $exportservice->get_files();
 

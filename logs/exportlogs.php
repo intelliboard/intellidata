@@ -21,45 +21,39 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_intellidata\output\tables\config_table;
-use local_intellidata\services\config_service;
-use local_intellidata\services\datatypes_service;
+use local_intellidata\output\tables\exportlogs_table;
+use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\services\database_service;
+use local_intellidata\services\export_service;
 
 require('../../../config.php');
 
-$action = optional_param('action', '', PARAM_TEXT);
-$query = optional_param('query', '', PARAM_TEXT);
+$id           = optional_param('id', 0, PARAM_INT);
+$query        = optional_param('query', '', PARAM_TEXT);
 
 require_login();
 
 $context = context_system::instance();
-require_capability('local/intellidata:viewconfig', $context);
-$pageurl = new \moodle_url('/local/intellidata/config/index.php', ['query' => $query]);
+require_capability('local/intellidata:viewlogs', $context);
 
+$pageurl = new \moodle_url('/local/intellidata/logs/exportlogs.php', ['query' => $query]);
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
-// Validate config table setup.
-if (!empty($action)) {
-    $configservice = new config_service(datatypes_service::get_all_datatypes());
-    $configservice->setup_config($action == 'reset');
-    redirect($pageurl, get_string('configurationsaved', 'local_intellidata'));
-}
-
-$title = get_string('configuration', 'local_intellidata');
+$title = get_string('exportlogs', 'local_intellidata');
 
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-$table = new config_table('config_table', $query);
-$table->sortable(false);
+$params = ['query' => $query];
+$table = new exportlogs_table('exportlogs_table', $params);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
-$table->out(30, true);
+$table->out(20, true);
 
 echo $OUTPUT->footer();

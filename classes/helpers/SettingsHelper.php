@@ -42,9 +42,11 @@ class SettingsHelper {
         'migrationwriterecordslimit' => '10000',
         'exportfilesduringmigration' => 0,
         'resetmigrationprogress' => 0,
+        'debugenabled' => 0,
         'exportdataformat' => 'csv',
         'defaultlayout' => 'standard',
         // User Tracking.
+        'enabledtracking' => 1,
         'compresstracking' => tracking_repository::TYPE_CACHE,
         'tracklogs' => 1,
         'trackdetails' => 1,
@@ -62,6 +64,7 @@ class SettingsHelper {
         'lticonsumerkey' => '',
         'ltisharedsecret' => '',
         'ltititle' => '',
+        'custommenuitem' => 0,
         'debug' => 0,
         // Internal settings.
         'lastmigrationdate' => 0,

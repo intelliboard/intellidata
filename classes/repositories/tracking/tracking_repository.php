@@ -36,6 +36,13 @@ class tracking_repository {
     const TYPE_CACHE = 1;
     const TYPE_FILE = 2;
 
+    /**
+     * Create tracking record.
+     *
+     * @param $pageparams
+     * @param false $ajaxrequest
+     * @throws \dml_exception
+     */
     public static function create_record($pageparams, $ajaxrequest = false) {
         global $USER;
         $compresstracking = SettingsHelper::get_setting('compresstracking');
@@ -65,6 +72,11 @@ class tracking_repository {
         }
     }
 
+    /**
+     * Export record to storage.
+     *
+     * @throws \dml_exception
+     */
     public static function export_records() {
         $compresstracking = SettingsHelper::get_setting('compresstracking');
 
@@ -76,6 +88,13 @@ class tracking_repository {
         }
     }
 
+    /**
+     * Get storage for tracking.
+     *
+     * @param $compresstracking
+     * @param false $ajaxrequest
+     * @return cache_storage_repository|file_storage_repository|live_storage_repository|void
+     */
     public static function get_storage($compresstracking, $ajaxrequest = false) {
         switch ($compresstracking){
             case self::TYPE_CACHE:

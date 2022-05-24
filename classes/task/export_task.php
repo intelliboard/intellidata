@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 use local_intellidata\services\export_service;
 use local_intellidata\services\database_service;
 use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\constants;
 
 /**
  * Task to process datafiles export.
@@ -57,6 +59,8 @@ class export_task extends \core\task\scheduled_task {
 
         if (TrackingHelper::enabled()) {
 
+            DebugHelper::enable_moodle_debug();
+
             mtrace("IntelliData Data Files Export CRON started!");
 
             // Export static tables.
@@ -68,7 +72,7 @@ class export_task extends \core\task\scheduled_task {
             $exportservice->save_files();
 
             // Export migration files to moodledata.
-            $exportservice = new export_service(true);
+            $exportservice = new export_service(constants::MIGRATION_MODE_ENABLED);
             $exportservice->save_files();
 
             mtrace("IntelliData Data Files Export CRON ended!");

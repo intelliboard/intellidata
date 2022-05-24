@@ -39,4 +39,7 @@ class constants {
 
     const PLUGIN = 'local_intellidata';
 
+    const MIGRATION_MODE_DISABLED = false;
+    const MIGRATION_MODE_ENABLED = true;
+
 }

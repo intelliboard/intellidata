@@ -28,9 +28,11 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\DebugHelper;
 use local_intellidata\services\migration_service;
 use local_intellidata\services\export_service;
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\constants;
 
 /**
  * Task to process datafiles export.
@@ -60,6 +62,8 @@ class migration_task extends \core\task\scheduled_task {
      * @throws \Exception
      */
     public function execute() {
+
+        DebugHelper::enable_moodle_debug();
 
         $params = [];
 
@@ -111,7 +115,7 @@ class migration_task extends \core\task\scheduled_task {
         $migrationservice->process($params, true);
 
         if ((bool)SettingsHelper::get_setting('exportfilesduringmigration')) {
-            $exportservice = new export_service(true);
+            $exportservice = new export_service(constants::MIGRATION_MODE_ENABLED);
             $exportservice->save_files();
         }
 

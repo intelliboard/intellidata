@@ -135,6 +135,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'debugenabled';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
     $name = 'exportdataformat';
     $setting = new admin_setting_configselect(
         $pluginname . '/' . $name,
@@ -159,6 +170,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     $settings->add(new admin_setting_heading(
         $pluginname . 'usertracking', get_string('usertracking', $pluginname), ''
     ));
+
+    $name = 'enabledtracking';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
 
     $name = 'compresstracking';
     $options = array(
@@ -336,6 +358,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'custommenuitem';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
     $name = 'debug';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
@@ -352,11 +385,16 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
             $CFG->wwwroot.'/local/intellidata/migrations/index.php')
     );
 
-    // Temporary solution to review exported files.
+    $ADMIN->add('intellidata',
+        new admin_externalpage('intellidataexportfiles',
+            new lang_string('exportfiles', $pluginname),
+            $CFG->wwwroot.'/local/intellidata/logs/index.php')
+    );
+
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidataexportlogs',
             new lang_string('exportlogs', $pluginname),
-            $CFG->wwwroot.'/local/intellidata/logs/index.php')
+            $CFG->wwwroot.'/local/intellidata/logs/exportlogs.php')
     );
 
     if (!$ADMIN->locate('intellibdata') && $ADMIN->locate('localplugins')) {

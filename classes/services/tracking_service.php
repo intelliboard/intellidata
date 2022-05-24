@@ -45,10 +45,17 @@ class tracking_service {
     public $trackable       = false;
     public $pageparams      = null;
 
+    /**
+     * Main method for tracking service.
+     *
+     * @param false $ajaxrequest
+     * @param array $trackparameters
+     * @throws \dml_exception
+     */
     public function __construct($ajaxrequest = false, $trackparameters = []) {
 
         // Get plugin config.
-        $this->enabled          = SettingsHelper::get_setting('enabled');
+        $this->enabled          = SettingsHelper::get_setting('enabledtracking');
         $this->ajaxfrequency    = (int) SettingsHelper::get_setting('ajaxfrequency');
         $this->inactivity       = (int) SettingsHelper::get_setting('inactivity');
         $this->trackadmin       = SettingsHelper::get_setting('trackadmin');
@@ -64,6 +71,8 @@ class tracking_service {
     }
 
     /**
+     * Validate is user trackable.
+     *
      * @return bool
      */
     protected function istrackable() {
@@ -88,6 +97,8 @@ class tracking_service {
     }
 
     /**
+     * Method to create tracking record.
+     *
      * @return false|void
      */
     public function track() {
@@ -114,6 +125,8 @@ class tracking_service {
     }
 
     /**
+     * Method to prepare tracking params.
+     *
      * @throws \coding_exception
      */
     public function preparepageparams() {
@@ -141,7 +154,7 @@ class tracking_service {
     }
 
     /**
-     * Init tracking.
+     * Tracking initialization.
      */
     protected function init() {
         global $PAGE;

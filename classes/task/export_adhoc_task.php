@@ -30,6 +30,9 @@ use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\database_service;
 use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\repositories\export_log_repository;
+use local_intellidata\persistent\export_logs;
 
 /**
  * Task to process datafiles export for specific datatype.
@@ -48,26 +51,42 @@ class export_adhoc_task extends \core\task\adhoc_task {
     public function execute() {
 
         if (TrackingHelper::enabled()) {
+
+            DebugHelper::enable_moodle_debug();
+
             mtrace("IntelliData Data Files Export CRON started!");
 
             $data = $this->get_custom_data();
+
             $encryptionservice = new encryption_service();
             $exportservice = new export_service();
+            $databaseservice = new database_service();
+            $databaseservice->set_all_tables();
+            $databaseservice->set_adhoctask(true);
+
+            $exportlogrepository = new export_log_repository();
 
             foreach ($data->datatypes as $datatype) {
+
                 // Delete old files.
                 $exportservice->delete_files([
                     'datatype' => $datatype,
                     'timemodified' => time()
                 ]);
+
+                // Export table.
+                $databaseservice->export_tables([
+                    'table' => $datatype
+                ]);
+
+                // Export files to storage.
+                $exportservice->save_files([
+                    'datatype' => $datatype
+                ]);
+
+                // Set datatype migrated.
+                $exportlogrepository->save_migrated($datatype);
             }
-
-            // Export static tables.
-            $databaseservice = new database_service();
-            $databaseservice->export_tables();
-
-            // Export files to moodledata.
-            $exportservice->save_files();
 
             // Send callback when files ready.
             if (!empty($data->callbackurl)) {

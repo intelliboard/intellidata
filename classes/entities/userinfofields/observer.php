@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\entities\cohorts;
+namespace local_intellidata\entities\userinfofields;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,63 +36,63 @@ use \local_intellidata\services\events_service;
 class observer {
 
     /**
-     * Triggered when 'cohort_created' event is triggered.
+     * Triggered when 'user_info_field_created' event is triggered.
      *
-     * @param \core\event\cohort_created $event
+     * @param \core\event\user_info_category_created $event
      */
-    public static function cohort_created(\core\event\cohort_created $event) {
+    public static function user_info_field_created(\core\event\user_info_field_created $event) {
         if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
-            $cohort = $event->get_record_snapshot('cohort', $eventdata['objectid']);
+            $userinfofield = $event->get_record_snapshot('user_info_field', $eventdata['objectid']);
 
-            self::export_event($cohort, $eventdata);
+            self::export_event($userinfofield, $eventdata);
         }
     }
 
     /**
-     * Triggered when 'cohort_updated' event is triggered.
+     * Triggered when 'user_info_field_updated' event is triggered.
      *
-     * @param \core\event\cohort_updated $event
+     * @param \core\event\user_info_field_updated $event
      */
-    public static function cohort_updated(\core\event\cohort_updated $event) {
+    public static function user_info_field_updated(\core\event\user_info_field_updated $event) {
         if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
-            $cohort = $event->get_record_snapshot('cohort', $eventdata['objectid']);
+            $userinfofield = $event->get_record_snapshot('user_info_field', $eventdata['objectid']);
 
-            self::export_event($cohort, $eventdata);
+            self::export_event($userinfofield, $eventdata);
         }
     }
 
     /**
-     * Triggered when 'cohort_deleted' event is triggered.
+     * Triggered when 'user_info_field_deleted' event is triggered.
      *
-     * @param \core\event\cohort_deleted $event
+     * @param \core\event\user_info_field_deleted $event
      */
-    public static function cohort_deleted(\core\event\cohort_deleted $event) {
+    public static function user_info_field_deleted(\core\event\user_info_field_deleted $event) {
         if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
-            $cohort = new \stdClass();
-            $cohort->id = $eventdata['objectid'];
+            $userinfofield = new \stdClass();
+            $userinfofield->id = $eventdata['objectid'];
 
-            self::export_event($cohort, $eventdata);
+            self::export_event($userinfofield, $eventdata);
         }
     }
 
     /**
-     * Export event.
+     * Export event method.
      *
-     * @param $cohortdata
      * @param $eventdata
+     * @param $eventname
      * @param array $fields
      * @throws \core\invalid_persistent_exception
      */
-    private static function export_event($cohortdata, $eventdata, $fields = []) {
-        $cohortdata->crud = $eventdata['crud'];
+    private static function export_event($userinfofield, $eventdata, $fields = []) {
+        $userinfofield->crud = $eventdata['crud'];
 
-        $entity = new cohort($cohortdata, $fields);
+        $entity = new userinfofield($userinfofield, $fields);
         $data = $entity->export();
         $data->eventname = $eventdata['eventname'];
 
@@ -101,4 +101,3 @@ class observer {
     }
 
 }
-

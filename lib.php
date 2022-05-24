@@ -23,6 +23,8 @@ use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\encryption_service;
 
 /**
+ * Return pluginfile URL.
+ *
  * @param $course
  * @param $cm
  * @param $context
@@ -88,11 +90,13 @@ function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, 
 }
 
 /**
+ * Add IntelliData LTI menu to the navigation.
+ *
  * @param global_navigation $nav
  * @throws dml_exception
  */
 function local_intellidata_extend_navigation(global_navigation $nav) {
-    global $PAGE;
+    global $PAGE, $CFG;
 
     try {
         $mynode = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE);
@@ -109,6 +113,10 @@ function local_intellidata_extend_navigation(global_navigation $nav) {
             $nav->add($name, $url);
             $node = $mynode->add($name, $url, 0, null, 'intellidata_lti', new pix_icon('i/area_chart', '', 'local_intellidata'));
             $node->showinflatnavigation = true;
+
+            if (SettingsHelper::get_setting('custommenuitem') && isset($CFG->custommenuitems)) {
+                $CFG->custommenuitems .= "\n" . $name . "|" . $url->out(false);
+            }
         }
     } catch (Exception $e) {
         DebugHelper::error_log($e->getMessage());
@@ -116,6 +124,8 @@ function local_intellidata_extend_navigation(global_navigation $nav) {
 }
 
 /**
+ * Return custom sidebar icon.
+ *
  * @return string[]
  */
 function local_intellidata_get_fontawesome_icon_map() {
@@ -125,10 +135,11 @@ function local_intellidata_get_fontawesome_icon_map() {
 }
 
 /**
+ * Init IntelliBoard tracking.
+ *
  * @throws dml_exception
  */
 function local_intellidata_tracking_init() {
-
     if (TrackingHelper::tracking_enabled()) {
         $tracking = new \local_intellidata\services\tracking_service();
         $tracking->track();

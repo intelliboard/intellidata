@@ -41,7 +41,7 @@ class StorageHelper {
      */
     public static function get_storage_service($datatype) {
 
-        if (empty($datatype['migrationmode']) and
+        if (empty($datatype['migrationmode']) &&
             !empty(SettingsHelper::get_setting('trackingstorage'))) {
             return new database_storage_repository($datatype);
         } else {

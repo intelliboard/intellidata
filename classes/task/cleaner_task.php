@@ -24,6 +24,7 @@
  */
 
 namespace local_intellidata\task;
+use local_intellidata\helpers\DebugHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\SettingsHelper;
@@ -58,6 +59,8 @@ class cleaner_task extends \core\task\scheduled_task {
 
         if (TrackingHelper::enabled() &&
             $cleanerduration = SettingsHelper::get_setting('cleaner_duration')) {
+
+            DebugHelper::enable_moodle_debug();
 
             mtrace("IntelliData Cleaner CRON started!");
 

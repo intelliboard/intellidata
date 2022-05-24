@@ -34,6 +34,8 @@ use local_intellidata\services\datatypes_service;
 class export_log_repository {
 
     /**
+     * Get the number of migrated records for specific datatype.
+     *
      * @param $datatype
      * @return int|mixed
      */
@@ -50,6 +52,8 @@ class export_log_repository {
     }
 
     /**
+     * Get last processed datatype details.
+     *
      * @param $datatype
      * @return array|int[]
      * @throws \coding_exception
@@ -66,6 +70,25 @@ class export_log_repository {
     }
 
     /**
+     * Get export log for specific datatype.
+     *
+     * @param $datatype
+     * @return \stdClass|null
+     */
+    public function get_datatype_export_log($datatype) {
+
+        $record = export_logs::get_record(['datatype' => $datatype]);
+
+        if ($record) {
+            return $record->to_record();
+        }
+
+        return null;
+    }
+
+    /**
+     * Update last processed record.
+     *
      * @param $datatype
      * @param $lastrecord
      * @param $lastexportedtime
@@ -97,6 +120,8 @@ class export_log_repository {
     }
 
     /**
+     * Save datatype as migrated.
+     *
      * @param $datatype
      * @throws \coding_exception
      */
@@ -113,6 +138,8 @@ class export_log_repository {
     }
 
     /**
+     * Convert datatypes to assoc array.
+     *
      * @param $key
      * @param array $params
      * @return array
@@ -132,6 +159,8 @@ class export_log_repository {
     }
 
     /**
+     * Get already migrated datatypes.
+     *
      * @return int[]|string[]
      * @throws \dml_exception
      */
@@ -148,6 +177,8 @@ class export_log_repository {
     }
 
     /**
+     * Reset migration method.
+     *
      * @return bool
      * @throws \dml_exception
      */
@@ -164,6 +195,8 @@ class export_log_repository {
     }
 
     /**
+     * Get all optional datatypes to process.
+     *
      * @return array
      * @throws \dml_exception
      */
@@ -194,26 +227,58 @@ class export_log_repository {
     }
 
     /**
+     * Insert or reset datatype in export logs.
+     *
      * @param $datatype
      * @throws \coding_exception
      */
-    public function insert_datatype($datatype) {
+    public function insert_datatype($datatype, $tabletype = export_logs::TABLE_TYPE_CUSTOM) {
 
         $record = export_logs::get_record(['datatype' => $datatype]);
 
         if (!$record) {
             $record = new export_logs();
             $record->set('datatype', $datatype);
-            $record->set('migrated', 0);
             $record->set('timestart', 0);
-            $record->set('tabletype', export_logs::TABLE_TYPE_CUSTOM);
+            $record->set('tabletype', $tabletype);
         }
 
+        $record->set('migrated', 0);
         $record->set('last_exported_time', 0);
         $record->set('recordsmigrated', 0);
         $record->set('recordscount', 0);
         $record->set('last_exported_id', 0);
 
         return $record->save();
+    }
+
+    /**
+     * Remove datatype from export table.
+     *
+     * @param $datatype
+     * @throws \coding_exception
+     */
+    public function remove_datatype($datatype) {
+
+        if ($record = export_logs::get_record(['datatype' => $datatype])) {
+            return $record->delete();
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all export logs from plugin.
+     *
+     * @return export_logs[]
+     */
+    public function get_export_logs() {
+        $logs = [];
+
+        foreach (export_logs::get_records() as $log) {
+            $logs[] = $log->to_record();
+        }
+
+        return $logs;
     }
 }
