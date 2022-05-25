@@ -33,12 +33,28 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 class local_intellidata_sqlreportlib extends external_api {
+
+    /**
+     * Parameters for run_report() method.
+     *
+     * @return external_function_parameters
+     */
     public static function run_report_parameters() {
         return new external_function_parameters([
-            'data' => new external_value(PARAM_RAW, 'Request params'),
+            'data' => new external_value(PARAM_RAW, 'Request params')
         ]);
     }
 
+    /**
+     * Run sql report in Moodle.
+     *
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function run_report($data) {
         global $DB, $CFG;
 
@@ -86,8 +102,9 @@ class local_intellidata_sqlreportlib extends external_api {
 
         if ($report) {
             $query = $report->sqlcode;
-            $filters = [];
+            $sqlparams = [];
 
+            // Prepare sorting.
             if (strrpos($query, ':sorting') !== false) {
                 $params->sortcol = $params->sortcol + 1;
 
@@ -99,6 +116,7 @@ class local_intellidata_sqlreportlib extends external_api {
                 }
             }
 
+            // Filter data with datefilter.
             if (strpos($query, ':datefilter[') !== false) {
                 $filterstart = strpos($query, ':datefilter[');
                 $columnstart = $filterstart + 12;
@@ -110,8 +128,8 @@ class local_intellidata_sqlreportlib extends external_api {
                 $params->timefinish = isset($params->timefinish) ? $params->timefinish : false;
 
                 if ($params->timestart && $params->timefinish && $columnname) {
-                    $filters['timestart'] = $params->timestart;
-                    $filters['timefinish'] = $params->timefinish;
+                    $sqlparams['timestart'] = $params->timestart;
+                    $sqlparams['timefinish'] = $params->timefinish;
                     $like = " AND {$columnname} BETWEEN :timestart AND :timefinish ";
                     $query = str_replace($val, $like, $query);
                 } else {
@@ -119,6 +137,7 @@ class local_intellidata_sqlreportlib extends external_api {
                 }
             }
 
+            // Filter data with course filter.
             if ($coursefilter = strpos($query, ':coursefilter[')) {
                 $filterstart = $coursefilter + 14;
                 $filterend = strpos($query, ']', $coursefilter) - $filterstart;
@@ -129,7 +148,7 @@ class local_intellidata_sqlreportlib extends external_api {
 
                 if ($params->courses && $columnname) {
                     list($sql, $coursefilter) = $DB->get_in_or_equal(explode(",", $params->courses), SQL_PARAMS_NAMED, 'courses');
-                    $filters = array_merge($filters, $coursefilter);
+                    $sqlparams = array_merge($sqlparams, $coursefilter);
                     $like = " AND {$columnname} {$sql} ";
                     $query = str_replace($val, $like, $query);
                 } else {
@@ -137,10 +156,11 @@ class local_intellidata_sqlreportlib extends external_api {
                 }
             }
 
+            // Filter data with additional filters.
             if (strrpos($query, ':filter') !== false) {
                 $query = str_replace(":filter", "", $query);
 
-                $params->search_value = isset($params->search_value) ? str_replace('&apos;', '_', $params->search_value) : false;
+                $params->search_value = isset($params->search_value) ? addslashes($params->search_value) : false;
                 $params->search_column = isset($params->search_column) ? $params->search_column : false;
 
                 if (($params->search_value || $params->search_value === '0') && $params->search_column) {
@@ -148,7 +168,7 @@ class local_intellidata_sqlreportlib extends external_api {
                     $query = "SELECT t.*
                                     FROM ({$query}) t
                                    WHERE t." . $DB->sql_like('`' . $params->search_column . '`', ':' . $key, false, false);
-                    $filters[$key] = '%' . $params->search_value . '%';
+                    $sqlparams[$key] = '%' . $params->search_value . '%';
                 }
             }
 
@@ -157,17 +177,20 @@ class local_intellidata_sqlreportlib extends external_api {
                 $CFG->debugdisplay = 1;
             }
             if ($params->debug === 2) {
-                $data = [$report->sqlcode, $query, $filters];
+                $data = [$report->sqlcode, $query, $sqlparams];
             } else if (isset($params->start) && $params->length != 0 && $params->length != -1) {
-                $data = $DB->get_records_sql($query, $filters, $params->start, $params->length);
+                $data = $DB->get_records_sql($query, $sqlparams, $params->start, $params->length);
             } else {
-                $data = $DB->get_records_sql($query, $filters);
+                $data = $DB->get_records_sql($query, $sqlparams);
             }
         }
 
         return ['status' => apilib::STATUS_SUCCESS, 'data' => json_encode($data)];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function run_report_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Response status'),
@@ -175,12 +198,22 @@ class local_intellidata_sqlreportlib extends external_api {
         ]);
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function save_report_parameters() {
         return new external_function_parameters([
             'data' => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function save_report($data) {
         try {
             apilib::check_auth();
@@ -211,7 +244,7 @@ class local_intellidata_sqlreportlib extends external_api {
             'external_identifier' => PARAM_TEXT,
             'service' => PARAM_URL,
             'name' => PARAM_TEXT,
-            'sqlcode' => PARAM_TEXT,
+            'sqlcode' => PARAM_TEXT
         ]);
         $report = (object) $params;
         // Deactivate report every time.
@@ -220,10 +253,13 @@ class local_intellidata_sqlreportlib extends external_api {
 
         return [
             'status' => apilib::STATUS_SUCCESS,
-            'data' => $data,
+            'data' => $data
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function save_report_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Response status'),
@@ -235,18 +271,28 @@ class local_intellidata_sqlreportlib extends external_api {
                     'sqlcode' => new external_value(PARAM_TEXT, 'Report SQL'),
                     'external_identifier' => new external_value(PARAM_TEXT, 'External identifier'),
                     'service' => new external_value(PARAM_URL, 'Service'),
-                    'timecreated' => new external_value(PARAM_INT, 'Report time created'),
+                    'timecreated' => new external_value(PARAM_INT, 'Report time created')
                 ]
             )
         ]);
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function delete_report_parameters() {
         return new external_function_parameters([
-            'data' => new external_value(PARAM_RAW, 'Request params'),
+            'data' => new external_value(PARAM_RAW, 'Request params')
         ]);
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function delete_report($data) {
         try {
             apilib::check_auth();
@@ -274,17 +320,20 @@ class local_intellidata_sqlreportlib extends external_api {
 
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
-            'external_identifier' => PARAM_TEXT,
+            'external_identifier' => PARAM_TEXT
         ]);
 
         reports_repository::delete_by_external_identifier($params['external_identifier']);
 
         return [
             'status' => apilib::STATUS_SUCCESS,
-            'data' => '',
+            'data' => ''
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function delete_report_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Response status'),

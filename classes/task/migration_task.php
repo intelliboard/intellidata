@@ -28,6 +28,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\services\migration_service;
 use local_intellidata\services\export_service;
 use local_intellidata\repositories\export_log_repository;
@@ -61,6 +63,8 @@ class migration_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
+        DebugHelper::enable_moodle_debug();
+
         $params = [];
 
         // Reset migration process if enabled.
@@ -81,9 +85,6 @@ class migration_task extends \core\task\scheduled_task {
 
             mtrace("IntelliData Cleaner: $filesrecords deleted.");
         }
-
-        // Set migration time.
-        set_config('lastmigrationdate', time(), 'local_intellidata');
 
         $migrationdatatype = SettingsHelper::get_setting('migrationdatatype');
         if ($migrationdatatype) {
@@ -106,12 +107,15 @@ class migration_task extends \core\task\scheduled_task {
 
         mtrace("IntelliData Migration CRON started!");
 
+        // Set migration time.
+        set_config('lastmigrationdate', time(), 'local_intellidata');
+
         // Export tables.
         $migrationservice = new migration_service();
         $migrationservice->process($params, true);
 
         if ((bool)SettingsHelper::get_setting('exportfilesduringmigration')) {
-            $exportservice = new export_service(true);
+            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
             $exportservice->save_files();
         }
 

@@ -27,6 +27,11 @@
 namespace local_intellidata\helpers;
 
 class ParamsHelper {
+    const PLUGIN = 'local_intellidata';
+
+    const MIGRATION_MODE_DISABLED = false;
+    const MIGRATION_MODE_ENABLED = true;
+
     const STATE_ACTIVE = 1;
     const STATE_INACTIVE = 0;
 
@@ -34,4 +39,27 @@ class ParamsHelper {
     const CONTEXT_COURSE = 2;
     const CONTEXT_COURSECAT = 3;
     const CONTEXT_USER = 5;
+
+    /**
+     * Get metadata for export API.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_exportfiles_metadata() {
+        return [
+            'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate'),
+            'pluginversion' => self::get_plugin_version()
+        ];
+    }
+
+    /**
+     * Get current plugin version.
+     *
+     * @return mixed
+     * @throws \dml_exception
+     */
+    public static function get_plugin_version() {
+        return get_config(self::PLUGIN)->version;
+    }
 }

@@ -41,6 +41,20 @@ class local_intellidata_edit_config extends \moodleform {
         $mform = $this->_form;
         $data = $this->_customdata['data'];
         $config = $this->_customdata['config'];
+        $exportlog = $this->_customdata['exportlog'];
+
+        $data->enableexport = (!empty($exportlog)) ? 1 : 0;
+
+        $options = [
+            datatypeconfig::STATUS_ENABLED => get_string('enabled', 'local_intellidata'),
+            datatypeconfig::STATUS_DISABLED => get_string('disabled', 'local_intellidata'),
+        ];
+        $mform->addElement('select', 'status', get_string('status', 'local_intellidata'), $options);
+        $mform->setType('status', PARAM_INT);
+
+        $mform->addElement('advcheckbox', 'enableexport', get_string('enableexport', 'local_intellidata'));
+        $mform->setType('enableexport', PARAM_INT);
+        $mform->disabledIf('enableexport', 'status', 'neq', datatypeconfig::STATUS_ENABLED);
 
         $mform->addElement('select', 'timemodified_field',
             get_string('timemodified_field', 'local_intellidata'), ['' => ''] + $config->timemodifiedfields);
@@ -59,13 +73,6 @@ class local_intellidata_edit_config extends \moodleform {
         $mform->setType('rewritable', PARAM_INT);
         $mform->disabledIf('rewritable', 'timemodified_field', 'neq', '');
         $mform->disabledIf('rewritable', 'filterbyid', 'checked');
-
-        $options = [
-            datatypeconfig::STATUS_ENABLED => get_string('enabled', 'local_intellidata'),
-            datatypeconfig::STATUS_DISABLED => get_string('disabled', 'local_intellidata'),
-        ];
-        $mform->addElement('select', 'status', get_string('status', 'local_intellidata'), $options);
-        $mform->setType('status', PARAM_INT);
 
         $mform->addElement('hidden', 'datatype');
         $mform->setType('datatype', PARAM_ALPHA);

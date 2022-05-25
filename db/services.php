@@ -210,6 +210,20 @@ $functions = [
         'description'   => 'Set new or update existing datatype in Moodle.',
         'type'          => 'write',
     ],
+    'local_intellidata_get_tasks_logs' => [
+        'classname'     => 'local_intellidata_logslib',
+        'methodname'    => 'get_tasks_logs',
+        'classpath'     => 'local/intellidata/classes/api/logslib.php',
+        'description'   => 'Get plugin tasks logs from Moodle.',
+        'type'          => 'read',
+    ],
+    'local_intellidata_get_export_logs' => [
+        'classname'     => 'local_intellidata_logslib',
+        'methodname'    => 'get_export_logs',
+        'classpath'     => 'local/intellidata/classes/api/logslib.php',
+        'description'   => 'Get export logs statistics from plugin.',
+        'type'          => 'read',
+    ]
 ];
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -238,6 +252,8 @@ $services = [
             'local_intellidata_get_dbschema_custom',
             'local_intellidata_get_dbschema_unified',
             'local_intellidata_set_datatype',
+            'local_intellidata_get_tasks_logs',
+            'local_intellidata_get_export_logs'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

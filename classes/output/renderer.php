@@ -60,4 +60,21 @@ class renderer extends plugin_renderer_base {
             'local_intellidata/lti_launch', $page->export_for_template($this)
         );
     }
+
+    /**
+     * Render from template but with validation.
+     *
+     * @param $params
+     * @return bool|string
+     * @throws \moodle_exception
+     */
+    public function render_from_template_with_validation($template, $templatepath, $context) {
+        global $CFG;
+
+        if (!file_exists($CFG->dirroot . $templatepath . '.mustache')) {
+            return '';
+        }
+
+        return $this->render_from_template($template, $context);
+    }
 }

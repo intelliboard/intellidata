@@ -255,6 +255,9 @@ class config_service {
             ],
             'notifications' => [
                 'timemodified_field' => 'timecreated'
+            ],
+            'user_lastaccess' => [
+                'timemodified_field' => 'timeaccess'
             ]
         ];
 

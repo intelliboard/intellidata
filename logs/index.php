@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use local_intellidata\output\tables\exportlogs_table;
+use local_intellidata\output\tables\exportfiles_table;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\database_service;
@@ -32,13 +32,14 @@ require('../../../config.php');
 $id           = optional_param('id', 0, PARAM_INT);
 $action       = optional_param('action', '', PARAM_ALPHA);
 $download     = optional_param('download', '', PARAM_ALPHA);
+$query        = optional_param('query', '', PARAM_TEXT);
 
 require_login();
 
 $context = context_system::instance();
 require_capability('local/intellidata:viewlogs', $context);
 
-$pageurl = new \moodle_url('/local/intellidata/logs/index.php');
+$pageurl = new \moodle_url('/local/intellidata/logs/index.php', ['query' => $query]);
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
@@ -62,15 +63,15 @@ if ($id and $action == 'delete') {
     redirect($pageurl);
 }
 
-$title = get_string('exportlogs', 'local_intellidata');
+$title = get_string('exportfiles', 'local_intellidata');
 $filenamefordownload = $title;
 
 $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-$params['download'] = $download;
-$table = new exportlogs_table('exportlogs_table', $params);
+$params = ['download' => $download, 'query' => $query];
+$table = new exportfiles_table('exportfiles_table', $params);
 $table->is_downloading($download, $filenamefordownload, $filenamefordownload);
 
 if ($download) {

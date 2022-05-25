@@ -25,6 +25,7 @@
 
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
+use local_intellidata\task\export_adhoc_task;
 
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
@@ -268,7 +269,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
 
         $table = new xmldb_table('local_intelliboard_tracking');
         if ($dbman->table_exists($table)) {
-            \local_intellidata\helpers\TrackingHelper::disable();
+            \local_intellidata\helpers\TrackingHelper::disable_tracking();
             mtrace("Start import user trackings from IntelliBoard plugin!<br>");
             $trackingfixmapper = local_intellidata\helpers\UpgradeHelper::copy_intelliboard_tracking();
             mtrace("Tracking table imported!<br>");
@@ -280,7 +281,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             mtrace("Start import user tracking log details from IntelliBoard plugin!<br>");
             local_intellidata\helpers\UpgradeHelper::copy_intelliboard_details();
             mtrace("Tracking log details table imported!<br>");
-            \local_intellidata\helpers\TrackingHelper::enable();
+            \local_intellidata\helpers\TrackingHelper::enable_tracking();
         }
 
         upgrade_plugin_savepoint(true, 2021111010, 'local', 'intellidata');
@@ -450,6 +451,30 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
         upgrade_plugin_savepoint(true, 2022050300, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2022051902) {
+
+        // Setup config in database.
+        $configservice = new config_service(datatypes_service::get_all_datatypes());
+        $configservice->setup_config();
+
+        // Add new datatypes to export ad-hoc task..
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => ['userinfocategories', 'userinfofields', 'userinfodatas']
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2022051902, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2022052500) {
+
+        // Set exportdataformat to the csv.
+        set_config('exportdataformat', 'csv', 'local_intellidata');
+
+        upgrade_plugin_savepoint(true, 2022052500, 'local', 'intellidata');
     }
 
     return true;

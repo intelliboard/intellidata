@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\encryption_service;
@@ -45,7 +46,7 @@ class migration_service {
     public function __construct($exportformatkey = null) {
         $this->tables = $this->get_tables();
         $this->encryptionservice = new encryption_service();
-        $this->exportservice = new export_service(true);
+        $this->exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
         $this->recordslimits = (int)SettingsHelper::get_setting('migrationrecordslimit');
         $this->exportfilesduringmigration = (bool)SettingsHelper::get_setting('exportfilesduringmigration');
 

@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use html_writer;
 use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\persistent\export_logs;
 
 require_once($CFG->libdir.'/tablelib.php');
 
@@ -38,8 +39,8 @@ class config_table extends \table_sql {
     protected $prefs   = [];
     protected $context = null;
 
-    public function __construct($uniqueid) {
-        global $PAGE;
+    public function __construct($uniqueid, $searchquery = '') {
+        global $PAGE, $DB;
 
         $this->context = \context_system::instance();
         parent::__construct($uniqueid);
@@ -53,10 +54,18 @@ class config_table extends \table_sql {
         $this->define_columns(array_keys($this->fields));
         $this->define_headers($this->get_headers());
 
-        $fields = "c.*";
-        $from = "{" . datatypeconfig::TABLE . "} c";
+        $fields = "c.*, el.id as exportenabled";
+        $from = "{" . datatypeconfig::TABLE . "} c
+                LEFT JOIN {" . export_logs::TABLE . "} el ON el.datatype = c.datatype";
 
         $where = 'c.id > 1';
+
+        if (!empty($searchquery)) {
+            $where .= " AND " . $DB->sql_like('c.datatype', ':searchquery', false, false, false);
+            $sqlparams += [
+                'searchquery' => '%' . $searchquery . '%'
+            ];
+        }
 
         $this->set_sql($fields, $from, $where, $sqlparams);
         $this->define_baseurl($PAGE->url);
@@ -88,6 +97,9 @@ class config_table extends \table_sql {
             ],
             'status' => [
                 'label' => get_string('status', 'local_intellidata'),
+            ],
+            'exportenabled' => [
+                'label' => get_string('export', 'local_intellidata'),
             ],
             'actions' => [
                 'label' => get_string('actions', 'local_intellidata'),
@@ -183,6 +195,17 @@ class config_table extends \table_sql {
      * @return \lang_string|string
      * @throws \coding_exception
      */
+    public function col_exportenabled($values) {
+        return ($values->exportenabled)
+            ? get_string('enabled', 'local_intellidata')
+            : get_string('disabled', 'local_intellidata');
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
     public function col_timemodified_field($values) {
         return !empty($values->timemodified_field)
             ? $values->timemodified_field
@@ -205,6 +228,19 @@ class config_table extends \table_sql {
 
         $buttons = [];
         $urlparams = ['datatype' => $values->datatype];
+
+        if ($values->exportenabled) {
+            $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'reset']);
+            $buttons[] = $OUTPUT->action_icon(
+                $aurl,
+                new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
+                'core',
+                ['class' => 'iconsmall']),
+                null,
+                ['onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
+                    "')) return false;"]
+            );
+        }
 
         $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
         $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
@@ -231,13 +267,16 @@ class config_table extends \table_sql {
             echo $this->download_buttons();
         }
 
-        echo html_writer::start_tag('div', ['class' => 'form-group']);
+        echo html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
 
         // Render config reset button.
         echo $this->reset_button();
 
         // Render import button.
         echo $this->import_button();
+
+        // Render search form.
+        echo $this->search_form();
 
         echo html_writer::end_tag('div');
 
@@ -272,7 +311,7 @@ class config_table extends \table_sql {
     }
 
     /**
-     * Get the html for the download buttons
+     * Get the html for the reset buttons
      *
      * Usually only use internally
      */
@@ -280,13 +319,13 @@ class config_table extends \table_sql {
 
         $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'reset']);
         $output = \html_writer::link($reseturl, get_string('resettodefault', 'local_intellidata'),
-            ['class' => 'btn btn-primary']);
+            ['class' => 'btn btn-primary mr-1']);
 
         return $output;
     }
 
     /**
-     * Get the html for the download buttons
+     * Get the html for the import buttons
      *
      * Usually only use internally
      */
@@ -294,9 +333,29 @@ class config_table extends \table_sql {
 
         $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'import']);
         $output = \html_writer::link($reseturl, get_string('importconfig', 'local_intellidata'),
-            ['class' => 'btn btn-primary']);
+            ['class' => 'btn btn-primary mr-1']);
 
         return $output;
+    }
+
+    /**
+     * Get the html for the search form
+     *
+     * Usually only use internally
+     */
+    public function search_form() {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('local_intellidata');
+
+        return $renderer->render_from_template_with_validation(
+            'core_admin/header_search_input',
+            '/admin/templates/header_search_input',
+            [
+                'action' => $PAGE->url,
+                'query' => $PAGE->url->get_param('query')
+            ]
+        );
     }
 
     /**

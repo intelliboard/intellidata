@@ -436,6 +436,39 @@ class datatypes_service {
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
+            'userinfocategories' => [
+                'name' => 'userinfocategories',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'userinfocategories\migration',
+                'entity' => 'userinfocategories\userinfocategory',
+                'observer' => 'userinfocategories\observer',
+                'rewritable' => false,
+                'timemodified_field' => false,
+                'filterbyid' => false,
+                'databaseexport' => false
+            ],
+            'userinfofields' => [
+                'name' => 'userinfofields',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'userinfofields\migration',
+                'entity' => 'userinfofields\userinfofield',
+                'observer' => 'userinfofields\observer',
+                'rewritable' => false,
+                'timemodified_field' => false,
+                'filterbyid' => false,
+                'databaseexport' => false
+            ],
+            'userinfodatas' => [
+                'name' => 'userinfodatas',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'userinfodatas\migration',
+                'entity' => 'userinfodatas\userinfodata',
+                'observer' => 'userinfodatas\observer',
+                'rewritable' => false,
+                'timemodified_field' => false,
+                'filterbyid' => false,
+                'databaseexport' => false
+            ]
         ];
     }
 

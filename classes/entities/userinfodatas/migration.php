@@ -15,28 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class with all constants.
+ * Class for migration UserInfoDatas.
  *
- * @package    local
- * @subpackage intellidata
- * @copyright  2022
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace local_intellidata;
-
-defined('MOODLE_INTERNAL') || die;
+namespace local_intellidata\entities\userinfodatas;
+defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class with all constants.
+ * Class for migration UserInfoDatas.
  *
- * @package    local
- * @subpackage intellidata
- * @copyright  2022
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class constants {
-
-    const PLUGIN = 'local_intellidata';
-
+class migration extends \local_intellidata\entities\migration {
+    public $entity      = '\local_intellidata\entities\userinfodatas\userinfodata';
+    public $eventname   = '\core\event\user_created';
+    public $table       = 'user_info_data';
 }

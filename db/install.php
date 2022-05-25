@@ -33,6 +33,9 @@ function xmldb_local_intellidata_install() {
 
     $dbman = $DB->get_manager();
 
+    // Set exportformat for csv.
+    set_config('exportdataformat', 'csv', 'local_intellidata');
+
     $table = new xmldb_table('local_intelliboard_tracking');
     if ($dbman->table_exists($table)) {
         mtrace("Start import user trackings from IntelliBoard plugin!<br>");

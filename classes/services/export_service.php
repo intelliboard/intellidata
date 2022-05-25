@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\datatypes_service;
+use local_intellidata\helpers\ParamsHelper;
 
 
 class export_service {
@@ -37,7 +38,7 @@ class export_service {
     /**
      * @param false $migrationmode
      */
-    public function __construct($migrationmode = false) {
+    public function __construct($migrationmode = ParamsHelper::MIGRATION_MODE_DISABLED) {
         $this->migrationmode = $migrationmode;
         $this->datatypes = $this->get_datatypes();
     }
@@ -62,10 +63,10 @@ class export_service {
 
         if (count($datatypes)) {
             foreach ($datatypes as $key => $datatype) {
-                if ($this->migrationmode == true) {
-                    $datatype['name'] = $this->get_migration_name($datatype);
-                    $datatype['migrationmode'] = $this->migrationmode;
-                }
+
+                // Setup correct migration parameters.
+                $datatype = $this->setup_migration_params($datatype);
+
                 $storageservice = new storage_service($datatype);
                 if ($file = $storageservice->save_file()) {
                     $files[] = $file;
@@ -74,6 +75,22 @@ class export_service {
         }
 
         return $files;
+    }
+
+    /**
+     * @param $datatype
+     * @return mixed
+     */
+    private function setup_migration_params($datatype) {
+
+        if ($this->migrationmode == ParamsHelper::MIGRATION_MODE_ENABLED) {
+            $datatype['name'] = $this->get_migration_name($datatype);
+        }
+
+        $datatype['migrationmode'] = (!empty($datatype['databaseexport']))
+             ? ParamsHelper::MIGRATION_MODE_ENABLED : $this->migrationmode;
+
+        return $datatype;
     }
 
     /**
@@ -150,11 +167,13 @@ class export_service {
      * @param $data
      */
     public function store_data($datatype, $data) {
+
+        // Prepare datatype.
         $datatype = $this->get_datatype($datatype);
-        if ($this->migrationmode == true) {
-            $datatype['name'] = $this->get_migration_name($datatype);
-            $datatype['migrationmode'] = $this->migrationmode;
-        }
+
+        // Apply migration params.
+        $datatype = $this->setup_migration_params($datatype);
+
         $storageservice = new storage_service($datatype);
         return $storageservice->save_data($data);
     }

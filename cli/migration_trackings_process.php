@@ -28,6 +28,8 @@ use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\TrackingHelper;
 
 define('CLI_SCRIPT', true);
 
@@ -64,7 +66,8 @@ EOF;
     exit(0);
 }
 
-\local_intellidata\helpers\TrackingHelper::disable();
+DebugHelper::enable_moodle_debug();
+TrackingHelper::disable_tracking();
 
 mtrace("Start import user trackings from IntelliBoard plugin!");
 $trackingfixmapper = local_intellidata\helpers\UpgradeHelper::copy_intelliboard_tracking();
@@ -78,6 +81,6 @@ mtrace("Start import user tracking log details from IntelliBoard plugin!");
 local_intellidata\helpers\UpgradeHelper::copy_intelliboard_details();
 mtrace("Tracking log details table imported!");
 
-\local_intellidata\helpers\TrackingHelper::enable();
+TrackingHelper::enable_tracking();
 
 exit(0);

@@ -26,14 +26,16 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\helpers\SettingsHelper;
+
 class DebugHelper {
 
     /**
      * @return bool
      * @throws \dml_exception
      */
-    public static function enabled() {
-        return get_config('local_intellidata', 'debugenabled') ? true : false;
+    public static function debugenabled() {
+        return SettingsHelper::get_setting('debugenabled');
     }
 
     /**
@@ -41,8 +43,34 @@ class DebugHelper {
      * @throws \dml_exception
      */
     public static function error_log($errorstring) {
-        if (self::enabled()) {
+        if (self::debugenabled()) {
             syslog(LOG_ERR, 'IntelliData Debug: ' . $errorstring);
+        }
+    }
+
+    /**
+     * @throws \dml_exception
+     */
+    public static function enable_moodle_debug () {
+        global $CFG;
+
+        if (self::debugenabled()) {
+            $CFG->debug = DEBUG_DEVELOPER;
+            $CFG->debugdeveloper = true;
+            $CFG->debugdisplay = true;
+        }
+    }
+
+    /**
+     * @throws \dml_exception
+     */
+    public static function disable_moodle_debug () {
+        global $CFG;
+
+        if (self::debugenabled()) {
+            $CFG->debug = 0;
+            $CFG->debugdeveloper = false;
+            $CFG->debugdisplay = false;
         }
     }
 }

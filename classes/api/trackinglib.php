@@ -27,6 +27,11 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_intellidata_trackinglib extends external_api {
 
+    /**
+     * Tracking validate params.
+     *
+     * @return external_function_parameters
+     */
     public static function save_tracking_parameters() {
         return new external_function_parameters(
             [
@@ -36,6 +41,17 @@ class local_intellidata_trackinglib extends external_api {
         );
     }
 
+    /**
+     * Save IntelliBoard tracking.
+     *
+     * @param $page
+     * @param $param
+     * @return int[]
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
+     */
     public static function save_tracking($page, $param) {
         global $SESSION;
 
@@ -72,6 +88,11 @@ class local_intellidata_trackinglib extends external_api {
         return ['time' => $params['time']];
     }
 
+    /**
+     * Tracking return params.
+     *
+     * @return external_single_structure
+     */
     public static function save_tracking_returns() {
         return new external_single_structure(
             array(

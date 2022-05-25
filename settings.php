@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
 
-    $pluginname = local_intellidata\constants::PLUGIN;
+    $pluginname = local_intellidata\helpers\ParamsHelper::PLUGIN;
 
     $settings = new admin_settingpage($pluginname, get_string('general', $pluginname));
 
@@ -135,13 +135,14 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    $name = 'exportdataformat';
-    $setting = new admin_setting_configselect(
+    $name = 'debugenabled';
+    $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),
-        get_string($name . '_desc', $pluginname),
+        '',
         SettingsHelper::get_defaut_config_value($name),
-        local_intellidata\services\migration_service::ACCEPTABLE_FORMAT_TYPES
+        true,
+        false
     );
     $settings->add($setting);
 
@@ -159,6 +160,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     $settings->add(new admin_setting_heading(
         $pluginname . 'usertracking', get_string('usertracking', $pluginname), ''
     ));
+
+    $name = 'enabledtracking';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
 
     $name = 'compresstracking';
     $options = array(
@@ -336,6 +348,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'custommenuitem';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
     $name = 'debug';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
@@ -352,11 +375,16 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
             $CFG->wwwroot.'/local/intellidata/migrations/index.php')
     );
 
-    // Temporary solution to review exported files.
+    $ADMIN->add('intellidata',
+        new admin_externalpage('intellidataexportfiles',
+            new lang_string('exportfiles', $pluginname),
+            $CFG->wwwroot.'/local/intellidata/logs/index.php')
+    );
+
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidataexportlogs',
             new lang_string('exportlogs', $pluginname),
-            $CFG->wwwroot.'/local/intellidata/logs/index.php')
+            $CFG->wwwroot.'/local/intellidata/logs/exportlogs.php')
     );
 
     if (!$ADMIN->locate('intellibdata') && $ADMIN->locate('localplugins')) {

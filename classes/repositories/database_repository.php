@@ -37,6 +37,18 @@ class database_repository {
 
     public static $encriptionservice    = null;
     public static $exportservice        = null;
+    public static $exportlogrepository        = null;
+
+    /**
+     * Init dependencies.
+     *
+     * @param $datatype
+     */
+    public static function init() {
+        self::$encriptionservice = new encryption_service();
+        self::$exportservice = new export_service();
+        self::$exportlogrepository = new export_log_repository();
+    }
 
     /**
      * @param $datatype
@@ -48,15 +60,12 @@ class database_repository {
     public static function export($datatype, $params) {
         global $DB;
 
-        self::$encriptionservice = new encryption_service();
-        self::$exportservice = new export_service();
-        $exportlogrepository = new export_log_repository();
-
-        list($lastexportedtime, $lastexportedid) = $exportlogrepository->get_last_processed_data($datatype['name']);
+        self::init();
+        list($lastexportedtime, $lastexportedid) = self::$exportlogrepository->get_last_processed_data($datatype['name']);
 
         $sqlparams = [];
         if ($datatype['timemodified_field']) {
-            $where = $datatype['timemodified_field'] . ' > :timemodified';
+            $where = '(' . $datatype['timemodified_field'] . ' = 0 OR ' . $datatype['timemodified_field'] . ' > :timemodified)';
             $sqlparams['timemodified'] = $lastexportedtime;
         } else if (!empty($datatype['filterbyid'])) {
             $where = 'id > ' . $lastexportedid;
@@ -93,7 +102,7 @@ class database_repository {
             }
         }
 
-        $exportlogrepository->save_last_processed_data($datatype['name'], $record, $lastexportedtime);
+        self::$exportlogrepository->save_last_processed_data($datatype['name'], $record, $lastexportedtime);
 
         return $recordsnum;
     }
@@ -134,10 +143,11 @@ class database_repository {
         $entitydata = $entity->after_export($entity->export());
 
         $prepareddata = StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $entitydata);
-        $exportservice = (!empty(self::$exportservice)) ?
-            self::$exportservice : new export_service();
 
-        $exportservice->store_data($datatype['name'], $prepareddata);
+        if (empty(self::$exportservice)) {
+            self::init();
+        }
+        self::$exportservice->store_data($datatype['name'], $prepareddata);
     }
 
 }
