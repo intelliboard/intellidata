@@ -24,6 +24,7 @@
  * @website    https://intelliboard.net/
  */
 
+use local_intellidata\helpers\DebugHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\repositories\export_log_repository;
@@ -69,6 +70,8 @@ EOF;
     echo $help;
     exit(0);
 }
+
+DebugHelper::enable_moodle_debug();
 
 // Disable reset migrations.
 if (empty($options['noreset'])) {

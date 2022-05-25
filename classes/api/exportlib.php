@@ -23,6 +23,7 @@ use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\ParamsHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,12 +36,23 @@ require_once("$CFG->libdir/externallib.php");
  */
 class local_intellidata_exportlib extends external_api {
 
+    /**
+     * @return external_function_parameters
+     */
     public static function validate_credentials_parameters() {
         return new external_function_parameters([
             'data'   => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function validate_credentials($data) {
 
         // Ensure the current user is allowed to run this function.
@@ -89,6 +101,9 @@ class local_intellidata_exportlib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function validate_credentials_returns() {
         return new external_single_structure(
             array(
@@ -98,10 +113,19 @@ class local_intellidata_exportlib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function export_data_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function export_data() {
 
         try {
@@ -131,14 +155,9 @@ class local_intellidata_exportlib extends external_api {
         // Generate and save files to filesdir.
         $exportservice->save_files();
 
-        // Get data files list.
-        $datafiles = $exportservice->get_files();
-        $metadata = [
-            'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate')
-        ];
         $context = [
-            'files' => $datafiles,
-            'metadata' => $metadata
+            'files' => $exportservice->get_files(),
+            'metadata' => ParamsHelper::get_exportfiles_metadata()
         ];
 
         return [
@@ -147,6 +166,9 @@ class local_intellidata_exportlib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function export_data_returns() {
         return new external_single_structure(
             array(
@@ -156,12 +178,23 @@ class local_intellidata_exportlib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function get_data_files_parameters() {
         return new external_function_parameters([
             'data'   => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function get_data_files($data) {
 
         try {
@@ -209,14 +242,9 @@ class local_intellidata_exportlib extends external_api {
             ];
         }
 
-        // Get data files list.
-        $datafiles = $exportservice->get_files($params);
-        $metadata = [
-            'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate')
-        ];
         $context = [
-            'files' => $datafiles,
-            'metadata' => $metadata
+            'files' => $exportservice->get_files($params),
+            'metadata' => ParamsHelper::get_exportfiles_metadata()
         ];
 
         return [
@@ -225,6 +253,9 @@ class local_intellidata_exportlib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function get_data_files_returns() {
         return new external_single_structure(
             array(
@@ -234,12 +265,23 @@ class local_intellidata_exportlib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function get_live_data_parameters() {
         return new external_function_parameters([
             'data'   => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function get_live_data($data) {
 
         try {
@@ -285,6 +327,9 @@ class local_intellidata_exportlib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function get_live_data_returns() {
         return new external_single_structure(
             array(
@@ -294,12 +339,23 @@ class local_intellidata_exportlib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function get_bbcollsessions_parameters() {
         return new external_function_parameters([
             'data'   => new external_value(PARAM_TEXT, 'Request params'),
         ]);
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function get_bbcollsessions($data) {
         global $CFG, $DB;
         require_once($CFG->libdir . "/adminlib.php");
@@ -365,6 +421,9 @@ class local_intellidata_exportlib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function get_bbcollsessions_returns() {
         return new external_single_structure(
             array(
@@ -384,6 +443,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Insert new datatype for export.
+     *
      * @param $data
      * @return array
      * @throws dml_exception

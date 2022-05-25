@@ -26,7 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-use local_intellidata\constants;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\repositories\tracking\tracking_repository;
 
 class SettingsHelper {
@@ -42,9 +42,11 @@ class SettingsHelper {
         'migrationwriterecordslimit' => '10000',
         'exportfilesduringmigration' => 0,
         'resetmigrationprogress' => 0,
+        'debugenabled' => 0,
         'exportdataformat' => 'csv',
         'defaultlayout' => 'standard',
         // User Tracking.
+        'enabledtracking' => 1,
         'compresstracking' => tracking_repository::TYPE_CACHE,
         'tracklogs' => 1,
         'trackdetails' => 1,
@@ -62,6 +64,7 @@ class SettingsHelper {
         'lticonsumerkey' => '',
         'ltisharedsecret' => '',
         'ltititle' => '',
+        'custommenuitem' => 0,
         'debug' => 0,
         // Internal settings.
         'lastmigrationdate' => 0,
@@ -99,7 +102,7 @@ class SettingsHelper {
      * @throws \dml_exception
      */
     public static function get_setting($configname) {
-        $config = get_config(constants::PLUGIN, $configname);
+        $config = get_config(ParamsHelper::PLUGIN, $configname);
 
         // Config did not set or doesn't exist.
         if ($config === null || $config === false) {
@@ -119,7 +122,7 @@ class SettingsHelper {
             return $config;
         }
 
-        return get_string('ltimenutitle', constants::PLUGIN);
+        return get_string('ltimenutitle', ParamsHelper::PLUGIN);
     }
 
     /**

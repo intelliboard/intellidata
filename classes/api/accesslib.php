@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class local_intellidata_accesslib extends external_api {
 
+    /**
+     * @return external_function_parameters
+     */
     public static function get_users_roles_parameters() {
         return new external_function_parameters(
             array(
@@ -41,6 +44,14 @@ class local_intellidata_accesslib extends external_api {
         );
     }
 
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function get_users_roles($data) {
         global $CFG, $DB;
         require_once($CFG->libdir . "/adminlib.php");
@@ -103,6 +114,9 @@ class local_intellidata_accesslib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function get_users_roles_returns() {
         return new external_single_structure(
             array(
@@ -112,10 +126,20 @@ class local_intellidata_accesslib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
     public static function get_roles_list_parameters() {
         return new external_function_parameters([]);
     }
 
+    /**
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
     public static function get_roles_list() {
         // Ensure the current user is allowed to run this function.
         $context = context_system::instance();
@@ -137,6 +161,9 @@ class local_intellidata_accesslib extends external_api {
         ];
     }
 
+    /**
+     * @return external_single_structure
+     */
     public static function get_roles_list_returns() {
         return new external_single_structure(
             array(

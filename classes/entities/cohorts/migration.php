@@ -26,7 +26,7 @@ namespace local_intellidata\entities\cohorts;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for migration Users.
+ * Class for migration Cohorts.
  *
  * @package    local_intellidata
  * @author     IntelliBoard

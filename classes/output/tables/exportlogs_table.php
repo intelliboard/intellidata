@@ -19,7 +19,7 @@
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
- * @copyright  2020 intelliboard.net
+ * @copyright  2022 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  */
 
@@ -28,37 +28,46 @@ namespace local_intellidata\output\tables;
 defined('MOODLE_INTERNAL') || die();
 
 use html_writer;
-use local_intellidata\helpers\StorageHelper;
+use local_intellidata\persistent\export_logs;
+use local_intellidata\persistent\datatypeconfig;
 
 require_once($CFG->libdir.'/tablelib.php');
 
 class exportlogs_table extends \table_sql {
 
-    public $download    = false;
-    public $fields      = [];
-    protected $prefs      = [];
+    public $fields     = [];
+    protected $prefs   = [];
+    protected $context = null;
 
-    public function __construct($uniqueid, $params) {
+    public function __construct($uniqueid, $params = '') {
         global $PAGE, $DB;
 
+        $this->context = \context_system::instance();
         parent::__construct($uniqueid);
-        $this->download = $params['download'];
+
         $this->fields = $this->get_fields();
         $sqlparams = [];
 
-        $this->sortable(true, 'timecreated', SORT_DESC);
+        $this->sortable(true, 'datatype', SORT_ASC);
         $this->is_collapsible = false;
 
         $this->define_columns(array_keys($this->fields));
         $this->define_headers($this->get_headers());
 
-        $fields = "f.*";
-        $from = "{files} f";
+        $fields = "el.*, el.recordsmigrated as progress";
+        $from = "{" . export_logs::TABLE . "} el";
 
-        $where = 'f.id > 0 AND f.component = :component AND f.mimetype IS NOT NULL';
-        $sqlparams['component'] = 'local_intellidata';
+        $where = 'el.id > 0';
+
+        if (!empty($params['query'])) {
+            $where .= " AND " . $DB->sql_like('el.datatype', ':searchquery', false, false, false);
+            $sqlparams += [
+                'searchquery' => '%' . $params['query'] . '%'
+            ];
+        }
 
         $this->set_sql($fields, $from, $where, $sqlparams);
+
         $this->define_baseurl($PAGE->url);
     }
 
@@ -68,21 +77,27 @@ class exportlogs_table extends \table_sql {
      */
     public function get_fields() {
         $fields = [
-            'filearea' => [
+            'datatype' => [
                 'label' => get_string('datatype', 'local_intellidata'),
             ],
-            'filename' => [
-                'label' => get_string('filename', 'local_intellidata'),
+            'tabletype' => [
+                'label' => get_string('tabletype', 'local_intellidata'),
             ],
-            'filesize' => [
-                'label' => get_string('filesize', 'local_intellidata'),
+            'migrated' => [
+                'label' => get_string('migrated', 'local_intellidata'),
             ],
-            'timecreated' => [
-                'label' => get_string('created', 'local_intellidata'),
+            'progress' => [
+                'label' => get_string('progress', 'local_intellidata'),
             ],
-            'actions' => [
-                'label' => get_string('actions', 'local_intellidata'),
+            'last_exported_id' => [
+                'label' => get_string('lastexportedid', 'local_intellidata'),
             ],
+            'timestart' => [
+                'label' => get_string('timestart', 'local_intellidata'),
+            ],
+            'last_exported_time' => [
+                'label' => get_string('timeend', 'local_intellidata'),
+            ]
         ];
 
         return $fields;
@@ -97,23 +112,12 @@ class exportlogs_table extends \table_sql {
         $headers = [];
 
         if (count($this->fields)) {
-            foreach ($this->fields as $field => $options) {
+            foreach ($this->fields as $options) {
                 $headers[] = $options['label'];
             }
         }
 
-        $headers[] = get_string('actions', 'local_intellidata');
-
         return$headers;
-    }
-
-    /**
-     * @param $values
-     * @return string
-     * @throws \coding_exception
-     */
-    public function col_timecreated($values) {
-        return ($values->timecreated) ? userdate($values->timecreated, get_string('strftimedatetime', 'langconfig')) : '-';
     }
 
     /**
@@ -121,57 +125,80 @@ class exportlogs_table extends \table_sql {
      * @return \lang_string|string
      * @throws \coding_exception
      */
-    public function col_filearea($values) {
-        if (get_string_manager()->string_exists('datatype_' . $values->filearea, 'local_intellidata')) {
-            return get_string('datatype_' . $values->filearea, 'local_intellidata');
+    public function col_datatype($values) {
+        if (get_string_manager()->string_exists('datatype_' . $values->datatype, 'local_intellidata')) {
+            return get_string('datatype_' . $values->datatype, 'local_intellidata');
         } else {
-            return $values->filearea;
+            return $values->datatype;
         }
     }
 
     /**
      * @param $values
-     * @return string
+     * @return \lang_string|string
+     * @throws \coding_exception
      */
-    public function col_filesize($values) {
-        return StorageHelper::convert_filesize($values->filesize);
+    public function col_tabletype($values) {
+        return ($values->tabletype == datatypeconfig::TABLETYPE_REQUIRED)
+            ? get_string('required', 'local_intellidata')
+            : get_string('optional', 'local_intellidata');
     }
 
     /**
      * @param $values
-     * @return string
+     * @return \lang_string|string
      * @throws \coding_exception
-     * @throws \moodle_exception
      */
-    public function col_actions($values) {
-        global $OUTPUT;
-
-        $buttons = array();
-
-        $urlparams = ['id' => $values->id];
-
-        // Action download.
-        $aurl = StorageHelper::make_pluginfile_url($values)->out(false);
-        $buttons[] = $OUTPUT->action_icon(
-            $aurl,
-            new \pix_icon('t/download', get_string('download'), 'core', array('class' => 'iconsmall'))
-        );
-
-        $aurl = new \moodle_url('/local/intellidata/logs/index.php', $urlparams + array('action' => 'delete'));
-        $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/delete', get_string('delete'),
-            'core', array('class' => 'iconsmall')), null,
-            ['onclick' => "if (!confirm('".get_string('deletefileconfirmation', 'local_intellidata')."')) return false;"]
-        );
-
-        return implode(' ', $buttons);
+    public function col_migrated($values) {
+        return ($values->migrated)
+            ? get_string('yes')
+            : get_string('no');
     }
 
     /**
-     * Start table output
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_progress($values) {
+        return (($values->migrated)
+                ? $values->recordscount
+                : $values->recordsmigrated) . '/' . $values->recordscount;
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_timestart($values) {
+        return $this->col_datetime($values->timestart);
+    }
+
+    /**
+     * @param $values
+     * @return \lang_string|string
+     * @throws \coding_exception
+     */
+    public function col_last_exported_time($values) {
+        return $this->col_datetime($values->last_exported_time);
+    }
+
+    /**
+     * @param $timestamp
+     * @return string
+     * @throws \coding_exception
+     */
+    private function col_datetime($timestamp) {
+        return ($timestamp) ? userdate($timestamp, get_string('strftimedatetime', 'langconfig')) : '-';
+    }
+
+    /**
+     * Start html method.
      */
     public function start_html() {
 
-        echo html_writer::start_tag('div', array('class' => 'custom-filtering-table'));
+        echo html_writer::start_tag('div', ['class' => 'custom-filtering-table']);
 
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
@@ -183,34 +210,57 @@ class exportlogs_table extends \table_sql {
             echo $this->download_buttons();
         }
 
+        echo html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
+
+        // Render search form.
+        echo $this->search_form();
+
+        echo html_writer::end_tag('div');
+
         $this->wrap_html_start();
         // Start of main data table.
 
-        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
         echo html_writer::start_tag('table', $this->attributes);
-
     }
 
     /**
-     * Get the html for the download buttons
+     * This function is not part of the public api.
+     */
+    public function print_nothing_to_display() {
+        global $OUTPUT;
+
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        $this->print_initials_bar();
+
+        echo $OUTPUT->heading(get_string('nothingtodisplay'));
+
+        // Render the dynamic table footer.
+        echo $this->get_dynamic_table_html_end();
+    }
+
+    /**
+     * Get the html for the search form
      *
      * Usually only use internally
      */
-    public function download_buttons() {
-        global $OUTPUT;
+    public function search_form() {
+        global $PAGE;
 
-        $output = '';
+        $renderer = $PAGE->get_renderer('local_intellidata');
 
-        if ($this->is_downloadable() && !$this->is_downloading()) {
-            $output = $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
-                $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params());
-
-            $exporturl = new \moodle_url('/local/intellidata/logs/index.php', ['action' => 'export']);
-            $output .= \html_writer::link($exporturl, get_string('exportfiles', 'local_intellidata'),
-                ['class' => 'btn btn-primary']);
-        }
-
-        return $output;
+        return $renderer->render_from_template_with_validation(
+            'core_admin/header_search_input',
+            '/admin/templates/header_search_input',
+            [
+                'action' => $PAGE->url,
+                'query' => $PAGE->url->get_param('query')
+            ]
+        );
     }
-
 }

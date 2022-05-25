@@ -25,248 +25,300 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$observers = array(
+$observers = [
     // Users events.
-    array(
+    [
         'eventname' => '\core\event\user_created',
         'callback' => '\local_intellidata\entities\users\observer::user_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_updated',
         'callback' => '\local_intellidata\entities\users\observer::user_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_deleted',
         'callback' => '\local_intellidata\entities\users\observer::user_deleted',
-    ),
+    ],
 
     // Users Auth events.
-    array(
+    [
         'eventname' => '\core\event\user_loggedin',
         'callback' => '\local_intellidata\entities\userlogins\observer::user_loggedin',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_loggedout',
         'callback' => '\local_intellidata\entities\userlogins\observer::user_loggedout',
-    ),
+    ],
 
     // Categories events.
-    array(
+    [
         'eventname' => '\core\event\course_category_created',
         'callback' => '\local_intellidata\entities\categories\observer::course_category_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_category_updated',
         'callback' => '\local_intellidata\entities\categories\observer::course_category_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_category_deleted',
         'callback' => '\local_intellidata\entities\categories\observer::course_category_deleted',
-    ),
+    ],
 
     // Courses events.
-    array(
+    [
         'eventname' => '\core\event\course_created',
         'callback' => '\local_intellidata\entities\courses\observer::course_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_updated',
         'callback' => '\local_intellidata\entities\courses\observer::course_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_deleted',
         'callback' => '\local_intellidata\entities\courses\observer::course_deleted',
-    ),
+    ],
 
     // Enrollments events.
-    array(
+    [
         'eventname' => '\core\event\user_enrolment_created',
         'callback' => '\local_intellidata\entities\enrolments\observer::user_enrolment_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_enrolment_updated',
         'callback' => '\local_intellidata\entities\enrolments\observer::user_enrolment_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\user_enrolment_deleted',
         'callback' => '\local_intellidata\entities\enrolments\observer::user_enrolment_deleted',
-    ),
+    ],
 
     // Roles events.
-    array(
+    [
         'eventname' => '\core\event\role_assigned',
         'callback' => '\local_intellidata\entities\roles\observer::role_assigned',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\role_unassigned',
         'callback' => '\local_intellidata\entities\roles\observer::role_unassigned',
-    ),
+    ],
 
     // Course completion events.
-    array(
+    [
         'eventname' => '\core\event\course_completed',
         'callback' => '\local_intellidata\entities\coursecompletions\observer::course_completed',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_completion_updated',
         'callback' => '\local_intellidata\entities\coursecompletions\observer::course_completion_updated',
-    ),
+    ],
 
     // Activities events.
-    array(
+    [
         'eventname' => '\core\event\course_module_created',
         'callback' => '\local_intellidata\entities\activities\observer::course_module_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_module_updated',
         'callback' => '\local_intellidata\entities\activities\observer::course_module_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_module_deleted',
         'callback' => '\local_intellidata\entities\activities\observer::course_module_deleted',
-    ),
+    ],
 
     // Activity completion.
-    array(
+    [
         'eventname' => '\core\event\course_module_completion_updated',
         'callback' => '\local_intellidata\entities\activitycompletions\observer::course_module_completion_updated',
-    ),
+    ],
 
     // User grades events.
-    array(
+    [
         'eventname' => '\core\event\user_graded',
         'callback' => '\local_intellidata\entities\usergrades\observer::user_graded',
+    ],
+
+    // Grade letter updated events.
+    array(
+        'eventname' => '\core\event\grade_letter_updated',
+        'callback' => '\local_intellidata\entities\usergrades\observer::grade_letter_updated',
+    ),
+    array(
+        'eventname' => '\core\event\grade_letter_created',
+        'callback' => '\local_intellidata\entities\usergrades\observer::grade_letter_created',
+    ),
+    array(
+        'eventname' => '\core\event\grade_letter_deleted',
+        'callback' => '\local_intellidata\entities\usergrades\observer::grade_letter_deleted',
     ),
 
     // Forum discussions.
-    array(
+    [
         'eventname' => '\mod_forum\event\discussion_created',
         'callback' => '\local_intellidata\entities\forums\observer::discussion_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_forum\event\discussion_updated',
         'callback' => '\local_intellidata\entities\forums\observer::discussion_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_forum\event\discussion_moved',
         'callback' => '\local_intellidata\entities\forums\observer::discussion_moved',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_forum\event\discussion_deleted',
         'callback' => '\local_intellidata\entities\forums\observer::discussion_deleted',
-    ),
+    ],
 
     // Forum posts.
-    array(
+    [
         'eventname' => '\mod_forum\event\post_created',
         'callback' => '\local_intellidata\entities\forums\observer::post_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_forum\event\post_updated',
         'callback' => '\local_intellidata\entities\forums\observer::post_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_forum\event\post_deleted',
         'callback' => '\local_intellidata\entities\forums\observer::post_deleted',
-    ),
+    ],
 
     // Forum posts.
-    array(
+    [
         'eventname' => '\mod_quiz\event\attempt_started',
         'callback' => '\local_intellidata\entities\quizzes\observer::attempt_started',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_quiz\event\attempt_submitted',
         'callback' => '\local_intellidata\entities\quizzes\observer::attempt_submitted',
-    ),
+    ],
 
     // Quiz questions events.
-    array(
+    [
         'eventname' => '\core\event\question_created',
         'callback' => '\local_intellidata\entities\quizquestions\observer::question_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\question_updated',
         'callback' => '\local_intellidata\entities\quizquestions\observer::question_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\question_deleted',
         'callback' => '\local_intellidata\entities\quizquestions\observer::question_deleted',
-    ),
+    ],
 
     // Assignment Submissions.
-    array(
+    [
         'eventname' => '\mod_assign\event\submission_created',
         'callback' => '\local_intellidata\entities\assignments\observer::submission_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_assign\event\submission_updated',
         'callback' => '\local_intellidata\entities\assignments\observer::submission_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_assign\event\submission_duplicated',
         'callback' => '\local_intellidata\entities\assignments\observer::submission_duplicated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_assign\event\submission_graded',
         'callback' => '\local_intellidata\entities\assignments\observer::submission_graded',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_assign\event\assessable_submitted',
         'callback' => '\local_intellidata\entities\assignments\observer::assessable_submitted',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\mod_assign\event\submission_status_updated',
         'callback' => '\local_intellidata\entities\assignments\observer::submission_status_updated',
-    ),
+    ],
 
     // Cohorts events.
-    array(
+    [
         'eventname' => '\core\event\cohort_created',
         'callback' => '\local_intellidata\entities\cohorts\observer::cohort_created',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\cohort_updated',
         'callback' => '\local_intellidata\entities\cohorts\observer::cohort_updated',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\cohort_deleted',
         'callback' => '\local_intellidata\entities\cohorts\observer::cohort_deleted',
-    ),
+    ],
 
     // Cohort members events.
-    array(
+    [
         'eventname' => '\core\event\cohort_member_added',
         'callback' => '\local_intellidata\entities\cohortmembers\observer::cohort_member_added',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\cohort_member_removed',
         'callback' => '\local_intellidata\entities\cohortmembers\observer::cohort_member_removed',
-    ),
+    ],
 
     // Grade Item events.
-    array(
+    [
         'eventname' => '\core\event\grade_item_deleted',
         'callback' => '\local_intellidata\entities\gradeitems\observer::grade_item_deleted',
-    ),
+    ],
 
     // Participations.
-    array(
+    [
         'eventname' => '*',
         'callback' => '\local_intellidata\entities\participations\observer::new_participation',
-    ),
+    ],
 
     // Tracking.
-    array(
+    [
         'eventname' => '\core\event\user_deleted',
         'callback' => '\local_intellidata\entities\usertrackings\observer::user_deleted',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_deleted',
         'callback' => '\local_intellidata\entities\usertrackings\observer::course_deleted',
-    ),
-    array(
+    ],
+    [
         'eventname' => '\core\event\course_module_deleted',
         'callback' => '\local_intellidata\entities\usertrackings\observer::course_module_deleted',
-    ),
-);
+    ],
+
+    // User info categories events.
+    [
+        'eventname' => '\core\event\user_info_category_created',
+        'callback' => '\local_intellidata\entities\userinfocategories\observer::user_info_category_created',
+    ],
+    [
+        'eventname' => '\core\event\user_info_category_updated',
+        'callback' => '\local_intellidata\entities\userinfocategories\observer::user_info_category_updated',
+    ],
+    [
+        'eventname' => '\core\event\user_info_category_deleted',
+        'callback' => '\local_intellidata\entities\userinfocategories\observer::user_info_category_deleted',
+    ],
+
+    // User info fields events.
+    [
+        'eventname' => '\core\event\user_info_field_created',
+        'callback' => '\local_intellidata\entities\userinfofields\observer::user_info_field_created',
+    ],
+    [
+        'eventname' => '\core\event\user_info_field_updated',
+        'callback' => '\local_intellidata\entities\userinfofields\observer::user_info_field_updated',
+    ],
+    [
+        'eventname' => '\core\event\user_info_field_deleted',
+        'callback' => '\local_intellidata\entities\userinfofields\observer::user_info_field_deleted',
+    ],
+
+    // User info data events.
+    [
+        'eventname' => '\core\event\user_created',
+        'callback' => '\local_intellidata\entities\userinfodatas\observer::user_created',
+    ],
+    [
+        'eventname' => '\core\event\user_updated',
+        'callback' => '\local_intellidata\entities\userinfodatas\observer::user_updated',
+    ]
+];

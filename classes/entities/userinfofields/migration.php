@@ -15,17 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class for migration UserInfoFields.
  *
- * @package    local
- * @subpackage intellidata
- * @copyright  2020
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace local_intellidata\entities\userinfofields;
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2022052500;
-$plugin->requires = 2017111300;
-$plugin->release = '1.43.0';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'local_intellidata';
+/**
+ * Class for migration UserInfoFields.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class migration extends \local_intellidata\entities\migration {
+    public $entity      = '\local_intellidata\entities\userinfofields\userinfofield';
+    public $eventname   = '\core\event\user_info_field_created';
+    public $table       = 'user_info_field';
+}

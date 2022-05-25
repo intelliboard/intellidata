@@ -51,7 +51,6 @@ class migration extends \local_intellidata\entities\migration {
         } else {
             $sql = "SELECT
                     max(id) as id,
-                    concat(userid, '_', contextinstanceid, '_', contextlevel) AS uid,
                     userid,
                     contextlevel,
                     contextinstanceid,

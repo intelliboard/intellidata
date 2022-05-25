@@ -58,6 +58,106 @@ class observer {
         }
     }
 
+    /**
+     * Triggered when 'grade_letter' event is triggered.
+     *
+     * @param \core\event\grade_letter_updated $event
+     */
+    public static function grade_letter_updated(\core\event\grade_letter_updated $event) {
+
+        $eventdata = $event->get_data();
+
+        self::update_export_grade($eventdata);
+    }
+
+    /**
+     * Triggered when 'grade_letter' event is triggered.
+     *
+     * @param \core\event\grade_letter_deleted $event
+     */
+    public static function grade_letter_deleted(\core\event\grade_letter_deleted $event) {
+        global $CFG, $DB;
+
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $eventdata = $event->get_data();
+
+        $grades = $DB->get_records_sql('SELECT *
+                                              FROM {grade_grades}
+                                             WHERE finalgrade IS NOT NULL');
+
+        if (!$grades) {
+            return;
+        }
+
+        foreach ($grades as $grade) {
+            $gradeitem = \grade_item::fetch(['id' => $grade->itemid]);
+
+            $data = self::prepare_data($grade, $gradeitem);
+
+            self::export_event($data, $eventdata);
+        }
+    }
+
+    /**
+     * Triggered when 'grade_letter' event is triggered.
+     *
+     * @param \core\event\grade_letter_created $event
+     */
+    public static function grade_letter_created(\core\event\grade_letter_created $event) {
+
+        $eventdata = $event->get_data();
+
+        self::update_export_grade($eventdata);
+    }
+
+    /**
+     * @param  $eventdata
+     */
+    public static function update_export_grade($eventdata) {
+        global $CFG, $DB;
+
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $sgradeletter = $DB->get_record('grade_letters', ['id' => $eventdata['objectid']]);
+        if (!$sgradeletter) {
+            return;
+        }
+
+        $from = $sgradeletter->lowerboundary;
+        $sgradeletterto = $DB->get_record_sql('SELECT lowerboundary
+                                                     FROM {grade_letters}
+                                                    WHERE lowerboundary > :from
+                                                 ORDER BY lowerboundary ASC LIMIT 1',
+            ['from' => $from]
+        );
+
+        $to = '';
+        $params = [
+            'from' => $from
+        ];
+        if ($sgradeletterto) {
+            $to = 'AND finalgrade <= :to';
+            $params['to'] = $sgradeletterto->lowerboundary;
+        }
+
+        $grades = $DB->get_records_sql('SELECT *
+                                              FROM {grade_grades}
+                                             WHERE finalgrade > :from ' . $to . ' AND finalgrade IS NOT NULL', $params);
+
+        if (!$grades) {
+            return;
+        }
+
+        foreach ($grades as $grade) {
+            $gradeitem = \grade_item::fetch(['id' => $grade->itemid]);
+
+            $data = self::prepare_data($grade, $gradeitem);
+
+            self::export_event($data, $eventdata);
+        }
+    }
+
     public static function prepare_data($gradeobject, $gradeitem) {
         // Each user have own grade max and grade min.
         $gradeitem->grademax = $gradeobject->rawgrademax;

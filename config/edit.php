@@ -26,10 +26,13 @@ use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\config_service;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\export_log_repository;
+use local_intellidata\services\export_service;
 
 require('../../../config.php');
 
 $datatype = required_param('datatype', PARAM_TEXT);
+$action = optional_param('action', '', PARAM_TEXT);
 
 require_login();
 
@@ -48,8 +51,26 @@ if (!$record || $record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED)
     throw new \moodle_exception('wrongdatatype', 'local_intellidata');
 }
 
+$exportlogrepository = new export_log_repository();
+
+if ($action == 'reset') {
+    // Reset export logs.
+    $exportlogrepository->insert_datatype($datatype);
+
+    // Delete old export files.
+    $exportservice = new export_service();
+    $exportservice->delete_files([
+        'datatype' => $datatype,
+        'timemodified' => time()
+    ]);
+
+    redirect($returnurl, get_string('resetmsg', 'local_intellidata'));
+}
+
 $datatypeconfig = datatypes_service::get_datatype($datatype);
 $datatypeconfig['timemodifiedfields'] = config_service::get_available_timemodified_fields($datatype);
+
+$exportlog = $exportlogrepository->get_datatype_export_log($datatype);
 
 $title = get_string('editconfigfor', 'local_intellidata', $datatype);
 
@@ -58,7 +79,11 @@ $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-$editform = new local_intellidata_edit_config(null, ['data' => $record->to_record(), 'config' => (object)$datatypeconfig]);
+$editform = new local_intellidata_edit_config(null, [
+    'data' => $record->to_record(),
+    'config' => (object)$datatypeconfig,
+    'exportlog' => $exportlog
+]);
 
 if ($editform->is_cancelled()) {
     redirect($returnurl);
@@ -95,6 +120,15 @@ if ($editform->is_cancelled()) {
         $record->set('rewritable', $data->rewritable);
         $record->set('status', $data->status);
         $record->save();
+
+        // Process export log.
+        if ((!$data->enableexport || !$data->status) && !empty($exportlog)) {
+            // Remove datatype from the export logs table.
+            $exportlogrepository->remove_datatype($datatype);
+        } else if (empty($exportlog) && $data->enableexport) {
+            // Add datatype to the export logs table.
+            $exportlogrepository->insert_datatype($datatype);
+        }
     }
 
     redirect($returnurl, get_string('configurationsaved', 'local_intellidata'));

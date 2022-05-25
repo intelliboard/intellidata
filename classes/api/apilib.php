@@ -29,6 +29,12 @@ class apilib {
     const STATUS_SUCCESS = 'success';
     const STATUS_ERROR = 'error';
 
+    /**
+     * Validate API Response and keys.
+     *
+     * @return bool
+     * @throws \moodle_exception
+     */
     public static function check_auth() {
 
         $encryptionservice = new encryption_service();
@@ -57,6 +63,14 @@ class apilib {
         return true;
     }
 
+    /**
+     * Validate API params.
+     *
+     * @param $params
+     * @param array $rules
+     * @return mixed
+     * @throws \coding_exception
+     */
     public static function validate_parameters($params, $rules = []) {
 
         $encryptionservice = new encryption_service();
@@ -68,6 +82,14 @@ class apilib {
         return $params;
     }
 
+    /**
+     * Clean API params.
+     *
+     * @param $params
+     * @param array $rules
+     * @return mixed
+     * @throws \coding_exception
+     */
     public static function clean_parameters($params, $rules = []) {
 
         if (count($rules)) {

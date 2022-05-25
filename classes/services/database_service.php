@@ -29,6 +29,7 @@ use local_intellidata\repositories\database_repository;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\tracking\tracking_repository;
 use local_intellidata\services\datatypes_service;
+use local_intellidata\helpers\TasksHelper;
 
 class database_service {
 
@@ -36,6 +37,7 @@ class database_service {
     protected $trackingrepo     = null;
     protected $tables           = null;
     protected $showlogs         = true;
+    protected $adhoctask        = false;
 
     public function __construct($showlogs = true) {
         $this->tables = $this->get_tables();
@@ -52,6 +54,13 @@ class database_service {
     }
 
     /**
+     * Set all datatypes list to adhoc tasks.
+     */
+    public function set_all_tables() {
+        $this->tables += datatypes_service::get_required_datatypes();
+    }
+
+    /**
      * @param null $params
      */
     public function export_tables($params = null) {
@@ -64,12 +73,20 @@ class database_service {
 
         $this->trackingrepo->export_records();
 
+        // Get tables list to process.
         $alltables = $this->tables;
         $tables = (!empty($params['table']) and isset($alltables[$params['table']])) ?
             [$params['table'] => $alltables[$params['table']]] : $this->tables;
 
+        // Process each table migration.
         if (count($tables)) {
             foreach ($tables as $key => $table) {
+
+                // Validate the table can be migrated.
+                if (!$this->validate($table)) {
+                    continue;
+                }
+
                 $this->export($table, $params);
             }
         }
@@ -105,5 +122,26 @@ class database_service {
             mtrace("Execution took ".$difftime." seconds.");
             mtrace("-------------------------------------------");
         }
+    }
+
+    /**
+     * @param $value
+     */
+    public function set_adhoctask($value) {
+        $this->adhoctask = $value;
+    }
+
+    /**
+     * @param $datatype
+     * @return bool
+     */
+    public function validate($datatype) {
+
+        // Avoid export table when adhoc task in progress.
+        if (!$this->adhoctask && !TasksHelper::validate_adhoc_tasks($datatype['name'])) {
+            return false;
+        }
+
+        return true;
     }
 }
