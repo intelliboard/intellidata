@@ -63,6 +63,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="datatype_dataid_unique" TYPE="unique" FIELDS="datatype, dataid"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="datatype, dataid"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="local_intellidata_tracking" COMMENT="IntelliData tracking">
