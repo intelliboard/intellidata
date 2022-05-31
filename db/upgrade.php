@@ -477,5 +477,14 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022052500, 'local', 'intellidata');
     }
 
+    if ($oldversion < 2022053100) {
+        // Add primary key, $dbman->add_key not working, error 'Primary Keys can be added at table create time only'.
+        $DB->execute('ALTER TABLE {local_intellidata_export_ids}
+                           ADD CONSTRAINT `local_intellidata_export_ids_primary`
+                           PRIMARY KEY (datatype, dataid)');
+
+        upgrade_plugin_savepoint(true, 2022053100, 'local', 'intellidata');
+    }
+
     return true;
 }
