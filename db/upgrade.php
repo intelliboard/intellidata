@@ -26,6 +26,7 @@
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\task\export_adhoc_task;
+use local_intellidata\helpers\DebugHelper;
 
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
@@ -480,10 +481,276 @@ function xmldb_local_intellidata_upgrade($oldversion) {
     if ($oldversion < 2022053100) {
         // Add primary key, $dbman->add_key not working, error 'Primary Keys can be added at table create time only'.
         $DB->execute('ALTER TABLE {local_intellidata_export_ids}
-                           ADD CONSTRAINT `local_intellidata_export_ids_primary`
+                           ADD CONSTRAINT {local_intellidata_export_ids_primary}
                            PRIMARY KEY (datatype, dataid)');
-
         upgrade_plugin_savepoint(true, 2022053100, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2022053105) {
+
+        // Update local_intellidata_export_log table.
+        $table = new xmldb_table("local_intellidata_export_log");
+        $field = new xmldb_field('recordsmigrated', XMLDB_TYPE_INTEGER, '11', null, false, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timestart', XMLDB_TYPE_INTEGER, '11', null, false, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('migrated', XMLDB_TYPE_INTEGER, '1', null, false, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('recordsmigrated', XMLDB_TYPE_INTEGER, '11', null, false, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('recordscount', XMLDB_TYPE_INTEGER, '11', null, false, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        // Update local_intellidata_storage table.
+        $table = new xmldb_table("local_intellidata_storage");
+        $field = new xmldb_field('timecreated', XMLDB_TYPE_INTEGER, '11', null, false, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        // Update local_intellidata_tracking table.
+        $table = new xmldb_table("local_intellidata_tracking");
+
+        // Remove index from local_intellidata_tracking table.
+        $index = new xmldb_index('userid_page_param_idx', XMLDB_INDEX_NOTUNIQUE, ['userid', 'page', 'param']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        // Remove key from local_intellidata_tracking table.
+        $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+        $dbman->drop_key($table, $key);
+
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('page', XMLDB_TYPE_CHAR, '100', null, false, null, '');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('param', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('visits', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timespend', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('firstaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('lastaccess', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        // Add key and index for local_intellidata_tracking table.
+        $dbman->add_key($table, $key);
+        $dbman->add_index($table, $index);
+
+        // Update local_intellidata_trlogs table.
+        $table = new xmldb_table("local_intellidata_trlogs");
+
+        // Remove key from local_intellidata_trlogs table.
+        $key = new xmldb_key('trackid', XMLDB_KEY_FOREIGN, ['trackid'], 'local_intellidata_tracking', ['id']);
+        $dbman->drop_key($table, $key);
+
+        // Remove index from local_intellidata_trlogs table.
+        $index = new xmldb_index('trackid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, array('trackid', 'timepoint'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field = new xmldb_field('trackid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('visits', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timespend', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timepoint', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        // Add key and index for local_intellidata_trlogs table.
+        $dbman->add_key($table, $key);
+        $dbman->add_index($table, $index);
+
+        // Update local_intellidata_trdetails table.
+        $table = new xmldb_table("local_intellidata_trdetails");
+
+        // Remove key from local_intellidata_trdetails table.
+        $key = new xmldb_key('logid', XMLDB_KEY_FOREIGN, ['logid'], 'local_intellidata_trlogs', ['id']);
+        $dbman->drop_key($table, $key);
+
+        // Remove index from local_intellidata_trdetails table.
+        $index = new xmldb_index('logid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, ['logid', 'timepoint']);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        $field = new xmldb_field('logid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('visits', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timespend', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('timepoint', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0');
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        // Add key and index for local_intellidata_trdetails table.
+        $dbman->add_key($table, $key);
+        $dbman->add_index($table, $index);
+
+        upgrade_plugin_savepoint(true, 2022053105, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2022053107) {
+
+        $table = new xmldb_table("local_intellidata_export_ids");
+
+        // Remove key from local_intellidata_export_ids table.
+        $key = new xmldb_key('datatype_dataid_unique', XMLDB_KEY_UNIQUE, ['datatype', 'dataid']);
+        $dbman->drop_key($table, $key);
+
+        $field = new xmldb_field('datatype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $field = new xmldb_field('dataid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        try {
+            $dbman->change_field_type($table, $field);
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        // Add key and index for local_intellidata_export_ids table.
+        $dbman->add_key($table, $key);
+
+        // Adding keys to table local_intellidata_config.
+        $table = new xmldb_table("local_intellidata_config");
+        $key = new xmldb_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+        $dbman->add_key($table, $key);
+
+        upgrade_plugin_savepoint(true, 2022053107, 'local', 'intellidata');
     }
 
     return true;

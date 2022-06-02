@@ -112,7 +112,14 @@ class database_service {
             mtrace("Datatype '" . $datatype['name'] . "' export started at " . date('r') . "...");
         }
 
-        $recordsexported = $this->repo->export($datatype, $params);
+        // Export table records.
+        $recordsexported = $this->repo->export($datatype, $params, $this->showlogs);
+
+        if ($this->showlogs) {
+            mtrace("Store dtatype ids at " . date('r') . " ...");
+        }
+
+        // Sync deleted items.
         $this->repo->export_ids($datatype);
 
         if ($this->showlogs) {

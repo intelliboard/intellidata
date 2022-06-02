@@ -171,9 +171,12 @@ class config_service {
         $predefinedconfig = self::get_predefined_config($datatype);
 
         // Validate predefined timemodified field.
-        if (isset($predefinedconfig['timemodified_field'])
-            && $dbschema->column_exists($datatype, $predefinedconfig['timemodified_field'])) {
-            return $predefinedconfig['timemodified_field'];
+        if (isset($predefinedconfig['timemodified_field'])) {
+            if (empty($predefinedconfig['timemodified_field'])) {
+                return '';
+            } else if ($dbschema->column_exists($datatype, $predefinedconfig['timemodified_field'])) {
+                return $predefinedconfig['timemodified_field'];
+            }
         }
 
         return $dbschema->get_updated_fieldname($datatype);
@@ -258,6 +261,11 @@ class config_service {
             ],
             'user_lastaccess' => [
                 'timemodified_field' => 'timeaccess'
+            ],
+            'lesson_answers' => [
+                'timemodified_field' => '',
+                'filterbyid' => false,
+                'rewritable' => true
             ]
         ];
 

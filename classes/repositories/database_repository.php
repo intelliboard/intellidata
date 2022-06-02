@@ -35,9 +35,12 @@ use local_intellidata\services\export_service;
 
 class database_repository {
 
+    const LOGS_DISPLAY_PERIOD = 1000;
+
     public static $encriptionservice    = null;
     public static $exportservice        = null;
-    public static $exportlogrepository        = null;
+    public static $exportlogrepository  = null;
+    public static $writerecordslimits   = null;
 
     /**
      * Init dependencies.
@@ -48,6 +51,7 @@ class database_repository {
         self::$encriptionservice = new encryption_service();
         self::$exportservice = new export_service();
         self::$exportlogrepository = new export_log_repository();
+        self::$writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
     }
 
     /**
@@ -57,15 +61,65 @@ class database_repository {
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
-    public static function export($datatype, $params) {
+    public static function export($datatype, $params, $showlogs = false) {
+        self::init();
+
+        $start = 0; $limit = (int)SettingsHelper::get_setting('exportrecordslimit');
+        $overalexportedrecords = 0; $lastrecord = new \stdClass();
+
+        while ($records = self::get_records($datatype, $start, $limit)) {
+
+            // Stop export when no records.
+            if (!$records->valid()) {
+                break;
+            }
+
+            // Export records to storage.
+            list($exportedrecords, $lastrecord) = self::export_records($datatype, $records, $showlogs);
+            $overalexportedrecords += $exportedrecords;
+
+            if ($showlogs) {
+                mtrace("Datatype '" . $datatype['name'] . "' exported " . $overalexportedrecords . " rows " . date('r') . "...");
+            }
+
+            // Stop export in no limit.
+            if (!$limit) {
+                break;
+            }
+            $start += $limit;
+        }
+
+        self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord, time());
+
+        return $overalexportedrecords;
+    }
+
+    /**
+     * @param $datatype
+     * @param int $start
+     * @param int $limit
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    public static function get_records($datatype, $start = 0, $limit = 0) {
         global $DB;
 
-        self::init();
+        list($sql, $sqlparams) = self::get_export_sql($datatype);
+
+        return $DB->get_recordset_sql($sql, $sqlparams, $start, $limit);
+    }
+
+    /**
+     * @param $datatype
+     * @return array
+     */
+    public static function get_export_sql($datatype) {
+
         list($lastexportedtime, $lastexportedid) = self::$exportlogrepository->get_last_processed_data($datatype['name']);
 
-        $sqlparams = [];
+        $sql = ''; $sqlparams = [];
         if ($datatype['timemodified_field']) {
-            $where = '(' . $datatype['timemodified_field'] . ' = 0 OR ' . $datatype['timemodified_field'] . ' > :timemodified)';
+            $where = $datatype['timemodified_field'] . ' > :timemodified';
             $sqlparams['timemodified'] = $lastexportedtime;
         } else if (!empty($datatype['filterbyid'])) {
             $where = 'id > ' . $lastexportedid;
@@ -73,38 +127,99 @@ class database_repository {
             $where = 'id > 0';
         }
 
-        $records = null;
         if (isset($datatype['table'])) {
-
-            $records = $DB->get_recordset_sql("
-                SELECT *
-                  FROM {" . $datatype['table'] . "}
-                WHERE $where
-                ORDER BY id", $sqlparams
-            );
-
+            $sql = "SELECT *
+                      FROM {" . $datatype['table'] . "}
+                     WHERE $where
+                  ORDER BY id";
         } else if (isset($datatype['migration'])) {
 
             $migration = datatypes_service::init_migration($datatype['migration']);
             list($sql, $params) = $migration->get_sql(false, null, [], $lastexportedtime);
 
-            $records = $DB->get_recordset_sql($sql, array_merge($sqlparams, $params));
+            $sqlparams = array_merge($sqlparams, $params);
         }
 
-        $lastexportedtime = time();
+        return [$sql, $sqlparams];
+    }
 
-        $recordsnum = 0;
+    /**
+     * @param $datatype
+     * @param $records
+     * @param false $showlogs
+     * @return array
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    public static function export_records($datatype, $records, $showlogs = false) {
+
+        $recordsnum = 0; $logscounter = 0; $cleanlogs = false;
         $record = new \stdClass();
+
         if ($records) {
-            foreach ($records as $record) {
-                self::save($datatype, $record);
-                $recordsnum++;
+            $data = [];
+            $i = 0;
+
+            if (empty(self::$exportservice)) {
+                self::init();
             }
+
+            foreach ($records as $record) {
+                $data[] = self::prepare_entity_data($datatype, $record);
+
+                // Export data by chanks.
+                if ($i >= self::$writerecordslimits) {
+                    // Save data into the file.
+                    self::export_data($datatype['name'], $data);
+                    $data = [];
+                    $i = 0;
+
+                    if ($showlogs) {
+                        mtrace("");
+                        mtrace("Complete $recordsnum records.");
+                    }
+                }
+                $i++;
+
+                $recordsnum++; $logscounter++;
+
+                // Display export logs.
+                if ($showlogs && $logscounter == self::LOGS_DISPLAY_PERIOD) {
+                    mtrace('.', '');
+                    $logscounter = 0; $cleanlogs = true;
+                }
+            }
+
+            self::export_data($datatype['name'], $data);
         }
 
-        self::$exportlogrepository->save_last_processed_data($datatype['name'], $record, $lastexportedtime);
+        if ($showlogs && $cleanlogs) {
+            mtrace("");
+        }
 
-        return $recordsnum;
+        return [$recordsnum, $record];
+    }
+
+    /**
+     * @param $datatype
+     * @param $data
+     */
+    private static function export_data($datatype, $data) {
+        self::$exportservice->store_data($datatype, implode(PHP_EOL, $data));
+    }
+
+    /**
+     * @param $datatype
+     * @param $data
+     * @return false|string
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    private static function prepare_entity_data($datatype, $data) {
+        $entity = datatypes_service::init_entity($datatype, $data);
+        $entitydata = $entity->after_export($entity->export());
+
+        return StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $entitydata);
     }
 
     /**
