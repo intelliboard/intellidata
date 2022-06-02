@@ -252,7 +252,7 @@ class exportfiles_table extends \table_sql {
     /**
      * This function is not part of the public api.
      */
-    function print_nothing_to_display() {
+    public function print_nothing_to_display() {
         global $OUTPUT;
 
         // Render the dynamic table header.
