@@ -210,6 +210,7 @@ class exportlogs_table extends \table_sql {
             echo $this->download_buttons();
         }
 
+        // Render search.
         echo html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
 
         // Render search form.
@@ -238,6 +239,14 @@ class exportlogs_table extends \table_sql {
 
         $this->print_initials_bar();
 
+        // Render search.
+        echo html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
+
+        // Render search form.
+        echo $this->search_form();
+
+        echo html_writer::end_tag('div');
+
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
 
         // Render the dynamic table footer.
@@ -254,9 +263,8 @@ class exportlogs_table extends \table_sql {
 
         $renderer = $PAGE->get_renderer('local_intellidata');
 
-        return $renderer->render_from_template_with_validation(
-            'core_admin/header_search_input',
-            '/admin/templates/header_search_input',
+        return $renderer->render_from_template(
+            'local_intellidata/header_search_input',
             [
                 'action' => $PAGE->url,
                 'query' => $PAGE->url->get_param('query')

@@ -353,7 +353,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => true
+                'databaseexport' => false
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',

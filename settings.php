@@ -113,6 +113,15 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'exportrecordslimit';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name)
+    );
+    $settings->add($setting);
+
     $name = 'exportfilesduringmigration';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,

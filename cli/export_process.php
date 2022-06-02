@@ -76,10 +76,12 @@ if (!empty($options['datatype'])) {
 }
 
 // Export static tables.
-if (empty($params['datatype'])) {
-    $databaseservice = new database_service();
-    $databaseservice->export_tables();
+$exportparams = null;
+if (!empty($params['datatype'])) {
+    $params['table'] = $params['datatype'];
 }
+$databaseservice = new database_service();
+$databaseservice->export_tables($params);
 
 // Generate and save files to filesdir.
 $exportservice = new export_service();

@@ -52,18 +52,20 @@ class migration extends \local_intellidata\entities\migration {
 
         list($rownumber, $rownumberselect) = DBHelper::get_row_number();
 
-        $select = ($count) ?
-            "SELECT COUNT(qa.id) as recordscount" :
-            "SELECT $rownumber AS uid, qa.id, qa.id AS attemptid," .
-                "qua.questionid, qas.state, a.value, qas.fraction, qa.timemodified";
-
         $sqlwhere1 = $sqlwhere2 = '';
         if ($timestart > 0) {
             $sqlwhere1 = " AND qas.timecreated > $timestart ";
             $sqlwhere2 = " AND qa.timemodified > $timestart ";
         }
 
-        $sql = "$select
+        if ($count) {
+            $sql = "SELECT COUNT(qa.id) as recordscount
+                      FROM {quiz_attempts} qa
+                     WHERE qa.id IS NOT NULL $sqlwhere2";
+            $params = [];
+        } else {
+
+            $sql = "SELECT $rownumber AS uid, qa.id, qa.id AS attemptid, qua.questionid, qas.state, a.value, qas.fraction, qa.timemodified
                 FROM $rownumberselect {quiz_attempts} qa
                 JOIN {question_attempts} qua ON qua.questionusageid=qa.uniqueid
                 JOIN {question_attempt_steps} qas ON qas.questionattemptid=qua.id
@@ -73,17 +75,18 @@ class migration extends \local_intellidata\entities\migration {
                         WHERE qasd.name=:name $sqlwhere1) a ON a.questionattemptid=qas.questionattemptid
                WHERE qas.fraction IS NOT NULL $sqlwhere2";
 
-        if (!$count) {
-            $sql .= " ORDER BY qa.id";
+            $params = [
+                'name' => 'answer'
+            ];
         }
-
-        $params = [
-            'name' => 'answer'
-        ];
 
         if ($condition) {
             $sql .= " AND " . $condition;
             $params += $conditionparams;
+        }
+
+        if (!$count) {
+            $sql .= " ORDER BY qa.id";
         }
 
         return [$sql, $params];

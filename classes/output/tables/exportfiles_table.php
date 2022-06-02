@@ -240,19 +240,59 @@ class exportfiles_table extends \table_sql {
             $output .= \html_writer::link($exporturl, get_string('exportfiles', 'local_intellidata'),
                 ['class' => 'btn btn-primary mr-1']);
 
-            $output .= $renderer->render_from_template_with_validation(
-                'core_admin/header_search_input',
-                '/admin/templates/header_search_input',
-                [
-                    'action' => $PAGE->url,
-                    'query' => $PAGE->url->get_param('query')
-                ]
-            );
+            // Render search form.
+            $output .= $this->search_form();
 
             $output .= \html_writer::end_tag('div');
         }
 
         return $output;
+    }
+
+    /**
+     * This function is not part of the public api.
+     */
+    public function print_nothing_to_display() {
+        global $OUTPUT;
+
+        // Render the dynamic table header.
+        echo $this->get_dynamic_table_html_start();
+
+        // Render button to allow user to reset table preferences.
+        echo $this->render_reset_button();
+
+        $this->print_initials_bar();
+
+        echo html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
+
+        // Render search form.
+        echo $this->search_form();
+
+        echo html_writer::end_tag('div');
+
+        echo $OUTPUT->heading(get_string('nothingtodisplay'));
+
+        // Render the dynamic table footer.
+        echo $this->get_dynamic_table_html_end();
+    }
+
+    /**
+     * Get the html for the search form
+     *
+     * Usually only use internally
+     */
+    public function search_form() {
+        global $PAGE;
+
+        $renderer = $PAGE->get_renderer('local_intellidata');
+
+        return $renderer->render_from_template(
+            'local_intellidata/header_search_input',
+            [
+                'action' => $PAGE->url,
+                'query' => $PAGE->url->get_param('query')
+            ]
+        );
     }
 
 }
