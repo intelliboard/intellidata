@@ -30,7 +30,8 @@ $tasks = [
         'hour' => '*',
         'day' => '*',
         'month' => '*',
-        'dayofweek' => '*'
+        'dayofweek' => '*',
+        'disabled' => 1
     ],
     [
         'classname' => 'local_intellidata\task\cleaner_task',
