@@ -724,26 +724,22 @@ function xmldb_local_intellidata_upgrade($oldversion) {
 
         $table = new xmldb_table("local_intellidata_export_ids");
 
-        // Remove key from local_intellidata_export_ids table.
-        $key = new xmldb_key('datatype_dataid_unique', XMLDB_KEY_UNIQUE, ['datatype', 'dataid']);
-        $dbman->drop_key($table, $key);
-
-        $field = new xmldb_field('datatype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
         try {
+            $key = new xmldb_key('datatype_dataid_unique', XMLDB_KEY_UNIQUE, ['datatype', 'dataid']);
+            // Remove key from local_intellidata_export_ids table.
+            $dbman->drop_key($table, $key);
+
+            $field = new xmldb_field('datatype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
             $dbman->change_field_type($table, $field);
+
+            $field = new xmldb_field('dataid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $dbman->change_field_type($table, $field);
+
+            // Add key and index for local_intellidata_export_ids table.
+            $dbman->add_key($table, $key);
         } catch (moodle_exception $e) {
             DebugHelper::error_log($e->getMessage());
         }
-
-        $field = new xmldb_field('dataid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        try {
-            $dbman->change_field_type($table, $field);
-        } catch (moodle_exception $e) {
-            DebugHelper::error_log($e->getMessage());
-        }
-
-        // Add key and index for local_intellidata_export_ids table.
-        $dbman->add_key($table, $key);
 
         // Adding keys to table local_intellidata_config.
         $table = new xmldb_table("local_intellidata_config");

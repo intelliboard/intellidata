@@ -60,19 +60,20 @@ class migration extends \local_intellidata\entities\migration {
 
         if ($count) {
             $sql = "SELECT COUNT(qa.id) as recordscount
-                      FROM {quiz_attempts} qa
-                     WHERE qa.id IS NOT NULL $sqlwhere2";
+                    FROM {quiz_attempts} qa
+                        JOIN {question_attempts} qua ON qua.questionusageid = qa.uniqueid
+                        JOIN {question_attempt_steps} qas ON qas.questionattemptid = qua.id
+                    WHERE qas.fraction IS NOT NULL $sqlwhere2";
             $params = [];
         } else {
-
             $sql = "SELECT $rownumber AS uid, qa.id, qa.id AS attemptid, qua.questionid, qas.state, a.value, qas.fraction, qa.timemodified
                 FROM $rownumberselect {quiz_attempts} qa
-                JOIN {question_attempts} qua ON qua.questionusageid=qa.uniqueid
-                JOIN {question_attempt_steps} qas ON qas.questionattemptid=qua.id
+                JOIN {question_attempts} qua ON qua.questionusageid = qa.uniqueid
+                JOIN {question_attempt_steps} qas ON qas.questionattemptid = qua.id
            LEFT JOIN (SELECT qas.questionattemptid, qasd.value
                         FROM {question_attempt_step_data} qasd
-                        JOIN {question_attempt_steps} qas ON qas.id=qasd.attemptstepid
-                        WHERE qasd.name=:name $sqlwhere1) a ON a.questionattemptid=qas.questionattemptid
+                        JOIN {question_attempt_steps} qas ON qas.id = qasd.attemptstepid
+                        WHERE qasd.name=:name $sqlwhere1) a ON a.questionattemptid = qas.questionattemptid
                WHERE qas.fraction IS NOT NULL $sqlwhere2";
 
             $params = [

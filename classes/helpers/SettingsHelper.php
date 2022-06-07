@@ -41,7 +41,7 @@ class SettingsHelper {
         'migrationrecordslimit' => '1000000',
         'migrationwriterecordslimit' => '10000',
         'exportrecordslimit' => '0',
-        'exportfilesduringmigration' => 0,
+        'exportfilesduringmigration' => 1,
         'resetmigrationprogress' => 0,
         'debugenabled' => 0,
         'exportdataformat' => 'csv',
