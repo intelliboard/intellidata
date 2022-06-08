@@ -50,11 +50,12 @@ class migration extends \local_intellidata\entities\migration {
                    WHERE crud IN('c', 'u') AND userid > 0 AND contextinstanceid > 0 $where";
         } else {
             $sql = "SELECT
-                    max(id) as id,
+                    MAX(id) as id,
                     userid,
                     contextlevel,
                     contextinstanceid,
-                    COUNT(contextinstanceid) AS participations
+                    COUNT(contextinstanceid) AS participations,
+                    MAX(timecreated) AS last_participation
                 FROM {logstore_standard_log}
                WHERE crud IN('c', 'u') AND userid>0 AND contextinstanceid>0 $where
             GROUP BY userid, contextinstanceid, contextlevel";
