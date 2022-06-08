@@ -50,6 +50,7 @@ class observer {
                 $record->userid = $eventdata['userid'];
                 $record->type = ($eventdata['contextlevel'] == CONTEXT_MODULE) ? 'activity' : 'course';
                 $record->objectid = $eventdata['contextinstanceid'];
+                $record->last_participation = time();
 
                 self::export_event($record, $eventdata);
             }

@@ -63,6 +63,11 @@ class participation extends \local_intellidata\entities\entity {
                 'description' => 'Count of participations.',
                 'default' => 1,
             ),
+            'last_participation' => array(
+                'type' => PARAM_INT,
+                'description' => 'Date of last participation.',
+                'default' => 0,
+            ),
         );
     }
 
