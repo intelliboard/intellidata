@@ -133,7 +133,7 @@ class export_service {
 
         if (!empty($params['datatype']) && isset($alldatatypes[$params['datatype']])) {
             $datatypes = [$params['datatype'] => $alldatatypes[$params['datatype']]];
-        } else if(!empty($params['datatype']) && !isset($alldatatypes[$params['datatype']])) {
+        } else if (!empty($params['datatype']) && !isset($alldatatypes[$params['datatype']])) {
             $datatypes = [];
         } else {
             $datatypes = $this->datatypes;
