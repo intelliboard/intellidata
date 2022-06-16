@@ -38,5 +38,33 @@ class attemptsmigration extends \local_intellidata\entities\migration {
     public $entity      = '\local_intellidata\entities\quizzes\attempt';
     public $eventname   = '\mod_quiz\event\attempt_started';
     public $table       = 'quiz_attempts';
+    public $tablealias  = 'qa';
 
+
+    /**
+     * @param false $count
+     * @param null $condition
+     * @param array $conditionparams
+     * @return array
+     */
+    public function get_sql($count = false, $condition = null, $conditionparams = []) {
+        $where = 'qa.id>0';
+        $params = [];
+
+        $select = ($count) ?
+            "SELECT COUNT(qa.id) as recordscount" :
+            "SELECT qa.id, qa.quiz, qa.userid, qa.attempt, qa.timestart, qa.timefinish, qa.state, (qa.sumgrades/q.sumgrades) * q.grade AS sumgrades";
+
+        $sql = "$select
+                FROM {quiz_attempts} qa
+                JOIN {quiz} q ON q.id=qa.quiz
+               WHERE $where";
+
+        if ($condition) {
+            $sql .= " AND " . $condition;
+            $params += $conditionparams;
+        }
+
+        return [$sql, $params];
+    }
 }
