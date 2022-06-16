@@ -63,7 +63,7 @@ class observer {
         $attempt = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
         $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
         $attempt->crud = $eventdata['crud'];
-        $attempt->sumgrades = ($attempt->sumgrades/$quiz->sumgrades) * $quiz->grade;
+        $attempt->sumgrades = ($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade;
 
         $entity = new attempt($attempt, $fields);
         $data = $entity->export();
