@@ -29,6 +29,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\events_service;
+use local_intellidata\task\export_adhoc_task;
+use core\task\manager;
 
 /**
  * Event observer for transcripts.
@@ -64,10 +66,7 @@ class observer {
      * @param \core\event\grade_letter_updated $event
      */
     public static function grade_letter_updated(\core\event\grade_letter_updated $event) {
-
-        $eventdata = $event->get_data();
-
-        self::update_export_grade($eventdata);
+        self::create_export_task();
     }
 
     /**
@@ -76,27 +75,7 @@ class observer {
      * @param \core\event\grade_letter_deleted $event
      */
     public static function grade_letter_deleted(\core\event\grade_letter_deleted $event) {
-        global $CFG, $DB;
-
-        require_once($CFG->libdir . '/gradelib.php');
-
-        $eventdata = $event->get_data();
-
-        $grades = $DB->get_records_sql('SELECT *
-                                              FROM {grade_grades}
-                                             WHERE finalgrade IS NOT NULL');
-
-        if (!$grades) {
-            return;
-        }
-
-        foreach ($grades as $grade) {
-            $gradeitem = \grade_item::fetch(['id' => $grade->itemid]);
-
-            $data = self::prepare_data($grade, $gradeitem);
-
-            self::export_event($data, $eventdata);
-        }
+        self::create_export_task();
     }
 
     /**
@@ -105,57 +84,20 @@ class observer {
      * @param \core\event\grade_letter_created $event
      */
     public static function grade_letter_created(\core\event\grade_letter_created $event) {
-
-        $eventdata = $event->get_data();
-
-        self::update_export_grade($eventdata);
+        self::create_export_task();
     }
 
     /**
-     * @param  $eventdata
+     * @return void
      */
-    public static function update_export_grade($eventdata) {
-        global $CFG, $DB;
+    public static function create_export_task() {
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [usergrade::TYPE],
+            'callbackurl' => ''
+        ]);
 
-        require_once($CFG->libdir . '/gradelib.php');
-
-        $sgradeletter = $DB->get_record('grade_letters', ['id' => $eventdata['objectid']]);
-        if (!$sgradeletter) {
-            return;
-        }
-
-        $from = $sgradeletter->lowerboundary;
-        $sgradeletterto = $DB->get_record_sql('SELECT lowerboundary
-                                                     FROM {grade_letters}
-                                                    WHERE lowerboundary > :from
-                                                 ORDER BY lowerboundary ASC LIMIT 1',
-            ['from' => $from]
-        );
-
-        $to = '';
-        $params = [
-            'from' => $from
-        ];
-        if ($sgradeletterto) {
-            $to = 'AND finalgrade <= :to';
-            $params['to'] = $sgradeletterto->lowerboundary;
-        }
-
-        $grades = $DB->get_records_sql('SELECT *
-                                              FROM {grade_grades}
-                                             WHERE finalgrade > :from ' . $to . ' AND finalgrade IS NOT NULL', $params);
-
-        if (!$grades) {
-            return;
-        }
-
-        foreach ($grades as $grade) {
-            $gradeitem = \grade_item::fetch(['id' => $grade->itemid]);
-
-            $data = self::prepare_data($grade, $gradeitem);
-
-            self::export_event($data, $eventdata);
-        }
+        manager::queue_adhoc_task($exporttask);
     }
 
     public static function prepare_data($gradeobject, $gradeitem) {

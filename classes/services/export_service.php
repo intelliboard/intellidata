@@ -130,8 +130,14 @@ class export_service {
 
         $filesdeleted = 0;
         $alldatatypes = $this->datatypes;
-        $datatypes = (!empty($params['datatype']) and isset($alldatatypes[$params['datatype']])) ?
-            [$params['datatype'] => $alldatatypes[$params['datatype']]] : $this->datatypes;
+
+        if (!empty($params['datatype']) && isset($alldatatypes[$params['datatype']])) {
+            $datatypes = [$params['datatype'] => $alldatatypes[$params['datatype']]];
+        } else if (!empty($params['datatype']) && !isset($alldatatypes[$params['datatype']])) {
+            $datatypes = [];
+        } else {
+            $datatypes = $this->datatypes;
+        }
 
         if (count($datatypes)) {
             foreach ($datatypes as $key => $datatype) {
