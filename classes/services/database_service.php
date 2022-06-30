@@ -58,6 +58,7 @@ class database_service {
      */
     public function set_all_tables() {
         $this->tables += datatypes_service::get_required_datatypes();
+        $this->tables += datatypes_service::get_logs_datatypes();
     }
 
     /**

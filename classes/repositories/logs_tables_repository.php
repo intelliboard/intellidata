@@ -26,10 +26,16 @@
 
 namespace local_intellidata\repositories;
 
-use local_intellidata\services\export_service;
+use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\repositories\config_repository;
 use local_intellidata\services\datatypes_service;
+use local_intellidata\services\export_service;
 
-class unified_tables_repository extends base_tables_repository {
+class logs_tables_repository extends base_tables_repository {
+
+    const TIMEMODIFIED_FIELD = 'timecreated';
+    const TABLE = 'logstore_standard_log';
+
     /**
      * @param $dbtables
      * @return mixed
@@ -54,8 +60,8 @@ class unified_tables_repository extends base_tables_repository {
     public static function get_excluded_tables($dbtables) {
         $tablestodelete = [];
 
-        foreach (self::get_defined_tables() as $table) {
-            self::validate_single_table($dbtables, $table, $tablestodelete);
+        foreach (self::get_defined_tables() as $tablename => $datatype) {
+            self::validate_table($dbtables, $tablename, $tablestodelete);
         }
 
         return $tablestodelete;
@@ -66,7 +72,7 @@ class unified_tables_repository extends base_tables_repository {
      * @param $table
      * @param $keystodelete
      */
-    private static function validate_single_table($dbtables, $table, &$keystodelete) {
+    private static function validate_table($dbtables, $table, &$keystodelete) {
         if (($key = array_search($table, $dbtables)) !== false) {
             $keystodelete[$key] = $table;
         }
@@ -75,51 +81,31 @@ class unified_tables_repository extends base_tables_repository {
     /**
      * @return string[]
      */
-    public static function get_defined_tables() {
-
-        $tables = [];
-        $exportservice = new export_service();
-
-        foreach ($exportservice->datatypes as $datatype) {
-            $migration = datatypes_service::init_migration($datatype['migration']);
-
-            if ($migration instanceof \local_intellidata\entities\migration) {
-                $tables[$migration->table] = $migration->table;
-            }
-        }
-
-        return $tables;
+    protected static function get_defined_tables() {
+        return config_repository::get_logs_datatypes(datatypeconfig::STATUS_DISABLED);
     }
 
     /**
-     * @return array
+     * @return string[]
      */
-    public static function get_tables_fields() {
+    public static function get_logtable_fields() {
+        return [
+            'eventname',
+            'component',
+            'action',
+            'target',
+            'objecttable',
+            'objectid'
+        ];
+    }
 
-        $exportservice = new export_service();
-        $datatypes = $exportservice->get_unified_datatypes();
+    public static function get_tables_fields() {
         $entities = [];
 
-        foreach ($datatypes as $datatype) {
+        foreach (datatypes_service::get_logs_datatypes() as $datatype) {
 
             $entityclass = datatypes_service::get_datatype_entity_class($datatype['entity']);
             $entityfields = $entityclass::properties_definition();
-
-            $entityfields['crud'] = [
-                'type' => PARAM_TEXT,
-                'description' => 'Event crud.',
-                'default' => 'с',
-                'null' => false
-            ];
-
-            if (!empty($datatype['observer'])) {
-                $entityfields['eventname'] = [
-                    'type' => PARAM_TEXT,
-                    'description' => 'Event name.',
-                    'default' => '',
-                    'null' => false
-                ];
-            }
 
             $entities[$datatype['name']] = [
                 'name' => $datatype['name'],

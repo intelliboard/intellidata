@@ -36,6 +36,7 @@ require_once($CFG->libdir.'/tablelib.php');
 class exportlogs_table extends \table_sql {
 
     public $fields     = [];
+    public $tabletypes = null;
     protected $prefs   = [];
     protected $context = null;
 
@@ -43,6 +44,7 @@ class exportlogs_table extends \table_sql {
         global $PAGE, $DB;
 
         $this->context = \context_system::instance();
+        $this->tabletypes = datatypeconfig::get_tabletypes();
         parent::__construct($uniqueid);
 
         $this->fields = $this->get_fields();
@@ -139,9 +141,9 @@ class exportlogs_table extends \table_sql {
      * @throws \coding_exception
      */
     public function col_tabletype($values) {
-        return ($values->tabletype == datatypeconfig::TABLETYPE_REQUIRED)
-            ? get_string('required', 'local_intellidata')
-            : get_string('optional', 'local_intellidata');
+        return isset($this->tabletypes[$values->tabletype])
+            ? $this->tabletypes[$values->tabletype]
+            : '';
     }
 
     /**

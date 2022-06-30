@@ -66,7 +66,7 @@ class migration_service {
     public function process($params = null, $cronprocessing = false) {
 
         $alltables = $this->tables;
-        $tables = (!empty($params['datatype']) and isset($alltables[$params['datatype']])) ?
+        $tables = (!empty($params['datatype']) && isset($alltables[$params['datatype']])) ?
             [$params['datatype'] => $alltables[$params['datatype']]] : $this->tables;
 
         if (count($tables)) {
@@ -97,7 +97,7 @@ class migration_service {
     public function export_table($datatype, $params, $cronprocessing) {
 
         $tablename = $datatype['name'];
-        $migration = datatypes_service::init_migration($datatype['migration']);
+        $migration = datatypes_service::init_migration($datatype);
         $params['limit'] = $this->recordslimits;
 
         if (!$migration->can_migrate()) {

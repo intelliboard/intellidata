@@ -749,5 +749,16 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022053107, 'local', 'intellidata');
     }
 
+    if ($oldversion < 2022062800) {
+        $table = new xmldb_table('local_intellidata_config');
+        $field = new xmldb_field('params', XMLDB_TYPE_TEXT, null, null, false, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2022062800, 'local', 'intellidata');
+    }
+
     return true;
 }

@@ -20,6 +20,7 @@ use local_intellidata\services\dbschema_service;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\repositories\required_tables_repository;
+use local_intellidata\repositories\logs_tables_repository;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -122,10 +123,18 @@ class local_intellidata_dbschemalib extends external_api {
         );
 
         $encryptionservice = new encryption_service();
-        $utrepository = new required_tables_repository();
+        $reqrepository = new required_tables_repository();
+        $ltrepository = new logs_tables_repository();
+
+        $tables = $reqrepository->get_tables_fields();
+        $logstables = $ltrepository->get_tables_fields();
+
+        if (count($logstables)) {
+            $tables = array_merge($tables, $logstables);
+        }
 
         return [
-            'data' => $encryptionservice->encrypt(json_encode($utrepository->get_tables_fields())),
+            'data' => $encryptionservice->encrypt(json_encode($tables)),
             'status' => apilib::STATUS_SUCCESS
         ];
     }
@@ -141,5 +150,7 @@ class local_intellidata_dbschemalib extends external_api {
             )
         );
     }
+
+
 
 }

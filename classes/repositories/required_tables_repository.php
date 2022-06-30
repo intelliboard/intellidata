@@ -80,7 +80,7 @@ class required_tables_repository extends base_tables_repository {
         $tables = [];
 
         foreach (datatypes_service::get_required_datatypes() as $datatype) {
-            $migration = datatypes_service::init_migration($datatype['migration'], null, false);
+            $migration = datatypes_service::init_migration($datatype, null, false);
 
             if ($migration instanceof \local_intellidata\entities\migration) {
                 $tables[$migration->table] = $migration->table;

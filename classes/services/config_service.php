@@ -122,6 +122,8 @@ class config_service {
             $this->datatypes[$datatypename]['rewritable'] = !$config->filterbyid &&
                 (!empty($config->rewritable) || empty($this->datatypes[$datatypename]['timemodified_field']));
         }
+
+        $this->datatypes[$datatypename]['params'] = $config->params;
     }
 
     /**

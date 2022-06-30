@@ -26,6 +26,7 @@
 namespace local_intellidata\services;
 
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\repositories\logs_tables_repository;
 use local_intellidata\services\dbschema_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\config_service;
@@ -37,11 +38,11 @@ class datatypes_service {
      * @param $datatype
      * @return mixed|null
      */
-    public static function init_migration($migrationpath, $forceformat = null, $init = true) {
-        $migrationclass = '\\local_intellidata\\entities\\' . $migrationpath;
+    public static function init_migration($datatype, $forceformat = null, $init = true) {
+        $migrationclass = '\\local_intellidata\\entities\\' . $datatype['migration'];
 
         if (class_exists($migrationclass)) {
-            return new $migrationclass($forceformat, $init);
+            return new $migrationclass($datatype, $forceformat, $init);
         }
 
         return null;
@@ -85,7 +86,8 @@ class datatypes_service {
         // Get datatypes with default configuration.
         $defaultdatatypes = array_merge(
             self::get_required_datatypes(),
-            self::get_optional_datatypes_for_export()
+            self::get_optional_datatypes_for_export(),
+            self::get_logs_datatypes()
         );
 
         // Apply configuration from database.
@@ -130,6 +132,7 @@ class datatypes_service {
 
         $datatypes = array_merge(
             self::get_required_datatypes(),
+            self::get_logs_datatypes(),
             self::get_all_optional_datatypes()
         );
 
@@ -482,6 +485,11 @@ class datatypes_service {
             return self::get_required_datatypes()[$datatypename];
         }
 
+        $logsdatatypes = self::get_logs_datatypes();
+        if (isset($logsdatatypes[$datatypename])) {
+            return $logsdatatypes[$datatypename];
+        }
+
         return self::format_optional_datatypes($datatypename);
     }
 
@@ -542,6 +550,46 @@ class datatypes_service {
             'filterbyid' => $filterbyidconf,
             'rewritable' => $rewritableconf,
             'databaseexport' => true
+        ];
+
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    public static function get_logs_datatypes() {
+
+        $exportlogrepository = new export_log_repository();
+        $logsdatatypes = $exportlogrepository->get_logs_datatypes();
+
+        $datatypes = [];
+
+        if (count($logsdatatypes)) {
+            foreach ($logsdatatypes as $datatype => $noneeded) {
+                $datatypes[$datatype] = self::format_logs_datatypes($datatype);
+            }
+        }
+
+        return $datatypes;
+    }
+
+
+    /**
+     * @return array
+     */
+    private static function format_logs_datatypes($datatype) {
+
+        $data = [
+            'name' => $datatype,
+            'tabletype' => datatypeconfig::TABLETYPE_LOGS,
+            'migration' => 'logs\migration',
+            'entity' => 'logs\log',
+            'observer' => 'logs\observer',
+            'timemodified_field' => logs_tables_repository::TIMEMODIFIED_FIELD,
+            'filterbyid' => false,
+            'rewritable' => false,
+            'databaseexport' => false
         ];
 
         return $data;

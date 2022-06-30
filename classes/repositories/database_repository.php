@@ -134,7 +134,7 @@ class database_repository {
                   ORDER BY id";
         } else if (isset($datatype['migration'])) {
 
-            $migration = datatypes_service::init_migration($datatype['migration']);
+            $migration = datatypes_service::init_migration($datatype);
             list($sql, $params) = $migration->get_sql(false, null, [], $lastexportedtime);
 
             $sqlparams = array_merge($sqlparams, $params);
@@ -164,8 +164,15 @@ class database_repository {
                 self::init();
             }
 
+            $isprepareddata = false;
+            if (!empty($datatype['migration'])) {
+                $migration = datatypes_service::init_migration($datatype);
+                $records = $migration->prepare_records_iterable($records);
+                $isprepareddata = true;
+            }
+
             foreach ($records as $record) {
-                $data[] = self::prepare_entity_data($datatype, $record);
+                $data[] = self::prepare_entity_data($datatype, $record, $isprepareddata);
 
                 // Export data by chanks.
                 if ($i >= self::$writerecordslimits) {
@@ -209,17 +216,21 @@ class database_repository {
     }
 
     /**
-     * @param $datatype
-     * @param $data
+     * @param array $datatype
+     * @param \stdClass $data
+     * @param bool $isentitydata
+     *
      * @return false|string
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
-    private static function prepare_entity_data($datatype, $data) {
-        $entity = datatypes_service::init_entity($datatype, $data);
-        $entitydata = $entity->after_export($entity->export());
+    private static function prepare_entity_data($datatype, $data, $isentitydata = false) {
+        if (!$isentitydata) {
+            $entity = datatypes_service::init_entity($datatype, $data);
+            $data = $entity->after_export($entity->export());
+        }
 
-        return StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $entitydata);
+        return StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $data);
     }
 
     /**
