@@ -48,9 +48,11 @@ abstract class migration {
     public $table               = null;
     public $tablealias          = null;
     public $crud                = 'c';
+    public $datatype            = null;
 
-    public function __construct(string $forceformat = null, $init = true) {
+    public function __construct($datatype, string $forceformat = null, $init = true) {
         if ($init) {
+            $this->datatype = $datatype;
             $this->encryptionservice = new encryption_service();
             $this->migrationservice = new migration_service($forceformat);
             $this->writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
@@ -122,6 +124,13 @@ abstract class migration {
         return [$sql, $sqlparams];
     }
 
+    /**
+     * Prepare all records.
+     *
+     * @param $records
+     * @return string
+     * @throws \coding_exception
+     */
     protected function prepare_records($records) {
         $data = [];
 
@@ -135,6 +144,12 @@ abstract class migration {
         return implode(PHP_EOL, $data);
     }
 
+    /**
+     * Prepare records.
+     *
+     * @param $records
+     * @return \Generator
+     */
     public function prepare_records_iterable($records) {
         foreach ($records as $record) {
             $entity = new $this->entity($record);
@@ -148,6 +163,14 @@ abstract class migration {
         }
     }
 
+    /**
+     * Prepare records for export.
+     *
+     * @param $records
+     * @param $tablename
+     * @return bool
+     * @throws \coding_exception
+     */
     private function prepare_export_records($records, $tablename) {
         $data = [];
         $i = 0;
@@ -174,12 +197,24 @@ abstract class migration {
         return true;
     }
 
+    /**
+     * Prepare data for export.
+     *
+     * @param $data
+     * @return false|string
+     */
     private function preparedata($data) {
         return StorageHelper::format_data(
             $this->migrationservice->exportdataformat, $data
         );
     }
 
+    /**
+     * Save migration logs.
+     *
+     * @param $record
+     * @throws \coding_exception
+     */
     public function save_log($record) {
         $entity = new $this->entity();
 
@@ -191,6 +226,12 @@ abstract class migration {
         );
     }
 
+    /**
+     * Validate if datatype is migratable.
+     *
+     * @return bool
+     * @throws \ddl_exception
+     */
     public function can_migrate() {
         global $DB;
         $dbman = $DB->get_manager();
@@ -198,15 +239,37 @@ abstract class migration {
         return $dbman->table_exists($this->table);
     }
 
+    /**
+     * Set datatype as migrated.
+     *
+     * @throws \coding_exception
+     */
     public function set_migrated() {
         $entity = new $this->entity();
         $this->exportlogrepository = new export_log_repository();
         $this->exportlogrepository->save_migrated($entity::TYPE);
     }
 
+    /**
+     * Validate if table exists.
+     *
+     * @param $tablename
+     * @return bool
+     * @throws \ddl_exception
+     */
     public static function table_exists($tablename) {
         global $DB;
 
         return $DB->get_manager()->table_exists($tablename);
+    }
+
+    /**
+     * Set datatype.
+     *
+     * @param $datatype
+     * @return mixed
+     */
+    public function set_datatype($datatype) {
+        return $this->datatype = $datatype;
     }
 }

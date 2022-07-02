@@ -265,3 +265,9 @@ $string['privacy:metadata:local_intellidata_config:usermodified'] = 'Admin ID wh
 $string['privacy:metadata:local_intellidata_config:timecreated'] = 'Timestemp record creation.';
 $string['privacy:metadata:local_intellidata_config:timemodified'] = 'Timestamp when record updated.';
 
+$string['createlogsdatatype'] = 'Create logs datatype';
+$string['logs'] = 'Logs';
+$string['datatypealreadyexists'] = 'The Data Type already exists.';
+$string['paramsshouldbespecified'] = 'Params should be specified.';
+$string['deletecordconfirmation'] = 'Are you sure want to delete this datatype?';
+$string['deletemsg'] = 'Record deleted successfully';

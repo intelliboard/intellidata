@@ -43,6 +43,7 @@ class datatypeconfig extends base {
     /** @var int The table type. */
     const TABLETYPE_REQUIRED = 0;
     const TABLETYPE_OPTIONAL = 1;
+    const TABLETYPE_LOGS = 2;
 
     /** @var int The datatype status. */
     const STATUS_ENABLED = 1;
@@ -59,7 +60,11 @@ class datatypeconfig extends base {
                 'type' => PARAM_INT,
                 'description' => 'Table type.',
                 'default' => self::TABLETYPE_OPTIONAL,
-                'choices' => [self::TABLETYPE_REQUIRED, self::TABLETYPE_OPTIONAL]
+                'choices' => [
+                    self::TABLETYPE_REQUIRED,
+                    self::TABLETYPE_OPTIONAL,
+                    self::TABLETYPE_LOGS
+                ]
             ],
             'datatype' => [
                 'type' => PARAM_TEXT,
@@ -107,6 +112,36 @@ class datatypeconfig extends base {
                 'default' => 0,
                 'description' => 'Record modify time.',
             ],
+            'params' => [
+                'type' => PARAM_TEXT,
+                'default' => '',
+                'null' => NULL_ALLOWED,
+                'description' => 'Additional configuration for datatype.',
+            ],
         );
+    }
+
+    /**
+     * Get list of tables types.
+     *
+     * @return array
+     * @throws \coding_exception
+     */
+    public static function get_tabletypes() {
+        return [
+            self::TABLETYPE_REQUIRED => get_string('required', 'local_intellidata'),
+            self::TABLETYPE_OPTIONAL => get_string('optional', 'local_intellidata'),
+            self::TABLETYPE_LOGS => get_string('logs', 'local_intellidata')
+        ];
+    }
+
+    /**
+     * Return unserialized params array.
+     *
+     * @return mixed|string
+     * @throws \coding_exception
+     */
+    protected function get_params() {
+        return !empty($this->raw_get('params')) ? json_decode($this->raw_get('params')) : [];
     }
 }

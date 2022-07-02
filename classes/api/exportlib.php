@@ -318,7 +318,9 @@ class local_intellidata_exportlib extends external_api {
         $exportservice = new export_service();
         $datatype = $exportservice->get_datatype($params['datatype']);
 
-        $migration = datatypes_service::init_migration($datatype['migration'], 'json');
+        $params['start'] = 0;
+        $params['limit'] = 100000;
+        $migration = datatypes_service::init_migration($datatype, 'json');
         $data = $migration->get_records($params);
 
         return [

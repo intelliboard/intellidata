@@ -44,6 +44,7 @@ class export_logs extends base {
     /** Tables types */
     const TABLE_TYPE_UNIFIED = 0;
     const TABLE_TYPE_CUSTOM = 1;
+    const TABLE_TYPE_LOGS = 2;
 
     /**
      * Return the definition of the properties of this model.

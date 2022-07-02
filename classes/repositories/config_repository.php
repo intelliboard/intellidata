@@ -39,7 +39,10 @@ class config_repository {
 
         if (count($dbconfig)) {
             foreach ($dbconfig as $conf) {
-                $config[$conf->get('datatype')] = $conf->to_record();
+                $confdata = $conf->to_record();
+                $confdata->params = $conf->get('params');
+
+                $config[$conf->get('datatype')] = $confdata;
             }
         }
 
@@ -81,6 +84,32 @@ class config_repository {
         if (count($dbconfig)) {
             foreach ($dbconfig as $conf) {
                 $config[$conf->get('datatype')] = $conf->to_record();
+            }
+        }
+
+        return $config;
+    }
+
+    /**
+     * @param array $params
+     * @return config[]
+     */
+    public static function get_logs_datatypes($status = null) {
+        $config = [];
+        $params = ['tabletype' => datatypeconfig::TABLETYPE_LOGS];
+
+        if ($status !== null) {
+            $params['status'] = $status;
+        }
+
+        $dbconfig = datatypeconfig::get_records($params);
+
+        if (count($dbconfig)) {
+            foreach ($dbconfig as $conf) {
+                $configdata = $conf->to_record();
+                $configdata->params = $conf->get('params');
+
+                $config[$conf->get('datatype')] = $configdata;
             }
         }
 

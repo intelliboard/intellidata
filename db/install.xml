@@ -150,6 +150,7 @@
         <FIELD NAME="usermodified" TYPE="int" LENGTH="11" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="11" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="11" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="params" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -43,7 +43,7 @@ class export_log_repository {
         $datatypeconfig = datatypes_service::get_datatype($datatype);
 
         if (!empty($datatypeconfig['migration'])) {
-            $migration = datatypes_service::init_migration($datatypeconfig['migration']);
+            $migration = datatypes_service::init_migration($datatypeconfig);
 
             return $migration->get_records_count($lastrecordid);
         }
@@ -168,10 +168,16 @@ class export_log_repository {
         global $DB;
 
         return array_keys(
-            $DB->get_records_menu(
-                'local_intellidata_export_log',
-                ['migrated' => 1, 'tabletype' => export_logs::TABLE_TYPE_UNIFIED],
-            '', 'datatype'
+            $DB->get_records_sql_menu(
+                'SELECT datatype, id
+                       FROM {local_intellidata_export_log}
+                      WHERE migrated = :migrated
+                        AND (tabletype = :tabletypeunified OR tabletype = :tabletypelogs)',
+                [
+                    'migrated' => 1,
+                    'tabletypeunified' => export_logs::TABLE_TYPE_UNIFIED,
+                    'tabletypelogs' => export_logs::TABLE_TYPE_LOGS
+                ]
             )
         );
     }
@@ -221,6 +227,62 @@ class export_log_repository {
             }
 
             $result[$datatype] = $record;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get all logs datatypes to process.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_logs_datatypes() {
+        $records = export_logs::get_records(['tabletype' => export_logs::TABLE_TYPE_LOGS]);
+        $config = config_repository::get_logs_datatypes();
+
+        $result = [];
+
+        foreach ($records as $record) {
+            $datatype = $record->get('datatype');
+
+            // Exclude disabled datatypes.
+            if (isset($config[$datatype]) && $config[$datatype]->status == datatypeconfig::STATUS_DISABLED) {
+                continue;
+            }
+
+            $result[$datatype] = $record;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get all logs datatypes to process.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public function get_logs_datatypes_with_config() {
+        $result = [];
+        $records = export_logs::get_records(['tabletype' => export_logs::TABLE_TYPE_LOGS]);
+
+        if (!count($records)) {
+            return $result;
+        }
+        $config = config_repository::get_logs_datatypes();
+
+        foreach ($records as $record) {
+            $datatype = $record->get('datatype');
+
+            // Exclude disabled datatypes.
+            if (isset($config[$datatype]) && $config[$datatype]->status == datatypeconfig::STATUS_DISABLED) {
+                continue;
+            }
+
+            $result[$datatype] = $record->to_record();
+            $result[$datatype]->params = $config[$datatype]->params;
         }
 
         return $result;
