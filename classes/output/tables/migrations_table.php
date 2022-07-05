@@ -26,6 +26,7 @@
 namespace local_intellidata\output\tables;
 
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\services\datatypes_service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -121,38 +122,26 @@ class migrations_table {
     public function get_record($datatypename, $datatype = []) {
         $exportlogrepository = new export_log_repository();
         $tabledatatypes = $exportlogrepository->get_assoc_datatypes('datatype');
-        $migrationclass = '';
 
-        if (isset($datatype['migration'])) {
-            $migrationclass = sprintf(self::MIGRATION_PREFIX_PATH, $datatype['migration']);
-        }
+        if (!empty($datatype['migration'])) {
 
-        if (!$migrationclass || !class_exists($migrationclass)) {
-            $migrationclass = sprintf(self::MIGRATION_PATH, $datatypename);
-        }
+            $item = array_fill_keys(array_keys($this->headers), '-');
+            $item['datatype'] = $datatypename;
 
-        if (class_exists($migrationclass)) {
-            $migration = new $migrationclass();
+            if (isset($tabledatatypes[$datatypename])) {
+                $tablerecord = $tabledatatypes[$datatypename];
 
-            if ($migration->can_migrate()) {
-                $item = array_fill_keys(array_keys($this->headers), '-');
-                $item['datatype'] = $datatypename;
-
-                if (isset($tabledatatypes[$datatypename])) {
-                    $tablerecord = $tabledatatypes[$datatypename];
-
-                    if ($tablerecord->get('recordscount')) {
-                        $item['status'] = $this->get_status($tablerecord->get('migrated'));
-                        $item['progress'] = (($tablerecord->get('migrated'))
-                                ? $tablerecord->get('recordscount')
-                                : $tablerecord->get('recordsmigrated')) . '/' . $tablerecord->get('recordscount');
-                        $item['timestart'] = $this->col_datetime($tablerecord->get('timestart'));
-                        $item['timeend'] = $this->col_datetime($tablerecord->get('last_exported_time'));
-                    }
+                if ($tablerecord->get('recordscount')) {
+                    $item['status'] = $this->get_status($tablerecord->get('migrated'));
+                    $item['progress'] = (($tablerecord->get('migrated'))
+                            ? $tablerecord->get('recordscount')
+                            : $tablerecord->get('recordsmigrated')) . '/' . $tablerecord->get('recordscount');
+                    $item['timestart'] = $this->col_datetime($tablerecord->get('timestart'));
+                    $item['timeend'] = $this->col_datetime($tablerecord->get('last_exported_time'));
                 }
-
-                return $item;
             }
+
+            return $item;
         }
 
         return null;

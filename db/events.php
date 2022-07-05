@@ -320,5 +320,11 @@ $observers = [
     [
         'eventname' => '\core\event\user_updated',
         'callback' => '\local_intellidata\entities\userinfodatas\observer::user_updated',
+    ],
+
+    // Logs.
+    [
+        'eventname' => '*',
+        'callback' => '\local_intellidata\entities\logs\observer::log_created',
     ]
 ];

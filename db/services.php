@@ -203,6 +203,13 @@ $functions = [
         'description' => 'Get Moodle DB Schema for Unified Tables',
         'type'        => 'read',
     ],
+    'local_intellidata_get_dbschema_logs' => [
+        'classname'   => 'local_intellidata_dbschemalib',
+        'methodname'  => 'get_dbschema_logs',
+        'classpath'   => 'local/intellidata/classes/api/dbschemalib.php',
+        'description' => 'Get Moodle DB Schema for Logs Tables',
+        'type'        => 'read',
+    ],
     'local_intellidata_set_datatype' => [
         'classname'     => 'local_intellidata_exportlib',
         'methodname'    => 'set_datatype',
@@ -251,6 +258,7 @@ $services = [
             'local_intellidata_delete_report',
             'local_intellidata_get_dbschema_custom',
             'local_intellidata_get_dbschema_unified',
+            'local_intellidata_get_dbschema_logs',
             'local_intellidata_set_datatype',
             'local_intellidata_get_tasks_logs',
             'local_intellidata_get_export_logs'

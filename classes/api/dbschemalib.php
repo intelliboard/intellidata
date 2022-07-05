@@ -20,6 +20,7 @@ use local_intellidata\services\dbschema_service;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\repositories\required_tables_repository;
+use local_intellidata\repositories\logs_tables_repository;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -122,10 +123,11 @@ class local_intellidata_dbschemalib extends external_api {
         );
 
         $encryptionservice = new encryption_service();
-        $utrepository = new required_tables_repository();
+        $reqrepository = new required_tables_repository();
+        $tables = $reqrepository->get_tables_fields();
 
         return [
-            'data' => $encryptionservice->encrypt(json_encode($utrepository->get_tables_fields())),
+            'data' => $encryptionservice->encrypt(json_encode($tables)),
             'status' => apilib::STATUS_SUCCESS
         ];
     }
@@ -134,6 +136,61 @@ class local_intellidata_dbschemalib extends external_api {
      * @return external_single_structure
      */
     public static function get_dbschema_unified_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Encrypted DB Schema'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * @return external_function_parameters
+     */
+    public static function get_dbschema_logs_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_dbschema_logs() {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::get_dbschema_logs_parameters(), []
+        );
+
+        $encryptionservice = new encryption_service();
+        $ltrepository = new logs_tables_repository();
+
+        $tables = $ltrepository->get_tables_fields();
+
+        return [
+            'data' => $encryptionservice->encrypt(json_encode($tables)),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * @return external_single_structure
+     */
+    public static function get_dbschema_logs_returns() {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_TEXT, 'Encrypted DB Schema'),

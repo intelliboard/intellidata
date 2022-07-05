@@ -36,6 +36,7 @@ require_once($CFG->libdir.'/tablelib.php');
 class config_table extends \table_sql {
 
     public $fields     = [];
+    public $tabletypes = null;
     protected $prefs   = [];
     protected $context = null;
 
@@ -43,6 +44,8 @@ class config_table extends \table_sql {
         global $PAGE, $DB;
 
         $this->context = \context_system::instance();
+        $this->tabletypes = datatypeconfig::get_tabletypes();
+
         parent::__construct($uniqueid);
 
         $this->fields = $this->get_fields();
@@ -147,9 +150,9 @@ class config_table extends \table_sql {
      * @throws \coding_exception
      */
     public function col_tabletype($values) {
-        return ($values->tabletype == datatypeconfig::TABLETYPE_REQUIRED)
-            ? get_string('required', 'local_intellidata')
-            : get_string('optional', 'local_intellidata');
+        return isset($this->tabletypes[$values->tabletype])
+            ? $this->tabletypes[$values->tabletype]
+            : '';
     }
 
     /**
@@ -227,25 +230,57 @@ class config_table extends \table_sql {
         }
 
         $buttons = [];
-        $urlparams = ['datatype' => $values->datatype];
 
-        if ($values->exportenabled) {
-            $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'reset']);
+        if ($values->tabletype == datatypeconfig::TABLETYPE_LOGS) {
+            $urlparams = ['id' => $values->id];
+            if ($values->exportenabled) {
+                $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + ['action' => 'reset']);
+                $buttons[] = $OUTPUT->action_icon(
+                    $aurl,
+                    new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
+                        'core',
+                        ['class' => 'iconsmall']),
+                    null,
+                    ['onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
+                        "')) return false;"]
+                );
+            }
+
+            $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams);
+            $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
+                'core', ['class' => 'iconsmall']), null
+            );
+
+            $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + ['action' => 'delete']);
             $buttons[] = $OUTPUT->action_icon(
                 $aurl,
-                new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
-                'core',
-                ['class' => 'iconsmall']),
+                new \pix_icon('t/delete', get_string('delete'),
+                    'core',
+                    ['class' => 'iconsmall']),
                 null,
-                ['onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
+                ['onclick' => "if (!confirm('" . get_string('deletecordconfirmation', 'local_intellidata') .
                     "')) return false;"]
             );
-        }
+        } else {
+            $urlparams = ['datatype' => $values->datatype];
+            if ($values->exportenabled) {
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'reset']);
+                $buttons[] = $OUTPUT->action_icon(
+                    $aurl,
+                    new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
+                        'core',
+                        ['class' => 'iconsmall']),
+                    null,
+                    ['onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
+                        "')) return false;"]
+                );
+            }
 
-        $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
-        $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
-            'core', ['class' => 'iconsmall']), null
-        );
+            $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
+            $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
+                'core', ['class' => 'iconsmall']), null
+            );
+        }
 
         return implode(' ', $buttons);
     }
@@ -268,6 +303,9 @@ class config_table extends \table_sql {
         }
 
         echo html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
+
+        // Add config button.
+        echo $this->create_button();
 
         // Render config reset button.
         echo $this->reset_button();
@@ -340,6 +378,20 @@ class config_table extends \table_sql {
 
         $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'import']);
         $output = \html_writer::link($reseturl, get_string('importconfig', 'local_intellidata'),
+            ['class' => 'btn btn-primary mr-1']);
+
+        return $output;
+    }
+
+    /**
+     * Get the html for the create button.
+     *
+     * Usually only use internally
+     */
+    public function create_button() {
+
+        $reseturl = new \moodle_url('/local/intellidata/config/editlogsentity.php');
+        $output = \html_writer::link($reseturl, get_string('createlogsdatatype', 'local_intellidata'),
             ['class' => 'btn btn-primary mr-1']);
 
         return $output;

@@ -54,8 +54,18 @@ class observer {
      * @param \core\event\role_unassigned $event
      */
     public static function role_unassigned(\core\event\role_unassigned $event) {
+        global $DB;
+
         if (TrackingHelper::enabled()) {
-            self::export_event($event);
+            $eventdata = $event->get_data();
+
+            if (!$DB->record_exists('role_assignments', [
+                'contextid' => $eventdata['contextid'],
+                'userid' => $eventdata['relateduserid'],
+                'roleid' => $eventdata['objectid']
+            ])) {
+                self::export_event($event);
+            }
         }
     }
 

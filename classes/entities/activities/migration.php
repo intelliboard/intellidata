@@ -96,31 +96,18 @@ class migration extends \local_intellidata\entities\migration {
             foreach (array_chunk($fullids, 10000) as $ids) {
                 list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
 
-                if ($modulename == 'customcert') {
-                    $cmidextract = DBHelper::get_operator('JSON_EXTRACT', 'cel.data', [
-                        'path' => 'gradeitem'
-                    ]);
-
-                    $cmid = DBHelper::get_operator('JSON_UNQUOTE', $cmidextract);
-
-                    $sql = "SELECT m.*, $cmid AS cmid
-                              FROM {" . $modulename . "} m
-                         LEFT JOIN {customcert_pages} cp ON cp.templateid = m.templateid
-                         LEFT JOIN {customcert_elements} cel ON cel.pageid = cp.id AND cel.element = 'grade'";
-                } else {
-                    $sql = "SELECT * FROM {" . $modulename . "} m";
-                }
-
-                $sql .= " WHERE m.id $insql";
+                $sql = "SELECT *
+                          FROM {" . $modulename . "} m
+                         WHERE m.id $insql";
 
                 $instances = $DB->get_records_sql($sql, $inparams);
 
-                $moduleinstances[$modulename] = array();
+                $moduleinstances[$modulename] = [];
                 foreach ($instances as $instance) {
-                    $moduleinstances[$modulename][$instance->id] = array(
-                                                                    'name' => $instance->name,
-                                                                    'params' => observer::set_additional_params($modulename, $instance)
-                                                                    );
+                    $moduleinstances[$modulename][$instance->id] = [
+                        'name' => $instance->name,
+                        'params' => observer::set_additional_params($modulename, $instance)
+                    ];
                 }
             }
         }
