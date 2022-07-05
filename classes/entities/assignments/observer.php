@@ -112,7 +112,7 @@ class observer {
      * @param \mod_assign\event\submission_graded $event
      */
     public static function submission_graded(\mod_assign\event\submission_graded $event) {
-        global $DB, $USER;
+        global $DB;
 
         if (TrackingHelper::enabled()) {
 
@@ -123,20 +123,23 @@ class observer {
                 'userid' => $gradedata->userid,
                 'attemptnumber' => $gradedata->attemptnumber
             ]);
-            $submission->grade = ((float)$gradedata->grade > 0) ? $gradedata->grade : 0;
-            $submission->feedback_at = $gradedata->timemodified;
-            $submission->feedback_by = $gradedata->grader;
-            $submission->submission_type = self::get_submission_type($submission->id);
 
-            $feedback = $DB->get_record('assignfeedback_comments', [
-                'assignment' => $gradedata->assignment,
-                'grade' => $gradedata->id
-            ]);
-            if (!empty($feedback->commenttext)) {
-                $submission->feedback = $feedback->commenttext;
+            if ($submission) {
+                $submission->grade = ((float) $gradedata->grade > 0) ? $gradedata->grade : 0;
+                $submission->feedback_at = $gradedata->timemodified;
+                $submission->feedback_by = $gradedata->grader;
+                $submission->submission_type = self::get_submission_type($submission->id);
+
+                $feedback = $DB->get_record('assignfeedback_comments', [
+                    'assignment' => $gradedata->assignment,
+                    'grade' => $gradedata->id
+                ]);
+                if (!empty($feedback->commenttext)) {
+                    $submission->feedback = $feedback->commenttext;
+                }
+
+                self::export_event($eventdata, $submission);
             }
-
-            self::export_event($eventdata, $submission);
         }
     }
 

@@ -69,6 +69,11 @@ class observer {
     private static function process_datatype($datatype, $eventdata) {
         $trackevent = true; $empty = 0;
 
+        // Ignrore if no params.
+        if (!$datatype->params) {
+            return;
+        }
+
         foreach ($datatype->params as $paramname => $paramvalue) {
             if (!empty($paramvalue) && $eventdata[$paramname] != $paramvalue) {
                 $trackevent = false;
@@ -77,7 +82,7 @@ class observer {
             }
         }
 
-        if ($trackevent && $empty != count($datatype->params)) {
+        if ($trackevent && $empty != count((array)$datatype->params)) {
             self::export_event($datatype->datatype, $eventdata);
         }
     }
@@ -92,6 +97,7 @@ class observer {
      */
     private static function export_event($datatypename, $eventdata) {
         $record = (object)$eventdata;
+
         $entity = new log($record, []);
         $data = $entity->export();
 

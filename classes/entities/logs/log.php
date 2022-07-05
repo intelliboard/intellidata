@@ -51,22 +51,22 @@ class log extends \local_intellidata\entities\entity {
             'component' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Component.',
-                'default' => 0,
+                'default' => '',
             ],
             'action' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Action.',
-                'default' => 0,
+                'default' => '',
             ],
             'target' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Target.',
-                'default' => 0,
+                'default' => '',
             ],
             'objecttable' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Object Table.',
-                'default' => 0,
+                'default' => '',
             ],
             'objectid' => [
                 'type' => PARAM_INT,
@@ -94,11 +94,21 @@ class log extends \local_intellidata\entities\entity {
                 'description' => 'Related User ID.',
                 'default' => 0,
             ],
+            'userid' => [
+                'type' => PARAM_INT,
+                'description' => 'User ID.',
+                'default' => 0,
+            ],
             'other' => [
                 'type' => PARAM_RAW,
                 'description' => 'Other event details.',
                 'default' => '',
             ],
+            'timecreated' => [
+                'type' => PARAM_INT,
+                'description' => 'Timestamp when record created.',
+                'default' => 0,
+            ]
         ];
     }
 

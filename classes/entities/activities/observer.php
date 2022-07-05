@@ -129,11 +129,6 @@ class observer {
                     'printgrade' => $instance->printgrade,
                 ];
                 break;
-            case 'customcert':
-                $params = [
-                    'cmid' => $instance->cmid,
-                ];
-                break;
             case 'questionnaire':
                 $params = [
                     'sid' => $instance->sid,

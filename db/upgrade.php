@@ -27,6 +27,9 @@ use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\services\export_service;
+use local_intellidata\repositories\export_log_repository;
+use local_intellidata\persistent\datatypeconfig;
 
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
@@ -758,6 +761,40 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2022062800, 'local', 'intellidata');
+    }
+
+    // Remove CURF from Optional tables, as it moved to Required tables.
+    if ($oldversion < 2022063000) {
+
+        $exportlogrepository = new export_log_repository();
+        $exportservice = new export_service();
+
+        $datatypestodelete = [
+            'user_info_category',
+            'user_info_data',
+            'user_info_field'
+        ];
+
+        foreach ($datatypestodelete as $datatype) {
+
+            // Delete old export files.
+            $exportservice->delete_files([
+                'datatype' => $datatype,
+                'timemodified' => time()
+            ]);
+
+            // Delete export logs.
+            if ($exportlogrepository->get_datatype_export_log($datatype)) {
+                $exportlogrepository->remove_datatype($datatype);
+            }
+
+            // Delete configuration.
+            if ($conf = datatypeconfig::get_record(['datatype' => $datatype])) {
+                $conf->delete();
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2022063000, 'local', 'intellidata');
     }
 
     return true;

@@ -24,6 +24,7 @@ use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\persistent\datatypeconfig;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -230,7 +231,7 @@ class local_intellidata_exportlib extends external_api {
         $migrateddatatypes = $exportlogrepository->get_migrated_datatypes();
         $alldatatypes = [];
         foreach ($exportservice->get_datatypes() as $name => $datatype) {
-            if ($datatype['migration']) {
+            if ($datatype['migration'] && $datatype['tabletype'] == datatypeconfig::TABLETYPE_REQUIRED) {
                 $alldatatypes[] = $name;
             }
         }

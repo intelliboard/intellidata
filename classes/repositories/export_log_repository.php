@@ -168,10 +168,16 @@ class export_log_repository {
         global $DB;
 
         return array_keys(
-            $DB->get_records_menu(
-                'local_intellidata_export_log',
-                ['migrated' => 1, 'tabletype' => export_logs::TABLE_TYPE_UNIFIED],
-            '', 'datatype'
+            $DB->get_records_sql_menu(
+                'SELECT datatype, id
+                       FROM {local_intellidata_export_log}
+                      WHERE migrated = :migrated
+                        AND (tabletype = :tabletypeunified OR tabletype = :tabletypelogs)',
+                [
+                    'migrated' => 1,
+                    'tabletypeunified' => export_logs::TABLE_TYPE_UNIFIED,
+                    'tabletypelogs' => export_logs::TABLE_TYPE_LOGS
+                ]
             )
         );
     }
