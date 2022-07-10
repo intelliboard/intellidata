@@ -25,6 +25,7 @@
  */
 
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\repositories\export_log_repository;
@@ -71,7 +72,15 @@ EOF;
     exit(0);
 }
 
+// Validate if plugin is enabled and configured.
+if (!TrackingHelper::enabled()) {
+    mtrace(get_string('pluginnotconfigured', 'local_intellidata'));
+    exit(0);
+}
+
 DebugHelper::enable_moodle_debug();
+
+$exportservice = new export_service();
 
 // Disable reset migrations.
 if (empty($options['noreset'])) {
@@ -80,7 +89,6 @@ if (empty($options['noreset'])) {
     $exportlogrepository->clear_migrated();
 
     // Delete all IntelliData files.
-    $exportservice = new export_service();
     $filesrecords = $exportservice->delete_files(['timemodified' => time()]);
 }
 
@@ -96,7 +104,8 @@ MigrationHelper::disable_sheduled_tasks();
 
 try {
     // Export static tables.
-    $migrationservice = new migration_service();
+    $exportservice->set_migration_mode();
+    $migrationservice = new migration_service(null, $exportservice);
     $migrationservice->process($params);
 
     MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);

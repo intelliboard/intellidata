@@ -26,6 +26,8 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\helpers\SettingsHelper;
+
 class TrackingHelper {
 
     /**
@@ -33,7 +35,8 @@ class TrackingHelper {
      * @throws \dml_exception
      */
     public static function enabled() {
-        return (get_config('local_intellidata', 'enabled')) ? true : false;
+        return (get_config('local_intellidata', 'enabled') && SettingsHelper::is_plugin_setup())
+            ? true : false;
     }
 
     /**

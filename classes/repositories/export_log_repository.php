@@ -39,11 +39,11 @@ class export_log_repository {
      * @param $datatype
      * @return int|mixed
      */
-    private function get_migration_records_count($datatype, $lastrecordid = null) {
+    private function get_migration_records_count($datatype, $lastrecordid = null, $migrationobject = null) {
         $datatypeconfig = datatypes_service::get_datatype($datatype);
 
         if (!empty($datatypeconfig['migration'])) {
-            $migration = datatypes_service::init_migration($datatypeconfig);
+            $migration = ($migrationobject) ?? datatypes_service::init_migration($datatypeconfig, null, false);
 
             return $migration->get_records_count($lastrecordid);
         }
@@ -94,7 +94,7 @@ class export_log_repository {
      * @param $lastexportedtime
      * @throws \coding_exception
      */
-    public function save_last_processed_data($datatype, $lastrecord, $lastexportedtime) {
+    public function save_last_processed_data($datatype, $lastrecord, $lastexportedtime, $migration = null) {
 
         $record = export_logs::get_record(['datatype' => $datatype]);
 
@@ -109,11 +109,11 @@ class export_log_repository {
         }
 
         $record->set('last_exported_time', $lastexportedtime);
-        $record->set('recordscount', $this->get_migration_records_count($datatype));
+        $record->set('recordscount', $this->get_migration_records_count($datatype, 0, $migration));
 
         if (isset($lastrecord->id)) {
             $record->set('last_exported_id', $lastrecord->id);
-            $record->set('recordsmigrated', $this->get_migration_records_count($datatype, $lastrecord->id));
+            $record->set('recordsmigrated', $this->get_migration_records_count($datatype, $lastrecord->id, $migration));
         }
 
         $record->save();
@@ -294,7 +294,7 @@ class export_log_repository {
      * @param $datatype
      * @throws \coding_exception
      */
-    public function insert_datatype($datatype, $tabletype = export_logs::TABLE_TYPE_CUSTOM) {
+    public function insert_datatype($datatype, $tabletype = export_logs::TABLE_TYPE_CUSTOM, $forcereset = false) {
 
         $record = export_logs::get_record(['datatype' => $datatype]);
 
@@ -311,7 +311,22 @@ class export_log_repository {
         $record->set('recordscount', 0);
         $record->set('last_exported_id', 0);
 
+        // Force reset all data.
+        if ($record && $forcereset) {
+            $record->set('timestart', 0);
+        }
+
         return $record->save();
+    }
+
+    /**
+     * Reset datatype in export logs.
+     *
+     * @param $datatype
+     * @throws \coding_exception
+     */
+    public function reset_datatype($datatype, $tabletype = export_logs::TABLE_TYPE_CUSTOM) {
+        return self::insert_datatype($datatype, $tabletype, true);
     }
 
     /**

@@ -38,16 +38,23 @@ class export_service {
     /**
      * @param false $migrationmode
      */
-    public function __construct($migrationmode = ParamsHelper::MIGRATION_MODE_DISABLED) {
+    public function __construct($migrationmode = ParamsHelper::MIGRATION_MODE_DISABLED, $applyconfig = true) {
         $this->migrationmode = $migrationmode;
-        $this->datatypes = $this->get_datatypes();
+        $this->datatypes = $this->get_datatypes($applyconfig);
+    }
+
+    /**
+     * Set migration mode.
+     */
+    public function set_migration_mode() {
+        $this->migrationmode = ParamsHelper::MIGRATION_MODE_ENABLED;
     }
 
     /**
      * @return array|array[]
      */
-    public function get_datatypes() {
-        return datatypes_service::get_datatypes();
+    public function get_datatypes($applyconfig = true) {
+        return datatypes_service::get_datatypes($applyconfig);
     }
 
     /**

@@ -19,7 +19,7 @@
  *
  *
  * @package    local_intellidata
- * @copyright  2020 IntelliBoard, Inc
+ * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
@@ -27,23 +27,29 @@
 namespace local_intellidata\repositories;
 
 use local_intellidata\helpers\ParamsHelper;
-use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\helpers\StorageHelper;
-use local_intellidata\services\export_service;
 
-class events_repository {
+class statistics_repository {
 
     /**
-     * @param $eventtype
-     * @param $eventdata
+     * Get general statistics for current site.
+     *
+     * @return array
      * @throws \dml_exception
      */
-    public static function create_record($eventtype, $eventdata) {
-        $eventdata = StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $eventdata);
+    public static function get_site_info() {
+        global $USER, $CFG, $DB;
 
-        // Insert data.
-        $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_DISABLED, false);
-        $exportservice->store_data($eventtype, $eventdata);
+        $params = [];
+
+        $params['email'] = $USER->email;
+        $params['url'] = $CFG->wwwroot;
+        $params['lang'] = current_language();
+        $params['dbtype'] = $CFG->dbtype;
+        $params['moodle'] = $CFG->version;
+        $params['version'] = ParamsHelper::get_plugin_version();
+        $params['courses_count'] = $DB->count_records("course", ["visible" => 1]);
+        $params['users_count'] = $DB->count_records_sql("SELECT COUNT(id) FROM {user} WHERE deleted = 0 AND id > 1");
+
+        return $params;
     }
-
 }

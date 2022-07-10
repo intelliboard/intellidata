@@ -32,9 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 
 class migrations_table {
 
-    const MIGRATION_PREFIX_PATH = 'local_intellidata\\entities\\%s';
-    const MIGRATION_PATH = self::MIGRATION_PREFIX_PATH . '\\migration';
-
     private $fields;
     private $headers;
     private $statuses;
@@ -175,9 +172,21 @@ class migrations_table {
      * @return string
      */
     public function out() {
+
+        $output = '';
+
+        $output .= \html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
+        $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'enablemigration']);
+        $output .= \html_writer::link($url, get_string('enablemigration', 'local_intellidata'),
+            ['class' => 'btn btn-primary', 'onclick' => "if (!confirm('" . get_string('resetmigrationmsg', 'local_intellidata') .
+                "')) return false;"]);
+        $output .= \html_writer::end_tag('div');
+
         $table = new \html_table();
         $table->head = array_values($this->headers);
         $table->data = $this->data;
-        return \html_writer::table($table);
+        $output .= \html_writer::table($table);
+
+        return $output;
     }
 }

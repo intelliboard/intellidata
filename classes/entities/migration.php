@@ -50,14 +50,22 @@ abstract class migration {
     public $crud                = 'c';
     public $datatype            = null;
 
-    public function __construct($datatype, string $forceformat = null, $init = true) {
-        if ($init) {
-            $this->datatype = $datatype;
-            $this->encryptionservice = new encryption_service();
-            $this->migrationservice = new migration_service($forceformat);
-            $this->writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
-            $this->exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+    public function __construct($datatype, string $forceformat = null, $initservices = true) {
+        $this->datatype = $datatype;
+        $this->writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
+
+        if ($initservices) {
+            $this->init_services(null, $forceformat);
         }
+    }
+
+    public function init_services($services = null, $forceformat = null) {
+        $this->encryptionservice = (!empty($services['encryptionservice']))
+            ? $services['encryptionservice'] : new encryption_service();
+        $this->migrationservice = (!empty($services['migrationservice']))
+            ? $services['migrationservice'] : new migration_service($forceformat);
+        $this->exportservice = (!empty($services['exportservice']))
+            ? $services['exportservice'] : new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
     }
 
     public function get_records($params) {
@@ -222,7 +230,8 @@ abstract class migration {
         $this->exportlogrepository->save_last_processed_data(
             $entity::TYPE,
             $record,
-            (isset($record->recordtimecreated)) ? $record->recordtimecreated : time()
+            (isset($record->recordtimecreated)) ? $record->recordtimecreated : time(),
+            $this
         );
     }
 

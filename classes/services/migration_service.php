@@ -43,10 +43,10 @@ class migration_service {
 
     public $exportdataformat;
 
-    public function __construct($exportformatkey = null) {
+    public function __construct($exportformatkey = null, $exportservice = null) {
+        $this->exportservice = ($exportservice) ?? new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
         $this->tables = $this->get_tables();
         $this->encryptionservice = new encryption_service();
-        $this->exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
         $this->recordslimits = (int)SettingsHelper::get_setting('migrationrecordslimit');
         $this->exportfilesduringmigration = (bool)SettingsHelper::get_setting('exportfilesduringmigration');
 
@@ -97,7 +97,12 @@ class migration_service {
     public function export_table($datatype, $params, $cronprocessing) {
 
         $tablename = $datatype['name'];
-        $migration = datatypes_service::init_migration($datatype);
+        $migration = datatypes_service::init_migration($datatype, null, false);
+        $migration->init_services([
+            'migrationservice' => $this,
+            'encryptionservice' => $this->encryptionservice,
+            'exportservice' => $this->exportservice
+        ]);
         $params['limit'] = $this->recordslimits;
 
         if (!$migration->can_migrate()) {

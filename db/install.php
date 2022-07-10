@@ -25,6 +25,7 @@
 
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
+use local_intellidata\services\intelliboard_service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -54,4 +55,13 @@ function xmldb_local_intellidata_install() {
     // Setup config in database.
     $configservice = new config_service(datatypes_service::get_all_datatypes());
     $configservice->setup_config();
+
+    // Send IB prospects.
+    try {
+        $ibservice = new intelliboard_service();
+        $ibservice->set_params_for_install();
+        $ibservice->send_request();
+    } catch (moodle_exception $e) {
+        DebugHelper::error_log($e->getMessage());
+    }
 }

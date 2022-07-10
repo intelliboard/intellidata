@@ -17,33 +17,45 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
- * @copyright  2020 IntelliBoard, Inc
+ * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
 
-namespace local_intellidata\repositories;
+namespace local_intellidata\services;
 
-use local_intellidata\helpers\ParamsHelper;
-use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\helpers\StorageHelper;
-use local_intellidata\services\export_service;
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\CurlHelper;
+use local_intellidata\repositories\statistics_repository;
 
-class events_repository {
+class intelliboard_service {
+
+    protected $debug        = false;
+    protected $params       = [];
+    protected $apiurl       = 'https://admin.intelliboard.net/api/prospects/moodle/';
 
     /**
-     * @param $eventtype
-     * @param $eventdata
-     * @throws \dml_exception
+     * Service to send request to IntelliBoard.
      */
-    public static function create_record($eventtype, $eventdata) {
-        $eventdata = StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $eventdata);
-
-        // Insert data.
-        $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_DISABLED, false);
-        $exportservice->store_data($eventtype, $eventdata);
+    public function __construct() {
+        $this->debug = DebugHelper::debugenabled();
     }
 
+    /**
+     * Setup params for install action.
+     */
+    public function set_params_for_install() {
+        $this->params = statistics_repository::get_site_info();
+        $this->params['action'] = 'install';
+    }
+
+    /**
+     * Send request to IB.
+     *
+     * @return object
+     */
+    public function send_request() {
+        return CurlHelper::send_post($this->apiurl, $this->params, [], $this->debug);
+    }
 }

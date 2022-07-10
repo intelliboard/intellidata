@@ -28,6 +28,7 @@ use local_intellidata\services\config_service;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\export_service;
+use local_intellidata\task\export_adhoc_task;
 
 require('../../../config.php');
 
@@ -47,15 +48,16 @@ $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 $record = datatypeconfig::get_record(['datatype' => $datatype]);
 
-if (!$record || $record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
+if (!$record) {
     throw new \moodle_exception('wrongdatatype', 'local_intellidata');
 }
 
 $exportlogrepository = new export_log_repository();
 
 if ($action == 'reset') {
+
     // Reset export logs.
-    $exportlogrepository->insert_datatype($datatype);
+    $exportlogrepository->reset_datatype($datatype);
 
     // Delete old export files.
     $exportservice = new export_service();
@@ -64,7 +66,20 @@ if ($action == 'reset') {
         'timemodified' => time()
     ]);
 
+    // Add task to migrate records.
+    if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$record->get('datatype')]
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+    }
+
     redirect($returnurl, get_string('resetmsg', 'local_intellidata'));
+}
+
+if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
+    throw new \moodle_exception('wrongdatatype', 'local_intellidata');
 }
 
 $datatypeconfig = datatypes_service::get_datatype($datatype);

@@ -24,10 +24,6 @@
  * @website    https://intelliboard.net/
  */
 
-use local_intellidata\services\export_service;
-use local_intellidata\services\migration_service;
-use local_intellidata\repositories\export_log_repository;
-use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\TrackingHelper;
 
@@ -63,6 +59,12 @@ Example:
 EOF;
 
     echo $help;
+    exit(0);
+}
+
+// Validate if plugin is enabled and configured.
+if (!TrackingHelper::enabled()) {
+    mtrace(get_string('pluginnotconfigured', 'local_intellidata'));
     exit(0);
 }
 

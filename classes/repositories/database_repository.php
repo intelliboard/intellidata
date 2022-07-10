@@ -47,11 +47,14 @@ class database_repository {
      *
      * @param $datatype
      */
-    public static function init() {
-        self::$encriptionservice = new encryption_service();
-        self::$exportservice = new export_service();
-        self::$exportlogrepository = new export_log_repository();
-        self::$writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
+    public static function init($services = null) {
+        self::$encriptionservice = (!empty($services['encryptionservice']))
+            ? $services['encryptionservice'] : new encryption_service();
+        self::$exportservice = (!empty($services['exportservice']))
+            ? $services['exportservice'] : new export_service();
+        self::$exportlogrepository = (!empty($services['exportlogrepository']))
+            ? $services['exportlogrepository'] : new export_log_repository();
+        self::$writerecordslimits = (int) SettingsHelper::get_setting('migrationwriterecordslimit');
     }
 
     /**
@@ -61,8 +64,10 @@ class database_repository {
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
-    public static function export($datatype, $params, $showlogs = false) {
-        self::init();
+    public static function export($datatype, $params, $showlogs = false, $services = null) {
+
+        // Init Services.
+        self::init($services);
 
         $start = 0; $limit = (int)SettingsHelper::get_setting('exportrecordslimit');
         $overalexportedrecords = 0; $lastrecord = new \stdClass();
@@ -134,7 +139,7 @@ class database_repository {
                   ORDER BY id";
         } else if (isset($datatype['migration'])) {
 
-            $migration = datatypes_service::init_migration($datatype);
+            $migration = datatypes_service::init_migration($datatype, null, false);
             list($sql, $params) = $migration->get_sql(false, null, [], $lastexportedtime);
 
             $sqlparams = array_merge($sqlparams, $params);
@@ -166,7 +171,7 @@ class database_repository {
 
             $isprepareddata = false;
             if (!empty($datatype['migration'])) {
-                $migration = datatypes_service::init_migration($datatype);
+                $migration = datatypes_service::init_migration($datatype, null, false);
                 $records = $migration->prepare_records_iterable($records);
                 $isprepareddata = true;
             }

@@ -271,3 +271,7 @@ $string['datatypealreadyexists'] = 'The Data Type already exists.';
 $string['paramsshouldbespecified'] = 'Params should be specified.';
 $string['deletecordconfirmation'] = 'Are you sure want to delete this datatype?';
 $string['deletemsg'] = 'Record deleted successfully';
+$string['resetmigrationmsg'] = 'Are you sure want to enable or reset migration?';
+$string['enablemigration'] = 'Enable migration';
+$string['migrationenabled'] = 'Migration enabled!';
+$string['pluginnotconfigured'] = 'The plugin is disabled or not configured.';

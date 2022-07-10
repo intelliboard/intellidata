@@ -27,10 +27,12 @@ namespace local_intellidata\task;
 defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\services\export_service;
+use local_intellidata\services\encryption_service;
 use local_intellidata\services\database_service;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\DebugHelper;
-use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\repositories\export_log_repository;
+
 
 /**
  * Task to process datafiles export.
@@ -63,16 +65,22 @@ class export_task extends \core\task\scheduled_task {
 
             mtrace("IntelliData Data Files Export CRON started!");
 
+            $exportservice = new export_service();
+            $services = [
+                'encryptionservice' => new encryption_service(),
+                'exportservice' => $exportservice,
+                'exportlogrepository' => new export_log_repository()
+            ];
+
             // Export static tables.
-            $databaseservice = new database_service();
+            $databaseservice = new database_service(true, $services);
             $databaseservice->export_tables();
 
             // Export files to moodledata.
-            $exportservice = new export_service();
             $exportservice->save_files();
 
             // Export migration files to moodledata.
-            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+            $exportservice->set_migration_mode();
             $exportservice->save_files();
 
             mtrace("IntelliData Data Files Export CRON ended!");
