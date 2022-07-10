@@ -41,7 +41,7 @@ class statistics_repository {
 
         $params = [];
 
-        $params['email'] = $USER->email;
+        $params['email'] = (isset($USER->email)) ? $USER->email : '';
         $params['url'] = $CFG->wwwroot;
         $params['lang'] = current_language();
         $params['dbtype'] = $CFG->dbtype;
