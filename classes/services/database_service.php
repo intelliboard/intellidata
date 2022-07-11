@@ -38,12 +38,14 @@ class database_service {
     protected $tables           = null;
     protected $showlogs         = true;
     protected $adhoctask        = false;
+    protected $services         = false;
 
-    public function __construct($showlogs = true) {
+    public function __construct($showlogs = true, $services = null) {
         $this->tables = $this->get_tables();
-        $this->repo = new database_repository();
         $this->trackingrepo = new tracking_repository();
         $this->showlogs = $showlogs;
+        $this->repo = new database_repository();
+        $this->services = $services;
     }
 
     /**
@@ -114,7 +116,7 @@ class database_service {
         }
 
         // Export table records.
-        $recordsexported = $this->repo->export($datatype, $params, $this->showlogs);
+        $recordsexported = $this->repo->export($datatype, $params, $this->showlogs, $this->services);
 
         if ($this->showlogs) {
             mtrace("Store dtatype ids at " . date('r') . " ...");

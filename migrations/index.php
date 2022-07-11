@@ -21,6 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\output\tables\migrations_table;
 use local_intellidata\helpers\SettingsHelper;
@@ -39,6 +40,16 @@ $pageurl = new \moodle_url('/local/intellidata/migrations/index.php');
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
+
+if ($action == 'enablemigration') {
+    // Reset migration.
+    set_config('resetmigrationprogress', 1, 'local_intellidata');
+
+    // Enable cron task.
+    MigrationHelper::enable_sheduled_tasks();
+
+    redirect($pageurl, get_string('migrationenabled', 'local_intellidata'));
+}
 
 $title = get_string('migrations', 'local_intellidata');
 $filenamefordownload = $title;

@@ -70,7 +70,7 @@ $recorddata->params = (array)$record->get('params');
 
 if ($action == 'reset' && $record->get('datatype')) {
     // Reset export logs.
-    $exportlogrepository->insert_datatype($record->get('datatype'), datatypeconfig::TABLETYPE_LOGS);
+    $exportlogrepository->reset_datatype($record->get('datatype'), datatypeconfig::TABLETYPE_LOGS);
 
     // Delete old export files.
     $exportservice = new export_service();
@@ -138,7 +138,7 @@ if ($editform->is_cancelled()) {
         $exportlogrepository->remove_datatype($datatype);
     } else if (empty($exportlog) && $data->enableexport) {
         // Add datatype to the export logs table.
-        $exportlogrepository->insert_datatype($datatype, datatypeconfig::TABLETYPE_LOGS);
+        $exportlogrepository->reset_datatype($datatype, datatypeconfig::TABLETYPE_LOGS);
 
         // Add task to migrate records.
         $exporttask = new export_adhoc_task();

@@ -224,8 +224,7 @@ class config_table extends \table_sql {
     public function col_actions($values) {
         global $OUTPUT;
 
-        if ($values->tabletype == datatypeconfig::TABLETYPE_REQUIRED ||
-            !has_capability('local/intellidata:editconfig', $this->context)) {
+        if (!has_capability('local/intellidata:editconfig', $this->context)) {
             return '';
         }
 
@@ -276,10 +275,12 @@ class config_table extends \table_sql {
                 );
             }
 
-            $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
-            $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
-                'core', ['class' => 'iconsmall']), null
-            );
+            if ($values->tabletype == datatypeconfig::TABLETYPE_OPTIONAL) {
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
+                $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
+                    'core', ['class' => 'iconsmall']), null
+                );
+            }
         }
 
         return implode(' ', $buttons);

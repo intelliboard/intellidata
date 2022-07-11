@@ -81,7 +81,7 @@ class datatypes_service {
     /**
      * @return array|array[]
      */
-    public static function get_datatypes() {
+    public static function get_datatypes($applyconfig = true) {
 
         // Get datatypes with default configuration.
         $defaultdatatypes = array_merge(
@@ -91,8 +91,12 @@ class datatypes_service {
         );
 
         // Apply configuration from database.
-        $configservice = new config_service($defaultdatatypes);
-        return $configservice->get_datatypes();
+        if ($applyconfig) {
+            $configservice = new config_service($defaultdatatypes);
+            return $configservice->get_datatypes();
+        } else {
+            return $defaultdatatypes;
+        }
     }
 
     /**
@@ -114,7 +118,7 @@ class datatypes_service {
      * @return array|array[]
      */
     public static function get_migrating_datatypes() {
-        $datatypes = self::get_datatypes();
+        $datatypes = self::get_datatypes(false);
 
         foreach ($datatypes as $key => $item) {
             if (empty($item['migration'])) {

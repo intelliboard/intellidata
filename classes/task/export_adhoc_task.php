@@ -26,13 +26,13 @@
 namespace local_intellidata\task;
 defined('MOODLE_INTERNAL') || die();
 
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\database_service;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\repositories\export_log_repository;
-use local_intellidata\persistent\export_logs;
 
 /**
  * Task to process datafiles export for specific datatype.
@@ -58,13 +58,19 @@ class export_adhoc_task extends \core\task\adhoc_task {
 
             $data = $this->get_custom_data();
 
+            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+            $exportlogrepository = new export_log_repository();
             $encryptionservice = new encryption_service();
-            $exportservice = new export_service();
-            $databaseservice = new database_service();
+
+            $services = [
+                'encryptionservice' => $encryptionservice,
+                'exportservice' => $exportservice,
+                'exportlogrepository' => new $exportlogrepository
+            ];
+
+            $databaseservice = new database_service(true, $services);
             $databaseservice->set_all_tables();
             $databaseservice->set_adhoctask(true);
-
-            $exportlogrepository = new export_log_repository();
 
             foreach ($data->datatypes as $datatype) {
 

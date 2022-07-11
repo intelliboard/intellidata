@@ -26,7 +26,10 @@
 
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\database_service;
+use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 
 define('CLI_SCRIPT', true);
@@ -68,6 +71,12 @@ EOF;
     exit(0);
 }
 
+// Validate if plugin is enabled and configured.
+if (!TrackingHelper::enabled()) {
+    mtrace(get_string('pluginnotconfigured', 'local_intellidata'));
+    exit(0);
+}
+
 DebugHelper::enable_moodle_debug();
 
 $params = [];
@@ -80,15 +89,22 @@ $exportparams = null;
 if (!empty($params['datatype'])) {
     $params['table'] = $params['datatype'];
 }
-$databaseservice = new database_service();
+
+$exportservice = new export_service();
+$services = [
+    'encryptionservice' => new encryption_service(),
+    'exportservice' => $exportservice,
+    'exportlogrepository' => new export_log_repository()
+];
+
+$databaseservice = new database_service(true, $services);
 $databaseservice->export_tables($params);
 
 // Generate and save files to filesdir.
-$exportservice = new export_service();
 $exportservice->save_files();
 
 // Generate and save migration files to filesdir.
-$exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+$exportservice->set_migration_mode();
 $exportservice->save_files();
 $datafiles = $exportservice->get_files();
 

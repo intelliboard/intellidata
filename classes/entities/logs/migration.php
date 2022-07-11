@@ -144,7 +144,8 @@ class migration extends \local_intellidata\entities\migration {
         $this->exportlogrepository->save_last_processed_data(
             $this->datatype['name'],
             $record,
-            (isset($record->recordtimecreated)) ? $record->recordtimecreated : time()
+            (isset($record->recordtimecreated)) ? $record->recordtimecreated : time(),
+            $this
         );
     }
 

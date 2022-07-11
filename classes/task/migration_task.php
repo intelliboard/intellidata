@@ -30,6 +30,7 @@ use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\migration_service;
 use local_intellidata\services\export_service;
 use local_intellidata\repositories\export_log_repository;
@@ -63,63 +64,66 @@ class migration_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        DebugHelper::enable_moodle_debug();
+        if (TrackingHelper::enabled()) {
 
-        $params = [];
+            DebugHelper::enable_moodle_debug();
 
-        // Reset migration process if enabled.
-        if (SettingsHelper::get_setting('resetmigrationprogress')) {
-            set_config('resetmigrationprogress', 0, 'local_intellidata');
-            set_config('migrationdatatype', '', 'local_intellidata');
-            set_config('migrationstart', 0, 'local_intellidata');
-
-            // Clean migrations logs database.
-            $exportlogrepository = new export_log_repository();
-            $exportlogrepository->clear_migrated();
-
-            mtrace("IntelliData Cleaner CRON started!");
-
-            // Delete all IntelliData files.
+            $params = [];
             $exportservice = new export_service();
-            $filesrecords = $exportservice->delete_files(['timemodified' => time()]);
 
-            mtrace("IntelliData Cleaner: $filesrecords deleted.");
-        }
+            // Reset migration process if enabled.
+            if (SettingsHelper::get_setting('resetmigrationprogress')) {
+                set_config('resetmigrationprogress', 0, 'local_intellidata');
+                set_config('migrationdatatype', '', 'local_intellidata');
+                set_config('migrationstart', 0, 'local_intellidata');
 
-        $migrationdatatype = SettingsHelper::get_setting('migrationdatatype');
-        if ($migrationdatatype) {
+                // Clean migrations logs database.
+                $exportlogrepository = new export_log_repository();
+                $exportlogrepository->clear_migrated();
 
-            // Ignore if migration completed.
-            if ($migrationdatatype == MigrationHelper::MIGRATIONS_COMPLETED_STATUS) {
+                mtrace("IntelliData Cleaner CRON started!");
 
-                // Disable scheduled migration task.
-                MigrationHelper::disable_sheduled_tasks();
-                MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
+                // Delete all IntelliData files.
+                $filesrecords = $exportservice->delete_files(['timemodified' => time()]);
 
-                return true;
+                mtrace("IntelliData Cleaner: $filesrecords deleted.");
             }
 
-            $params['datatype'] = $migrationdatatype;
+            $migrationdatatype = SettingsHelper::get_setting('migrationdatatype');
+            if ($migrationdatatype) {
+
+                // Ignore if migration completed.
+                if ($migrationdatatype == MigrationHelper::MIGRATIONS_COMPLETED_STATUS) {
+
+                    // Disable scheduled migration task.
+                    MigrationHelper::disable_sheduled_tasks();
+                    MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
+
+                    return true;
+                }
+
+                $params['datatype'] = $migrationdatatype;
+            }
+
+            $migrationstart = (int) SettingsHelper::get_setting('migrationstart');
+            $params['migrationstart'] = $migrationstart;
+
+            mtrace("IntelliData Migration CRON started!");
+
+            // Set migration time.
+            set_config('lastmigrationdate', time(), 'local_intellidata');
+
+            // Export tables.
+            $exportservice->set_migration_mode();
+            $migrationservice = new migration_service(null, $exportservice);
+            $migrationservice->process($params, true);
+
+            if ((bool) SettingsHelper::get_setting('exportfilesduringmigration')) {
+                $exportservice->save_files();
+            }
+
+            mtrace("IntelliData Migration CRON ended!");
         }
-
-        $migrationstart = (int)SettingsHelper::get_setting('migrationstart');
-        $params['migrationstart'] = $migrationstart;
-
-        mtrace("IntelliData Migration CRON started!");
-
-        // Set migration time.
-        set_config('lastmigrationdate', time(), 'local_intellidata');
-
-        // Export tables.
-        $migrationservice = new migration_service();
-        $migrationservice->process($params, true);
-
-        if ((bool)SettingsHelper::get_setting('exportfilesduringmigration')) {
-            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
-            $exportservice->save_files();
-        }
-
-        mtrace("IntelliData Migration CRON ended!");
 
         return true;
     }

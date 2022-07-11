@@ -34,6 +34,7 @@ class SettingsHelper {
     const DEFAULT_VALUES = [
         // General settings.
         'enabled' => 1,
+        'ispluginsetup' => 0,
         'trackingstorage' => 0,
         'encryptionkey' => '',
         'clientidentifier' => '',
@@ -158,5 +159,24 @@ class SettingsHelper {
         }
 
         return 'standard';
+    }
+
+    /**
+     * Validate if plugin setup correctly with IB keys.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function is_plugin_setup() {
+
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+            return true;
+        }
+
+        // TODO: Enable when requrst will be done on IB side.
+        // return self::get_setting('ispluginsetup');
+
+        return (!empty(self::get_setting('encryptionkey')) &&
+                !empty(self::get_setting('clientidentifier'))) ? true : false;
     }
 }
