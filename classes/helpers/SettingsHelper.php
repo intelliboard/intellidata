@@ -169,6 +169,10 @@ class SettingsHelper {
      */
     public static function is_plugin_setup() {
 
+        if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+            return true;
+        }
+
         // TODO: Enable when requrst will be done on IB side.
         // return self::get_setting('ispluginsetup');
 
