@@ -29,6 +29,7 @@ namespace local_intellidata\helpers;
 use local_intellidata\helpers\ParamsHelper;
 
 class TasksHelper {
+    const LOG_TABLE = 'task_log';
 
     /**
      * @param $table
@@ -101,7 +102,7 @@ class TasksHelper {
 
         return $DB->get_records_sql("
             SELECT *
-              FROM {task_log}
+              FROM {" . self::LOG_TABLE . "}
              WHERE $where", $sqlparams);
     }
 }
