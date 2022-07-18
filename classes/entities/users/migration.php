@@ -74,7 +74,7 @@ class migration extends \local_intellidata\entities\migration {
      */
     public function prepare_records_iterable($records) {
         foreach ($records as $user) {
-            $user->fullname = fullname($user);
+            $user->fullname = str_replace('"', "'", fullname($user));
             $user->state = ($user->confirmed && !$user->suspended) ?
                 ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
             $user->lastlogin = max($user->lastlogin, $user->currentlogin);
