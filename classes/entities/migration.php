@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * Abstract class for core objects saved to the DB.
  *
  * @author     IntelliBoard
- * @copyright  2020 intelliboard.net
+ * @copyright  2022 intelliboard.net
  */
 abstract class migration {
 
@@ -50,6 +50,15 @@ abstract class migration {
     public $crud                = 'c';
     public $datatype            = null;
 
+    /**
+     * Migration constructor.
+     *
+     * @param $datatype
+     * @param string|null $forceformat
+     * @param bool $initservices
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
     public function __construct($datatype, string $forceformat = null, $initservices = true) {
         $this->datatype = $datatype;
         $this->writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
@@ -59,6 +68,13 @@ abstract class migration {
         }
     }
 
+    /**
+     * Init Migration service for entity.
+     *
+     * @param null $services
+     * @param null $forceformat
+     * @throws \moodle_exception
+     */
     public function init_services($services = null, $forceformat = null) {
         $this->encryptionservice = (!empty($services['encryptionservice']))
             ? $services['encryptionservice'] : new encryption_service();
@@ -68,6 +84,14 @@ abstract class migration {
             ? $services['exportservice'] : new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
     }
 
+    /**
+     * Get records for migration.
+     *
+     * @param $params
+     * @return string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function get_records($params) {
         global $DB;
 
@@ -78,6 +102,15 @@ abstract class migration {
         return $this->prepare_records($records);
     }
 
+    /**
+     * Get records from DB and prepare to export.
+     *
+     * @param $params
+     * @param $tablename
+     * @return bool
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function export_records($params, $tablename) {
         global $DB;
 
@@ -89,6 +122,8 @@ abstract class migration {
     }
 
     /**
+     * Get records from DB.
+     *
      * @param null $condition
      * @param array $sqlparams
      * @return int
@@ -110,6 +145,8 @@ abstract class migration {
     }
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $sqlparams

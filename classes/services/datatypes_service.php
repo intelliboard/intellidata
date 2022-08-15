@@ -399,7 +399,6 @@ class datatypes_service {
             'quizquestionattemptstepsdata' => [
                 'name' => 'quizquestionattemptstepsdata',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'table' => 'question_attempt_step_data',
                 'migration' => 'quizquestionanswers\qasdmigration',
                 'entity' => 'quizquestionanswers\quizquestionattemptstepsdata',
                 'observer' => false,

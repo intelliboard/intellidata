@@ -58,6 +58,8 @@ class database_repository {
     }
 
     /**
+     * Export data.
+     *
      * @param $datatype
      * @param $params
      * @return int
@@ -100,6 +102,8 @@ class database_repository {
     }
 
     /**
+     * Get records from DB.
+     *
      * @param $datatype
      * @param int $start
      * @param int $limit
@@ -115,6 +119,8 @@ class database_repository {
     }
 
     /**
+     * Prepare SQL to get data from DB.
+     *
      * @param $datatype
      * @return array
      */
@@ -140,7 +146,7 @@ class database_repository {
         } else if (isset($datatype['migration'])) {
 
             $migration = datatypes_service::init_migration($datatype, null, false);
-            list($sql, $params) = $migration->get_sql(false, null, [], $lastexportedtime);
+            list($sql, $params) = $migration->get_sql(false, $where, $sqlparams, $lastexportedtime);
 
             $sqlparams = array_merge($sqlparams, $params);
         }
@@ -149,6 +155,8 @@ class database_repository {
     }
 
     /**
+     * Export records method.
+     *
      * @param $datatype
      * @param $records
      * @param false $showlogs
@@ -213,6 +221,8 @@ class database_repository {
     }
 
     /**
+     * Export data.
+     *
      * @param $datatype
      * @param $data
      */
@@ -221,6 +231,8 @@ class database_repository {
     }
 
     /**
+     * Prepare entity for export.
+     *
      * @param array $datatype
      * @param \stdClass $data
      * @param bool $isentitydata
@@ -239,6 +251,8 @@ class database_repository {
     }
 
     /**
+     * Export ids for specific entity.
+     *
      * @param $datatype
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
@@ -263,6 +277,8 @@ class database_repository {
     }
 
     /**
+     * Save data to storage.
+     *
      * @param $datatype
      * @param $data
      * @param false $eventname
@@ -280,5 +296,4 @@ class database_repository {
         }
         self::$exportservice->store_data($datatype['name'], $prepareddata);
     }
-
 }
