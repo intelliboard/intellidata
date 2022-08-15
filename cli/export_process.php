@@ -24,12 +24,9 @@
  * @website    https://intelliboard.net/
  */
 
-use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\TrackingHelper;
-use local_intellidata\repositories\export_log_repository;
-use local_intellidata\services\database_service;
-use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 
 define('CLI_SCRIPT', true);
@@ -91,22 +88,7 @@ if (!empty($params['datatype'])) {
 }
 
 $exportservice = new export_service();
-$services = [
-    'encryptionservice' => new encryption_service(),
-    'exportservice' => $exportservice,
-    'exportlogrepository' => new export_log_repository()
-];
-
-$databaseservice = new database_service(true, $services);
-$databaseservice->export_tables($params);
-
-// Generate and save files to filesdir.
-$exportservice->save_files();
-
-// Generate and save migration files to filesdir.
-$exportservice->set_migration_mode();
-$exportservice->save_files();
-$datafiles = $exportservice->get_files();
+ExportHelper::process_export($exportservice, $params);
 
 mtrace("Export process complete.");
 

@@ -374,15 +374,38 @@ class datatypes_service {
                 'filterbyid' => true,
                 'databaseexport' => true
             ],
-            'quizquestionanswers' => [
-                'name' => 'quizquestionanswers',
+            'quizquestionattempts' => [
+                'name' => 'quizquestionattempts',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'migration' => 'quizquestionanswers\migration',
-                'entity' => 'quizquestionanswers\quizquestionanswer',
+                'migration' => 'quizquestionanswers\quamigration',
+                'entity' => 'quizquestionanswers\quizquestionattempts',
                 'observer' => false,
                 'rewritable' => false,
-                'timemodified_field' => 'qa.timemodified',
+                'timemodified_field' => 'qua.timemodified',
                 'filterbyid' => false,
+                'databaseexport' => true
+            ],
+            'quizquestionattemptsteps' => [
+                'name' => 'quizquestionattemptsteps',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'quizquestionanswers\qasmigration',
+                'entity' => 'quizquestionanswers\quizquestionattemptsteps',
+                'observer' => false,
+                'rewritable' => false,
+                'timemodified_field' => 'qas.timecreated',
+                'filterbyid' => false,
+                'databaseexport' => true
+            ],
+            'quizquestionattemptstepsdata' => [
+                'name' => 'quizquestionattemptstepsdata',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'question_attempt_step_data',
+                'migration' => 'quizquestionanswers\qasdmigration',
+                'entity' => 'quizquestionanswers\quizquestionattemptstepsdata',
+                'observer' => false,
+                'rewritable' => false,
+                'timemodified_field' => false,
+                'filterbyid' => true,
                 'databaseexport' => true
             ],
             'assignmentsubmissions' => [
@@ -395,6 +418,16 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => false
+            ],
+            'ltisubmittion' => [
+                'name' => 'ltisubmittion',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'lti\migration',
+                'entity' => 'lti\submission',
+                'rewritable' => false,
+                'timemodified_field' => 'dateupdated',
+                'filterbyid' => false,
+                'databaseexport' => true
             ],
             'tracking' => [
                 'name' => 'tracking',

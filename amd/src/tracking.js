@@ -16,8 +16,6 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
- * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    https://intelliboard.net/
@@ -73,24 +71,24 @@ function(
         TRACKING.COUNTER = 0;
         TRACKING.WARNINGTIME = 0;
         TRACKING.LOGOUTTIME = 0;
-    }
+    };
 
     var resetParams = function() {
         CookiesHelper.setCookie('intellidatapage', PARAMS.PAGE);
         CookiesHelper.setCookie('intellidataparam', PARAMS.PARAM);
         CookiesHelper.setCookie('intellidatatime', PARAMS.AJAXFREQUENCY);
-    }
+    };
 
     var initTracking = function() {
         setInterval(track, PARAMS.PERIOD);
         log.debug('IntelliData: Start Tracking', [PARAMS, TRACKING]);
-    }
+    };
 
     var track = function() {
         if (PARAMS.MEDIATRACK) {
             var status = mediaTracking();
             if (status && !document.hidden) {
-                clearCounter;
+                clearCounter();
             }
         }
         if (TRACKING.COUNTER <= PARAMS.INACTIVITY) {
@@ -98,13 +96,13 @@ function(
             TRACKING.AJAXCOUNTER++;
 
             if (TRACKING.AJAXCOUNTER == PARAMS.AJAXFREQUENCY && PARAMS.AJAXFREQUENCY) {
-                TrackingRepository.sendRequest(PARAMS.PAGE, PARAMS.PARAM)
+                TrackingRepository.sendRequest(PARAMS.PAGE, PARAMS.PARAM);
                 TRACKING.AJAXCOUNTER = 0;
             }
         }
-    }
+    };
 
-    var mediaTracking = function() {
+    var mediaTracking = function(){
         var media = [];
         var status = false;
         var internal = document.querySelectorAll('audio,video');
@@ -134,7 +132,7 @@ function(
         }
 
         return status;
-    }
+    };
 
     return {
         init: function(params) {

@@ -26,6 +26,8 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\services\encryption_service;
+
 class MigrationHelper {
     const MIGRATIONS_COMPLETED_STATUS = 'migrationcompleted';
 
@@ -90,6 +92,26 @@ class MigrationHelper {
             if (!in_array($task, $exclude)) {
                 self::set_disabled_sheduled_task($task, false);
             }
+        }
+    }
+
+    /**
+     * Send callback to IBN when export completed.
+     *
+     * @throws \dml_exception
+     */
+    public static function send_callback() {
+
+        $migrationcallbackurl = SettingsHelper::get_setting('migrationcallbackurl');
+
+        // Send callback when files ready.
+        if (!empty($migrationcallbackurl)) {
+            $encryptionservice = new encryption_service();
+            $client = new \curl();
+
+            $client->post($migrationcallbackurl, [
+                'data' => $encryptionservice->encrypt(json_encode(['exporttime' => time()]))
+            ]);
         }
     }
 

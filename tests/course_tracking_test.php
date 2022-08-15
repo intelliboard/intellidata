@@ -123,7 +123,7 @@ class local_intellidata_course_tracking_testcase extends \advanced_testcase {
 
         $course = $DB->get_record('course', $data);
 
-        delete_course($course);
+        delete_course($course, false);
 
         $entity = new \local_intellidata\entities\courses\course($course);
         $entitydata = $entity->export();

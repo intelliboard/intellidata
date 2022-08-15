@@ -25,11 +25,12 @@
 
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
-use local_intellidata\task\export_adhoc_task;
-use local_intellidata\helpers\DebugHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\persistent\export_logs;
+use local_intellidata\task\export_adhoc_task;
+use local_intellidata\helpers\DebugHelper;
 
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
@@ -795,6 +796,117 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2022063000, 'local', 'intellidata');
+    }
+
+    // Divide quizquestionanswers to few datatypes.
+    if ($oldversion < 2022080401) {
+
+        $exportlogrepository = new export_log_repository();
+        $exportservice = new export_service();
+
+        $datatype = 'quizquestionanswers';
+
+        // Delete old export files.
+        $exportservice->delete_files([
+            'datatype' => $datatype,
+            'timemodified' => time()
+        ]);
+
+        // Delete export logs.
+        if ($exportlogrepository->get_datatype_export_log($datatype)) {
+            $exportlogrepository->remove_datatype($datatype);
+        }
+
+        // Delete configuration.
+        if ($conf = datatypeconfig::get_record(['datatype' => $datatype])) {
+            $conf->delete();
+        }
+
+        upgrade_plugin_savepoint(true, 2022080401, 'local', 'intellidata');
+    }
+
+    // Enable plugin by default for all existing connections.
+    if ($oldversion < 2022080402) {
+
+        set_config('ispluginsetup', 1, 'local_intellidata');
+
+        upgrade_plugin_savepoint(true, 2022080402, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2022081000) {
+
+        $exportlogrepository = new export_log_repository();
+        $exportservice = new export_service();
+
+        // Delete duplicated datatypes.
+        $datatypestodelete = [
+            'quizquestionattempt',
+            'quizquestionattemptstep',
+            'quizquestionattemptstepdata',
+            'ltisubmissions'
+        ];
+
+        foreach ($datatypestodelete as $datatype) {
+            $exportservice->delete_files([
+                'datatype' => $datatype,
+                'timemodified' => time()
+            ]);
+
+            // Delete export logs.
+            if ($exportlogrepository->get_datatype_export_log($datatype)) {
+                $exportlogrepository->remove_datatype($datatype);
+            }
+
+            // Delete configuration.
+            if ($conf = datatypeconfig::get_record(['datatype' => $datatype])) {
+                $conf->delete();
+            }
+        }
+
+        // Add new LTI datatype.
+        $exportlogrepository = new export_log_repository();
+        $datatype = 'ltisubmittion';
+
+        // Insert or update log record for datatype.
+        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+        // Add new datatypes to export ad-hoc task.
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$datatype]
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2022081000, 'local', 'intellidata');
+    }
+
+
+    // Reset and add new datatypes to the export.
+    if ($oldversion < 2022081001) {
+
+        $exportlogrepository = new export_log_repository();
+
+        // Add new datatypes to the plugin config and export.
+        $datatypes = [
+            'quizquestionattempts',
+            'quizquestionattemptsteps',
+            'quizquestionattemptstepsdata'
+        ];
+
+        foreach ($datatypes as $datatype) {
+
+            // Insert or update log record for datatype.
+            $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+            // Add new datatypes to export ad-hoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatype]
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        upgrade_plugin_savepoint(true, 2022081001, 'local', 'intellidata');
     }
 
     return true;

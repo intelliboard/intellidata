@@ -230,6 +230,15 @@ $functions = [
         'classpath'     => 'local/intellidata/classes/api/logslib.php',
         'description'   => 'Get export logs statistics from plugin.',
         'type'          => 'read',
+    ],
+    'local_intellidata_enable_processing' => [
+        'classname'     => 'local_intellidata_exportlib',
+        'methodname'    => 'enable_processing',
+        'classpath'     => 'local/intellidata/classes/api/exportlib.php',
+        'description'   => 'Enable data processing',
+        'type'          => 'write',
+        'ajax'          => true,
+        'loginrequired' => false,
     ]
 ];
 
@@ -261,7 +270,8 @@ $services = [
             'local_intellidata_get_dbschema_logs',
             'local_intellidata_set_datatype',
             'local_intellidata_get_tasks_logs',
-            'local_intellidata_get_export_logs'
+            'local_intellidata_get_export_logs',
+            'local_intellidata_enable_processing'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

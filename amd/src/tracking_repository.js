@@ -16,8 +16,6 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
- * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    https://intelliboard.net/
@@ -34,12 +32,12 @@ define(['jquery', 'core/ajax', 'core/log'], function($, ajax, log) {
                 param: param
             }
         }])[0]
-        .done(function (response) {
+        .done(function(response) {
             log.debug('IntelliData: Request Inserted at ' + response.time);
-        }).fail(function (ex) {
+        }).fail(function(ex) {
             log.debug('IntelliData: Request ERROR: ' + ex.message);
         });
-    }
+    };
 
     return {
         sendRequest: sendRequest

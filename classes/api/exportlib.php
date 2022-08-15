@@ -22,7 +22,6 @@ use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
-use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\persistent\datatypeconfig;
 
@@ -236,9 +235,10 @@ class local_intellidata_exportlib extends external_api {
             }
         }
 
-        if (array_diff($alldatatypes, $migrateddatatypes)) {
+        $notmigrateddatatypes = array_diff($alldatatypes, $migrateddatatypes);
+        if ($notmigrateddatatypes) {
             return [
-                'data' => 'Migrations not ready',
+                'data' => 'Migrations not ready: ' . implode(', ', $notmigrateddatatypes),
                 'status' => apilib::STATUS_ERROR
             ];
         }
@@ -521,6 +521,73 @@ class local_intellidata_exportlib extends external_api {
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
             )
+        );
+    }
+
+
+    /**
+     * @return external_function_parameters
+     */
+    public static function enable_processing_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function enable_processing($data) {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::enable_processing_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'status' => PARAM_INT,
+            'callbackurl' => PARAM_URL
+        ]);
+
+        // Set plugin settings.
+        set_config('ispluginsetup', $params['status'], ParamsHelper::PLUGIN);
+        set_config('migrationcallbackurl', $params['callbackurl'], ParamsHelper::PLUGIN);
+
+        return [
+            'data' => 'ok',
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * @return external_single_structure
+     */
+    public static function enable_processing_returns() {
+        return new external_single_structure(
+            [
+                'data' => new external_value(PARAM_TEXT, 'Response'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            ]
         );
     }
 
