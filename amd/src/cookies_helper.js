@@ -16,8 +16,6 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
- * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    https://intelliboard.net/
@@ -29,7 +27,7 @@ define([], function() {
             "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
         ));
         return matches ? decodeURIComponent(matches[1]) : 0;
-    }
+    };
 
     var setCookie = function(name, value, options) {
         options = options || {};
@@ -45,7 +43,7 @@ define([], function() {
         options.path = "/";
         value = encodeURIComponent(value);
         var updatedCookie = name + "=" + value + (location.protocol === 'https:' ? ';secure' : '');
-        for(var propName in options) {
+        for (var propName in options) {
             updatedCookie += "; " + propName;
             var propValue = options[propName];
             if (propValue !== true) {
@@ -53,10 +51,15 @@ define([], function() {
             }
         }
         document.cookie = updatedCookie;
-    }
+    };
 
+    /**
+     * Delete IntelliData cookie.
+     *
+     * @param {String} name Cookie name.
+     */
     function deleteCookie(name) {
-        setCookie(name, "", { expires: -1 });
+        setCookie(name, "", {expires: -1});
     }
 
     return {

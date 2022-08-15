@@ -14,19 +14,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
- * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    https://intelliboard.net/
  */
-define([
-    'jquery'
-],
-function(
-    $
-) {
-    var resize = function(e) {
+define(['jquery'], function($) {
+
+    var resize = function() {
         var body = $("body");
         var doc = $(document);
         var frame = $("#contentframe");
@@ -42,7 +36,7 @@ function(
 
     return {
         init: function() {
-            $(document).ready(function () {
+            $(document).ready(function() {
                 resize();
             });
 

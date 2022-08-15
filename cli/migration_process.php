@@ -25,6 +25,7 @@
  */
 
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
@@ -107,6 +108,14 @@ try {
     $exportservice->set_migration_mode();
     $migrationservice = new migration_service(null, $exportservice);
     $migrationservice->process($params);
+
+    if (empty($params['datatype'])) {
+        // Export files.
+        ExportHelper::process_export($exportservice);
+
+        // Send callback to IBN.
+        MigrationHelper::send_callback();
+    }
 
     MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
 } catch (\Exception $e) {

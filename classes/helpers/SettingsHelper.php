@@ -35,6 +35,7 @@ class SettingsHelper {
         // General settings.
         'enabled' => 1,
         'ispluginsetup' => 0,
+        'migrationcallbackurl' => '',
         'trackingstorage' => 0,
         'encryptionkey' => '',
         'clientidentifier' => '',
@@ -173,10 +174,8 @@ class SettingsHelper {
             return true;
         }
 
-        // TODO: Enable when requrst will be done on IB side.
-        // return self::get_setting('ispluginsetup');
-
         return (!empty(self::get_setting('encryptionkey')) &&
-                !empty(self::get_setting('clientidentifier'))) ? true : false;
+                !empty(self::get_setting('clientidentifier')) &&
+                !empty(self::get_setting('ispluginsetup'))) ? true : false;
     }
 }

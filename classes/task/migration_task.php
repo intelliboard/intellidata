@@ -26,10 +26,10 @@
 namespace local_intellidata\task;
 defined('MOODLE_INTERNAL') || die();
 
+use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\DebugHelper;
-use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\migration_service;
 use local_intellidata\services\export_service;
@@ -94,6 +94,12 @@ class migration_task extends \core\task\scheduled_task {
 
                 // Ignore if migration completed.
                 if ($migrationdatatype == MigrationHelper::MIGRATIONS_COMPLETED_STATUS) {
+
+                    // Export files.
+                    ExportHelper::process_export($exportservice);
+
+                    // Send callback to IBN.
+                    MigrationHelper::send_callback();
 
                     // Disable scheduled migration task.
                     MigrationHelper::disable_sheduled_tasks();

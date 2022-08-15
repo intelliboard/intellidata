@@ -15,17 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Class for migration Lti Submission.
  *
- * @package    local
- * @subpackage intellidata
- * @copyright  2020
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2022 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace local_intellidata\entities\lti;
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2022081001;
-$plugin->requires = 2017111300;
-$plugin->release = '1.65.0';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'local_intellidata';
+/**
+ * Class for migration Lti Submission.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2022 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class migration extends \local_intellidata\entities\migration {
+    public $entity      = '\local_intellidata\entities\lti\submission';
+    public $table       = 'lti_submission';
+}

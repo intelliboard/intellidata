@@ -33,7 +33,7 @@ class intelliboard_service {
 
     protected $debug        = false;
     protected $params       = [];
-    protected $apiurl       = 'https://admin.intelliboard.net/api/prospects/moodle/';
+    protected $apiurl       = 'https://next.intelliboard.net/api/prospects/moodle/';
 
     /**
      * Service to send request to IntelliBoard.
