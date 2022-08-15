@@ -880,7 +880,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022081000, 'local', 'intellidata');
     }
 
-
     // Reset and add new datatypes to the export.
     if ($oldversion < 2022081001) {
 
