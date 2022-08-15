@@ -50,10 +50,6 @@ class quamigration extends \local_intellidata\entities\migration {
     public function get_sql($count = false, $condition = null, $conditionparams = [], $timestart = null) {
 
         $sqlwhere = 'qua.id > 0'; $params = [];
-        if ($timestart > 0) {
-            $sqlwhere .= " AND qa.timemodified > :timemodified";
-            $params['timemodified'] = $timestart;
-        }
 
         $select = ($count) ?
             "SELECT COUNT(qua.id) as recordscount" :
