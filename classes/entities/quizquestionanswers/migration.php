@@ -42,6 +42,8 @@ class migration extends \local_intellidata\entities\migration {
     public $tablealias  = 'qa';
 
     /**
+     * Prepare SQL query to get data.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

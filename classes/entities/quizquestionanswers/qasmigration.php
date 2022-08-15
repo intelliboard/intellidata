@@ -50,10 +50,6 @@ class qasmigration extends \local_intellidata\entities\migration {
     public function get_sql($count = false, $condition = null, $conditionparams = [], $timestart = null) {
 
         $sqlwhere = 'qas.id > 0'; $params = [];
-        if ($timestart > 0) {
-            $sqlwhere .= " AND qas.timecreated > :timecreated";
-            $params['timecreated'] = $timestart;
-        }
 
         $select = ($count) ?
             "SELECT COUNT(" . $this->tablealias . ".id) as recordscount" :

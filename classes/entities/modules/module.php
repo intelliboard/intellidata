@@ -79,8 +79,16 @@ class module extends \local_intellidata\entities\entity {
 
         $record = $this->to_record();
 
-        $this->set('title', get_string('modulename', 'mod_' . $record->name));
-        $this->set('titleplural', get_string('modulenameplural', 'mod_' . $record->name));
+        $modulename = get_string_manager()->string_exists('modulename', 'mod_' . $record->name)
+            ? get_string('modulename', 'mod_' . $record->name)
+            : $record->name;
+
+        $modulenameplural = get_string_manager()->string_exists('modulenameplural', 'mod_' . $record->name)
+            ? get_string('modulenameplural', 'mod_' . $record->name)
+            : $record->name;
+
+        $this->set('title', $modulename);
+        $this->set('titleplural', $modulenameplural);
     }
 
 }
