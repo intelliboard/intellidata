@@ -101,6 +101,9 @@ class MigrationHelper {
      * @throws \dml_exception
      */
     public static function send_callback() {
+        global $CFG;
+
+        require_once($CFG->libdir . '/filelib.php');
 
         $migrationcallbackurl = SettingsHelper::get_setting('migrationcallbackurl');
 
