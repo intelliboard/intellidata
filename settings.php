@@ -27,6 +27,7 @@
  */
 
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\StorageHelper;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -52,8 +53,9 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     $settings->add($setting);
 
     $options = [
-        0 => get_string('file', $pluginname),
-        1 => get_string('database', $pluginname),
+        StorageHelper::FILE_STORAGE => get_string('file', $pluginname),
+        StorageHelper::DATABASE_STORAGE => get_string('database', $pluginname),
+        StorageHelper::CACHE_STORAGE => get_string('cache', $pluginname)
     ];
     $name = 'trackingstorage';
     $setting = new admin_setting_configselect(
@@ -123,6 +125,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     $settings->add($setting);
 
     $name = 'exportfilesduringmigration';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_desc', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'tracklogsdatatypes';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),

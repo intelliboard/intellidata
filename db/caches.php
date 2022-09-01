@@ -32,5 +32,12 @@ $definitions = [
         'requirelockingwrite' => true,
         'overrideclass' => 'local_intellidata\tools\cache_application',
         'overrideclassfile' => 'local/intellidata/classes/tools/cache_application.php'
+    ],
+    'events' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'requirelockingwrite' => true,
+        'overrideclass' => 'local_intellidata\tools\cache_application',
+        'overrideclassfile' => 'local/intellidata/classes/tools/cache_application.php'
     ]
 ];

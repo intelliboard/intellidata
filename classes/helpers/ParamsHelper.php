@@ -62,4 +62,23 @@ class ParamsHelper {
     public static function get_plugin_version() {
         return get_config(self::PLUGIN)->version;
     }
+
+    /**
+     * Get current plugin version.
+     *
+     * @return mixed
+     * @throws \dml_exception
+     */
+    public static function get_moodle_config() {
+        global $CFG;
+
+        return [
+            'version' => $CFG->version,
+            'release' => $CFG->release,
+            'dbtype' => $CFG->dbtype,
+            'cronenabled' => $CFG->cron_enabled,
+            'moodleworkplace' => (int)class_exists('\tool_tenant\tenancy'),
+            'totaraversion' => !empty($CFG->totara_version) ? $CFG->totara_version : ''
+        ];
+    }
 }

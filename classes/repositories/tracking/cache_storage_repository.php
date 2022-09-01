@@ -32,6 +32,13 @@ use local_intellidata\helpers\SettingsHelper;
 
 class cache_storage_repository extends storage_repository {
 
+    /**
+     * Save data to storage.
+     *
+     * @param $trackdata
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function save_data($trackdata) {
         global $DB;
 
@@ -97,6 +104,12 @@ class cache_storage_repository extends storage_repository {
         }
     }
 
+    /**
+     * Export data to storage.
+     *
+     * @throws \coding_exception
+     * @throws \dml_transaction_exception
+     */
     public function export_data() {
         global $DB;
 

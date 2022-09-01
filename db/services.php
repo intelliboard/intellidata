@@ -34,7 +34,7 @@ $functions = [
         'description'   => 'Validate plugin credentials',
         'type'          => 'read',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intellidata_export_data' => [
         'classname'     => 'local_intellidata_exportlib',
@@ -43,7 +43,7 @@ $functions = [
         'description'   => 'Export Data',
         'type'          => 'write',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intellidata_get_data_files' => [
         'classname'     => 'local_intellidata_exportlib',
@@ -52,7 +52,7 @@ $functions = [
         'description'   => 'Get Data Files',
         'type'          => 'read',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intelldata_save_tracking' => [
         'classname'     => 'local_intellidata_trackinglib',
@@ -60,7 +60,7 @@ $functions = [
         'classpath'     => 'local/intellidata/classes/api/trackinglib.php',
         'description'   => 'Save Tracking',
         'type'          => 'write',
-        'ajax'          => true,
+        'ajax'          => true
     ],
     'local_intellidata_get_live_data' => [
         'classname'     => 'local_intellidata_exportlib',
@@ -69,7 +69,7 @@ $functions = [
         'description'   => 'Get some data in real time',
         'type'          => 'read',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intellidata_get_bbcollsessions_data' => [
         'classname'     => 'local_intellidata_exportlib',
@@ -78,7 +78,7 @@ $functions = [
         'description'   => 'Get get Blackboard Collaborate Sessions relations to Course',
         'type'          => 'read',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intellidata_course_get_categories' => [
         'classname' => 'core_course_external',
@@ -87,7 +87,7 @@ $functions = [
         'description' => 'Return category details',
         'type' => 'read',
         'capabilities' => 'moodle/category:viewhiddencategories',
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE]
     ],
     'local_intellidata_course_get_courses' => [
         'classname' => 'core_course_external',
@@ -97,7 +97,7 @@ $functions = [
         'type' => 'read',
         'capabilities' => 'moodle/course:view, moodle/course:update, moodle/course:viewhiddencourses',
         'ajax' => true,
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE]
     ],
     'local_intellidata_course_get_courses_by_field' => [
         'classname' => 'core_course_external',
@@ -105,7 +105,7 @@ $functions = [
         'classpath' => 'course/externallib.php',
         'description' => 'Get courses matching a specific field (id/s, shortname, idnumber, category)',
         'type' => 'read',
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE]
     ],
     'local_intellidata_role_assign_roles' => [
         'classname' => 'core_role_external',
@@ -124,7 +124,7 @@ $functions = [
         'type' => 'read',
         'capabilities' => 'moodle/user:viewdetails, moodle/user:viewhiddendetails, moodle/course:useremail, moodle/user:update',
         'ajax' => true,
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE]
     ],
     'local_intellidata_enrol_users' => [
         'classname'   => 'enrol_manual_external',
@@ -132,7 +132,7 @@ $functions = [
         'classpath'   => 'enrol/manual/externallib.php',
         'description' => 'Manual enrol users',
         'capabilities' => 'enrol/manual:enrol',
-        'type'        => 'write',
+        'type'        => 'write'
     ],
     'local_intellidata_unenrol_users' => [
         'classname'   => 'enrol_manual_external',
@@ -140,7 +140,7 @@ $functions = [
         'classpath'   => 'enrol/manual/externallib.php',
         'description' => 'Manual unenrol users',
         'capabilities' => 'enrol/manual:unenrol',
-        'type'        => 'write',
+        'type'        => 'write'
     ],
     'local_intellidata_user_get_users' => [
         'classname' => 'core_user_external',
@@ -157,7 +157,7 @@ $functions = [
         'description'   => 'Get Users Roles',
         'type'          => 'read',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intellidata_get_roles_list' => [
         'classname' => 'local_intellidata_accesslib',
@@ -166,70 +166,70 @@ $functions = [
         'description' => 'Get Roles List',
         'type' => 'read',
         'ajax' => true,
-        'loginrequired' => false,
+        'loginrequired' => false
     ],
     'local_intellidata_run_report' => [
         'classname'   => 'local_intellidata_sqlreportlib',
         'methodname'  => 'run_report',
         'classpath'   => 'local/intellidata/classes/api/sqlreportlib.php',
         'description' => 'Run Supernova SQL report',
-        'type'        => 'read',
+        'type'        => 'read'
     ],
     'local_intellidata_save_report' => [
         'classname'   => 'local_intellidata_sqlreportlib',
         'methodname'  => 'save_report',
         'classpath'   => 'local/intellidata/classes/api/sqlreportlib.php',
         'description' => 'Save Supernova SQL report',
-        'type'        => 'write',
+        'type'        => 'write'
     ],
     'local_intellidata_delete_report' => [
         'classname'   => 'local_intellidata_sqlreportlib',
         'methodname'  => 'delete_report',
         'classpath'   => 'local/intellidata/classes/api/sqlreportlib.php',
         'description' => 'Delete Supernova SQL report',
-        'type'        => 'write',
+        'type'        => 'write'
     ],
     'local_intellidata_get_dbschema_custom' => [
         'classname'   => 'local_intellidata_dbschemalib',
         'methodname'  => 'get_dbschema_custom',
         'classpath'   => 'local/intellidata/classes/api/dbschemalib.php',
         'description' => 'Get Moodle DB Schema for Custom Tables',
-        'type'        => 'read',
+        'type'        => 'read'
     ],
     'local_intellidata_get_dbschema_unified' => [
         'classname'   => 'local_intellidata_dbschemalib',
         'methodname'  => 'get_dbschema_unified',
         'classpath'   => 'local/intellidata/classes/api/dbschemalib.php',
         'description' => 'Get Moodle DB Schema for Unified Tables',
-        'type'        => 'read',
+        'type'        => 'read'
     ],
     'local_intellidata_get_dbschema_logs' => [
         'classname'   => 'local_intellidata_dbschemalib',
         'methodname'  => 'get_dbschema_logs',
         'classpath'   => 'local/intellidata/classes/api/dbschemalib.php',
         'description' => 'Get Moodle DB Schema for Logs Tables',
-        'type'        => 'read',
+        'type'        => 'read'
     ],
     'local_intellidata_set_datatype' => [
         'classname'     => 'local_intellidata_exportlib',
         'methodname'    => 'set_datatype',
         'classpath'     => 'local/intellidata/classes/api/exportlib.php',
         'description'   => 'Set new or update existing datatype in Moodle.',
-        'type'          => 'write',
+        'type'          => 'write'
     ],
     'local_intellidata_get_tasks_logs' => [
         'classname'     => 'local_intellidata_logslib',
         'methodname'    => 'get_tasks_logs',
         'classpath'     => 'local/intellidata/classes/api/logslib.php',
         'description'   => 'Get plugin tasks logs from Moodle.',
-        'type'          => 'read',
+        'type'          => 'read'
     ],
     'local_intellidata_get_export_logs' => [
         'classname'     => 'local_intellidata_logslib',
         'methodname'    => 'get_export_logs',
         'classpath'     => 'local/intellidata/classes/api/logslib.php',
         'description'   => 'Get export logs statistics from plugin.',
-        'type'          => 'read',
+        'type'          => 'read'
     ],
     'local_intellidata_enable_processing' => [
         'classname'     => 'local_intellidata_exportlib',
@@ -238,7 +238,15 @@ $functions = [
         'description'   => 'Enable data processing',
         'type'          => 'write',
         'ajax'          => true,
-        'loginrequired' => false,
+        'loginrequired' => false
+    ],
+    'local_intellidata_get_plugin_config' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'get_plugin_config',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Get plugin config',
+        'type'          => 'read',
+        'loginrequired' => false
     ]
 ];
 
@@ -271,7 +279,8 @@ $services = [
             'local_intellidata_set_datatype',
             'local_intellidata_get_tasks_logs',
             'local_intellidata_get_export_logs',
-            'local_intellidata_enable_processing'
+            'local_intellidata_enable_processing',
+            'local_intellidata_get_plugin_config'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,
