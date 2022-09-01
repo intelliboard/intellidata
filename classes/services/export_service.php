@@ -150,7 +150,7 @@ class export_service {
             foreach ($datatypes as $key => $datatype) {
 
                 // Exclude datatatypes.
-                if (count($exclude) and in_array($key, $exclude)) {
+                if (count($exclude) && in_array($key, $exclude)) {
                     continue;
                 }
 

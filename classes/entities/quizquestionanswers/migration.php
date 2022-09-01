@@ -68,7 +68,8 @@ class migration extends \local_intellidata\entities\migration {
                     WHERE qas.fraction IS NOT NULL $sqlwhere2";
             $params = [];
         } else {
-            $sql = "SELECT $rownumber AS uid, qa.id, qa.id AS attemptid, qua.questionid, qas.state, a.value, qas.fraction, qa.timemodified
+            $sql = "SELECT $rownumber AS uid, qa.id, qa.id AS attemptid, qua.questionid,
+                           qas.state, a.value, qas.fraction, qa.timemodified
                 FROM $rownumberselect {quiz_attempts} qa
                 JOIN {question_attempts} qua ON qua.questionusageid = qa.uniqueid
                 JOIN {question_attempt_steps} qas ON qas.questionattemptid = qua.id

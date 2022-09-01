@@ -31,6 +31,8 @@ use local_intellidata\helpers\SettingsHelper;
 class TrackingHelper {
 
     /**
+     * Validate is plugin enabled.
+     *
      * @return bool
      * @throws \dml_exception
      */
@@ -40,6 +42,8 @@ class TrackingHelper {
     }
 
     /**
+     * Enable plugin.
+     *
      * @return bool
      */
     public static function enable() {
@@ -47,6 +51,8 @@ class TrackingHelper {
     }
 
     /**
+     * Disable plugin.
+     *
      * @return bool
      */
     public static function disable() {
@@ -54,6 +60,8 @@ class TrackingHelper {
     }
 
     /**
+     * Validate is tracking enabled.
+     *
      * @return bool
      * @throws \dml_exception
      */
@@ -68,6 +76,18 @@ class TrackingHelper {
     }
 
     /**
+     * Validate is tracklogsdatatypes enabled.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function trackinglogs_enabled() {
+        return (SettingsHelper::get_setting('tracklogsdatatypes')) ? true : false;
+    }
+
+    /**
+     * Enable tracking.
+     *
      * @return bool
      */
     public static function enable_tracking() {
@@ -75,6 +95,8 @@ class TrackingHelper {
     }
 
     /**
+     * Disable tracking.
+     *
      * @return bool
      */
     public static function disable_tracking() {

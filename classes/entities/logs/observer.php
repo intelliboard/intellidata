@@ -43,7 +43,7 @@ class observer {
      * @param \core\event\base $event
      */
     public static function log_created(\core\event\base $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::enabled() && TrackingHelper::trackinglogs_enabled()) {
             $eventdata = $event->get_data();
 
             $exportlogrepository = new export_log_repository();

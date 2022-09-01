@@ -34,20 +34,57 @@ use local_intellidata\helpers\SettingsHelper;
 
 class StorageHelper {
 
+    const FILE_STORAGE = 0;
+    const DATABASE_STORAGE = 1;
+    const CACHE_STORAGE = 2;
+
     /**
+     * Get storage service.
+     *
      * @param $datatype
      * @return database_storage_repository|file_storage_repository
      * @throws \dml_exception
      */
     public static function get_storage_service($datatype) {
 
-        if (empty($datatype['migrationmode']) &&
-            !empty(SettingsHelper::get_setting('trackingstorage'))) {
-            return new database_storage_repository($datatype);
-        } else {
+        if (!empty($datatype['migrationmode'])) {
             return new file_storage_repository($datatype);
         }
 
+        $storagename = 'local_intellidata\\repositories\\' . self::get_storage_classname();
+
+        return new $storagename($datatype);
+    }
+
+    /**
+     * Return the list of all repositories.
+     *
+     * @return string[]
+     */
+    public static function repositories() {
+        return [
+            self::FILE_STORAGE => 'file_storage_repository',
+            self::DATABASE_STORAGE => 'database_storage_repository',
+            self::CACHE_STORAGE => 'cache_storage_repository'
+        ];
+    }
+
+    /**
+     * Get storage repository based on plugin configuration.
+     *
+     * @return string
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public static function get_storage_classname() {
+        $trackingstorage = SettingsHelper::get_setting('trackingstorage');
+        $repositories = self::repositories();
+
+        if (!isset($repositories[$trackingstorage])) {
+            throw new \moodle_exception("storage_not_exits", 'local_intellidata');
+        }
+
+        return $repositories[$trackingstorage];
     }
 
     /**

@@ -27,6 +27,7 @@
 namespace local_intellidata\helpers;
 
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\StorageHelper;
 use local_intellidata\repositories\tracking\tracking_repository;
 
 class SettingsHelper {
@@ -36,7 +37,7 @@ class SettingsHelper {
         'enabled' => 1,
         'ispluginsetup' => 0,
         'migrationcallbackurl' => '',
-        'trackingstorage' => 0,
+        'trackingstorage' => StorageHelper::FILE_STORAGE,
         'encryptionkey' => '',
         'clientidentifier' => '',
         'cleaner_duration' => DAYSECS * 14,
@@ -45,6 +46,7 @@ class SettingsHelper {
         'exportrecordslimit' => '0',
         'exportfilesduringmigration' => 1,
         'resetmigrationprogress' => 0,
+        'tracklogsdatatypes' => 0,
         'debugenabled' => 0,
         'exportdataformat' => 'csv',
         'defaultlayout' => 'standard',
@@ -177,5 +179,143 @@ class SettingsHelper {
         return (!empty(self::get_setting('encryptionkey')) &&
                 !empty(self::get_setting('clientidentifier')) &&
                 !empty(self::get_setting('ispluginsetup'))) ? true : false;
+    }
+
+    /**
+     * Get plugin settings list with values.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_plugin_settings($pluginame = 'local_intellidata', $pluginsetting = 'local_intellidata') {
+        global $CFG, $DB;
+        require_once($CFG->libdir.'/adminlib.php');
+
+        $result = [];
+        $settingsvalues = $DB->get_records_menu(
+            'config_plugins', ['plugin' => $pluginame], '', 'name, value'
+        );
+
+        // Validate if settings exists.
+        if (!count($settingsvalues)) {
+            return $result;
+        }
+
+        $adminroot = admin_get_root();
+        $settingspage = $adminroot->locate($pluginsetting, true);
+
+        if (isset($settingspage->children)) {
+            foreach ($settingspage->children as $childpage) {
+                $result[] = self::prepare_settings_page($childpage, $settingsvalues);
+            }
+        } else if ($settingspage) {
+            $result[] = self::prepare_settings_page($settingspage, $settingsvalues);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return setting title.
+     *
+     * @param $setting
+     * @return mixed|string
+     */
+    public static function get_setting_langname($visiblename) {
+        return ($visiblename instanceof \lang_string)
+            ? $visiblename->out()
+            : $visiblename;
+    }
+
+    /**
+     * Prepare readable settings list.
+     *
+     * @param $settingpage
+     * @param $settingsvalues
+     * @return array
+     */
+    public static function prepare_settings_page($settingpage, $settingsvalues) {
+        global $CFG;
+        require_once($CFG->libdir.'/adminlib.php');
+
+        // Ignore if not accessable.
+        if ($settingpage->is_hidden() || !$settingpage->check_access()) {
+            return [];
+        }
+
+        $page = [
+            'title' => self::get_setting_langname($settingpage->visiblename),
+            'items' => [],
+        ];
+
+        if ($settingpage instanceof \admin_settingpage) {
+
+            if (!empty($settingpage->settings)) {
+                $group = [];
+
+                foreach ($settingpage->settings as $setting) {
+
+                    $title = self::get_setting_langname($setting->visiblename);
+
+                    if ($setting instanceof \admin_setting_heading) {
+                        if ($group) {
+                            $page['items'][] = $group;
+                        }
+                        $group = [
+                            'grouptitle' => $title,
+                            'items' => []
+                        ];
+                    } else {
+                        if ($setting instanceof \admin_setting_configmultiselect) {
+                            $selected = explode(
+                                ',', $settingsvalues[$setting->name]
+                            );
+
+                            $selected = array_filter(
+                                $setting->choices, function($key) use ($selected) {
+                                    return in_array($key, $selected);
+                                }, ARRAY_FILTER_USE_KEY
+                            );
+
+                            foreach ($selected as &$item) {
+                                if ($item instanceof \lang_string) {
+                                    $item = $item->out();
+                                }
+                            }
+                            $value = implode(', ', $selected);
+                            $subtype = 'multiselect';
+                        } else if ($setting instanceof \admin_setting_configselect) {
+                            $value = $setting->choices[
+                                $settingsvalues[$setting->name]
+                            ];
+                            $subtype = 'select';
+                            if ($value instanceof \lang_string) {
+                                $value = $value->out();
+                            }
+                        } else if ($setting instanceof \admin_setting_configcheckbox) {
+                            $value = ($settingsvalues[$setting->name]) ? true : false;
+                            $subtype = 'checkbox';
+                        } else {
+                            $subtype = 'other';
+                            $value = $setting->get_setting();
+                        }
+
+                        $group['items'][$setting->name] = [
+                            'type' => 'setting',
+                            'subtype' => $subtype,
+                            'title' => $title,
+                            'name' => $setting->name,
+                            'value' => $value,
+                        ];
+                    }
+                }
+
+                if ($group) {
+                    $page['items'][] = $group;
+                }
+            }
+        }
+
+        return $page;
     }
 }

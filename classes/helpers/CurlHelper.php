@@ -45,6 +45,10 @@ class CurlHelper {
         if ($debug) {
             ob_start();
             $curl = new \curl(['debug' => true]);
+            // It is required for old versions of moodle, it is fixed in new ones.
+            if (property_exists($curl, 'emulateredirects') && !$curl->emulateredirects) {
+                $curl->emulateredirects = true;
+            }
             $out = fopen('php://output', 'w');
 
             $options['CURLOPT_VERBOSE'] = true;
@@ -55,7 +59,10 @@ class CurlHelper {
             $output = ob_get_clean();
         } else {
             $curl = new \curl;
-
+            // It is required for old versions of moodle, it is fixed in new ones.
+            if (property_exists($curl, 'emulateredirects') && !$curl->emulateredirects) {
+                $curl->emulateredirects = true;
+            }
             $json = $curl->post($url, $params, $options);
             $output = $json;
         }

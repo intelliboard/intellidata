@@ -47,7 +47,7 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'cc.timecompleted > 0';
+        $where = 'cc.id > 0';
         $select = ($count) ?
             "SELECT COUNT(cc.id) as recordscount" :
             "SELECT cc.*";
