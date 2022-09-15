@@ -46,7 +46,6 @@ class local_intellidata_logslib extends external_api {
      * @throws restricted_context_exception
      */
     public static function get_tasks_logs($data) {
-        global $DB;
 
         try {
             apilib::check_auth();
@@ -74,17 +73,13 @@ class local_intellidata_logslib extends external_api {
             'taskname' => PARAM_TEXT,
         ]);
 
-        $dbman = $DB->get_manager();
-
-        $logs = [];
-        if ($dbman->table_exists(TasksHelper::LOG_TABLE)) {
-            $logs = TasksHelper::get_logs($params);
-        }
-
+        $logs = TasksHelper::get_logs($params);
         $encryptionservice = new encryption_service();
 
         return [
-            'data' => $encryptionservice->encrypt(json_encode($logs)),
+            'data' => $encryptionservice->encrypt(
+                json_encode($logs)
+            ),
             'status' => apilib::STATUS_SUCCESS
         ];
     }

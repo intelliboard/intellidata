@@ -378,7 +378,7 @@ class config_table extends \table_sql {
     public function import_button() {
 
         $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'import']);
-        $output = \html_writer::link($reseturl, get_string('importconfig', 'local_intellidata'),
+        $output = \html_writer::link($reseturl, get_string('refreshconfig', 'local_intellidata'),
             ['class' => 'btn btn-primary mr-1']);
 
         return $output;

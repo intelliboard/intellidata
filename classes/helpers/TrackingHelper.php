@@ -102,4 +102,92 @@ class TrackingHelper {
     public static function disable_tracking() {
         return set_config('local_intellidata', false, 'enabledtracking');
     }
+
+    /**
+     * Extract tracking records.
+     *
+     * @param $trackingdata
+     * @return array
+     */
+    public static function extract_tracking_records($trackingdata) {
+
+        $trackingrecords = [];
+
+        foreach ($trackingdata as $data) {
+            $trackingrecords[] = (object)$data['tracking'];
+        }
+
+        return $trackingrecords;
+    }
+
+    /**
+     * Extract tracking logs.
+     *
+     * @param $userdata
+     * @param $trackingrecords
+     * @return array
+     */
+    public static function extract_tracking_logs($userdata, $trackingrecords) {
+
+        $logsrecords = [];
+
+        foreach ($userdata as $data) {
+            $tracking = (object)$data['tracking'];
+            $tracking->id = (isset($trackingrecords[$tracking->page . '_' . $tracking->param]))
+                ? $trackingrecords[$tracking->page . '_' . $tracking->param]->id
+                : 0;
+            $logs = $data['logs'];
+
+            if (count($logs)) {
+                foreach ($logs as $logrecord) {
+                    if ($tracking->id) {
+                        $logrecord = (object)$logrecord;
+
+                        $logrecord->trackid = $tracking->id;
+                        $logsrecords[] = $logrecord;
+                    }
+                }
+            }
+        }
+
+        return $logsrecords;
+    }
+
+    /**
+     * Extract tracking logs.
+     *
+     * @param $userdata
+     * @param $trackingrecords
+     * @return array
+     */
+    public static function extract_tracking_details($userdata, $trackingrecords, $logsrecords) {
+
+        $detailsrecords = [];
+
+        foreach ($userdata as $data) {
+            $tracking = (object)$data['tracking'];
+            $tracking->id = (isset($trackingrecords[$tracking->page . '_' . $tracking->param]))
+                ? $trackingrecords[$tracking->page . '_' . $tracking->param]->id
+                : 0;
+
+            foreach ($data['logs'] as $logrecord) {
+                $logrecord = (object)$logrecord;
+                $logrecord->id = (isset($logsrecords[$tracking->id . '_' . $logrecord->timepoint]))
+                    ? $logsrecords[$tracking->id . '_' . $logrecord->timepoint]->id
+                    : 0;
+
+                $details = $data['details'][$logrecord->timepoint];
+                foreach ($details as $detailrecord) {
+                    $detailrecord = (object)$detailrecord;
+
+                    if ($logrecord->id) {
+                        $detailrecord->logid = $logrecord->id;
+                        $detailsrecords[] = $detailrecord;
+                    }
+                }
+            }
+        }
+
+        return $detailsrecords;
+    }
 }

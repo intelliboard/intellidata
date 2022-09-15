@@ -288,3 +288,7 @@ $string['tracklogsdatatypes'] = 'Track logs datatypes';
 $string['tracklogsdatatypes_desc'] = 'Enable tracking each event to export logs datatypes';
 $string['trackingstorage'] = 'Tracking Storage';
 $string['cachedef_events'] = 'IntelliData Events data';
+$string['directsqlenabled'] = 'Enable direct SQL';
+$string['directsqlenabled_desc'] = '';
+$string['event_sql_request'] = 'SQL Request Event';
+$string['refreshconfig'] = 'Refresh Configuration';

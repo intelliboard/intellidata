@@ -168,6 +168,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'directsqlenabled';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
     $name = 'defaultlayout';
     $setting = new admin_setting_configselect(
         $pluginname . '/' . $name,

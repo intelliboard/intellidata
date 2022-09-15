@@ -247,6 +247,13 @@ $functions = [
         'description'   => 'Get plugin config',
         'type'          => 'read',
         'loginrequired' => false
+    ],
+    'local_intellidata_get_data' => [
+        'classname'   => 'local_intellidata_datalib',
+        'methodname'  => 'get_data',
+        'classpath'   => 'local/intellidata/classes/api/datalib.php',
+        'description' => 'Run SQL and retrieve data from LMS',
+        'type'        => 'read'
     ]
 ];
 
@@ -280,7 +287,8 @@ $services = [
             'local_intellidata_get_tasks_logs',
             'local_intellidata_get_export_logs',
             'local_intellidata_enable_processing',
-            'local_intellidata_get_plugin_config'
+            'local_intellidata_get_plugin_config',
+            'local_intellidata_get_data'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

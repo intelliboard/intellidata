@@ -70,7 +70,7 @@ class local_intellidata_sqlreportlib extends external_api {
         $context = context_system::instance();
         self::validate_context($context);
 
-        $params = self::validate_parameters(self::save_report_parameters(), ['data' => $data]);
+        $params = self::validate_parameters(self::run_report_parameters(), ['data' => $data]);
 
         // Validate if credentials not empty.
         $encryptionservice = new encryption_service();

@@ -78,6 +78,7 @@ class migration extends \local_intellidata\entities\migration {
             $user->state = ($user->confirmed && !$user->suspended) ?
                 ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
             $user->lastlogin = max($user->lastlogin, $user->currentlogin);
+            $user->email = trim($user->email);
 
             $entity = new $this->entity($user);
             $userdata = $entity->export();

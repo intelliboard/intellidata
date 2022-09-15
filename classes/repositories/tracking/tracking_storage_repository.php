@@ -77,4 +77,116 @@ class tracking_storage_repository {
         }
         return null;
     }
+
+    /**
+     * Read and return data from file.
+     *
+     * @param $tempfilepath
+     * @return array
+     */
+    public function get_usersdata_from_file($filename, $showdebug = true) {
+
+        $data = [];
+
+        list($userid, $extension) = explode('.', $filename);
+
+        if (!is_numeric($userid) || $extension != self::STORAGE_FILE_TYPE) {
+            // Something wrong.
+            if ($showdebug) {
+                mtrace("Incorrect file " . $filename);
+            }
+            $this->delete_file($filename);
+            return $data;
+        }
+
+        $tempfilepath = $this->rename_file($filename);
+        if (!$tempfilepath) {
+            // Something wrong.
+            if ($showdebug) {
+                mtrace("Error rename file " . $filename);
+            }
+            return $data;
+        }
+
+        $handle = @fopen($tempfilepath, "r");
+        if ($handle) {
+            while (($buffer = fgets($handle)) !== false) {
+                $record = json_decode($buffer);
+
+                if ($record->table == 'tracking') {
+                    if (isset($data[$record->userid][$record->page][$record->param][$record->table])) {
+                        $item = &$data[$record->userid][$record->page][$record->param][$record->table];
+                        if (isset($record->visits)) {
+                            @$item['visits'] += $record->visits;
+                        }
+                        $item['timespend'] += $record->timespend;
+                        $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
+
+                    } else {
+                        $data[$record->userid][$record->page][$record->param][$record->table] = (array) $record;
+                    }
+                } else if ($record->table == 'logs') {
+                    if (isset($data[$record->userid][$record->page][$record->param][$record->table][$record->timepoint])) {
+                        $item = &$data[$record->userid][$record->page][$record->param][$record->table][$record->timepoint];
+                        if (isset($record->visits)) {
+                            @$item['visits'] += $record->visits;
+                        }
+                        $item['timespend'] += $record->timespend;
+                        $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
+
+                    } else {
+                        $data[$record->userid][$record->page][$record->param][$record->table][$record->timepoint] =
+                            (array)$record;
+                    }
+                } else if ($record->table == 'details') {
+                    if (isset($data[$record->userid][$record->page][$record->param][$record->table]
+                        [$record->currentstamp][$record->timepoint])) {
+                        $item = &
+                            $data[$record->userid][$record->page][$record->param][$record->table]
+                            [$record->currentstamp][$record->timepoint];
+                        if (isset($record->visits)) {
+                            @$item['visits'] += $record->visits;
+                        }
+                        $item['timespend'] += $record->timespend;
+                        $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
+
+                    } else {
+                        $data[$record->userid][$record->page][$record->param][$record->table]
+                        [$record->currentstamp][$record->timepoint] = (array)$record;
+                    }
+                }
+            }
+            if (!feof($handle) && $showdebug) {
+                mtrace("Error reading file " . $filename);
+            }
+            fclose($handle);
+        }
+
+        // Delete temp file.
+        $this->delete_filepath($tempfilepath);
+
+        return $data;
+    }
+
+    /**
+     * Prepare userdata array.
+     *
+     * @param $userdata
+     * @return array
+     */
+
+    public function prepare_usersdata($userdata) {
+
+        $data = [];
+
+        foreach ($userdata as $pagerecords) {
+            foreach ($pagerecords as $recordarr) {
+                foreach ($recordarr as $record) {
+                    $data[] = $record;
+                }
+            }
+        }
+
+        return $data;
+    }
 }

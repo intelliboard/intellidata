@@ -29,6 +29,12 @@ namespace local_intellidata\tests;
 use phpunit_util;
 
 class generator {
+
+    /**
+     * Data generator.
+     *
+     * @return \testing_data_generator|null
+     */
     private static function data_generator() {
         if (test_helper::is_new_phpunit()) {
             return \advanced_testcase::getDataGenerator();
@@ -37,6 +43,13 @@ class generator {
         return phpunit_util::get_data_generator();
     }
 
+    /**
+     * Generate a user.
+     *
+     * @param array $data
+     * @return \stdClass
+     * @throws \moodle_exception
+     */
     public static function create_user(array $data = array()): \stdClass {
         global $CFG;
 
@@ -50,14 +63,33 @@ class generator {
         return (object)$data;
     }
 
+    /**
+     * Generate a cohort.
+     *
+     * @param array $data
+     * @return \stdClass
+     */
     public static function create_cohort(array $data): \stdClass {
         return self::data_generator()->create_cohort($data);
     }
 
+    /**
+     * Generate a category.
+     *
+     * @param array $data
+     * @return \core_course_category
+     */
     public static function create_category(array $data) {
         return self::data_generator()->create_category($data);
     }
 
+    /**
+     * Get category.
+     *
+     * @param int $id
+     * @return \core_course_category|false|null
+     * @throws \moodle_exception
+     */
     public static function get_category(int $id) {
         if (test_helper::is_new_phpunit()) {
             return \core_course_category::get($id);
@@ -66,26 +98,65 @@ class generator {
         return \coursecat::get($id);
     }
 
+    /**
+     * Generate a group.
+     *
+     * @param array $data
+     * @return \stdClass
+     * @throws \coding_exception
+     */
     public static function create_group(array $data) {
         return self::data_generator()->create_group($data);
     }
 
+    /**
+     * Generate a course.
+     *
+     * @param array $data
+     * @return \stdClass
+     */
     public static function create_course(array $data = array()) {
         return self::data_generator()->create_course($data);
     }
 
+    /**
+     * Enrol user.
+     *
+     * @param array $data
+     * @return bool
+     */
     public static function enrol_user(array $data) {
         return self::data_generator()->enrol_user($data['userid'], $data['courseid']);
     }
 
+    /**
+     * Get generator.
+     *
+     * @param $component
+     * @return \component_generator_base|\default_block_generator
+     */
     public static function get_plugin_generator($component) {
         return self::data_generator()->get_plugin_generator($component);
     }
 
+    /**
+     * Generate a role.
+     *
+     * @param array $data
+     * @return int
+     * @throws \coding_exception
+     */
     public static function create_role(array $data) {
         return self::data_generator()->create_role($data);
     }
 
+    /**
+     * Generate a module.
+     *
+     * @param string $modulename
+     * @param array $data
+     * @return \stdClass
+     */
     public static function create_module(string $modulename, array $data) {
         return self::data_generator()->create_module($modulename, $data);
     }

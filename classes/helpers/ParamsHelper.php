@@ -49,6 +49,7 @@ class ParamsHelper {
     public static function get_exportfiles_metadata() {
         return [
             'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate'),
+            'lastexportdate' => (int)SettingsHelper::get_setting('lastexportdate'),
             'pluginversion' => self::get_plugin_version()
         ];
     }

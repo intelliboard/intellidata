@@ -59,6 +59,9 @@ class ExportHelper {
         $exportservice->set_migration_mode();
         $exportservice->save_files();
 
+        // Set last export date.
+        SettingsHelper::set_lastexportdate();
+
         return $exportservice->get_files();
     }
 }
