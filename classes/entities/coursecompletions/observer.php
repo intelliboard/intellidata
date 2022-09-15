@@ -66,18 +66,23 @@ class observer {
         if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
-            $completion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
-
             $data = new \stdClass();
             $data->courseid = $eventdata['courseid'];
-            $data->userid = $eventdata['relateduserid'];
-            $data->timecompleted = $completion->timecompleted;
             $data->id = $eventdata['objectid'];
 
             self::export_event($data, $eventdata);
         }
     }
 
+    /**
+     * Export event data.
+     *
+     * @param $data
+     * @param $eventdata
+     * @param $fields
+     * @return void
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($data, $eventdata, $fields = []) {
         $data->crud = $eventdata['crud'];
 
