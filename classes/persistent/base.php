@@ -104,4 +104,25 @@ abstract class base extends \core\persistent {
         return $result;
     }
 
+    /**
+     * Bulk insert records to DB.
+     *
+     * @param $records
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function insert_records($records) {
+        global $DB;
+
+        try {
+            $transaction = $DB->start_delegated_transaction();
+            $DB->insert_records(static::TABLE, $records);
+            $transaction->allow_commit();
+        } catch (\Exception $e) {
+            if (!empty($transaction) && !$transaction->is_disposed()) {
+                $transaction->rollback($e);
+            }
+        }
+    }
+
 }

@@ -97,6 +97,7 @@ class observer {
      */
     private static function export_event($datatypename, $eventdata) {
         $record = (object)$eventdata;
+        $record->other = (is_array($record->other)) ? json_encode($record) : $record->other;
 
         $entity = new log($record, []);
         $data = $entity->export();

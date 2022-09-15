@@ -27,9 +27,11 @@
 namespace local_intellidata\repositories\tracking;
 
 use local_intellidata\helpers\SettingsHelper;
-
+use local_intellidata\repositories\tracking\usertracking_repository;
 
 class file_storage_repository extends storage_repository {
+
+    private $trackingstorage = null;
 
     /**
      * @param $trackdata
@@ -131,175 +133,37 @@ class file_storage_repository extends storage_repository {
      * Export data method.
      */
     public function export_data() {
-        global $DB;
-
         mtrace("IntelliData Tracking Files Export started!");
-        $trackingstorage = new tracking_storage_repository();
-        $files = $trackingstorage->get_files();
+
+        $this->trackingstorage = new tracking_storage_repository();
+        $files = $this->trackingstorage->get_files();
 
         foreach ($files as $filename) {
-            list($userid, $extension) = explode('.', $filename);
-
-            if (!is_numeric($userid) || $extension != $trackingstorage::STORAGE_FILE_TYPE) {
-                // Something wrong.
-                mtrace("Incorrect file " . $filename);
-                $trackingstorage->delete_file($filename);
-                continue;
-            }
-
-            $tempfilepath = $trackingstorage->rename_file($filename);
-
-            if (!$tempfilepath) {
-                // Something wrong.
-                mtrace("Error rename file " . $filename);
-                continue;
-            }
-
-            $data = [];
-            $handle = @fopen($tempfilepath, "r");
-            if ($handle) {
-                while (($buffer = fgets($handle)) !== false) {
-                    $record = json_decode($buffer);
-
-                    if ($record->table == 'tracking') {
-                        if (isset($data[$record->userid][$record->page][$record->param][$record->table])) {
-                            $item = &$data[$record->userid][$record->page][$record->param][$record->table];
-                            if (isset($record->visits)) {
-                                @$item['visits'] += $record->visits;
-                            }
-                            $item['timespend'] += $record->timespend;
-                            $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
-
-                        } else {
-                            $data[$record->userid][$record->page][$record->param][$record->table] = (array)$record;
-                        }
-                    } else if ($record->table == 'logs') {
-                        if (isset($data[$record->userid][$record->page][$record->param][$record->table][$record->timepoint])) {
-                            $item = &$data[$record->userid][$record->page][$record->param][$record->table][$record->timepoint];
-                            if (isset($record->visits)) {
-                                @$item['visits'] += $record->visits;
-                            }
-                            $item['timespend'] += $record->timespend;
-                            $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
-
-                        } else {
-                            $data[$record->userid][$record->page][$record->param][$record->table][$record->timepoint] = (array)$record;
-                        }
-                    } else if ($record->table == 'details') {
-                        if (isset($data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint])) {
-                            $item = &$data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint];
-                            if (isset($record->visits)) {
-                                @$item['visits'] += $record->visits;
-                            }
-                            $item['timespend'] += $record->timespend;
-                            $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
-
-                        } else {
-                            $data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint] = (array)$record;
-                        }
-                    }
-                }
-                if (!feof($handle)) {
-                    mtrace("Error reading file " . $filename);
-                }
-                fclose($handle);
-            }
-
-            try {
-                $transaction = $DB->start_delegated_transaction();
-
-                foreach ($data as $user) {
-                    foreach ($user as $page) {
-                        foreach ($page as $param) {
-                            $trrecord = (object)$param['tracking'];
-                            $trparams = array(
-                                'userid' => $trrecord->userid,
-                                'page' => $trrecord->page,
-                                'param' => $trrecord->param
-                            );
-                            $trfields = 'id, visits, timespend, lastaccess';
-
-                            if ($tracking = $DB->get_record('local_intellidata_tracking', $trparams, $trfields)) {
-                                if ($tracking->lastaccess < strtotime('today') || $trrecord->ajaxrequest == 0) {
-                                    $tracking->lastaccess = $trrecord->lastaccess;
-                                }
-                                if (isset($trrecord->visits)) {
-                                    $tracking->visits += $trrecord->visits;
-                                }
-                                $tracking->timespend += $trrecord->timespend;
-                                $tracking->useragent = $trrecord->useragent;
-                                $tracking->ip = $trrecord->ip;
-                                $tracking->timemodified = time();
-                                $DB->update_record('local_intellidata_tracking', $tracking);
-                            } else {
-                                $tracking = new \stdClass();
-                                $tracking->id = $DB->insert_record('local_intellidata_tracking', $trrecord, true);
-                            }
-
-                            $logrecords = $param['logs'];
-                            foreach ($logrecords as $logrecord) {
-                                $logrecord = (object)$logrecord;
-                                $logparams = array(
-                                    'trackid' => $tracking->id,
-                                    'timepoint' => $logrecord->timepoint
-                                );
-                                if ($log = $DB->get_record('local_intellidata_trlogs', $logparams)) {
-                                    if (isset($logrecord->visits)) {
-                                        $log->visits += $logrecord->visits;
-                                    }
-                                    $log->timespend += $logrecord->timespend;
-                                    $log->timemodified = time();
-                                    $DB->update_record('local_intellidata_trlogs', $log);
-                                } else {
-                                    $log = new \stdClass();
-                                    $log->trackid = $tracking->id;
-                                    $log->visits = $logrecord->visits;
-                                    $log->timespend = $logrecord->timespend;
-                                    $log->timepoint = $logrecord->timepoint;
-                                    $log->timemodified = time();
-                                    $log->id = $DB->insert_record('local_intellidata_trlogs', $log, true);
-                                }
-
-                                $detailrecords = $param['details'][$logrecord->timepoint];
-                                foreach ($detailrecords as $detailrecord) {
-                                    $detailrecord = (object)$detailrecord;
-                                    $detailparams = array(
-                                        'logid' => $log->id,
-                                        'timepoint' => $detailrecord->timepoint
-                                    );
-                                    if ($detail = $DB->get_record('local_intellidata_trdetails', $detailparams)) {
-                                        if (isset($detailrecord->visits)) {
-                                            $detail->visits += $detailrecord->visits;
-                                        }
-                                        $detail->timespend += $detailrecord->timespend;
-                                        $detail->timemodified = time();
-                                        $DB->update_record('local_intellidata_trdetails', $detail);
-                                    } else {
-                                        $detail = new \stdClass();
-                                        $detail->logid = $log->id;
-                                        $detail->visits = $detailrecord->visits;
-                                        $detail->timespend = $detailrecord->timespend;
-                                        $detail->timepoint = $detailrecord->timepoint;
-                                        $detail->timemodified = time();
-                                        $detail->id = $DB->insert_record('local_intellidata_trdetails', $detail, true);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                $transaction->allow_commit();
-            } catch (\Exception $e) {
-                if (!empty($transaction) && !$transaction->is_disposed()) {
-                    $transaction->rollback($e);
-                }
-            }
-
-            $trackingstorage->delete_filepath($tempfilepath);
-            mtrace("Successfull imported for user: $userid");
+            $this->export_data_from_file($filename);
         }
 
         mtrace('IntelliData Tracking Files Export completed!');
+    }
+
+    /**
+     * Export data from file.
+     *
+     * @param $filename
+     */
+    private function export_data_from_file($filename) {
+
+        // Get data from specific tracking file.
+        $usersdata = $this->trackingstorage->get_usersdata_from_file($filename);
+        $repository = new usertracking_repository();
+
+        if (count($usersdata)) {
+            foreach ($usersdata as $userid => $userdata) {
+
+                // Export tracking records for individual user.
+                $repository->save_tracking_records($userid, $this->trackingstorage->prepare_usersdata($usersdata));
+
+                mtrace("Imported tracking for user: $userid");
+            }
+        }
     }
 }

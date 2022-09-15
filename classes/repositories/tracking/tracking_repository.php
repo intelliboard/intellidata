@@ -97,12 +97,13 @@ class tracking_repository {
      */
     public static function get_storage($compresstracking, $ajaxrequest = false) {
         switch ($compresstracking){
-            case self::TYPE_CACHE:
-                return new cache_storage_repository($ajaxrequest);
             case self::TYPE_FILE:
                 return new file_storage_repository($ajaxrequest);
             case self::TYPE_LIVE:
                 return new live_storage_repository($ajaxrequest);
+            case self::TYPE_CACHE:
+            default:
+                return new cache_storage_repository($ajaxrequest);
         }
     }
 }

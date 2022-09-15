@@ -29,7 +29,10 @@ namespace local_intellidata\repositories;
 use local_intellidata\persistent\datatypeconfig;
 
 class config_repository {
+
     /**
+     * Get config records from DB.
+     *
      * @param array $params
      * @return config[]
      */
@@ -50,6 +53,8 @@ class config_repository {
     }
 
     /**
+     * Saves config to DB.
+     *
      * @param $datatype
      * @param $data
      * @return mixed
@@ -68,6 +73,8 @@ class config_repository {
     }
 
     /**
+     * Returns optional datatypes list.
+     *
      * @param array $params
      * @return config[]
      */
@@ -91,6 +98,8 @@ class config_repository {
     }
 
     /**
+     * Returns logs datatypes list.
+     *
      * @param array $params
      * @return config[]
      */
@@ -114,5 +123,21 @@ class config_repository {
         }
 
         return $config;
+    }
+
+    /**
+     * Delete config for specific datatype.
+     *
+     * @param $datatype
+     * @return bool
+     * @throws \coding_exception
+     */
+    public function delete($datatype) {
+
+        if ($record = datatypeconfig::get_record(['datatype' => $datatype])) {
+            return (new datatypeconfig($record->get('id')))->delete();
+        }
+
+        return false;
     }
 }

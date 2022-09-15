@@ -95,7 +95,9 @@ class apilib {
         if (count($rules)) {
             foreach ($rules as $name => $type) {
                 if (isset($params[$name])) {
-                    $params[$name] = clean_param($params[$name], $type);
+                    $params[$name] = (is_array($params[$name]))
+                        ? clean_param_array($params[$name], $type)
+                        : clean_param($params[$name], $type);
                 }
             }
         }

@@ -29,6 +29,11 @@ namespace local_intellidata\helpers;
 use local_intellidata\helpers\ParamsHelper;
 
 class TasksHelper {
+
+    /* Tasks list table */
+    const TASKS_TABLE = 'task_scheduled';
+
+    /* Tasks logs table */
     const LOG_TABLE = 'task_log';
 
     /**
@@ -78,6 +83,12 @@ class TasksHelper {
     public static function get_logs($params = []) {
         global $DB;
 
+        // Check if DB table exists.
+        $dbman = $DB->get_manager();
+        if (!$dbman->table_exists(self::LOG_TABLE)) {
+            return [];
+        }
+
         $where = ['component = :component'];
         $sqlparams = [
             'component' => ParamsHelper::PLUGIN
@@ -104,5 +115,26 @@ class TasksHelper {
             SELECT *
               FROM {" . self::LOG_TABLE . "}
              WHERE $where", $sqlparams);
+    }
+
+    /**
+     * Get plugin cron jobs config.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_tasks_config() {
+        global $DB;
+
+        // Check if DB table exists.
+        $dbman = $DB->get_manager();
+        if (!$dbman->table_exists(self::TASKS_TABLE)) {
+            return [];
+        }
+
+        return $DB->get_records(
+            self::TASKS_TABLE,
+            ['component' => ParamsHelper::PLUGIN]
+        );
     }
 }

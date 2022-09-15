@@ -26,6 +26,7 @@
 
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\ExportHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
@@ -99,7 +100,7 @@ if (!empty($options['datatype'])) {
 }
 
 // Set migration time.
-set_config('lastmigrationdate', time(), 'local_intellidata');
+SettingsHelper::set_lastmigrationdate();
 
 MigrationHelper::disable_sheduled_tasks();
 

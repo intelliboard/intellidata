@@ -48,6 +48,7 @@ class SettingsHelper {
         'resetmigrationprogress' => 0,
         'tracklogsdatatypes' => 0,
         'debugenabled' => 0,
+        'directsqlenabled' => 0,
         'exportdataformat' => 'csv',
         'defaultlayout' => 'standard',
         // User Tracking.
@@ -73,9 +74,9 @@ class SettingsHelper {
         'debug' => 0,
         // Internal settings.
         'lastmigrationdate' => 0,
-        'resetmigrationprogress' => 0,
         'migrationstart' => 0,
-        'migrationdatatype' => ''
+        'migrationdatatype' => '',
+        'lastexportdate' => 0
     ];
 
     /**
@@ -317,5 +318,21 @@ class SettingsHelper {
         }
 
         return $page;
+    }
+
+    /**
+     * Set last export date.
+     */
+    public static function set_lastexportdate($time = null) {
+        $value = ($time === null) ? time() : $time;
+        set_config('lastexportdate', $value, ParamsHelper::PLUGIN);
+    }
+
+    /**
+     * Set last migration date.
+     */
+    public static function set_lastmigrationdate($time = null) {
+        $value = ($time === null) ? time() : $time;
+        set_config('lastmigrationdate', $value, ParamsHelper::PLUGIN);
     }
 }

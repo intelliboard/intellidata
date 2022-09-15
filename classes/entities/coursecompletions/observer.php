@@ -66,8 +66,12 @@ class observer {
         if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
+            $completion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+
             $data = new \stdClass();
             $data->courseid = $eventdata['courseid'];
+            $data->userid = $eventdata['relateduserid'];
+            $data->timecompleted = $completion->timecompleted;
             $data->id = $eventdata['objectid'];
 
             self::export_event($data, $eventdata);

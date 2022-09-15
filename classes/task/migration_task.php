@@ -117,7 +117,7 @@ class migration_task extends \core\task\scheduled_task {
             mtrace("IntelliData Migration CRON started!");
 
             // Set migration time.
-            set_config('lastmigrationdate', time(), 'local_intellidata');
+            SettingsHelper::set_lastmigrationdate();
 
             // Export tables.
             $exportservice->set_migration_mode();

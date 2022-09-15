@@ -18,6 +18,7 @@ use local_intellidata\api\apilib;
 use local_intellidata\services\encryption_service;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\TasksHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -46,6 +47,7 @@ class local_intellidata_configlib extends external_api {
      * @throws restricted_context_exception
      */
     public static function get_plugin_config($data) {
+
         try {
             apilib::check_auth();
         } catch (\moodle_exception $e) {
@@ -68,7 +70,8 @@ class local_intellidata_configlib extends external_api {
         $config = [
             'moodleconfig' => ParamsHelper::get_moodle_config(),
             'pluginversion' => ParamsHelper::get_plugin_version(),
-            'pluginconfig' => SettingsHelper::get_plugin_settings()
+            'pluginconfig' => SettingsHelper::get_plugin_settings(),
+            'cronconfig' => TasksHelper::get_tasks_config()
         ];
 
         $encryptionservice = new encryption_service();

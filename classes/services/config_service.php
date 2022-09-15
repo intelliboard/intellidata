@@ -43,6 +43,8 @@ class config_service {
     }
 
     /**
+     * Returns configuration.
+     *
      * @return config[]
      */
     public function get_config() {
@@ -50,6 +52,8 @@ class config_service {
     }
 
     /**
+     * Returns datatypes list with configuration.
+     *
      * @return array|mixed
      */
     public function get_datatypes() {
@@ -72,9 +76,13 @@ class config_service {
                 $this->apply_config($datatypename, $defaultconfig, $forceresetconfig);
             }
         }
+
+        $this->delete_missed_tables_config();
     }
 
     /**
+     * Generate config for specific datatype.
+     *
      * @param $datatypename
      * @param $defaultconfig
      */
@@ -127,6 +135,8 @@ class config_service {
     }
 
     /**
+     * Creates new config record.
+     *
      * @param $datatypename
      * @param $defaultconfig
      * @return mixed
@@ -148,6 +158,8 @@ class config_service {
     }
 
     /**
+     * Returns config record status.
+     *
      * @param $conf
      * @return int
      */
@@ -165,6 +177,8 @@ class config_service {
     }
 
     /**
+     * Returns timemodified field.
+     *
      * @param $datatype
      * @return array|false
      */
@@ -185,6 +199,8 @@ class config_service {
     }
 
     /**
+     * Returns timemodified field based on DB table.
+     *
      * @param $datatype
      * @return array|false
      */
@@ -193,6 +209,8 @@ class config_service {
     }
 
     /**
+     * Returns filterbyid value.
+     *
      * @param $datatype
      * @return array|false
      */
@@ -209,6 +227,8 @@ class config_service {
     }
 
     /**
+     * Returns rewritable configuration.
+     *
      * @param $datatype
      * @return array|false
      */
@@ -225,6 +245,8 @@ class config_service {
     }
 
     /**
+     * Returns predefined configuration.
+     *
      * @param null $datatype
      * @return array|mixed
      */
@@ -274,4 +296,26 @@ class config_service {
         return ($datatype && !empty($config[$datatype])) ? $config[$datatype] : $config;
     }
 
+    /**
+     * Delete config records for not existing tables.
+     *
+     * @throws \coding_exception
+     */
+    private function delete_missed_tables_config() {
+
+        if (count($this->config)) {
+            foreach ($this->config as $config) {
+
+                // Delete only optional datatypes. Ignore required and logs datatypes.
+                if ($config->tabletype != datatypeconfig::TABLETYPE_OPTIONAL) {
+                    continue;
+                }
+
+                // Delete missed tables.
+                if (!$this->dbschema->table_exists($config->datatype)) {
+                    $this->repo->delete($config->datatype);
+                }
+            }
+        }
+    }
 }
