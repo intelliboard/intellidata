@@ -256,7 +256,9 @@ class exportfiles_table extends \table_sql {
         global $OUTPUT;
 
         // Render the dynamic table header.
-        echo $this->get_dynamic_table_html_start();
+        if (method_exists($this, 'get_dynamic_table_html_start')) {
+            echo $this->get_dynamic_table_html_start();
+        }
 
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
@@ -273,7 +275,9 @@ class exportfiles_table extends \table_sql {
         echo $OUTPUT->heading(get_string('nothingtodisplay'));
 
         // Render the dynamic table footer.
-        echo $this->get_dynamic_table_html_end();
+        if (method_exists($this, 'get_dynamic_table_html_end')) {
+            echo $this->get_dynamic_table_html_end();
+        }
     }
 
     /**

@@ -53,11 +53,13 @@ class migration extends \local_intellidata\entities\migration {
         $where = 's.id > 0';
         $xmltables = DBManagerHelper::get_install_xml_tables();
 
-        $select = $join = [];
+        $select = $join = $plugins = [];
         foreach ($xmltables as $xmltable) {
-            if ($xmltable['plugintype'] == 'assignsubmission') {
+            if (!in_array($xmltable['plugintype'], $plugins) && $xmltable['plugintype'] == 'assignsubmission') {
                 $select[] = "CASE WHEN MAX({$xmltable['name']}.id) IS NOT NULL THEN '{$xmltable['plugin']}' ELSE '' END";
                 $join[] = "LEFT JOIN {{$xmltable['name']}} {$xmltable['name']} on {$xmltable['name']}.submission = s.id";
+
+                $plugins[] = $xmltable['plugintype'];
             }
         }
 
