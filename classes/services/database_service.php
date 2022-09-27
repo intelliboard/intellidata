@@ -119,7 +119,7 @@ class database_service {
         $recordsexported = $this->repo->export($datatype, $params, $this->showlogs, $this->services);
 
         if ($this->showlogs) {
-            mtrace("Store dtatype ids at " . date('r') . " ...");
+            mtrace("Store datatype ids at " . date('r') . " ...");
         }
 
         // Sync deleted items.
