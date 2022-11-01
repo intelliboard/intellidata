@@ -40,11 +40,11 @@ function xmldb_local_intellidata_install() {
     $table = new xmldb_table('local_intelliboard_tracking');
     if ($dbman->table_exists($table)) {
         mtrace("Start import user trackings from IntelliBoard plugin!<br>");
-        $trackingfixmapper = local_intellidata\helpers\UpgradeHelper::copy_intelliboard_tracking();
+        local_intellidata\helpers\UpgradeHelper::copy_intelliboard_tracking();
         mtrace("Tracking table imported!<br>");
 
         mtrace("Start import user tracking logs from IntelliBoard plugin!<br>");
-        local_intellidata\helpers\UpgradeHelper::copy_intelliboard_logs($trackingfixmapper);
+        local_intellidata\helpers\UpgradeHelper::copy_intelliboard_logs();
         mtrace("Tracking logs table imported!<br>");
 
         mtrace("Start import user tracking log details from IntelliBoard plugin!<br>");

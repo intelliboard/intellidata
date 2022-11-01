@@ -160,4 +160,28 @@ class generator {
     public static function create_module(string $modulename, array $data) {
         return self::data_generator()->create_module($modulename, $data);
     }
+
+    /**
+     * Data plugin generator.
+     *
+     * @return \testing_data_generator|null
+     */
+    public static function data_plugin_generator() {
+        if (test_helper::is_new_phpunit()) {
+            return \advanced_testcase::getDataGenerator()->get_plugin_generator('local_intellidata');
+        }
+
+        return phpunit_util::get_data_generator()->get_plugin_generator('local_intellidata');
+    }
+
+    /**
+     * Generate tracking record.
+     *
+     * @param string $modulename
+     * @param array $data
+     * @return \stdClass
+     */
+    public static function create_tracking(array $data) {
+        return self::data_plugin_generator()->create_tracking($data);
+    }
 }

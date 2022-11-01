@@ -26,6 +26,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\EventsHelper;
@@ -244,7 +245,7 @@ class database_repository {
     private static function prepare_entity_data($datatype, $data, $isentitydata = false) {
         if (!$isentitydata) {
             $entity = datatypes_service::init_entity($datatype, $data);
-            $data = $entity->after_export($entity->export());
+            $data = $entity->export_data();
         }
 
         return StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $data);
@@ -257,22 +258,28 @@ class database_repository {
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
-    public static function export_ids($datatype) {
+    public static function export_ids($datatype, $showlogs = true) {
 
-        $exportidrepository = new export_id_repository();
-
-        if (isset($datatype['table'])) {
-            $filteredids = $exportidrepository->filterids($datatype['name'], $datatype['table']);
-            $exportidrepository->save($datatype['name'], $filteredids);
-        } else if (isset($datatype['migration'])) {
-            // Temporary disabled, currently we can not calculate deleted ids for large migration requests.
+        // Temporary disabled, currently we can not calculate deleted ids for large migration requests.
+        if (!isset($datatype['table'])) {
             return;
         }
 
-        if ($deletedids = $filteredids['deleted']) {
-            foreach ($deletedids as $id) {
-                self::save($datatype, (object)['id' => $id, 'crud' => EventsHelper::CRUD_DELETED]);
-            }
+        if ($showlogs) {
+            $starttime = microtime();
+            mtrace("Storing datatype ids: started at " . date('r') . "...");
+        }
+
+        // Process deleted records.
+        self::process_deleted_records($datatype, $showlogs);
+
+        // Process created records.
+        self::process_created_records($datatype, $showlogs);
+
+        if ($showlogs) {
+            $difftime = microtime_diff($starttime, microtime());
+            mtrace("Storing datatype ids: completed at " . date('r') . ".");
+            mtrace("Storing datatype ids: took " . $difftime . " seconds.");
         }
     }
 
@@ -287,7 +294,7 @@ class database_repository {
      */
     public static function save($datatype, $data, $eventname = false) {
         $entity = datatypes_service::init_entity($datatype, $data);
-        $entitydata = $entity->after_export($entity->export());
+        $entitydata = $entity->export_data();
 
         $prepareddata = StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $entitydata);
 
@@ -295,5 +302,154 @@ class database_repository {
             self::init();
         }
         self::$exportservice->store_data($datatype['name'], $prepareddata);
+    }
+
+    /**
+     * Save data to storage.
+     *
+     * @param $datatype
+     * @param $data
+     * @param false $eventname
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    private static function process_deleted_records($datatype, $showlogs = true) {
+
+        $exportidrepository = new export_id_repository();
+
+        $deletedrecords = $exportidrepository->get_deleted_ids($datatype['name'], $datatype['table']);
+
+        if ($deletedrecords->valid()) {
+
+            if ($showlogs) {
+                mtrace("Storing datatype ids: generating deleted events...");
+            }
+
+            $deletedids = []; $records = []; $i = 1; $cleanlogs = false;
+            foreach ($deletedrecords as $record) {
+                $deletedids[] = $record->id;
+                $records[] = self::prepare_event_data(
+                    $datatype, (object)['id' => $record->id, 'crud' => EventsHelper::CRUD_DELETED]
+                );
+
+                if (!empty(SettingsHelper::get_setting('exportrecordslimit'))
+                    && $i >= (int)SettingsHelper::get_setting('exportrecordslimit')) {
+
+                    self::save_events($datatype['name'], $records);
+                    $records = []; $i = 0;
+
+                    if ($showlogs) {
+                        mtrace('.', '');
+                        $cleanlogs = true;
+                    }
+                }
+
+                $i++;
+            }
+
+            self::save_events($datatype['name'], $records);
+
+            // Delete records IDs from database.
+            $exportidrepository->clean_deleted_ids($datatype['name'], $deletedids);
+
+            if ($showlogs && count($deletedids)) {
+                if ($cleanlogs) {
+                    mtrace('');
+                }
+                mtrace("Storing datatype ids: deleted " . count($deletedids) . " ids at " . date('r') . ".");
+            }
+        }
+    }
+
+    /**
+     * Save created IDs to storage.
+     *
+     * @param $datatype
+     * @param $showlogs
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    private static function process_created_records($datatype, $showlogs = true) {
+
+        $exportidrepository = new export_id_repository();
+
+        $createdrecords = $exportidrepository->get_created_ids($datatype['name'], $datatype['table']);
+
+        if ($createdrecords->valid()) {
+
+            if ($showlogs) {
+                mtrace("Storing datatype ids: saving new ids...");
+            }
+
+            $records = []; $created = 0; $i = 1; $cleanlogs = false;
+            foreach ($createdrecords as $record) {
+                $records[] = [
+                    'datatype' => $datatype['name'],
+                    'dataid' => $record->id,
+                    'timecreated' => time()
+                ];
+
+                if (!empty(SettingsHelper::get_setting('exportrecordslimit'))
+                        && $i >= (int)SettingsHelper::get_setting('exportrecordslimit')) {
+
+                    $exportidrepository->save($records);
+                    if ($showlogs) {
+                        mtrace('.', '');
+                        $cleanlogs = true;
+                    }
+                    $records = []; $i = 0;
+                }
+                $i++; $created++;
+            }
+
+            $exportidrepository->save($records);
+
+            if ($showlogs && $created) {
+                if ($cleanlogs) {
+                    mtrace('');
+                }
+                mtrace("Storing datatype ids: created " . $created . " ids at " . date('r') . ".");
+            }
+        }
+    }
+
+    /**
+     * Prepare event data for export.
+     *
+     * @param $datatype
+     * @param $data
+     * @param $eventname
+     * @return false|string
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    private static function prepare_event_data($datatype, $data, $eventname = false) {
+        $entity = datatypes_service::init_entity($datatype, $data);
+        $entitydata = $entity->export_data();
+
+        return StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $entitydata);
+    }
+
+    /**
+     * Save events to the Storage.
+     *
+     * @param $datatype
+     * @param $records
+     * @return void
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    private static function save_events(string $datatypename, array $events) {
+
+        if (!count($events)) {
+            return;
+        }
+
+        if (empty(self::$exportservice)) {
+            self::init();
+        }
+
+        self::$exportservice->store_data($datatypename, implode(PHP_EOL, $events));
     }
 }

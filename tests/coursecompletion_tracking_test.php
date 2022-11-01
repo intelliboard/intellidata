@@ -67,6 +67,7 @@ class local_intellidata_coursecompletion_tracking_testcase extends \advanced_tes
         $coursedata = [
             'fullname' => 'ibcoursecompletion1',
             'idnumber' => '1111111',
+            'enablecompletion' => true
         ];
 
         $course = generator::create_course($coursedata);
