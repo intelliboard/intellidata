@@ -15,17 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- * @package    local
- * @subpackage intellidata
- * @copyright  2020
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @website    http://intelliboard.net/
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2022103101;
-$plugin->requires = 2017111300;
-$plugin->release = '1.77.0';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'local_intellidata';
+
+/**
+ * IntelliData data generator class
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @website    http://intelliboard.net/
+ */
+interface local_intellidata_base_generator {
+
+    public function create($record = null);
+
+}

@@ -67,6 +67,21 @@ class observer {
     }
 
     /**
+     * Triggered when 'course_restored' event is triggered.
+     *
+     * @param \core\event\course_restored $event
+     */
+    public static function course_restored(\core\event\course_restored $event) {
+        if (TrackingHelper::enabled()) {
+            $eventdata = $event->get_data();
+
+            $course = $event->get_record_snapshot('course', $eventdata['objectid']);
+
+            self::export_event($course, $eventdata);
+        }
+    }
+
+    /**
      * Triggered when 'course_deleted' event is triggered.
      *
      * @param \core\event\course_deleted $event

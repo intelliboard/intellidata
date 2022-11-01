@@ -424,6 +424,15 @@ class entity {
         return $record;
     }
 
+    /**
+     * Export data with after_export() action.
+     *
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    final public function export_data() {
+        return $this->after_export($this->export());
+    }
 
     /**
      * Hook to execute before the validation.

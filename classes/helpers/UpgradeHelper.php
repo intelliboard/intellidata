@@ -29,6 +29,7 @@ namespace local_intellidata\helpers;
 class UpgradeHelper {
 
     const SHOW_MESSAGE_ROWS = 10000;
+    const TRACKING_TYPES = [PageParamsHelper::PAGETYPE_COURSE, PageParamsHelper::PAGETYPE_MODULE];
 
     /**
      * @return array
@@ -39,8 +40,7 @@ class UpgradeHelper {
         global $DB;
 
         $DB->delete_records('local_intellidata_tracking');
-        $trackingtypes = [PageParamsHelper::PAGETYPE_COURSE, PageParamsHelper::PAGETYPE_MODULE];
-        list($sql, $conditions) = $DB->get_in_or_equal($trackingtypes);
+        list($sql, $conditions) = $DB->get_in_or_equal(self::TRACKING_TYPES);
 
         $DB->execute("INSERT INTO {local_intellidata_tracking}
                                         SELECT
@@ -59,7 +59,7 @@ class UpgradeHelper {
                                         FROM {local_intelliboard_tracking}
                                         WHERE courseid IS NOT NULL AND page {$sql} ", $conditions);
 
-        list($sql, $conditions) = $DB->get_in_or_equal($trackingtypes, SQL_PARAMS_NAMED, 'param', false);
+        list($sql, $conditions) = $DB->get_in_or_equal(self::TRACKING_TYPES, SQL_PARAMS_NAMED, 'param', false);
         $DB->execute("
                         INSERT INTO {local_intellidata_tracking}
                         SELECT
@@ -78,7 +78,20 @@ class UpgradeHelper {
                         FROM {local_intelliboard_tracking}
                        WHERE page {$sql}
                     GROUP BY userid", $conditions);
+    }
 
+    /**
+     * @param $trackingfixmapper
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public static function copy_intelliboard_logs() {
+        global $DB;
+
+        $DB->delete_records('local_intellidata_trlogs');
+        $DB->execute("INSERT INTO {local_intellidata_trlogs} SELECT *, 0 AS timemodified FROM {local_intelliboard_logs}");
+
+        list($sql, $conditions) = $DB->get_in_or_equal(self::TRACKING_TYPES, SQL_PARAMS_NAMED, 'param', false);
         $ids = DBHelper::get_operator('GROUP_CONCAT', 'id', ['separator' => ',']);
         $duplicates = $DB->get_records_sql("
                         SELECT
@@ -89,27 +102,11 @@ class UpgradeHelper {
                     GROUP BY userid
                       HAVING COUNT(id) > 1", $conditions);
 
-        $trackingfixmapper = [];
         foreach ($duplicates as $record) {
             $ids = explode(',', $record->ids);
-            $trackingfixmapper[$record->id] = array_diff($ids, [$record->id]);
-        }
+            $newid = $record->id;
+            $duplicates = array_diff($ids, [$record->id]);
 
-        return $trackingfixmapper;
-    }
-
-    /**
-     * @param $trackingfixmapper
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public static function copy_intelliboard_logs($trackingfixmapper) {
-        global $DB;
-
-        $DB->delete_records('local_intellidata_trlogs');
-        $DB->execute("INSERT INTO {local_intellidata_trlogs} SELECT *, 0 AS timemodified FROM {local_intelliboard_logs}");
-
-        foreach ($trackingfixmapper as $newid => $duplicates) {
             list($sql, $conditions) = $DB->get_in_or_equal($duplicates, SQL_PARAMS_NAMED);
             $conditions['newid'] = $newid;
 

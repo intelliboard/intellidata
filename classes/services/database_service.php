@@ -26,7 +26,6 @@
 namespace local_intellidata\services;
 
 use local_intellidata\repositories\database_repository;
-use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\tracking\tracking_repository;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\helpers\TasksHelper;
@@ -118,12 +117,8 @@ class database_service {
         // Export table records.
         $recordsexported = $this->repo->export($datatype, $params, $this->showlogs, $this->services);
 
-        if ($this->showlogs) {
-            mtrace("Store datatype ids at " . date('r') . " ...");
-        }
-
         // Sync deleted items.
-        $this->repo->export_ids($datatype);
+        $this->repo->export_ids($datatype, $this->showlogs);
 
         if ($this->showlogs) {
             mtrace("Datatype '" . $datatype['name'] . "' export completed at " .

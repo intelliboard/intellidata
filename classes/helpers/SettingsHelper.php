@@ -43,7 +43,7 @@ class SettingsHelper {
         'cleaner_duration' => DAYSECS * 14,
         'migrationrecordslimit' => '1000000',
         'migrationwriterecordslimit' => '10000',
-        'exportrecordslimit' => '0',
+        'exportrecordslimit' => '10000',
         'exportfilesduringmigration' => 1,
         'resetmigrationprogress' => 0,
         'tracklogsdatatypes' => 0,
