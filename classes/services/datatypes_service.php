@@ -428,6 +428,16 @@ class datatypes_service {
                 'filterbyid' => false,
                 'databaseexport' => true
             ],
+            'ltitypes' => [
+                'name' => 'ltitypes',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'lti\ltitypesmigration',
+                'entity' => 'lti\ltitypes',
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
+                'filterbyid' => false,
+                'databaseexport' => true
+            ],
             'tracking' => [
                 'name' => 'tracking',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,

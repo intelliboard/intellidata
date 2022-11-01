@@ -77,6 +77,10 @@ $observers = [
         'eventname' => '\core\event\course_deleted',
         'callback' => '\local_intellidata\entities\courses\observer::course_deleted',
     ],
+    [
+        'eventname' => '\core\event\course_restored',
+        'callback' => '\local_intellidata\entities\courses\observer::course_restored',
+    ],
 
     // Enrollments events.
     [

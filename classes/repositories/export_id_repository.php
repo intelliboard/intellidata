@@ -26,66 +26,203 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\persistent\export_ids;
+
 class export_id_repository {
 
     /**
+     * Get deleted records IDs.
+     *
      * @param $datatype
      * @param $table
-     * @return array
+     * @return \moodle_recordset
      * @throws \dml_exception
      */
-    public function filterids($datatype, $table) {
+    public function get_deleted_ids($datatype, $table) {
         global $DB;
-        $deletedrecords = $DB->get_records_sql("
-            SELECT dataid AS id
-              FROM {local_intellidata_export_ids}
-             WHERE datatype=:datatype AND dataid NOT IN(SELECT id FROM {{$table}})",
-            ['datatype' => $datatype]);
-        $createdrecords = $DB->get_records_sql("
-            SELECT id FROM {{$table}}
-             WHERE id NOT IN(SELECT dataid FROM {local_intellidata_export_ids} WHERE datatype=:datatype)",
-            ['datatype' => $datatype]);
 
-        $createdids = $deletedids = [];
-        foreach ($createdrecords as $record) {
-            $createdids[] = $record->id;
-        }
-        foreach ($deletedrecords as $record) {
-            $deletedids[] = $record->id;
+        $ids = [];
+        $count = 0;
+        $lastid = 0;
+        $prevlastid = 0;
+        $existedrecords = $DB->get_recordset_sql("SELECT id FROM {{$table}} ORDER BY id ASC");
+
+        foreach ($existedrecords as $existedrecord) {
+            $ids[] = $existedrecord->id;
+            $count++;
+            $lastid = $existedrecord->id;
+
+            if ($count >= 1000) {
+                $records = $this->get_deleted_ids_records($ids, $lastid, $prevlastid, $datatype);
+                foreach ($records as $record) {
+                    yield $record;
+                }
+
+                $ids = [];
+                $count = 0;
+                $prevlastid = $lastid;
+            }
         }
 
-        return array(
-            'created' => $createdids,
-            'deleted' => $deletedids,
-        );
+        if (count($ids) > 0) {
+            $records = $this->get_deleted_ids_records($ids, $lastid, $prevlastid, $datatype);
+            foreach ($records as $record) {
+                yield $record;
+            }
+        }
+
+        $inparams = [
+            'lastid' => $lastid,
+            'datatype' => $datatype
+        ];
+        $records = $DB->get_recordset_sql("SELECT dataid AS id
+                                                 FROM {" . export_ids::TABLE . "}
+                                                WHERE dataid > :lastid
+                                                  AND datatype = :datatype", $inparams);
+        foreach ($records as $record) {
+            yield $record;
+        }
     }
 
     /**
+     * Get deleted records IDs.
+     *
+     * @param $ids
+     * @param $lastid
+     * @param $prevlastid
+     * @param $table
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    private function get_deleted_ids_records($ids, $lastid, $prevlastid, $datatype) {
+        global $DB;
+
+        list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'param', false);
+        $inparams['lastid'] = $lastid;
+        $inparams['prevlastid'] = $prevlastid + 1;
+        $inparams['datatype'] = $datatype;
+        return $DB->get_recordset_sql("SELECT dataid AS id
+                                             FROM {" . export_ids::TABLE . "}
+                                            WHERE dataid {$insql}
+                                              AND dataid BETWEEN :prevlastid
+                                              AND :lastid
+                                              AND datatype=:datatype", $inparams);
+    }
+
+    /**
+     * Get created records IDs.
+     *
      * @param $datatype
-     * @param $filteredids
+     * @param $table
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    public function get_created_ids($datatype, $table) {
+        global $DB;
+
+        $ids = [];
+        $count = 0;
+        $lastid = 0;
+        $prevlastid = 0;
+        $storedrecords = $DB->get_recordset_sql("SELECT dataid
+                                                       FROM {" . export_ids::TABLE . "}
+                                                      WHERE datatype = :datatype
+                                                   ORDER BY dataid ASC", ['datatype' => $datatype]);
+
+        foreach ($storedrecords as $storedrecord) {
+            $ids[] = $storedrecord->dataid;
+            $count++;
+            $lastid = $storedrecord->dataid;
+
+            if ($count >= 1000) {
+                $records = $this->get_created_ids_records($ids, $lastid, $prevlastid, $table);
+                foreach ($records as $record) {
+                    yield $record;
+                }
+
+                $ids = [];
+                $count = 0;
+                $prevlastid = $lastid;
+            }
+        }
+
+        if (count($ids) > 0) {
+            $records = $this->get_created_ids_records($ids, $lastid, $prevlastid, $table);
+            foreach ($records as $record) {
+                yield $record;
+            }
+        }
+
+        $inparams = ['lastid' => $lastid];
+        $records = $DB->get_recordset_sql("SELECT id
+                                                 FROM {{$table}}
+                                                WHERE id > :lastid", $inparams);
+        foreach ($records as $record) {
+            yield $record;
+        }
+    }
+
+    /**
+     * Get created records IDs.
+     *
+     * @param $ids
+     * @param $lastid
+     * @param $prevlastid
+     * @param $table
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    private function get_created_ids_records($ids, $lastid, $prevlastid, $table) {
+        global $DB;
+
+        list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'param', false);
+        $inparams['lastid'] = $lastid;
+        $inparams['prevlastid'] = $prevlastid + 1;
+
+        return $DB->get_recordset_sql("SELECT id
+                                             FROM {{$table}}
+                                            WHERE id {$insql}
+                                              AND id BETWEEN :prevlastid AND :lastid", $inparams);
+    }
+
+    /**
+     * Delete deleted IDs from database.
+     *
+     * @param string $datatype
+     * @param array $deletedids
+     * @return void
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function save($datatype, $filteredids) {
+    public function clean_deleted_ids(string $datatype, array $deletedids) {
         global $DB;
 
-        if (!empty($filteredids['deleted'])) {
-            list($insql, $params) = $DB->get_in_or_equal($filteredids['deleted'], SQL_PARAMS_NAMED);
-            $params['datatype'] = $datatype;
-            $DB->execute("DELETE FROM {local_intellidata_export_ids} WHERE datatype=:datatype AND dataid {$insql}", $params);
+        if (!count($deletedids)) {
+            return;
         }
 
-        if (!empty($filteredids['created'])) {
-            $records = [];
-            foreach ($filteredids['created'] as $filteredid) {
-                $records[] = [
-                    'datatype' => $datatype,
-                    'dataid' => $filteredid,
-                    'timecreated' => time()
-                ];
-            }
+        list($insql, $params) = $DB->get_in_or_equal($deletedids, SQL_PARAMS_NAMED);
+        $params['datatype'] = $datatype;
+        $DB->execute("DELETE FROM {" . export_ids::TABLE . "}
+                           WHERE datatype = :datatype
+                             AND dataid {$insql}", $params);
+    }
 
-            $DB->insert_records('local_intellidata_export_ids', $records);
+    /**
+     * Save exported IDs to database.
+     *
+     * @param $records
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function save($records) {
+        global $DB;
+
+        if (!count($records)) {
+            return;
         }
+
+        $DB->insert_records(export_ids::TABLE, $records);
     }
 }

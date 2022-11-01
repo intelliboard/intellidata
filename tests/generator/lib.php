@@ -15,50 +15,56 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class storage
+ * IntelliData data generator class.
  *
- * @copyright  2021 IntelliBoard, Inc
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
-
-namespace local_intellidata\persistent;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/generators/tracking_generator.php');
+
 /**
- * Class storage
+ * IntelliData data generator class.
  *
- * @copyright  2021 IntelliBoard, Inc
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
-class export_ids extends base {
-
-    /** The table name. */
-    const TABLE = 'local_intellidata_export_ids';
+class local_intellidata_generator extends \component_generator_base {
 
     /**
-     * Return the definition of the properties of this model.
-     *
-     * @return array
+     * @var number of created tracking.
      */
-    protected static function define_properties() {
-        return [
-            'datatype' => [
-                'type' => PARAM_TEXT,
-                'description' => 'Datatype.',
-            ],
-            'dataid' => [
-                'type' => PARAM_INT,
-                'default' => 0,
-                'description' => 'Table primary keys.',
-            ],
-            'timecreated' => [
-                'type' => PARAM_INT,
-                'default' => 0,
-                'description' => 'Export create time.',
-            ]
-        ];
+    protected $trackingcount = 0;
+
+    /**
+     * To be called from data reset code only,
+     * do not use in tests.
+     * @return void
+     */
+    public function reset() {
+        $this->trackingcount = 0;
+    }
+
+    /**
+     * Create tracking record.
+     *
+     * @param $data
+     * @return \local_intellidata\persistent\tracking
+     * @throws coding_exception
+     */
+    public function create_tracking($data = null) {
+        $record = (new tracking_generator())->create($data);
+
+        if ($record->get('id')) {
+            $this->trackingcount++;
+        }
+
+        return $record->to_record();
     }
 }
