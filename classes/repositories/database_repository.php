@@ -261,7 +261,7 @@ class database_repository {
     public static function export_ids($datatype, $showlogs = true) {
 
         // Temporary disabled, currently we can not calculate deleted ids for large migration requests.
-        if (!isset($datatype['table'])) {
+        if (!isset($datatype['table']) || empty($datatype['exportids'])) {
             return;
         }
 
