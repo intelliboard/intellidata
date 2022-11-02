@@ -39,12 +39,19 @@ class apilib {
 
         $encryptionservice = new encryption_service();
         $headers = DeprecatedHelper::getallheaders();
+        $authheader = '';
 
-        if (empty($headers['Auth'])) {
+        if (isset($headers['Auth'])) {
+            $authheader = $headers['Auth'];
+        } else if (isset($headers['Authorization'])) {
+            $authheader = $headers['Authorization'];
+        }
+
+        if (empty($authheader)) {
             throw new \moodle_exception('Auth header required');
         }
 
-        $authheader = json_decode($encryptionservice->decrypt($headers['Auth']), true);
+        $authheader = json_decode($encryptionservice->decrypt($authheader), true);
         $identifier = !empty($authheader['clientidentifier']) ? $authheader['clientidentifier'] : '';
 
         if (!$identifier) {
