@@ -100,4 +100,9 @@ class course extends \local_intellidata\entities\entity {
         );
     }
 
+    protected function before_export() {
+        $course = $this->to_record();
+        $this->set('fullname', fix_utf8($course->fullname));
+    }
+
 }
