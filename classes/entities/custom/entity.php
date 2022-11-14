@@ -507,6 +507,10 @@ class entity {
                         // We silently clean for this type. It may introduce changes even to valid data.
                         $value = clean_param($value, PARAM_CLEANHTML);
                     }
+                    if ($definition['type'] === PARAM_RAW || $definition['type'] === PARAM_TEXT) {
+                        // We silently clean for this type to avoid utf encoding problems.
+                        $value = clean_param($value, PARAM_RAW);
+                    }
                     validate_param($value, $definition['type'], $definition['null']);
                 } catch (\Exception $e) {
                     $errors[$property] = self::get_property_error_message($property);
