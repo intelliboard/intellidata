@@ -43,8 +43,12 @@ class apilib {
 
         if (isset($headers['Auth'])) {
             $authheader = $headers['Auth'];
+        } else if (isset($headers['auth'])) {
+            $authheader = $headers['auth'];
         } else if (isset($headers['Authorization'])) {
             $authheader = $headers['Authorization'];
+        } else if (isset($headers['authorization'])) {
+            $authheader = $headers['authorization'];
         }
 
         if (empty($authheader)) {
