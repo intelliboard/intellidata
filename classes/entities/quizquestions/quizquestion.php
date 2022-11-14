@@ -46,33 +46,33 @@ class quizquestion extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Question ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_RAW,
                 'description' => 'Question name.',
                 'default' => '',
-            ),
-            'questiontext' => array(
+            ],
+            'questiontext' => [
                 'type' => PARAM_RAW,
                 'description' => 'Question text.',
-                'default' => 0,
-            ),
-            'qtype' => array(
+                'default' => '',
+            ],
+            'qtype' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Question type.',
                 'default' => '',
-            ),
-            'defaultmark' => array(
+            ],
+            'defaultmark' => [
                 'type' => PARAM_FLOAT,
                 'description' => 'Possible score.',
                 'default' => 1,
-            )
-        );
+            ]
+        ];
     }
 
 }
