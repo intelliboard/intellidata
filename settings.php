@@ -402,6 +402,34 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    // Advanced Settings.
+    $settings->add(new admin_setting_heading(
+        $pluginname . '/advancedsettings', get_string('advancedsettings', $pluginname), ''
+    ));
+
+    $name = 'enabledatavalidation';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'enabledatacleaning';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidatamigrations',
             new lang_string('migrations', $pluginname),

@@ -46,9 +46,7 @@ class local_intellidata_activitycompletion_tracking_testcase extends \advanced_t
     public function setUp(): void {
         $this->setAdminUser();
 
-        setup_helper::enable_plugin();
-        setup_helper::enable_db_storage();
-        setup_helper::setup_json_exportformat();
+        setup_helper::setup_tests_config();
     }
 
     public function test_update() {

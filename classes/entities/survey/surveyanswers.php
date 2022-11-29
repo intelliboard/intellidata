@@ -15,30 +15,30 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for preparing data for Forum Posts.
+ * Class for preparing data for Survey Answers.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
- * @copyright  2020 intelliboard.net
+ * @copyright  2022 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_intellidata\entities\forums;
+namespace local_intellidata\entities\survey;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for preparing data for Forum Posts.
+ * Class for preparing data for Survey Answers.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
- * @copyright  2020 intelliboard.net
+ * @copyright  2022 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class forumpost extends \local_intellidata\entities\entity {
+class surveyanswers extends \local_intellidata\entities\entity {
 
     /**
      * Entity type.
      */
-    const TYPE = 'forumposts';
+    const TYPE = 'surveyanswers';
 
     /**
      * Return the definition of the properties of this model.
@@ -46,10 +46,10 @@ class forumpost extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
+        return [
             'id' => array(
                 'type' => PARAM_INT,
-                'description' => 'Post ID.',
+                'description' => 'Survey answer ID.',
                 'default' => 0,
             ),
             'userid' => array(
@@ -57,42 +57,41 @@ class forumpost extends \local_intellidata\entities\entity {
                 'description' => 'User ID.',
                 'default' => 0,
             ),
-            'forum' => array(
+            'survey' => array(
                 'type' => PARAM_INT,
-                'description' => 'Forum ID.',
+                'description' => 'Survey ID.',
                 'default' => 0,
             ),
-            'discussion' => array(
+            'questiontype' => array(
                 'type' => PARAM_INT,
-                'description' => 'Discussion ID.',
+                'description' => 'Question type.',
                 'default' => 0,
             ),
-            'parent' => array(
-                'type' => PARAM_INT,
-                'description' => 'Parent ID.',
-                'default' => 0,
-            ),
-            'message' => array(
-                'type' => PARAM_RAW,
-                'description' => 'Forum Message.',
+            'questiontext' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Question text.',
                 'default' => '',
             ),
-            'deleted' => array(
+            'question' => array(
                 'type' => PARAM_INT,
-                'description' => 'Post deleted.',
+                'description' => 'Question ID.',
                 'default' => 0,
             ),
-            'created' => array(
+            'time' => array(
                 'type' => PARAM_INT,
-                'description' => 'Timestamp when post created.',
+                'description' => 'Timestamp when answer created.',
                 'default' => 0,
             ),
-            'modified' => array(
-                'type' => PARAM_INT,
-                'description' => 'Timestamp when post updated.',
-                'default' => 0,
+            'answer1' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Answer 1.',
+                'default' => '',
             ),
-        );
+            'answer2' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Answer 2.',
+                'default' => '',
+            )
+        ];
     }
-
 }
