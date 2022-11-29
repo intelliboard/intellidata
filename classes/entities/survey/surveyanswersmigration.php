@@ -15,32 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration Forum Posts.
+ * Class for migration Survey Answers.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
- * @copyright  2020 intelliboard.net
+ * @copyright  2022 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_intellidata\entities\forums;
-use local_intellidata\services\dbschema_service;
+namespace local_intellidata\entities\survey;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for migration Forum Posts.
+ * Class for migration Survey Answers.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
- * @copyright  2020 intelliboard.net
+ * @copyright  2022 intelliboard.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class postsmigration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\forums\forumpost';
-    public $eventname   = '\mod_forum\event\post_created';
-    public $table       = 'forum_posts';
-    public $tablealias  = 'p';
+class surveyanswersmigration extends \local_intellidata\entities\migration {
+    public $entity      = '\local_intellidata\entities\survey\surveyanswers';
+    public $table       = 'survey_answers';
+    public $tablealias  = 'sa';
 
     /**
      * @param false $count
@@ -49,36 +46,38 @@ class postsmigration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-
-        $where = 'p.id > 0';
-        $params = [];
-
+        $where = 'sa.id > 0';
         $select = ($count) ?
-            "SELECT COUNT(p.id) as recordscount" :
-            "SELECT p.id, p.userid, p.discussion, p.parent, p.message, p.created, p.modified, d.forum";
-
-        // Validate deleted field.
-        $dbschema = new dbschema_service();
-        if ($dbschema->column_exists('forumposts', 'deleted')) {
-            if (!$count) {
-                $select .= ', p.deleted';
-            }
-            $where .= ' AND p.deleted = :deleted';
-            $params += [
-                'deleted' => 0
-            ];
-        }
+            "SELECT COUNT(sa.id) as recordscount" :
+            "SELECT sa.*, sq.text as questiontext, sq.type as questiontype";
 
         $sql = "$select
-                  FROM {forum_posts} p
-             LEFT JOIN {forum_discussions} d ON d.id = p.discussion
+                  FROM {" . $this->table . "} sa
+                  JOIN {survey_questions} sq ON sq.id = sa.question
                  WHERE $where";
 
         if ($condition) {
             $sql .= " AND " . $condition;
-            $params += $conditionparams;
         }
 
-        return [$sql, $params];
+        return [$sql, $conditionparams];
+    }
+
+    /**
+     * @param $records
+     * @return \Generator
+     */
+    public function prepare_records_iterable($records) {
+        foreach ($records as $sanswer) {
+            if (!empty($sanswer->questiontext)) {
+                $sanswer->questiontext = get_string($sanswer->questiontext, "survey");
+            }
+
+            $entity = new $this->entity($sanswer);
+            $data = $entity->export();
+            $data->eventname = $this->eventname;
+
+            yield $data;
+        }
     }
 }

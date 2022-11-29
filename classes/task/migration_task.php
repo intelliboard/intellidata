@@ -63,7 +63,6 @@ class migration_task extends \core\task\scheduled_task {
      * @throws \Exception
      */
     public function execute() {
-
         if (TrackingHelper::enabled()) {
 
             DebugHelper::enable_moodle_debug();

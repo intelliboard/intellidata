@@ -928,5 +928,31 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022103101, 'local', 'intellidata');
     }
 
+    // Reset and add new survey to the export.
+    if ($oldversion < 2022110400) {
+
+        $exportlogrepository = new export_log_repository();
+
+        // Add new datatypes to the plugin config and export.
+        $datatypes = [
+            'survey',
+            'surveyanswers',
+        ];
+
+        foreach ($datatypes as $datatype) {
+            // Insert or update log record for datatype.
+            $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+            // Add new datatypes to export ad-hoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatype]
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        upgrade_plugin_savepoint(true, 2022110400, 'local', 'intellidata');
+    }
+
     return true;
 }

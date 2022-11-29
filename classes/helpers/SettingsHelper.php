@@ -76,7 +76,10 @@ class SettingsHelper {
         'lastmigrationdate' => 0,
         'migrationstart' => 0,
         'migrationdatatype' => '',
-        'lastexportdate' => 0
+        'lastexportdate' => 0,
+        // Advanced Settings.
+        'enabledatavalidation' => 0,
+        'enabledatacleaning' => 0
     ];
 
     /**

@@ -45,9 +45,7 @@ class local_intellidata_role_tracking_testcase extends \advanced_testcase {
     public function setUp(): void {
         $this->setAdminUser();
 
-        setup_helper::enable_plugin();
-        setup_helper::enable_db_storage();
-        setup_helper::setup_json_exportformat();
+        setup_helper::setup_tests_config();
     }
 
     public function test_assign() {
@@ -90,7 +88,8 @@ class local_intellidata_role_tracking_testcase extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'roleassignments']);
-        $datarecord = $storage->get_log_entity_data('role_assigned', $data);
+        $datarecord = $storage->get_log_entity_data('role_assigned');
+
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

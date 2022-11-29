@@ -26,6 +26,7 @@ namespace local_intellidata\entities\custom;
 use core\invalid_persistent_exception;
 use local_intellidata\helpers\DBManagerHelper;
 use local_intellidata\helpers\EventsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\dbschema_service;
 use stdClass;
 use lang_string;
@@ -481,10 +482,15 @@ class entity {
         // Before validate hook.
         $this->before_validate();
 
+        // Ignore validation if not enabled.
+        if (!$this->validation_enabled()) {
+            $this->validated = true;
+        }
+
         // If this object has not been validated yet.
         if ($this->validated !== true) {
 
-            $errors = array();
+            $errors = [];
             $properties = self::properties_definition($this->returnfields);
             foreach ($properties as $property => $definition) {
 
@@ -564,31 +570,39 @@ class entity {
         return $this->errors;
     }
 
+    /**
+     * Clean data.
+     *
+     * @return void
+     * @throws \coding_exception
+     */
     final public function clean_data() {
 
-        $properties = self::properties_definition($this->returnfields);
+        if ($this->cleaning_enabled()) {
 
-        foreach ($properties as $property => $definition) {
+            $properties = self::properties_definition($this->returnfields);
 
-            // Get the data, bypassing the potential custom getter which could alter the data.
-            $value = $this->raw_get($property);
+            foreach ($properties as $property => $definition) {
 
-            // Check if the property is required.
-            if ($value === null) {
-                continue;
+                // Get the data, bypassing the potential custom getter which could alter the data.
+                $value = $this->raw_get($property);
+
+                // Check if the property is required.
+                if ($value === null) {
+                    continue;
+                }
+
+                if ($definition['type'] === PARAM_BOOL && $value === false) {
+                    $value = 0;
+                } else if ($definition['type'] === PARAM_CLEANHTML) {
+                    $value = clean_param($value, PARAM_CLEANHTML);
+                } else {
+                    $value = clean_param($value, $definition['type']);
+                }
+
+                $this->raw_set($property, $value);
             }
-
-            if ($definition['type'] === PARAM_BOOL && $value === false) {
-                $value = 0;
-            } else if ($definition['type'] === PARAM_CLEANHTML) {
-                $value = clean_param($value, PARAM_CLEANHTML);
-            } else {
-                $value = clean_param($value, $definition['type']);
-            }
-
-            $this->raw_set($property, $value);
         }
-
     }
 
     /**
@@ -616,6 +630,20 @@ class entity {
         }
 
         return $fields;
+    }
+
+    /*
+     * Check if validation enabled.
+     */
+    final public function validation_enabled() {
+        return SettingsHelper::get_setting('enabledatavalidation');
+    }
+
+    /*
+     * Check if cleaning enabled.
+     */
+    final public function cleaning_enabled() {
+        return SettingsHelper::get_setting('enabledatacleaning');
     }
 
 }

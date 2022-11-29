@@ -425,22 +425,50 @@ class datatypes_service {
             'ltisubmittion' => [
                 'name' => 'ltisubmittion',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'lti_submission',
                 'migration' => 'lti\migration',
                 'entity' => 'lti\submission',
                 'rewritable' => false,
                 'timemodified_field' => 'dateupdated',
                 'filterbyid' => false,
-                'databaseexport' => true
+                'databaseexport' => true,
+                'exportids' => true
             ],
             'ltitypes' => [
                 'name' => 'ltitypes',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'lti_types',
                 'migration' => 'lti\ltitypesmigration',
                 'entity' => 'lti\ltitypes',
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => true
+                'databaseexport' => true,
+                'exportids' => true
+            ],
+            'survey' => [
+                'name' => 'survey',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'survey',
+                'migration' => 'survey\surveymigration',
+                'entity' => 'survey\survey',
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
+                'filterbyid' => false,
+                'databaseexport' => true,
+                'exportids' => true
+            ],
+            'surveyanswers' => [
+                'name' => 'surveyanswers',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'survey_answers',
+                'migration' => 'survey\surveyanswersmigration',
+                'entity' => 'survey\surveyanswers',
+                'rewritable' => false,
+                'timemodified_field' => 'time',
+                'filterbyid' => false,
+                'databaseexport' => true,
+                'exportids' => true
             ],
             'tracking' => [
                 'name' => 'tracking',
