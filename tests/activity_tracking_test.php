@@ -44,9 +44,7 @@ class local_intellidata_activity_tracking_testcase extends \advanced_testcase {
     public function setUp(): void {
         $this->setAdminUser();
 
-        setup_helper::enable_plugin();
-        setup_helper::enable_db_storage();
-        setup_helper::setup_json_exportformat();
+        setup_helper::setup_tests_config();
     }
 
     public function test_create() {
@@ -74,6 +72,7 @@ class local_intellidata_activity_tracking_testcase extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'activities']);
         $datarecord = $storage->get_log_entity_data('course_module_created', $data);
+
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

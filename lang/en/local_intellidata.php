@@ -292,3 +292,6 @@ $string['directsqlenabled'] = 'Enable direct SQL';
 $string['directsqlenabled_desc'] = '';
 $string['event_sql_request'] = 'SQL Request Event';
 $string['refreshconfig'] = 'Refresh Configuration';
+$string['advancedsettings'] = 'Advanced Settings';
+$string['enabledatavalidation'] = 'Enable data validation';
+$string['enabledatacleaning'] = 'Enable data cleaning';

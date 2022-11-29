@@ -37,6 +37,31 @@ class setup_helper {
     }
 
     /**
+     * Setup configuration for testing.
+     */
+    public static function setup_tests_config() {
+
+        // Enable plugin.
+        self::enable_plugin();
+
+        // Enable DB Storage for testing.
+        self::enable_db_storage();
+
+        // Enable json format for testing.
+        self::setup_json_exportformat();
+
+        // Enable Data cleaning.
+        self::enable_datacleaning();
+    }
+
+    /**
+     * Enable data cleaning.
+     */
+    public static function enable_datacleaning() {
+        set_config('enabledatacleaning', 1, 'local_intellidata');
+    }
+
+    /**
      * Enable db storage.
      */
     public static function enable_db_storage() {
