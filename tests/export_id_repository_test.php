@@ -155,14 +155,14 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         }
 
         // Validate not existing deleted IDs.
-        $deletedids = $exportidrepository->get_deleted_ids($datatype, $datatype);
+        $deletedids = $exportidrepository->get_deleted_ids($datatype, 'local_intellidata_tracking');
         $this->assertFalse($deletedids->valid());
 
         // Validate deleted IDs.
         $exportidrepository->save($records);
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
-        $deletedrecords = $exportidrepository->get_deleted_ids($datatype, $datatype);
+        $deletedrecords = $exportidrepository->get_deleted_ids($datatype, 'local_intellidata_tracking');
         $this->assertTrue($deletedrecords->valid());
 
         $deletedidscount = 0;
