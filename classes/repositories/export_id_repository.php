@@ -27,8 +27,12 @@
 namespace local_intellidata\repositories;
 
 use local_intellidata\persistent\export_ids;
+use local_intellidata\helpers\SettingsHelper;
 
 class export_id_repository {
+
+    const TRACK_IDS_MODE_REQUEST = 1;
+    const TRACK_IDS_MODE_TRIGGER = 2;
 
     /**
      * Get deleted records IDs.
@@ -39,6 +43,41 @@ class export_id_repository {
      * @throws \dml_exception
      */
     public function get_deleted_ids($datatype, $table) {
+        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
+        if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
+            return $this->get_deleted_ids_trigger($table);
+        } else {
+            return $this->get_deleted_ids_request($datatype, $table);
+        }
+    }
+
+    /**
+     * Get deleted records IDs.
+     *
+     * @param $table
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    public function get_deleted_ids_trigger($table) {
+        global $DB;
+
+        $inparams = [
+            'table' => $table
+        ];
+
+        return $DB->get_recordset_sql("SELECT dataid AS id
+                                                 FROM {" . export_ids::TABLE . "}
+                                                WHERE datatype = :table", $inparams);
+    }
+
+    /**
+     * Get deleted records IDs.
+     *
+     * @param $table
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    public function get_deleted_ids_request($datatype, $table) {
         global $DB;
 
         $ids = [];
@@ -120,6 +159,11 @@ class export_id_repository {
     public function get_created_ids($datatype, $table) {
         global $DB;
 
+        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
+        if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
+            return null;
+        }
+
         $ids = [];
         $count = 0;
         $lastid = 0;
@@ -194,8 +238,14 @@ class export_id_repository {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function clean_deleted_ids(string $datatype, array $deletedids) {
+    public function clean_deleted_ids(string $datatype, array $deletedids, string $table) {
         global $DB;
+
+        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
+        if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
+            $this->clean_deleted_ids_trigger($table);
+            return;
+        }
 
         if (!count($deletedids)) {
             return;
@@ -206,6 +256,24 @@ class export_id_repository {
         $DB->execute("DELETE FROM {" . export_ids::TABLE . "}
                            WHERE datatype = :datatype
                              AND dataid {$insql}", $params);
+    }
+
+    /**
+     * Delete deleted IDs from database.
+     *
+     * @param string $table
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function clean_deleted_ids_trigger(string $table) {
+        global $DB;
+
+        $inparams = [
+            'datatype' => $table
+        ];
+
+        $DB->delete_records(export_ids::TABLE, $inparams);
     }
 
     /**

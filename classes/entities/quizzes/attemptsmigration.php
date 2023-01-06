@@ -48,8 +48,6 @@ class attemptsmigration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'qa.id>0';
-        $params = [];
 
         $select = ($count) ?
             "SELECT COUNT(qa.id) as recordscount" :
@@ -59,14 +57,8 @@ class attemptsmigration extends \local_intellidata\entities\migration {
 
         $sql = "$select
                 FROM {quiz_attempts} qa
-                JOIN {quiz} q ON q.id=qa.quiz
-               WHERE $where";
+                JOIN {quiz} q ON q.id = qa.quiz";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, []);
     }
 }

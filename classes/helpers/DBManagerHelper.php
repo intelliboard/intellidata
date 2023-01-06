@@ -33,6 +33,8 @@ require_once($CFG->libdir . '/adminlib.php');
 class DBManagerHelper {
 
     /**
+     * Get tables list from install files.
+     *
      * @return array
      */
     public static function get_install_xml_tables() {
@@ -119,5 +121,43 @@ class DBManagerHelper {
      */
     public static function get_field_default_value($column) {
         return ($column->has_default) ? $column->default_value : '';
+    }
+
+
+    /**
+     * Create DB index.
+     *
+     * @param $key
+     * @return array
+     */
+    public static function create_index($tablename, $indexname) {
+        global $DB;
+
+        $dbman = $DB->get_manager();
+
+        $table = new \xmldb_table($tablename);
+        $index = new \xmldb_index($indexname . '_idx', XMLDB_INDEX_NOTUNIQUE, [$indexname]);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+    }
+
+    /**
+     * Delete DB index.
+     *
+     * @param $key
+     * @return array
+     */
+    public static function delete_index($tablename, $indexname) {
+        global $DB;
+
+        $dbman = $DB->get_manager();
+
+        $table = new \xmldb_table($tablename);
+        $index = new \xmldb_index($indexname . '_idx', XMLDB_INDEX_NOTUNIQUE, [$indexname]);
+
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
     }
 }

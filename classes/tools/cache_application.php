@@ -58,4 +58,11 @@ class cache_application extends moodle_cache_application {
         return $keys;
     }
 
+    /**
+     * @return bool
+     */
+    public function store_supports_get_all_keys() {
+        return method_exists($this->get_store(), 'find_all');
+    }
+
 }

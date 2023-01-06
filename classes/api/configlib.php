@@ -94,4 +94,76 @@ class local_intellidata_configlib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
+    public static function set_plugin_config_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function set_plugin_config($data) {
+
+        $status = apilib::STATUS_ERROR;
+        $message = 'error';
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::set_plugin_config_parameters(), [
+                'data' => $data
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'name' => PARAM_TEXT,
+            'value' => PARAM_TEXT
+        ]);
+
+        if (SettingsHelper::is_setting_updatable($params['name'])) {
+            SettingsHelper::set_setting($params['name'], $params['value']);
+
+            $status = apilib::STATUS_SUCCESS;
+            $message = 'updated';
+        }
+
+        $encryptionservice = new encryption_service();
+
+        return [
+            'data' => $encryptionservice->encrypt($message),
+            'status' => $status
+        ];
+    }
+
+    /**
+     * @return external_single_structure
+     */
+    public static function set_plugin_config_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
 }

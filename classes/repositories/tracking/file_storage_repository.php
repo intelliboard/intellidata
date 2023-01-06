@@ -133,7 +133,8 @@ class file_storage_repository extends storage_repository {
      * Export data method.
      */
     public function export_data() {
-        mtrace("IntelliData Tracking Files Export started!");
+        $starttime = microtime();
+        mtrace("Tracking Files Export started at " . date('r') . "...");
 
         $this->trackingstorage = new tracking_storage_repository();
         $files = $this->trackingstorage->get_files();
@@ -142,7 +143,10 @@ class file_storage_repository extends storage_repository {
             $this->export_data_from_file($filename);
         }
 
-        mtrace('IntelliData Tracking Files Export completed!');
+        $difftime = microtime_diff($starttime, microtime());
+        mtrace("Tracking Files Export completed at " . date('r') . ".");
+        mtrace("Export Tracking Execution took " . $difftime . " seconds.");
+        mtrace("-------------------------------------------");
     }
 
     /**

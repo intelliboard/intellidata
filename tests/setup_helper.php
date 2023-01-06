@@ -26,14 +26,16 @@
 
 namespace local_intellidata\tests;
 
+use local_intellidata\helpers\SettingsHelper;
+
 class setup_helper {
 
     /**
      * Enable intellidata plugin.
      */
     public static function enable_plugin() {
-        set_config('enabled', true, 'local_intellidata');
-        set_config('enabledtracking', true, 'local_intellidata');
+        SettingsHelper::set_setting('enabled', 1);
+        SettingsHelper::set_setting('enabledtracking', 1);
     }
 
     /**
@@ -58,34 +60,69 @@ class setup_helper {
      * Enable data cleaning.
      */
     public static function enable_datacleaning() {
-        set_config('enabledatacleaning', 1, 'local_intellidata');
+        SettingsHelper::set_setting('enabledatacleaning', 1);
     }
 
     /**
      * Enable db storage.
      */
     public static function enable_db_storage() {
-        set_config('trackingstorage', 1, 'local_intellidata');
+        SettingsHelper::set_setting('trackingstorage', 1);
     }
 
     /**
      * Enable files storage.
      */
     public static function enable_file_storage() {
-        set_config('trackingstorage', 0, 'local_intellidata');
+        SettingsHelper::set_setting('trackingstorage', 0);
     }
 
     /**
      * Set json export format.
      */
     public static function setup_json_exportformat() {
-        set_config('exportdataformat', 'json', 'local_intellidata');
+        SettingsHelper::set_setting('exportdataformat', 'json');
     }
 
     /**
      * Set csv export format.
      */
     public static function setup_csv_exportformat() {
-        set_config('exportdataformat', 'csv', 'local_intellidata');
+        SettingsHelper::set_setting('exportdataformat', 'csv');
+    }
+
+    /**
+     * Disable eventstracking.
+     */
+    public static function disable_eventstracking() {
+        SettingsHelper::set_setting('eventstracking', 0);
+    }
+
+    /**
+     * Enable eventstracking.
+     */
+    public static function enable_eventstracking() {
+        SettingsHelper::set_setting('eventstracking', 1);
+    }
+
+    /**
+     * Disable exportfilesduringmigration.
+     */
+    public static function disable_exportfilesduringmigration() {
+        SettingsHelper::set_setting('exportfilesduringmigration', 0);
+    }
+
+    /**
+     * Enable exportfilesduringmigration.
+     */
+    public static function enable_exportfilesduringmigration() {
+        SettingsHelper::set_setting('exportfilesduringmigration', 1);
+    }
+
+    /**
+     * Disable exportfilesduringmigration.
+     */
+    public static function set_migration_limit($value = 0) {
+        SettingsHelper::set_setting('migrationrecordslimit', $value);
     }
 }

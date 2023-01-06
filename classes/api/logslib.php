@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use local_intellidata\api\apilib;
+use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\encryption_service;
 use local_intellidata\helpers\TasksHelper;
 use local_intellidata\repositories\export_log_repository;
@@ -126,6 +128,10 @@ class local_intellidata_logslib extends external_api {
 
         $encryptionservice = new encryption_service();
         $exportlogrepository = new export_log_repository();
+
+        if (!SettingsHelper::get_setting('enableprogresscalculation')) {
+            MigrationHelper::calculate_migration_progress(false);
+        }
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($exportlogrepository->get_export_logs())),

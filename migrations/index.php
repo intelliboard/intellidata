@@ -25,6 +25,7 @@ use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\output\tables\migrations_table;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\TasksHelper;
 
 require('../../../config.php');
 
@@ -49,6 +50,9 @@ if ($action == 'enablemigration') {
     MigrationHelper::enable_sheduled_tasks();
 
     redirect($pageurl, get_string('migrationenabled', 'local_intellidata'));
+} else if ($action == 'calculateprogress') {
+    TasksHelper::init_refresh_export_progress_adhoc_task();
+    redirect($pageurl, get_string('calculateprogresssuccessmsg', 'local_intellidata'));
 }
 
 $title = get_string('migrations', 'local_intellidata');

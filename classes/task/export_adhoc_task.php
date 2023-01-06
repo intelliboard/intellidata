@@ -32,6 +32,7 @@ use local_intellidata\services\export_service;
 use local_intellidata\services\database_service;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 
 /**
@@ -44,6 +45,8 @@ use local_intellidata\repositories\export_log_repository;
  */
 class export_adhoc_task extends \core\task\adhoc_task {
 
+    private $divideexportbydatatype = false;
+
     /**
      * Do the job.
      * Throw exceptions on errors (the job will be retried).
@@ -52,57 +55,151 @@ class export_adhoc_task extends \core\task\adhoc_task {
 
         if (TrackingHelper::enabled()) {
 
-            DebugHelper::enable_moodle_debug();
+            // Divide adhoc task to smaller tasks if needed.
+            if ((int)SettingsHelper::get_setting('divideexportbydatatype')) {
+                $this->execute_chunks_export();
+            } else {
+                $this->execute_full_export();
+            }
 
-            mtrace("IntelliData Data Files Export CRON started!");
+        }
+    }
 
-            $data = $this->get_custom_data();
+    /**
+     * Export data by once.
+     * Throw exceptions on errors (the job will be retried).
+     */
+    private function execute_full_export() {
 
-            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
-            $exportlogrepository = new export_log_repository();
-            $encryptionservice = new encryption_service();
+        DebugHelper::enable_moodle_debug();
 
-            $services = [
-                'encryptionservice' => $encryptionservice,
-                'exportservice' => $exportservice,
-                'exportlogrepository' => new $exportlogrepository
-            ];
+        mtrace("IntelliData Data Files Export CRON started!");
 
-            $databaseservice = new database_service(true, $services);
-            $databaseservice->set_all_tables();
-            $databaseservice->set_adhoctask(true);
+        $data = $this->get_custom_data();
 
-            foreach ($data->datatypes as $datatype) {
+        $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+        $exportlogrepository = new export_log_repository();
+        $encryptionservice = new encryption_service();
 
-                // Delete old files.
+        $services = [
+            'encryptionservice' => $encryptionservice,
+            'exportservice' => $exportservice,
+            'exportlogrepository' => new $exportlogrepository
+        ];
+
+        $databaseservice = new database_service(true, $services);
+        $databaseservice->set_all_tables();
+        $databaseservice->set_adhoctask(true);
+
+        foreach ($data->datatypes as $datatype) {
+
+            // Delete old files.
+            $exportservice->delete_files([
+                'datatype' => $datatype,
+                'timemodified' => time()
+            ]);
+
+            // Export table.
+            $databaseservice->export_tables([
+                'table' => $datatype
+            ]);
+
+            // Export files to storage.
+            $exportservice->save_files([
+                'datatype' => $datatype
+            ]);
+
+            // Set datatype migrated.
+            $exportlogrepository->save_migrated($datatype);
+        }
+
+        // Send callback when files ready.
+        if (!empty($data->callbackurl)) {
+            $client = new \curl();
+            $client->post($data->callbackurl, [
+                'data' => $encryptionservice->encrypt(json_encode(['datatypes' => $data->datatypes]))
+            ]);
+        }
+
+        mtrace("IntelliData Data Files Export CRON ended!");
+    }
+
+    /**
+     * Export data by chunks.
+     * Throw exceptions on errors (the job will be retried).
+     */
+    private function execute_chunks_export() {
+
+        DebugHelper::enable_moodle_debug();
+
+        $data = $this->get_custom_data();
+
+        // Divide one large task to multiple smaller tasks.
+        if (count($data->datatypes) > 1) {
+            return $this->divide_adhoc_by_datatypes($data);
+        }
+
+        mtrace("IntelliData Data Files Export CRON started!");
+
+        $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+        $exportlogrepository = new export_log_repository();
+        $encryptionservice = new encryption_service();
+
+        $services = [
+            'encryptionservice' => $encryptionservice,
+            'exportservice' => $exportservice,
+            'exportlogrepository' => new $exportlogrepository
+        ];
+
+        $databaseservice = new database_service(true, $services);
+        $databaseservice->set_all_tables();
+        $databaseservice->set_adhoctask(true);
+
+        foreach ($data->datatypes as $datatype) {
+
+            // Delete old files.
+            if (empty($data->limit)) {
                 $exportservice->delete_files([
                     'datatype' => $datatype,
                     'timemodified' => time()
                 ]);
-
-                // Export table.
-                $databaseservice->export_tables([
-                    'table' => $datatype
-                ]);
-
-                // Export files to storage.
-                $exportservice->save_files([
-                    'datatype' => $datatype
-                ]);
-
-                // Set datatype migrated.
-                $exportlogrepository->save_migrated($datatype);
             }
 
-            // Send callback when files ready.
-            if (!empty($data->callbackurl)) {
-                $client = new \curl();
-                $client->post($data->callbackurl, [
-                    'data' => $encryptionservice->encrypt(json_encode(['datatypes' => $data->datatypes]))
-                ]);
-            }
-
-            mtrace("IntelliData Data Files Export CRON ended!");
+            // Export table.
+            $databaseservice->export_tables([
+                'table' => $datatype,
+                'cronprocessing' => true,
+                'adhoctask' => true,
+                'limit' => (!empty($data->limit)) ? $data->limit : 0,
+                'callback' => !empty($data->callbackurl) ? $data->callbackurl : null
+            ]);
         }
+
+        mtrace("IntelliData Data Files Export CRON ended!");
+    }
+
+    /**
+     * Divide datatypes to multiple adhoc tasks.
+     *
+     * @param $data
+     * @return void
+     */
+    private function divide_adhoc_by_datatypes($data) {
+
+        foreach ($data->datatypes as $datatype) {
+
+            $customdata = [
+                'datatypes' => [$datatype]
+            ];
+            if (!empty($data->callbackurl)) {
+                $customdata['callbackurl'] = $data->callbackurl;
+            }
+
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data($customdata);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        mtrace("IntelliData Data Adhoc task divided to datatypes.");
     }
 }

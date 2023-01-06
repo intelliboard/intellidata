@@ -42,7 +42,7 @@ class observer {
      * @param \core\event\course_created $event
      */
     public static function course_created(\core\event\course_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $course = $event->get_record_snapshot('course', $eventdata['objectid']);
@@ -57,7 +57,7 @@ class observer {
      * @param \core\event\course_updated $event
      */
     public static function course_updated(\core\event\course_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $course = $event->get_record_snapshot('course', $eventdata['objectid']);
@@ -72,7 +72,7 @@ class observer {
      * @param \core\event\course_restored $event
      */
     public static function course_restored(\core\event\course_restored $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $course = $event->get_record_snapshot('course', $eventdata['objectid']);
@@ -87,7 +87,7 @@ class observer {
      * @param \core\event\course_deleted $event
      */
     public static function course_deleted(\core\event\course_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $course = new \stdClass();

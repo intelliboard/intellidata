@@ -26,6 +26,8 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\repositories\export_log_repository;
+use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 
 class MigrationHelper {
@@ -36,7 +38,8 @@ class MigrationHelper {
      */
     private static $tasks = [
         '\local_intellidata\task\cleaner_task',
-        '\local_intellidata\task\export_task',
+        '\local_intellidata\task\export_data_task',
+        '\local_intellidata\task\export_files_task',
         '\local_intellidata\task\migration_task',
         '\local_intellidata\task\track_bbb_meetings'
     ];
@@ -69,8 +72,8 @@ class MigrationHelper {
      * @param int $migrationstart
      */
     public static function set_next_migration_params($migrationdatatype, $migrationstart = 0) {
-        set_config('migrationdatatype', $migrationdatatype, 'local_intellidata');
-        set_config('migrationstart', $migrationstart, 'local_intellidata');
+        SettingsHelper::set_setting('migrationdatatype', $migrationdatatype);
+        SettingsHelper::set_setting('migrationstart', $migrationstart);
     }
 
     /**
@@ -131,5 +134,49 @@ class MigrationHelper {
         $task = \core\task\manager::scheduled_task_from_record($taskrecord);
         $task->set_disabled($status);
         return \core\task\manager::configure_scheduled_task($task);
+    }
+
+    /**
+     * Reset migration details.
+     *
+     * @return void
+     */
+    public static function reset_migration_details() {
+        SettingsHelper::set_setting('resetmigrationprogress', 0);
+        SettingsHelper::set_setting('migrationdatatype', '');
+        SettingsHelper::set_setting('migrationstart', 0);
+
+        // Clean migrations logs database.
+        $exportlogrepository = new export_log_repository();
+        $exportlogrepository->clear_migrated();
+
+        // Reset export process.
+        ExportHelper::reset_export_details();
+    }
+
+    /**
+     * Calculate migration progress.
+     *
+     * @return void
+     */
+    public static function calculate_migration_progress($showlogs = true) {
+
+        $datatypeservice = new datatypes_service();
+        $datatypes = $datatypeservice->get_migrating_datatypes();
+
+        $exportlogrepository = new export_log_repository();
+
+        foreach ($datatypes as $datatype) {
+            $starttime = microtime();
+
+            $exportlogrepository->calculate_export_progress($datatype['name']);
+
+            $difftime = microtime_diff($starttime, microtime());
+
+            if ($showlogs) {
+                mtrace("IntelliData: Calculation progress for '" . $datatype['name'] . "' completed. Execution took " . $difftime .
+                    " seconds.");
+            }
+        }
     }
 }

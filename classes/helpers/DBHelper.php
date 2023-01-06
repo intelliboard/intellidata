@@ -26,6 +26,8 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\persistent\export_ids;
+
 class DBHelper {
     const MYSQL_TYPE = 'mysqli';
     const POSTGRES_TYPE = 'pgsql';
@@ -389,5 +391,49 @@ class DBHelper {
         $letters = ($letters) ? "{$letters}." : '';
 
         return str_replace('#', $letters, $res);
+    }
+
+    /**
+     * @param $table
+     * @return void
+     */
+    public static function create_deleted_id_triger($table) {
+        global $CFG, $DB;
+
+        if ($CFG->dbtype == self::POSTGRES_TYPE) {
+            $DB->change_database_structure("CREATE OR REPLACE FUNCTION insert_deleted_id() RETURNS trigger AS $$
+                                                BEGIN
+                                                    INSERT INTO " . $DB->get_prefix() . export_ids::TABLE . "
+                                                        (dataid, datatype, timecreated) VALUES (OLD.id, TG_TABLE_NAME, NULL);
+                                                    RETURN OLD;
+                                                END
+                                            $$ LANGUAGE plpgsql");
+
+            $DB->execute("DROP TRIGGER IF EXISTS deleted_{$table} ON {{$table}}");
+            $DB->execute("CREATE TRIGGER deleted_{$table} BEFORE DELETE ON {{$table}}
+                                FOR EACH ROW EXECUTE FUNCTION insert_deleted_id()");
+        } else {
+            $DB->execute("DROP TRIGGER IF EXISTS before_delete_{$table}");
+            $DB->execute("CREATE TRIGGER before_delete_{$table}
+                            BEFORE DELETE ON {{$table}} FOR EACH ROW
+                            INSERT IGNORE INTO {" . export_ids::TABLE . "}
+                                (datatype, dataid, timecreated) VALUES ('{$table}', OLD.id, NULL)");
+        }
+    }
+
+    /**
+     * @param $table
+     * @return void
+     */
+    public static function remove_deleted_id_triger($table) {
+        global $CFG, $DB;
+
+        if ($CFG->dbtype == self::POSTGRES_TYPE) {
+            $DB->execute("DELETE FUNCTION IF EXISTS insert_deleted_id() CASCADE");
+
+            $DB->execute("DROP TRIGGER IF EXISTS deleted_{$table} ON {{$table}}");
+        } else {
+            $DB->execute("DROP TRIGGER IF EXISTS before_delete_{$table}");
+        }
     }
 }

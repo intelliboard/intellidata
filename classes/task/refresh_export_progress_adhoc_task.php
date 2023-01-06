@@ -19,37 +19,25 @@
  * @package    local_intellidata
  * @category   task
  * @author     IntelliBoard Inc.
- * @copyright  2020 IntelliBoard
+ * @copyright  2022 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_intellidata\task;
 defined('MOODLE_INTERNAL') || die();
 
-use local_intellidata\services\export_service;
-use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\DebugHelper;
-use local_intellidata\helpers\ExportHelper;
-
+use local_intellidata\helpers\MigrationHelper;
 
 /**
- * Task to process datafiles export.
+ * Task to create index in table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
- * @copyright  2020 IntelliBoard
+ * @copyright  2022 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class export_task extends \core\task\scheduled_task {
-
-    /**
-     * Get a descriptive name for this task (shown to admins).
-     *
-     * @return string
-     */
-    public function get_name() {
-        return get_string('export_task', 'local_intellidata');
-    }
+class refresh_export_progress_adhoc_task extends \core\task\adhoc_task {
 
     /**
      * Do the job.
@@ -57,16 +45,8 @@ class export_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        if (TrackingHelper::enabled()) {
+        DebugHelper::enable_moodle_debug();
 
-            DebugHelper::enable_moodle_debug();
-
-            mtrace("IntelliData Data Files Export CRON started!");
-
-            $exportservice = new export_service();
-            ExportHelper::process_export($exportservice);
-
-            mtrace("IntelliData Data Files Export CRON ended!");
-        }
+        MigrationHelper::calculate_migration_progress();
     }
 }

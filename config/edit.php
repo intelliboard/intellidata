@@ -29,8 +29,10 @@ use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
+use local_intellidata\task\create_index_adhoc_task;
+use local_intellidata\task\delete_index_adhoc_task;
 
-require('../../../config.php');
+require_once('../../../config.php');
 
 $datatype = required_param('datatype', PARAM_TEXT);
 $action = optional_param('action', '', PARAM_TEXT);
@@ -76,6 +78,33 @@ if ($action == 'reset') {
     }
 
     redirect($returnurl, get_string('resetmsg', 'local_intellidata'));
+
+} else if ($action == 'createindex') {
+
+    $record->set('tableindex', $record->get('timemodified_field'));
+    $record->save();
+
+    $createindextask = new create_index_adhoc_task();
+    $createindextask->set_custom_data([
+        'datatype' => $record->get('datatype')
+    ]);
+    \core\task\manager::queue_adhoc_task($createindextask);
+
+    redirect($returnurl, get_string('taskaddedforindexcreation', 'local_intellidata'));
+
+} else if ($action == 'deleteindex') {
+
+    $deleteindextask = new delete_index_adhoc_task();
+    $deleteindextask->set_custom_data([
+        'datatype' => $record->get('datatype'),
+        'tableindex' => $record->get('tableindex')
+    ]);
+    \core\task\manager::queue_adhoc_task($deleteindextask);
+
+    $record->set('tableindex', '');
+    $record->save();
+
+    redirect($returnurl, get_string('taskaddedforindexdeletion', 'local_intellidata'));
 }
 
 if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
@@ -108,6 +137,21 @@ if ($editform->is_cancelled()) {
         $data = (new config_service)->create_config($datatype, $datatypeconfig);
         $returnurl = $pageurl;
     } else {
+
+        // Delete index for old timemodified_field.
+        if (!empty($record->get('tableindex')) &&
+            $data->timemodified_field != $record->get('timemodified_field')) {
+
+            $deleteindextask = new delete_index_adhoc_task();
+            $deleteindextask->set_custom_data([
+                'datatype' => $record->get('datatype'),
+                'tableindex' => $record->get('tableindex')
+            ]);
+            \core\task\manager::queue_adhoc_task($deleteindextask);
+
+            $data->tableindex = '';
+        }
+
         // Validate export rules.
         if (!empty($data->timemodified_field)) {
             if (!isset($datatypeconfig['timemodifiedfields'][$data->timemodified_field])) {
@@ -134,6 +178,7 @@ if ($editform->is_cancelled()) {
         $record->set('filterbyid', $data->filterbyid);
         $record->set('rewritable', $data->rewritable);
         $record->set('status', $data->status);
+        $record->set('tableindex', $data->tableindex);
         $record->save();
 
         // Process export log.

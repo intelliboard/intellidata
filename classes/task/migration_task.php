@@ -72,13 +72,7 @@ class migration_task extends \core\task\scheduled_task {
 
             // Reset migration process if enabled.
             if (SettingsHelper::get_setting('resetmigrationprogress')) {
-                set_config('resetmigrationprogress', 0, 'local_intellidata');
-                set_config('migrationdatatype', '', 'local_intellidata');
-                set_config('migrationstart', 0, 'local_intellidata');
-
-                // Clean migrations logs database.
-                $exportlogrepository = new export_log_repository();
-                $exportlogrepository->clear_migrated();
+                MigrationHelper::reset_migration_details();
 
                 mtrace("IntelliData Cleaner CRON started!");
 
@@ -94,8 +88,8 @@ class migration_task extends \core\task\scheduled_task {
                 // Ignore if migration completed.
                 if ($migrationdatatype == MigrationHelper::MIGRATIONS_COMPLETED_STATUS) {
 
-                    // Export files.
-                    ExportHelper::process_export($exportservice);
+                    // Export files to Moodledata.
+                    ExportHelper::process_files_export($exportservice);
 
                     // Send callback to IBN.
                     MigrationHelper::send_callback();
@@ -112,6 +106,7 @@ class migration_task extends \core\task\scheduled_task {
 
             $migrationstart = (int) SettingsHelper::get_setting('migrationstart');
             $params['migrationstart'] = $migrationstart;
+            $params['rewritable'] = false;
 
             mtrace("IntelliData Migration CRON started!");
 
@@ -122,10 +117,6 @@ class migration_task extends \core\task\scheduled_task {
             $exportservice->set_migration_mode();
             $migrationservice = new migration_service(null, $exportservice);
             $migrationservice->process($params, true);
-
-            if ((bool) SettingsHelper::get_setting('exportfilesduringmigration')) {
-                $exportservice->save_files();
-            }
 
             mtrace("IntelliData Migration CRON ended!");
         }

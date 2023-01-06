@@ -45,7 +45,7 @@ class observer {
     public static function submission_created(\mod_assign\event\submission_created $event) {
         global $DB;
 
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
             $submission = $DB->get_record('assign_submission', ['id' => $eventdata['other']['submissionid']]);
             $submission->submission_type = str_replace('assignsubmission_', '', $eventdata['objecttable']);
@@ -62,7 +62,7 @@ class observer {
     public static function submission_updated(\mod_assign\event\submission_updated $event) {
         global $DB;
 
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $submission = $DB->get_record('assign_submission', ['id' => $eventdata['other']['submissionid']]);
@@ -78,9 +78,8 @@ class observer {
      * @param \mod_assign\event\submission_duplicated $event
      */
     public static function submission_duplicated(\mod_assign\event\submission_duplicated $event) {
-        global $DB;
 
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -96,7 +95,7 @@ class observer {
      * @param \mod_assign\event\assessable_submitted $event
      */
     public static function assessable_submitted(\mod_assign\event\assessable_submitted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -114,7 +113,7 @@ class observer {
     public static function submission_graded(\mod_assign\event\submission_graded $event) {
         global $DB;
 
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
 
             $eventdata = $event->get_data();
             $gradedata = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -151,7 +150,7 @@ class observer {
     public static function submission_status_updated(\mod_assign\event\submission_status_updated $event) {
         global $DB;
 
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
 
             $eventdata = $event->get_data();
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);

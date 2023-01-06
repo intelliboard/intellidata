@@ -47,24 +47,17 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'cc.id > 0';
+
         $select = ($count) ?
             "SELECT COUNT(cc.id) as recordscount" :
             "SELECT cc.*";
 
-        if ($condition) {
-            $where .= " AND " . $condition;
-        }
-
         $sql = "$select
-                  FROM {".$this->table."} cc
-                 WHERE $where";
+                  FROM {".$this->table."} cc";
 
-        if (!$count) {
-            $sql .= " ORDER BY cc.id";
-        }
+        list($sql, $params) = $this->set_condition($condition, $conditionparams, $sql, []);
 
-        return [$sql, $conditionparams];
+        return [$sql, $params];
     }
 
     /**

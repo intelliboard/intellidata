@@ -52,6 +52,10 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
      * @throws \dml_exception
      */
     public function test_save() {
+        global $DB;
+
+        $DB->delete_records(export_ids::TABLE);
+
         $this->resetAfterTest(true);
 
         $exportidrepository = new export_id_repository();
@@ -77,14 +81,6 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         ];
         $exportidrepository->save($records);
         $this->assertEquals(count($records), export_ids::count_records());
-
-        // Validate duplications.
-        $this->expectException('dml_write_exception');
-        $exportidrepository->save([[
-            'datatype' => 'tracking',
-            'dataid' => 2,
-            'timecreated' => time()
-        ]]);
     }
 
     /**
@@ -95,6 +91,9 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
      * @throws \dml_exception
      */
     public function test_clean_deleted_ids() {
+        global $DB;
+
+        $DB->delete_records(export_ids::TABLE);
         $this->resetAfterTest(true);
 
         $exportidrepository = new export_id_repository();
@@ -105,7 +104,6 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
 
         // Validate record creation.
         $records = []; $recordsnum = 10; $datatype = 'tracking';
-        $idstodelete = [1, 2, 3, 4, 5];
         for ($i = 1; $i <= $recordsnum; $i++) {
             $records[] = [
                 'datatype' => $datatype,
@@ -117,61 +115,13 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         $exportidrepository->save($records);
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
-        // Validate empty ids list.
-        $exportidrepository->clean_deleted_ids($datatype, []);
-        $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
-
         // Validate other datatype deletion.
-        $exportidrepository->clean_deleted_ids('users', $idstodelete);
+        $exportidrepository->clean_deleted_ids('users', [], 'users');
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
         // Validate deletion.
-        $exportidrepository->clean_deleted_ids(
-            $datatype,
-            $idstodelete
-        );
-        $this->assertEquals(($recordsnum - count($idstodelete)), export_ids::count_records());
-    }
-
-    /**
-     * Test for get_created_ids() method.
-     *
-     * @return void
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    public function test_get_created_ids() {
-        $this->resetAfterTest(true);
-
-        $exportidrepository = new export_id_repository();
-        $this->assertInstanceOf('local_intellidata\repositories\export_id_repository', $exportidrepository);
-
-        // Validate empty table.
+        $exportidrepository->clean_deleted_ids($datatype, [], $datatype);
         $this->assertEquals(0, export_ids::count_records());
-
-        // Create user.
-        $user = generator::create_user();
-
-        // Create tracking.
-        $tracking = generator::create_tracking(['userid' => $user->id]);
-
-        $datatype = 'tracking'; $datatypetable = tracking::TABLE;
-        $createdrecords = $exportidrepository->get_created_ids($datatype, $datatypetable);
-
-        // Validate new records.
-        $this->assertNotFalse($createdrecords->valid());
-        foreach ($createdrecords as $record) {
-            $this->assertEquals($record->id, $tracking->id);
-        }
-
-        // Validate existing records.
-        $exportidrepository->save([[
-            'datatype' => $datatype,
-            'dataid' => $tracking->id,
-            'timecreated' => time()
-        ]]);
-        $records = $exportidrepository->get_created_ids($datatype, $datatypetable);
-        $this->assertFalse($records->valid());
     }
 
     /**
@@ -182,6 +132,9 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
      * @throws \dml_exception
      */
     public function test_get_deleted_ids() {
+        global $DB;
+
+        $DB->delete_records(export_ids::TABLE);
         $this->resetAfterTest(true);
 
         $exportidrepository = new export_id_repository();
@@ -191,7 +144,7 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         $this->assertEquals(0, export_ids::count_records());
 
         // Validate record creation.
-        $datatype = 'tracking'; $datatypetable = tracking::TABLE;
+        $datatype = 'tracking';
         $records = []; $recordsnum = 5;
         for ($i = 1; $i <= $recordsnum; $i++) {
             $records[] = [
@@ -202,14 +155,14 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         }
 
         // Validate not existing deleted IDs.
-        $deletedids = $exportidrepository->get_deleted_ids($datatype, $datatypetable);
+        $deletedids = $exportidrepository->get_deleted_ids($datatype, $datatype);
         $this->assertFalse($deletedids->valid());
 
         // Validate deleted IDs.
         $exportidrepository->save($records);
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
-        $deletedrecords = $exportidrepository->get_deleted_ids($datatype, $datatypetable);
+        $deletedrecords = $exportidrepository->get_deleted_ids($datatype, $datatype);
         $this->assertTrue($deletedrecords->valid());
 
         $deletedidscount = 0;

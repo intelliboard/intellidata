@@ -31,7 +31,9 @@ use local_intellidata\helpers\StorageHelper;
 
 defined('MOODLE_INTERNAL') || die;
 
-if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
+if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
+    $trackingcache = \cache::make('local_intellidata', 'tracking');
+    $eventscache = \cache::make('local_intellidata', 'events');
 
     $pluginname = local_intellidata\helpers\ParamsHelper::PLUGIN;
 
@@ -54,9 +56,13 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
 
     $options = [
         StorageHelper::FILE_STORAGE => get_string('file', $pluginname),
-        StorageHelper::DATABASE_STORAGE => get_string('database', $pluginname),
-        StorageHelper::CACHE_STORAGE => get_string('cache', $pluginname)
+        StorageHelper::DATABASE_STORAGE => get_string('database', $pluginname)
     ];
+
+    if (method_exists($eventscache, 'store_supports_get_all_keys') && $eventscache->store_supports_get_all_keys()) {
+        $options[StorageHelper::CACHE_STORAGE] = get_string('cache', $pluginname);
+    }
+
     $name = 'trackingstorage';
     $setting = new admin_setting_configselect(
         $pluginname . '/' . $name,
@@ -157,22 +163,11 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    $name = 'debugenabled';
+    $name = 'resetimporttrackingprogress';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
-
-    $name = 'directsqlenabled';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
+        get_string($name . '_desc', $pluginname),
         SettingsHelper::get_defaut_config_value($name),
         true,
         false
@@ -206,14 +201,17 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     $settings->add($setting);
 
     $name = 'compresstracking';
-    $options = array(
+    $options = [
         local_intellidata\repositories\tracking\tracking_repository::TYPE_LIVE =>
             new lang_string('do_not_use_compresstracking', $pluginname),
-        local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE =>
-            new lang_string('cache_compresstracking', $pluginname),
         local_intellidata\repositories\tracking\tracking_repository::TYPE_FILE =>
             new lang_string('file_compresstracking', $pluginname)
-    );
+    ];
+    if (method_exists($trackingcache, 'store_supports_get_all_keys') && $trackingcache->store_supports_get_all_keys()) {
+        $options[
+            local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE
+        ] = new lang_string('cache_compresstracking', $pluginname);
+    }
     $setting = new admin_setting_configselect(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),
@@ -419,6 +417,61 @@ if ($ADMIN->locate('localplugins') and $ADMIN->locate('root')) {
     $settings->add($setting);
 
     $name = 'enabledatacleaning';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'enableprogresscalculation';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'eventstracking';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'divideexportbydatatype';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'debugenabled';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'directsqlenabled';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),

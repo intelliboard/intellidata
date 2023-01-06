@@ -48,11 +48,6 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'gg.id > 0';
-
-        if ($condition) {
-            $where .= " AND " . $condition;
-        }
 
         $select = ($count) ?
             "SELECT COUNT(gg.id) as recordscount" :
@@ -60,10 +55,9 @@ class migration extends \local_intellidata\entities\migration {
                     gg.hidden, gg.timemodified, gg.rawgrademax, gg.rawgrademin";
 
         $sql = "$select
-                FROM {grade_grades} gg
-               WHERE $where";
+                FROM {grade_grades} gg";
 
-        return [$sql, $conditionparams];
+        return $this->set_condition($condition, $conditionparams, $sql, []);
     }
 
     /**

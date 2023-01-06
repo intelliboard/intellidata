@@ -24,12 +24,13 @@
  */
 
 namespace local_intellidata\task;
-use local_intellidata\helpers\DebugHelper;
+defined('MOODLE_INTERNAL') || die();
+
+use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
-use local_intellidata\helpers\SettingsHelper;
-
-defined('MOODLE_INTERNAL') || die();
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\ExportHelper;
 
 
 /**
@@ -40,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2020 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cleaner_task extends \core\task\scheduled_task {
+class export_files_task extends \core\task\scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -48,7 +49,7 @@ class cleaner_task extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('cleaner_task', 'local_intellidata');
+        return get_string('export_files_task', 'local_intellidata');
     }
 
     /**
@@ -57,21 +58,20 @@ class cleaner_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        if (TrackingHelper::enabled() &&
-            $cleanerduration = SettingsHelper::get_setting('cleaner_duration')) {
+        if (TrackingHelper::enabled()) {
 
             DebugHelper::enable_moodle_debug();
 
-            mtrace("IntelliData Cleaner CRON started!");
-
-            $timemodified = time() - (int)$cleanerduration;
+            $starttime = microtime();
+            mtrace("Export Files process started at " . date('r') . "...");
 
             $exportservice = new export_service();
-            $filesrecords = $exportservice->delete_files(['timemodified' => $timemodified]);
+            ExportHelper::process_files_export($exportservice);
 
-            mtrace("IntelliData Cleaner: $filesrecords deleted.");
-
-            mtrace("IntelliData Cleaner CRON ended!");
+            mtrace("Export Files process completed at " . date('r') . ".");
+            $difftime = microtime_diff($starttime, microtime());
+            mtrace("Export Files Execution took " . $difftime . " seconds.");
+            mtrace("-------------------------------------------");
         }
     }
 }

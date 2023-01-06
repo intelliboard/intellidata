@@ -63,12 +63,7 @@ class ramigration extends \local_intellidata\entities\migration {
              LEFT JOIN {context} cxt ON cxt.id = ra.contextid
                  WHERE $where";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, $params);
     }
 
     /**

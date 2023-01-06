@@ -53,7 +53,7 @@ class encryption_service {
      * @return bool
      */
     public function validate_credentials() {
-        return (empty($this->encryptionkey) or empty($this->clientidentifier)) ? false : true;
+        return (empty($this->encryptionkey) || empty($this->clientidentifier)) ? false : true;
     }
 
     /**

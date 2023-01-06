@@ -43,7 +43,7 @@ class observer {
      * @param \mod_forum\event\discussion_created $event
      */
     public static function discussion_created(\mod_forum\event\discussion_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $discussion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -57,7 +57,7 @@ class observer {
      * @param \mod_forum\event\discussion_updated $event
      */
     public static function discussion_updated(\mod_forum\event\discussion_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $discussion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -71,7 +71,7 @@ class observer {
      * @param \mod_forum\event\discussion_moved $event
      */
     public static function discussion_moved(\mod_forum\event\discussion_moved $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $discussion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -87,7 +87,7 @@ class observer {
      * @param \mod_forum\event\discussion_deleted $event
      */
     public static function discussion_deleted(\mod_forum\event\discussion_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $discussion = new \stdClass();
@@ -103,7 +103,7 @@ class observer {
      * @param \mod_forum\event\post_created $event
      */
     public static function post_created(\mod_forum\event\post_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $post = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -119,7 +119,7 @@ class observer {
      * @param \mod_forum\event\post_updated $event
      */
     public static function post_updated(\mod_forum\event\post_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $post = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -143,7 +143,7 @@ class observer {
      * @param \mod_forum\event\post_deleted $event
      */
     public static function post_deleted(\mod_forum\event\post_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $post = new \stdClass();

@@ -28,6 +28,7 @@ namespace local_intellidata\output\tables;
 defined('MOODLE_INTERNAL') || die();
 
 use html_writer;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\export_logs;
 use local_intellidata\persistent\datatypeconfig;
 

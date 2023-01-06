@@ -112,6 +112,7 @@ class migration_service {
             return false;
         }
 
+        $starttime = microtime();
         // Get records count.
         $recordscount = $migration->get_records_count();
         $params['recordscount'] = $recordscount;
@@ -148,15 +149,19 @@ class migration_service {
             }
         }
 
-        mtrace("Migration ended for table $tablename.");
+        $difftime = microtime_diff($starttime, microtime());
+        mtrace("Migration ended for table $tablename. Execution took " . $difftime . " seconds.");
+        mtrace("-------------------------------------------");
 
         // Export file to moodledata.
         if ($this->exportfilesduringmigration) {
-            $this->exportservice->save_files(['datatype' => $tablename]);
-            mtrace("File $tablename exported to moodledata.");
-        }
+            $savefilesparams = ['datatype' => $tablename];
+            if ($datatype['rewritable'] && $cronprocessing) {
+                $savefilesparams['rewritable'] = false;
+            }
 
-        mtrace("-------------------------------------------");
+            $this->exportservice->save_files($savefilesparams);
+        }
     }
 
     /**

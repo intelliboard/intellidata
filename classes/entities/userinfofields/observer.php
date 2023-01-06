@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\user_info_category_created $event
      */
     public static function user_info_field_created(\core\event\user_info_field_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $userinfofield = $event->get_record_snapshot('user_info_field', $eventdata['objectid']);
@@ -56,7 +56,7 @@ class observer {
      * @param \core\event\user_info_field_updated $event
      */
     public static function user_info_field_updated(\core\event\user_info_field_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $userinfofield = $event->get_record_snapshot('user_info_field', $eventdata['objectid']);
@@ -71,7 +71,7 @@ class observer {
      * @param \core\event\user_info_field_deleted $event
      */
     public static function user_info_field_deleted(\core\event\user_info_field_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $userinfofield = new \stdClass();

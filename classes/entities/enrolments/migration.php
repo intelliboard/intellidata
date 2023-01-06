@@ -47,20 +47,15 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'ue.id > 0';
+
         $select = ($count) ?
             "SELECT COUNT(ue.id) as recordscount" :
             "SELECT ue.*, e.courseid, e.enrol as enroltype";
 
         $sql = "$select
                   FROM {user_enrolments} ue
-             LEFT JOIN {enrol} e ON e.id = ue.enrolid
-                 WHERE $where";
+             LEFT JOIN {enrol} e ON e.id = ue.enrolid";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-        }
-
-        return [$sql, $conditionparams];
+        return $this->set_condition($condition, $conditionparams, $sql, []);
     }
 }

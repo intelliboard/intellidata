@@ -18,51 +18,51 @@
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
  * @package    local_intellidata
- * @copyright  2021 IntelliBoard, Inc
+ * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
 
+use local_intellidata\helpers\DBManagerHelper;
+use local_intellidata\services\datatypes_service;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_id_repository;
-use local_intellidata\services\config_service;
-use local_intellidata\services\datatypes_service;
-use local_intellidata\services\intelliboard_service;
-use local_intellidata\helpers\DBHelper;
+use local_intellidata\repositories\config_repository;
 use local_intellidata\helpers\DebugHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
-function xmldb_local_intellidata_install() {
-    global $DB;
+function xmldb_local_intellidata_uninstall() {
 
-    // Set exportformat for csv.
-    set_config('exportdataformat', 'csv', 'local_intellidata');
-
-    // Setup config in database.
-    $configservice = new config_service(datatypes_service::get_all_datatypes());
-    $configservice->setup_config();
-
-    // Setup database triggers.
+    // Remove database triggers.
     $datatypes = datatypes_service::get_datatypes();
     try {
         foreach ($datatypes as $datatype) {
             if (isset($datatype['table'])) {
-                DBHelper::create_deleted_id_triger($datatype['table']);
+                DBHelper::remove_deleted_id_triger($datatype['table']);
             }
         }
-        SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
     } catch (moodle_exception $e) {
         SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
         DebugHelper::error_log($e->getMessage());
     }
 
-    // Send IB prospects.
-    try {
-        $ibservice = new intelliboard_service();
-        $ibservice->set_params_for_install();
-        $ibservice->send_request();
-    } catch (moodle_exception $e) {
-        DebugHelper::error_log($e->getMessage());
+    // Remove custom indexes.
+    $configrepository = new config_repository();
+    $configs = $configrepository->get_config();
+
+    if (count($configs)) {
+        $datatypes = datatypes_service::get_all_datatypes();
+
+        foreach ($configs as $config) {
+            if (!empty($config->tableindex) && !empty($datatypes[$config->datatype]['table'])) {
+                DBManagerHelper::delete_index(
+                    $datatypes[$config->datatype]['table'],
+                    $config->tableindex
+                );
+            }
+        }
     }
+
 }
