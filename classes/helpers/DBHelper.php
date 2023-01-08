@@ -406,7 +406,7 @@ class DBHelper {
         global $CFG, $DB;
 
         if ($CFG->dbtype == self::POSTGRES_TYPE) {
-            $DB->change_database_structure("CREATE OR REPLACE FUNCTION " . $CFG->prefix . "insert_deleted_id()
+            $DB->change_database_structure("CREATE OR REPLACE FUNCTION " . self::get_tables_prefix() . "insert_deleted_id()
                                                     RETURNS trigger AS $$
                                                     DECLARE
                                                         datatype varchar;
@@ -422,7 +422,7 @@ class DBHelper {
             $DB->execute("CREATE TRIGGER deleted_{$datatype}
                                 BEFORE DELETE ON {{$table}}
                                 FOR EACH ROW
-                                EXECUTE FUNCTION " . $CFG->prefix . "insert_deleted_id('{$datatype}')");
+                                EXECUTE FUNCTION " . self::get_tables_prefix() . "insert_deleted_id('{$datatype}')");
         } else {
             $DB->execute("DROP TRIGGER IF EXISTS before_delete_{$datatype}");
             $DB->execute("CREATE TRIGGER before_delete_{$datatype}
@@ -452,6 +452,16 @@ class DBHelper {
     }
 
     /**
+     * Return tables prefix.
+     *
+     * @return mixed
+     */
+    public static function get_tables_prefix() {
+        global $CFG;
+        return (PHPUNIT_TEST) ? $CFG->phpunit_prefix : $CFG->prefix;
+    }
+
+    /**
      * Delete trigger functions.
      *
      * @return void
@@ -461,7 +471,7 @@ class DBHelper {
         global $CFG, $DB;
 
         if ($CFG->dbtype == self::POSTGRES_TYPE) {
-            $DB->execute("DROP FUNCTION IF EXISTS " . $CFG->prefix . "insert_deleted_id() CASCADE");
+            $DB->execute("DROP FUNCTION IF EXISTS " . self::get_tables_prefix() . "insert_deleted_id() CASCADE");
         }
     }
 }
