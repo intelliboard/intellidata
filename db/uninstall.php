@@ -40,9 +40,10 @@ function xmldb_local_intellidata_uninstall() {
     try {
         foreach ($datatypes as $datatype) {
             if (isset($datatype['table'])) {
-                DBHelper::remove_deleted_id_triger($datatype['table']);
+                DBHelper::remove_deleted_id_triger($datatype['name'], $datatype['table']);
             }
         }
+        DBHelper::remove_deleted_id_functions();
     } catch (moodle_exception $e) {
         SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
         DebugHelper::error_log($e->getMessage());

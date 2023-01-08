@@ -25,6 +25,8 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\export_id_repository;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\helpers\ParamsHelper;
@@ -88,9 +90,34 @@ class export_service {
                     }
                 }
             }
+
+            // Clean export ids.
+            $this->clean_exportids($datatypes);
         }
 
         return $files;
+    }
+
+    /*
+     * Delete export ids saved with triggers.
+     */
+    private function clean_exportids($datatypes) {
+
+        $exportidrepository = new export_id_repository();
+
+        $eventstracking = SettingsHelper::get_setting('eventstracking');
+        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
+
+        if ($eventstracking && $trackidsmode == $exportidrepository::TRACK_IDS_MODE_TRIGGER) {
+            foreach ($datatypes as $datatype) {
+
+                if (!isset($datatype['table']) || !empty($datatype['exportids'])) {
+                    continue;
+                }
+
+                $exportidrepository->clean_deleted_ids($datatype['name'], []);
+            }
+        }
     }
 
     /**

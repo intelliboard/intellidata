@@ -120,7 +120,7 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
         // Validate deletion.
-        $exportidrepository->clean_deleted_ids($datatype, [], $datatype);
+        $exportidrepository->clean_deleted_ids($datatype, [], 'local_intellidata_tracking');
         $this->assertEquals(0, export_ids::count_records());
     }
 

@@ -45,7 +45,7 @@ class export_id_repository {
     public function get_deleted_ids($datatype, $table) {
         $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
         if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
-            return $this->get_deleted_ids_trigger($table);
+            return $this->get_deleted_ids_trigger($datatype);
         } else {
             return $this->get_deleted_ids_request($datatype, $table);
         }
@@ -58,16 +58,16 @@ class export_id_repository {
      * @return \moodle_recordset
      * @throws \dml_exception
      */
-    public function get_deleted_ids_trigger($table) {
+    public function get_deleted_ids_trigger($datatype) {
         global $DB;
 
         $inparams = [
-            'table' => $table
+            'datatype' => $datatype
         ];
 
         return $DB->get_recordset_sql("SELECT dataid AS id
                                                  FROM {" . export_ids::TABLE . "}
-                                                WHERE datatype = :table", $inparams);
+                                                WHERE datatype = :datatype", $inparams);
     }
 
     /**
@@ -145,7 +145,7 @@ class export_id_repository {
                                             WHERE dataid {$insql}
                                               AND dataid BETWEEN :prevlastid
                                               AND :lastid
-                                              AND datatype=:datatype", $inparams);
+                                              AND datatype = :datatype", $inparams);
     }
 
     /**
@@ -238,12 +238,12 @@ class export_id_repository {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function clean_deleted_ids(string $datatype, array $deletedids, string $table) {
+    public function clean_deleted_ids(string $datatype, array $deletedids) {
         global $DB;
 
         $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
         if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
-            $this->clean_deleted_ids_trigger($table);
+            $this->clean_deleted_ids_trigger($datatype);
             return;
         }
 
@@ -266,11 +266,11 @@ class export_id_repository {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public function clean_deleted_ids_trigger(string $table) {
+    public function clean_deleted_ids_trigger(string $datatype) {
         global $DB;
 
         $inparams = [
-            'datatype' => $table
+            'datatype' => $datatype
         ];
 
         $DB->delete_records(export_ids::TABLE, $inparams);

@@ -48,7 +48,7 @@ function xmldb_local_intellidata_install() {
     try {
         foreach ($datatypes as $datatype) {
             if (isset($datatype['table'])) {
-                DBHelper::create_deleted_id_triger($datatype['table']);
+                DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
             }
         }
         SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
