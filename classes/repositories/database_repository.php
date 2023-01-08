@@ -528,7 +528,7 @@ class database_repository {
             self::save_events($datatype['name'], $records);
 
             // Delete records IDs from database.
-            $exportidrepository->clean_deleted_ids($datatype['name'], $deletedids, $datatype['table']);
+            $exportidrepository->clean_deleted_ids($datatype['name'], $deletedids);
 
             if ($showlogs && count($deletedids)) {
                 if ($cleanlogs) {

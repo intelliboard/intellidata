@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_id_repository;
 use local_intellidata\persistent\export_ids;
 use local_intellidata\persistent\tracking;
@@ -116,11 +117,31 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
         // Validate other datatype deletion.
-        $exportidrepository->clean_deleted_ids('users', [], 'users');
+        $exportidrepository->clean_deleted_ids('users', []);
         $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
 
         // Validate deletion.
-        $exportidrepository->clean_deleted_ids($datatype, [], 'local_intellidata_tracking');
+        $ids = [];
+
+        // Validate export with triggers.
+        SettingsHelper::set_setting('trackingidsmode', $exportidrepository::TRACK_IDS_MODE_TRIGGER);
+        $exportidrepository->clean_deleted_ids($datatype, $ids);
+        $this->assertEquals(0, export_ids::count_records());
+
+        // Validate export with request.
+        $exportidrepository->save($records);
+        $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
+
+        SettingsHelper::set_setting('trackingidsmode', $exportidrepository::TRACK_IDS_MODE_REQUEST);
+        $exportidrepository->clean_deleted_ids($datatype, $ids);
+        $this->assertEquals($recordsnum, export_ids::count_records());
+
+        $exportidsrecords = export_ids::get_records(['datatype' => $datatype]);
+        foreach ($exportidsrecords as $exportids) {
+            $ids[] = $exportids->get('dataid');
+        }
+
+        $exportidrepository->clean_deleted_ids($datatype, $ids);
         $this->assertEquals(0, export_ids::count_records());
     }
 
