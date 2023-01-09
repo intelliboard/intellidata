@@ -413,7 +413,8 @@ class DBHelper {
                                                     BEGIN
                                                         datatype   := TG_ARGV[0];
                                                         INSERT INTO " . $DB->get_prefix() . export_ids::TABLE . "
-                                                            (dataid, datatype, timecreated) VALUES (OLD.id, datatype, NULL);
+                                                            (dataid, datatype, timecreated) VALUES (OLD.id, datatype, NULL)
+                                                        ON CONFLICT (id) DO NOTHING;
                                                         RETURN OLD;
                                                     END
                                                 $$ LANGUAGE plpgsql");
