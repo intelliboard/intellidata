@@ -104,11 +104,9 @@ class export_service {
     private function clean_exportids($datatypes) {
 
         $exportidrepository = new export_id_repository();
-
-        $eventstracking = SettingsHelper::get_setting('eventstracking');
         $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
 
-        if ($eventstracking && $trackidsmode == $exportidrepository::TRACK_IDS_MODE_TRIGGER) {
+        if ($trackidsmode == $exportidrepository::TRACK_IDS_MODE_TRIGGER) {
             foreach ($datatypes as $datatype) {
 
                 if (!isset($datatype['table']) || !empty($datatype['exportids'])) {

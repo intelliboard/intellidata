@@ -964,19 +964,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        $datatypes = datatypes_service::get_datatypes();
-        try {
-            foreach ($datatypes as $datatype) {
-                if (isset($datatype['exportids']) && $datatype['exportids'] == true) {
-                    DBHelper::create_deleted_id_triger($datatype['table']);
-                }
-            }
-            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
-        } catch (moodle_exception $e) {
-            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
-            DebugHelper::error_log($e->getMessage());
-        }
-
         upgrade_plugin_savepoint(true, 2022112905, 'local', 'intellidata');
     }
 
@@ -1010,6 +997,25 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2022121501, 'local', 'intellidata');
+    }
+
+    // Reset and add new survey to the export.
+    if ($oldversion < 2023010612) {
+
+        $datatypes = datatypes_service::get_datatypes();
+        try {
+            foreach ($datatypes as $datatype) {
+                if (isset($datatype['table'])) {
+                    DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
+                }
+            }
+            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
+        } catch (moodle_exception $e) {
+            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        upgrade_plugin_savepoint(true, 2023010612, 'local', 'intellidata');
     }
 
     return true;

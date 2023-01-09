@@ -129,7 +129,7 @@ class migrations_table {
             if (isset($tabledatatypes[$datatypename])) {
                 $tablerecord = $tabledatatypes[$datatypename];
 
-                if ($tablerecord->get('recordscount')) {
+                if ($tablerecord->get('recordscount') || $tablerecord->get('last_exported_id') || $tablerecord->get('migrated')) {
                     $item['status'] = $this->get_status($tablerecord->get('migrated'));
                     $item['progress'] = (($tablerecord->get('migrated'))
                             ? $tablerecord->get('recordscount')

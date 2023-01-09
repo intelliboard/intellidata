@@ -488,10 +488,11 @@ class local_intellidata_exportlib extends external_api {
         // Insert or update log record for datatype.
         $exportlogrepository = new export_log_repository();
         try {
-            foreach ($params['datatypes'] as $datatype) {
-                $exportlogrepository->insert_datatype($datatype);
+            foreach ($params['datatypes'] as $datatypename) {
+                $exportlogrepository->insert_datatype($datatypename);
                 try {
-                    DBHelper::create_deleted_id_triger($datatype);
+                    $datatype = datatypes_service::get_datatypes()[$datatypename];
+                    DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
                 } catch (moodle_exception $e) {
                     DebugHelper::error_log($e->getMessage());
                 }

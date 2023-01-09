@@ -26,6 +26,7 @@ use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\config_service;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
@@ -183,11 +184,28 @@ if ($editform->is_cancelled()) {
 
         // Process export log.
         if ((!$data->enableexport || !$data->status) && !empty($exportlog)) {
+
+            // Remove triggers.
+            try {
+                $datatype = datatypes_service::get_datatypes()[$datatype];
+                DBHelper::remove_deleted_id_triger($datatype['name'], $datatype['table']);
+            } catch (moodle_exception $e) {
+                DebugHelper::error_log($e->getMessage());
+            }
+
             // Remove datatype from the export logs table.
-            $exportlogrepository->remove_datatype($datatype);
+            $exportlogrepository->remove_datatype($datatype['name']);
         } else if (empty($exportlog) && $data->enableexport) {
             // Add datatype to the export logs table.
             $exportlogrepository->insert_datatype($datatype);
+
+            // Create triggers.
+            try {
+                $datatype = datatypes_service::get_datatypes()[$datatype];
+                DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
+            } catch (moodle_exception $e) {
+                DebugHelper::error_log($e->getMessage());
+            }
         }
     }
 

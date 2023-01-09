@@ -34,7 +34,6 @@ use local_intellidata\helpers\DebugHelper;
 defined('MOODLE_INTERNAL') || die();
 
 function xmldb_local_intellidata_install() {
-    global $DB;
 
     // Set exportformat for csv.
     set_config('exportdataformat', 'csv', 'local_intellidata');
