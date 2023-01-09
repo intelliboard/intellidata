@@ -42,7 +42,7 @@ class observer {
      * @param \mod_quiz\event\attempt_started $event
      */
     public static function attempt_started(\mod_quiz\event\attempt_started $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }
@@ -53,7 +53,7 @@ class observer {
      * @param \mod_quiz\event\attempt_submitted $event
      */
     public static function attempt_submitted(\mod_quiz\event\attempt_submitted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }

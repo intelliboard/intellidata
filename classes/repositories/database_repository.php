@@ -26,13 +26,15 @@
 
 namespace local_intellidata\repositories;
 
-use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\EventsHelper;
+use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
+use local_intellidata\task\export_adhoc_task;
 
 class database_repository {
 
@@ -72,8 +74,47 @@ class database_repository {
         // Init Services.
         self::init($services);
 
-        $start = 0; $limit = (int)SettingsHelper::get_setting('exportrecordslimit');
-        $overalexportedrecords = 0; $lastrecord = new \stdClass();
+        list($overalexportedrecords, $lastrecord) = self::process_export($datatype, $params, $showlogs);
+
+        return $overalexportedrecords;
+    }
+
+    /**
+     * Method to get exporter type.
+     *
+     * @param $datatype
+     * @param $params
+     * @param $showlogs
+     * @return array|int
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    public static function process_export($datatype, $params, $showlogs) {
+
+        $limit = (int)SettingsHelper::get_setting('exportrecordslimit');
+
+        if ((int)SettingsHelper::get_setting('divideexportbydatatype') && !empty($params['cronprocessing'])) {
+            return (!empty($params['adhoctask']))
+                ? self::export_adhoc($datatype, $params, $limit, $showlogs)
+                : self::export_chunk($datatype, $params, $limit, $showlogs);
+        } else {
+            return self::export_all($datatype, $limit, $showlogs);
+        }
+    }
+
+    /**
+     * Export data.
+     *
+     * @param $datatype
+     * @param $params
+     * @return int
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    public static function export_all($datatype, $limit, $showlogs) {
+
+        $start = 0; $overalexportedrecords = 0; $lastrecord = new \stdClass();
+        $exportstarttime = microtime();
 
         while ($records = self::get_records($datatype, $start, $limit)) {
 
@@ -83,11 +124,14 @@ class database_repository {
             }
 
             // Export records to storage.
+            $starttime = microtime();
             list($exportedrecords, $lastrecord) = self::export_records($datatype, $records, $showlogs);
             $overalexportedrecords += $exportedrecords;
 
             if ($showlogs) {
-                mtrace("Datatype '" . $datatype['name'] . "' exported " . $overalexportedrecords . " rows " . date('r') . "...");
+                $difftime = microtime_diff($starttime, microtime());
+                mtrace("Datatype '" . $datatype['name'] . "' exported " . $overalexportedrecords . " rows." .
+                    " Execution took " . $difftime . " seconds.");
             }
 
             // Stop export in no limit.
@@ -97,9 +141,140 @@ class database_repository {
             $start += $limit;
         }
 
+        $difftime = microtime_diff($exportstarttime, microtime());
+        mtrace("Datatype '" . $datatype['name'] . "' export completed." .
+            " Execution took " . $difftime . " seconds.");
+
         self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord, time());
 
-        return $overalexportedrecords;
+        // Export table to Moodledata.
+        ExportHelper::process_file_export(self::$exportservice, ['datatype' => $datatype['name']]);
+
+        return [$overalexportedrecords, $lastrecord];
+    }
+
+    /**
+     * Export one datatype data.
+     *
+     * @param $datatype
+     * @param $params
+     * @return int
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    public static function export_chunk($datatype, $params, $limit, $showlogs) {
+
+        $start = (int)SettingsHelper::get_setting('exportstart');
+        $overalexportedrecords = 0; $lastrecord = new \stdClass();
+
+        $records = self::get_records($datatype, $start, $limit);
+
+        if ($records->valid()) {
+            $starttime = microtime();
+
+            // Export records to storage.
+            list($overalexportedrecords, $lastrecord) = self::export_records($datatype, $records, $showlogs);
+
+            if ($showlogs) {
+                $difftime = microtime_diff($starttime, microtime());
+                mtrace("Datatype '" . $datatype['name'] . "' exported " . $overalexportedrecords .
+                    " rows (start: " . $start . ").");
+                mtrace("Execution took ".$difftime." seconds.");
+            }
+        }
+
+        if (!$limit || $overalexportedrecords < $limit) {
+            // Set next table to process.
+            ExportHelper::set_next_export_params($params['nextexporttable']);
+
+            // Update lastexported time and ID.
+            self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord, time());
+        } else {
+            // Increase start export param.
+            ExportHelper::set_next_export_params($datatype['name'], ($start + $limit));
+
+            // Update only lastexported ID.
+            self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord);
+        }
+
+        // Export specific table to Moodledata.
+        $exportparams = [
+            'datatype' => $datatype['name'],
+            'rewritable' => (!$start) ? true : false
+        ];
+        ExportHelper::process_file_export(self::$exportservice, $exportparams);
+
+        return [$overalexportedrecords, $lastrecord];
+    }
+
+    /**
+     * Export one datatype with adhoc task.
+     *
+     * @param $datatype
+     * @param $params
+     * @return int
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
+    public static function export_adhoc($datatype, $params, $limit, $showlogs) {
+
+        $start = !empty($params['limit']) ? (int)$params['limit'] : 0;
+        $overalexportedrecords = 0; $lastrecord = new \stdClass();
+
+        $records = self::get_records($datatype, $start, $limit);
+
+        if ($records->valid()) {
+            $starttime = microtime();
+
+            // Export records to storage.
+            list($overalexportedrecords, $lastrecord) = self::export_records($datatype, $records, $showlogs);
+
+            if ($showlogs) {
+                $difftime = microtime_diff($starttime, microtime());
+                mtrace("Datatype '" . $datatype['name'] . "' exported " . $overalexportedrecords .
+                    " rows (start: " . $start . ").");
+                mtrace("Execution took ".$difftime." seconds.");
+            }
+        }
+
+        // Export specific table to Moodledata.
+        $exportparams = [
+            'datatype' => $datatype['name'],
+            'rewritable' => (!$start) ? true : false
+        ];
+        ExportHelper::process_file_export(self::$exportservice, $exportparams);
+
+        if (!$limit || $overalexportedrecords < $limit) {
+
+            // Update lastexported time and ID.
+            self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord, time());
+
+            // Set datatype migrated.
+            self::$exportlogrepository->save_migrated($datatype['name']);
+
+            // Send callback when files ready.
+            if (!empty($params['callbackurl'])) {
+                $client = new \curl();
+                $client->post($params['callbackurl'], [
+                    'data' => self::$encriptionservice->encrypt(json_encode(['datatypes' => $datatype['name']]))
+                ]);
+            }
+        } else {
+            // Update only lastexported ID.
+            self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord);
+
+            // Create next adhoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatype['name']],
+                'limit' => ($start + $limit),
+                'callbackurl' => !empty($params['callbackurl']) ? $params['callbackurl'] : ''
+            ]);
+            $exporttask->set_next_run_time(time() + MINSECS);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        return [$overalexportedrecords, $lastrecord];
     }
 
     /**
@@ -139,17 +314,20 @@ class database_repository {
             $where = 'id > 0';
         }
 
-        if (isset($datatype['table'])) {
-            $sql = "SELECT *
-                      FROM {" . $datatype['table'] . "}
-                     WHERE $where
-                  ORDER BY id";
-        } else if (isset($datatype['migration'])) {
+        if (!empty($datatype['migration'])) {
 
             $migration = datatypes_service::init_migration($datatype, null, false);
             list($sql, $params) = $migration->get_sql(false, $where, $sqlparams, $lastexportedtime);
 
             $sqlparams = array_merge($sqlparams, $params);
+
+        } else if (!empty($datatype['table'])) {
+
+            $sql = "SELECT *
+                      FROM {" . $datatype['table'] . "}
+                     WHERE $where
+                  ORDER BY id";
+
         }
 
         return [$sql, $sqlparams];
@@ -267,7 +445,7 @@ class database_repository {
 
         if ($showlogs) {
             $starttime = microtime();
-            mtrace("Storing datatype ids: started at " . date('r') . "...");
+            mtrace("Storing datatype ids started at " . date('r') . "...");
         }
 
         // Process deleted records.
@@ -278,8 +456,8 @@ class database_repository {
 
         if ($showlogs) {
             $difftime = microtime_diff($starttime, microtime());
-            mtrace("Storing datatype ids: completed at " . date('r') . ".");
-            mtrace("Storing datatype ids: took " . $difftime . " seconds.");
+            mtrace("Storing datatype ids completed at " . date('r') . ".");
+            mtrace("Storing datatype ids took " . $difftime . " seconds.");
         }
     }
 

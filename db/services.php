@@ -248,6 +248,14 @@ $functions = [
         'type'          => 'read',
         'loginrequired' => false
     ],
+    'local_intellidata_set_plugin_config' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'set_plugin_config',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Set plugin config',
+        'type'          => 'write',
+        'loginrequired' => false
+    ],
     'local_intellidata_get_data' => [
         'classname'   => 'local_intellidata_datalib',
         'methodname'  => 'get_data',
@@ -288,6 +296,7 @@ $services = [
             'local_intellidata_get_export_logs',
             'local_intellidata_enable_processing',
             'local_intellidata_get_plugin_config',
+            'local_intellidata_set_plugin_config',
             'local_intellidata_get_data'
         ],
         'restrictedusers' => 0,

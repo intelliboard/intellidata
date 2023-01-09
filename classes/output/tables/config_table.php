@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 use html_writer;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\persistent\export_logs;
+use local_intellidata\services\datatypes_service;
 
 require_once($CFG->libdir.'/tablelib.php');
 
@@ -39,12 +40,17 @@ class config_table extends \table_sql {
     public $tabletypes = null;
     protected $prefs   = [];
     protected $context = null;
+    protected $datatypes = [];
+    protected $datatypestoignoreindex = [
+        'tracking', 'trackinglog', 'trackinglogdetail'
+    ];
 
     public function __construct($uniqueid, $searchquery = '') {
         global $PAGE, $DB;
 
         $this->context = \context_system::instance();
         $this->tabletypes = datatypeconfig::get_tabletypes();
+        $this->datatypes = datatypes_service::get_all_datatypes();
 
         parent::__construct($uniqueid);
 
@@ -283,7 +289,54 @@ class config_table extends \table_sql {
             }
         }
 
+        $buttons = $this->index_actions($values, $buttons);
+
         return implode(' ', $buttons);
+    }
+
+    /**
+     * Create or delete index if allowed.
+     *
+     * @param $values
+     * @return void
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function index_actions($values, $buttons = []) {
+        global $OUTPUT;
+
+        if (!in_array($values->datatype, $this->datatypestoignoreindex) && !empty($this->datatypes[$values->datatype]['table'])) {
+
+            $urlparams = ['datatype' => $values->datatype];
+
+            if (!empty($values->tableindex)) {
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'deleteindex']);
+                $buttons[] = $OUTPUT->action_icon(
+                    $aurl,
+                    new \pix_icon('t/switch_minus', get_string('deleteindex', 'local_intellidata'),
+                        'core',
+                        ['class' => 'iconsmall']),
+                    null,
+                    ['onclick' => "if (!confirm('" .
+                        get_string('deleteindexcordconfirmation', 'local_intellidata', $values->datatype) .
+                        "')) return false;"]
+                );
+            } else if (!empty($values->timemodified_field)) {
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'createindex']);
+                $buttons[] = $OUTPUT->action_icon(
+                    $aurl,
+                    new \pix_icon('t/switch_plus', get_string('createindex', 'local_intellidata'),
+                        'core',
+                        ['class' => 'iconsmall']),
+                    null,
+                    ['onclick' => "if (!confirm('" .
+                        get_string('createindexcordconfirmation', 'local_intellidata', $values->datatype) .
+                        "')) return false;"]
+                );
+            }
+        }
+
+        return $buttons;
     }
 
     /**

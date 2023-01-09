@@ -42,7 +42,7 @@ class observer {
      * @param \core\event\question_created $event
      */
     public static function question_created(\core\event\question_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }
@@ -53,7 +53,7 @@ class observer {
      * @param \core\event\question_updated $event
      */
     public static function question_updated(\core\event\question_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }
@@ -64,7 +64,7 @@ class observer {
      * @param \core\event\question_deleted $event
      */
     public static function question_deleted(\core\event\question_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }

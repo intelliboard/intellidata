@@ -61,11 +61,6 @@ class qasdmigration extends \local_intellidata\entities\migration {
             'name' => 'answer'
         ];
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, $params);
     }
 }

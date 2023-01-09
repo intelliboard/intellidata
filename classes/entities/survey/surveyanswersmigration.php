@@ -70,13 +70,11 @@ class surveyanswersmigration extends \local_intellidata\entities\migration {
     public function prepare_records_iterable($records) {
         foreach ($records as $sanswer) {
             if (!empty($sanswer->questiontext)) {
-                $sanswer->questiontext = get_string($sanswer->questiontext, "survey");
+                $sanswer->questiontext = get_string($sanswer->questiontext, "mod_survey");
             }
 
             $entity = new $this->entity($sanswer);
             $data = $entity->export();
-            $data->eventname = $this->eventname;
-
             yield $data;
         }
     }

@@ -25,6 +25,8 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\export_id_repository;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\helpers\ParamsHelper;
@@ -33,14 +35,16 @@ use local_intellidata\helpers\ParamsHelper;
 class export_service {
 
     public $datatypes       = null;
+    public $showlogs        = false;
     private $migrationmode  = false;
 
     /**
      * @param false $migrationmode
      */
-    public function __construct($migrationmode = ParamsHelper::MIGRATION_MODE_DISABLED, $applyconfig = true) {
-        $this->migrationmode = $migrationmode;
+    public function __construct($migrationmode = ParamsHelper::MIGRATION_MODE_DISABLED, $applyconfig = true, $showlogs = true) {
         $this->datatypes = $this->get_datatypes($applyconfig);
+        $this->showlogs = $showlogs;
+        $this->migrationmode = $migrationmode;
     }
 
     /**
@@ -64,31 +68,80 @@ class export_service {
     public function save_files($params = []) {
 
         $files = [];
-        $alldatatypes = $this->datatypes;
-        $datatypes = (!empty($params['datatype']) and isset($alldatatypes[$params['datatype']])) ?
-            [$params['datatype'] => $alldatatypes[$params['datatype']]] : $this->datatypes;
+        $datatypes = $this->filter_datatypes($params);
 
         if (count($datatypes)) {
             foreach ($datatypes as $key => $datatype) {
 
                 // Setup correct migration parameters.
-                $datatype = $this->setup_migration_params($datatype);
+                $datatype = $this->setup_migration_params($datatype, $params);
 
                 $storageservice = new storage_service($datatype);
+                $starttime = microtime();
+
                 if ($file = $storageservice->save_file()) {
                     $files[] = $file;
+
+                    if ($this->showlogs) {
+                        $difftime = microtime_diff($starttime, microtime());
+                        mtrace("File {$key} exported at " . date('r') . ".");
+                        mtrace("Execution took " . $difftime . " seconds.");
+                        mtrace("-------------------------------------------");
+                    }
                 }
             }
+
+            // Clean export ids.
+            $this->clean_exportids($datatypes);
         }
 
         return $files;
+    }
+
+    /*
+     * Delete export ids saved with triggers.
+     */
+    private function clean_exportids($datatypes) {
+
+        $exportidrepository = new export_id_repository();
+        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
+
+        if ($trackidsmode == $exportidrepository::TRACK_IDS_MODE_TRIGGER) {
+            foreach ($datatypes as $datatype) {
+
+                if (!isset($datatype['table']) || !empty($datatype['exportids'])) {
+                    continue;
+                }
+
+                $exportidrepository->clean_deleted_ids($datatype['name'], []);
+            }
+        }
+    }
+
+    /**
+     * Filter datatypes by params.
+     *
+     * @param $params
+     * @return array|array[]|mixed|null
+     */
+    protected function filter_datatypes($params) {
+
+        if (!empty($params['datatype']) && isset($this->datatypes[$params['datatype']])) {
+            $datatypes = [$params['datatype'] => $this->datatypes[$params['datatype']]];
+        } else if (!empty($params['tabletype'])) {
+            $datatypes = datatypes_service::filter_datatypes($this->datatypes, $params['tabletype']);
+        } else {
+            $datatypes = $this->datatypes;
+        }
+
+        return $datatypes;
     }
 
     /**
      * @param $datatype
      * @return mixed
      */
-    private function setup_migration_params($datatype) {
+    private function setup_migration_params($datatype, $params = []) {
 
         if ($this->migrationmode == ParamsHelper::MIGRATION_MODE_ENABLED) {
             $datatype['name'] = $this->get_migration_name($datatype);
@@ -96,6 +149,10 @@ class export_service {
 
         $datatype['migrationmode'] = (!empty($datatype['databaseexport']))
              ? ParamsHelper::MIGRATION_MODE_ENABLED : $this->migrationmode;
+
+        if (!empty($datatype['rewritable']) && isset($params['rewritable']) && !$params['rewritable']) {
+            $datatype['rewritable'] = false;
+        }
 
         return $datatype;
     }
@@ -107,9 +164,7 @@ class export_service {
     public function get_files($params = []) {
 
         $files = [];
-        $alldatatypes = $this->datatypes;
-        $datatypes = (!empty($params['datatype']) and isset($alldatatypes[$params['datatype']])) ?
-            [$params['datatype'] => $alldatatypes[$params['datatype']]] : $this->datatypes;
+        $datatypes = $this->filter_datatypes($params);
 
         if (count($datatypes)) {
             foreach ($datatypes as $key => $datatype) {
@@ -195,7 +250,7 @@ class export_service {
      * @param $datatype
      * @return string
      */
-    protected function get_migration_name($datatype) {
+    public function get_migration_name($datatype) {
         return 'migration_' . $datatype['name'];
     }
 

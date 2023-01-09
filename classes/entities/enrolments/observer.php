@@ -42,7 +42,7 @@ class observer {
      * @param \core\event\user_enrolment_created $event
      */
     public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $enrolment = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -59,7 +59,7 @@ class observer {
      * @param \core\event\user_enrolment_updated $event
      */
     public static function user_enrolment_updated(\core\event\user_enrolment_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $enrolment = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
@@ -76,7 +76,7 @@ class observer {
      * @param \core\event\user_enrolment_deleted $event
      */
     public static function user_enrolment_deleted(\core\event\user_enrolment_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $enrolment = new \stdClass();

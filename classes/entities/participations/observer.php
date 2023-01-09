@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\base $event
      */
     public static function new_participation(\core\event\base $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             if (in_array($eventdata['crud'], array('c', 'u')) && $eventdata['userid'] &&

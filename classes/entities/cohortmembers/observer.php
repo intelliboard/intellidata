@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\cohort_member_added $event
      */
     public static function cohort_member_added(\core\event\cohort_member_added $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $cohortmember = new \stdClass();
@@ -59,7 +59,7 @@ class observer {
      * @param \core\event\cohort_member_removed $event
      */
     public static function cohort_member_removed(\core\event\cohort_member_removed $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $cohortmember = new \stdClass();

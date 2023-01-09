@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\user_loggedin $event
      */
     public static function user_loggedin(\core\event\user_loggedin $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $user = new \stdClass();
@@ -60,7 +60,7 @@ class observer {
      * @param \core\event\user_loggedout $event
      */
     public static function user_loggedout(\core\event\user_loggedout $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $user = new \stdClass();

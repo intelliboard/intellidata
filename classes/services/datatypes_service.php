@@ -25,6 +25,7 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\logs_tables_repository;
 use local_intellidata\services\dbschema_service;
@@ -100,13 +101,38 @@ class datatypes_service {
     }
 
     /**
+     * Get static datatypes.
+     *
      * @return array|array[]
      */
-    public static function get_static_datatypes() {
-        $datatypes = self::get_datatypes();
+    public static function get_static_datatypes($datatypes = []) {
+
+        if (!count($datatypes)) {
+            $datatypes = self::get_datatypes();
+        }
 
         foreach ($datatypes as $key => $item) {
             if (empty($item['databaseexport'])) {
+                unset($datatypes[$key]);
+            }
+        }
+
+        return $datatypes;
+    }
+
+    /**
+     * Get static datatypes.
+     *
+     * @return array|array[]
+     */
+    public static function get_events_datatypes($datatypes = []) {
+
+        if (!count($datatypes)) {
+            $datatypes = self::get_datatypes();
+        }
+
+        foreach ($datatypes as $key => $item) {
+            if (!empty($item['databaseexport'])) {
                 unset($datatypes[$key]);
             }
         }
@@ -148,15 +174,16 @@ class datatypes_service {
      */
     public static function get_required_datatypes() {
 
-        return [
+        $datatypes = [
             'users' => [
                 'name' => 'users',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'user',
                 'migration' => 'users\migration',
                 'entity' => 'users\user',
                 'observer' => 'users\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
@@ -167,73 +194,79 @@ class datatypes_service {
                 'entity' => 'userlogins\userlogin',
                 'observer' => 'userlogins\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'categories' => [
                 'name' => 'categories',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'course_categories',
                 'migration' => 'categories\migration',
                 'entity' => 'categories\category',
                 'observer' => 'categories\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'courses' => [
                 'name' => 'courses',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'course',
                 'migration' => 'courses\migration',
                 'entity' => 'courses\course',
                 'observer' => 'courses\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'enrolments' => [
                 'name' => 'enrolments',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'user_enrolments',
                 'migration' => 'enrolments\migration',
                 'entity' => 'enrolments\enrolment',
                 'observer' => 'enrolments\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'roleassignments' => [
                 'name' => 'roleassignments',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'role_assignments',
                 'migration' => 'roles\ramigration',
                 'entity' => 'roles\roleassignment',
                 'observer' => 'roles\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'cohorts' => [
                 'name' => 'cohorts',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'cohort',
                 'migration' => 'cohorts\migration',
                 'entity' => 'cohorts\cohort',
                 'observer' => 'cohorts\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'cohortmembers' => [
                 'name' => 'cohortmembers',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'cohort_members',
                 'migration' => 'cohortmembers\migration',
                 'entity' => 'cohortmembers\cohortmember',
                 'observer' => 'cohortmembers\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timeadded',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
@@ -262,22 +295,24 @@ class datatypes_service {
             'activitycompletions' => [
                 'name' => 'activitycompletions',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'course_modules_completion',
                 'migration' => 'activitycompletions\migration',
                 'entity' => 'activitycompletions\activitycompletion',
                 'observer' => 'activitycompletions\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'usergrades' => [
                 'name' => 'usergrades',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'grade_grades',
                 'migration' => 'usergrades\migration',
                 'entity' => 'usergrades\usergrade',
                 'observer' => 'usergrades\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
@@ -323,33 +358,36 @@ class datatypes_service {
             'forumdiscussions' => [
                 'name' => 'forumdiscussions',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'forum_discussions',
                 'migration' => 'forums\discussionsmigration',
                 'entity' => 'forums\forumdiscussion',
                 'observer' => 'forums\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'forumposts' => [
                 'name' => 'forumposts',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'forum_posts',
                 'migration' => 'forums\postsmigration',
                 'entity' => 'forums\forumpost',
                 'observer' => 'forums\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'modified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
             'quizattempts' => [
                 'name' => 'quizattempts',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'quiz_attempts',
                 'migration' => 'quizzes\attemptsmigration',
                 'entity' => 'quizzes\attempt',
                 'observer' => 'quizzes\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
@@ -381,44 +419,51 @@ class datatypes_service {
             'quizquestionattempts' => [
                 'name' => 'quizquestionattempts',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'question_attempts',
                 'migration' => 'quizquestionanswers\quamigration',
                 'entity' => 'quizquestionanswers\quizquestionattempts',
                 'observer' => false,
                 'rewritable' => false,
-                'timemodified_field' => 'qua.timemodified',
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => true
+                'databaseexport' => true,
+                'exportids' => false
             ],
             'quizquestionattemptsteps' => [
                 'name' => 'quizquestionattemptsteps',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'question_attempt_steps',
                 'migration' => 'quizquestionanswers\qasmigration',
                 'entity' => 'quizquestionanswers\quizquestionattemptsteps',
                 'observer' => false,
                 'rewritable' => false,
-                'timemodified_field' => 'qas.timecreated',
+                'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
-                'databaseexport' => true
+                'databaseexport' => true,
+                'exportids' => false
             ],
             'quizquestionattemptstepsdata' => [
                 'name' => 'quizquestionattemptstepsdata',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'question_attempt_step_data',
                 'migration' => 'quizquestionanswers\qasdmigration',
                 'entity' => 'quizquestionanswers\quizquestionattemptstepsdata',
                 'observer' => false,
                 'rewritable' => false,
                 'timemodified_field' => false,
                 'filterbyid' => true,
-                'databaseexport' => true
+                'databaseexport' => true,
+                'exportids' => false
             ],
             'assignmentsubmissions' => [
                 'name' => 'assignmentsubmissions',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'assign_submission',
                 'migration' => 'assignments\migration',
                 'entity' => 'assignments\submission',
                 'observer' => 'assignments\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
@@ -516,9 +561,10 @@ class datatypes_service {
                 'entity' => 'participations\participation',
                 'observer' => 'participations\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
+                'exportids' => false
             ],
             'userinfocategories' => [
                 'name' => 'userinfocategories',
@@ -526,7 +572,7 @@ class datatypes_service {
                 'migration' => 'userinfocategories\migration',
                 'entity' => 'userinfocategories\userinfocategory',
                 'observer' => 'userinfocategories\observer',
-                'rewritable' => false,
+                'rewritable' => SettingsHelper::get_setting('eventstracking') ? false : true,
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => false
@@ -537,7 +583,7 @@ class datatypes_service {
                 'migration' => 'userinfofields\migration',
                 'entity' => 'userinfofields\userinfofield',
                 'observer' => 'userinfofields\observer',
-                'rewritable' => false,
+                'rewritable' => SettingsHelper::get_setting('eventstracking') ? false : true,
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => false
@@ -545,15 +591,18 @@ class datatypes_service {
             'userinfodatas' => [
                 'name' => 'userinfodatas',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'user_info_data',
                 'migration' => 'userinfodatas\migration',
                 'entity' => 'userinfodatas\userinfodata',
                 'observer' => 'userinfodatas\observer',
                 'rewritable' => false,
-                'timemodified_field' => false,
+                'timemodified_field' => 'u.timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
             ]
         ];
+
+        return self::format_required_datatypes($datatypes);
     }
 
     /**
@@ -611,6 +660,51 @@ class datatypes_service {
     }
 
     /**
+     * Format required datatypes.
+     *
+     * @return array
+     */
+    private static function format_required_datatypes($datatypes) {
+
+        if (count($datatypes)) {
+
+            $params = [
+                'eventstracking' => SettingsHelper::get_setting('eventstracking')
+            ];
+
+            foreach ($datatypes as $table => $datatype) {
+                $datatypes[$table] = self::format_required_datatype($datatype, $params);
+            }
+        }
+
+        return $datatypes;
+    }
+
+    /**
+     * Format required datatype.
+     *
+     * @return array
+     */
+    private static function format_required_datatype($datatype, $params) {
+
+        // Switch events tracking to static export.
+        if (!empty(empty($params['eventstracking']))) {
+
+            $datatype['databaseexport'] = (!empty($datatype['timemodified_field']) || !empty($datatype['rewritable']))
+                ? true : $datatype['databaseexport'];
+
+            if (!isset($datatype['exportids'])) {
+                $datatype['exportids'] = (!empty($datatype['timemodified_field']))
+                    ? true : $datatype['databaseexport'];
+            }
+        }
+
+        return $datatype;
+    }
+
+    /**
+     * Format optional datatype.
+     *
      * @return array
      */
     private static function format_optional_datatypes($datatype) {
@@ -658,6 +752,8 @@ class datatypes_service {
 
 
     /**
+     * Format datatype details for logs table.
+     *
      * @return array
      */
     private static function format_logs_datatypes($datatype) {
@@ -675,5 +771,23 @@ class datatypes_service {
         ];
 
         return $data;
+    }
+
+    /**
+     * Filter datatypes.
+     *
+     * @param $datatypes
+     * @param $filter
+     * @return array|array[]|mixed
+     */
+    public static function filter_datatypes($datatypes, $filter) {
+
+        if ($filter == datatypeconfig::TABLETYPE_STATIC) {
+            return self::get_static_datatypes($datatypes);
+        } else if ($filter == datatypeconfig::TABLETYPE_EVENTS) {
+            return self::get_events_datatypes($datatypes);
+        }
+
+        return $datatypes;
     }
 }

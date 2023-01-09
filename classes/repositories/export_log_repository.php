@@ -26,6 +26,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\persistent\export_logs;
 use local_intellidata\services\dbschema_service;
@@ -94,7 +95,7 @@ class export_log_repository {
      * @param $lastexportedtime
      * @throws \coding_exception
      */
-    public function save_last_processed_data($datatype, $lastrecord, $lastexportedtime, $migration = null) {
+    public function save_last_processed_data($datatype, $lastrecord, $lastexportedtime = 0, $migration = null) {
 
         $record = export_logs::get_record(['datatype' => $datatype]);
 
@@ -108,15 +109,52 @@ class export_log_repository {
             $record->set('timestart', time());
         }
 
-        $record->set('last_exported_time', $lastexportedtime);
-        $record->set('recordscount', $this->get_migration_records_count($datatype, 0, $migration));
+        if ($lastexportedtime) {
+            $record->set('last_exported_time', $lastexportedtime);
+        }
 
         if (isset($lastrecord->id)) {
             $record->set('last_exported_id', $lastrecord->id);
-            $record->set('recordsmigrated', $this->get_migration_records_count($datatype, $lastrecord->id, $migration));
+        }
+
+        if (SettingsHelper::get_setting('enableprogresscalculation')) {
+            $record = $this->calculate_export_progress($datatype, $record);
         }
 
         $record->save();
+    }
+
+    /**
+     * Calculate export progress.
+     *
+     * @param $datatype
+     * @return void
+     */
+    public function calculate_export_progress($datatype, $record = null, $migration = null) {
+
+        if (!$record) {
+            $record = export_logs::get_record(['datatype' => $datatype]);
+            $saverecord = true;
+        } else {
+            $saverecord = false;
+        }
+
+        if ($record) {
+            $record->set('recordscount', $this->get_migration_records_count($datatype, 0, $migration));
+
+            if ($record->get('last_exported_id')) {
+                $record->set(
+                    'recordsmigrated',
+                    $this->get_migration_records_count($datatype, $record->get('last_exported_id'), $migration)
+                );
+            }
+
+            if ($saverecord) {
+                $record->save();
+            }
+
+            return $record;
+        }
     }
 
     /**

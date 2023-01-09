@@ -45,6 +45,8 @@ class file_storage_repository {
     }
 
     /**
+     * Get storage folder path.
+     *
      * @return false|string
      */
     protected function get_storage_folder() {
@@ -52,13 +54,17 @@ class file_storage_repository {
     }
 
     /**
+     * Get storage file path.
+     *
      * @return string
      */
-    protected function get_storage_file() {
+    public function get_storage_file() {
         return $this->storagefolder . '/' . $this->datatype['name'] . '.' . self::STORAGE_FILE_TYPE;
     }
 
     /**
+     * Get temp file path.
+     *
      * @return string
      */
     public function get_temp_file() {
@@ -66,6 +72,8 @@ class file_storage_repository {
     }
 
     /**
+     * Save data to the file.
+     *
      * @param $data
      * @throws \moodle_exception
      */
@@ -74,6 +82,8 @@ class file_storage_repository {
     }
 
     /**
+     * Save file to the storage.
+     *
      * @return \stored_file|null
      * @throws \coding_exception
      * @throws \dml_exception
@@ -108,6 +118,8 @@ class file_storage_repository {
     }
 
     /**
+     * Retrieve files list.
+     *
      * @param array $params
      * @return array
      * @throws \dml_exception
@@ -128,6 +140,8 @@ class file_storage_repository {
     }
 
     /**
+     * Retrieve files list from storage.
+     *
      * @param $contextid
      * @param $component
      * @param $filearea
@@ -225,6 +239,8 @@ class file_storage_repository {
     }
 
     /**
+     * Get sql to retrieve fiels from storage.
+     *
      * Get the sql formated fields for a file instance to be created from a
      * {files} and {files_refernece} join.
      *
@@ -254,6 +270,8 @@ class file_storage_repository {
     }
 
     /**
+     * Delete files from storage.
+     *
      * @param null $params
      * @return int|void
      * @throws \dml_exception
@@ -303,6 +321,8 @@ class file_storage_repository {
     }
 
     /**
+     * Delete files from temp folder.
+     *
      * @return bool
      */
     public function delete_temp_files() {

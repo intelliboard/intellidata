@@ -25,6 +25,8 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\helpers\ExportHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\database_repository;
 use local_intellidata\repositories\tracking\tracking_repository;
 use local_intellidata\services\datatypes_service;
@@ -45,13 +47,14 @@ class database_service {
         $this->showlogs = $showlogs;
         $this->repo = new database_repository();
         $this->services = $services;
+
     }
 
     /**
      * @return array|array[]
      */
     public function get_tables() {
-        return datatypes_service::get_static_datatypes();
+        return $this->tables ?? datatypes_service::get_static_datatypes();
     }
 
     /**
@@ -69,16 +72,15 @@ class database_service {
 
         if ($this->showlogs) {
             $starttime = microtime();
-            mtrace("Export process for Static tables started at " . date('r') . "...");
+            mtrace("Export Data process started at " . date('r') . "...");
             mtrace("-------------------------------------------");
         }
 
-        $this->trackingrepo->export_records();
+        // Apply specific params.
+        $params = $this->get_params_for_process($params);
 
         // Get tables list to process.
-        $alltables = $this->tables;
-        $tables = (!empty($params['table']) and isset($alltables[$params['table']])) ?
-            [$params['table'] => $alltables[$params['table']]] : $this->tables;
+        $tables = $this->get_tables_to_export($params);
 
         // Process each table migration.
         if (count($tables)) {
@@ -94,9 +96,9 @@ class database_service {
         }
 
         if ($this->showlogs) {
-            mtrace("Export process for Static tables completed at " . date('r') . ".");
+            mtrace("Export Data process completed at " . date('r') . ".");
             $difftime = microtime_diff($starttime, microtime());
-            mtrace("Execution took ".$difftime." seconds.");
+            mtrace("Export Data Execution took " . $difftime . " seconds.");
             mtrace("-------------------------------------------");
         }
     }
@@ -108,6 +110,12 @@ class database_service {
      * @throws \dml_exception
      */
     public function export($datatype, $params = null) {
+
+        // Export tracking records from cache/temp storage.
+        // TODO: move this validation to entity class.
+        if ($datatype['name'] == 'tracking') {
+            $this->trackingrepo->export_records();
+        }
 
         if ($this->showlogs) {
             $starttime = microtime();
@@ -148,5 +156,38 @@ class database_service {
         }
 
         return true;
+    }
+
+    /**
+     * Get list of tables to export.
+     *
+     * @param $params
+     * @return bool
+     */
+    public function get_tables_to_export($params) {
+        $tables = (!empty($params['table']) && isset($this->tables[$params['table']]))
+            ? [$params['table'] => $this->tables[$params['table']]]
+            : $this->tables;
+
+        return $tables;
+    }
+
+    /**
+     * Get specific params for export.
+     *
+     * @param $params
+     * @return bool
+     */
+    public function get_params_for_process($params) {
+
+        // Validate dividing export by datatypes.
+        if (empty($params['table']) && !empty($params['cronprocessing']) &&
+            SettingsHelper::get_setting('divideexportbydatatype')) {
+
+            $params['table'] = ExportHelper::get_export_table($this->tables);
+            $params['nextexporttable'] = ExportHelper::get_next_table($this->tables, $params['table']);
+        }
+
+        return $params;
     }
 }

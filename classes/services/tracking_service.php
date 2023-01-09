@@ -89,7 +89,7 @@ class tracking_service {
             return false;
         }
 
-        if (is_siteadmin() and !$this->trackadmin) {
+        if (is_siteadmin() && !$this->trackadmin) {
             return false;
         }
 

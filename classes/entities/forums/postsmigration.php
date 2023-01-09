@@ -50,8 +50,8 @@ class postsmigration extends \local_intellidata\entities\migration {
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
 
-        $where = 'p.id > 0';
-        $params = [];
+        $where = 'p.id > :pid';
+        $params = ['pid' => 0];
 
         $select = ($count) ?
             "SELECT COUNT(p.id) as recordscount" :
@@ -74,11 +74,6 @@ class postsmigration extends \local_intellidata\entities\migration {
              LEFT JOIN {forum_discussions} d ON d.id = p.discussion
                  WHERE $where";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, $params);
     }
 }

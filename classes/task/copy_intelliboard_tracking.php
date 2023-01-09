@@ -17,40 +17,37 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata\task;
 
-class test_helper {
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\services\intelliboard_tracking_service;
+
+class copy_intelliboard_tracking extends \core\task\scheduled_task {
 
     /**
-     * Validate phpunit version.
+     * Get a descriptive name for this task (shown to admins).
      *
-     * @return bool
+     * @return string
      */
-    public static function is_new_phpunit() {
-        global $CFG;
-        return $CFG->version > 2017051509;
+    public function get_name() {
+        return get_string('importintelliboardtracking', 'local_intellidata');
     }
 
     /**
-     * Validate data.
-     *
-     * @param $data
-     * @param $fields
-     * @return object
+     * Do the job.
+     * Throw exceptions on errors (the job will be retried).
      */
-    public static function filter_fields($data, $fields) {
-        $keys = array_keys($fields);
+    public function execute() {
+        DebugHelper::enable_moodle_debug();
 
-        return (object)array_filter((array)$data, function ($key) use ($keys) {
-            return in_array($key, $keys);
-        }, ARRAY_FILTER_USE_KEY);
+        mtrace("Start IntelliBoard copy tracking task");
+        (new intelliboard_tracking_service())->copy_process();
+        mtrace("End IntelliBoard copy tracking task");
     }
-
 }

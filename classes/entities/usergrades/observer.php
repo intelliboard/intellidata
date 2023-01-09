@@ -45,7 +45,7 @@ class observer {
     public static function user_graded(\core\event\user_graded $event) {
         global $CFG;
 
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
 
             require_once($CFG->libdir . '/gradelib.php');
 

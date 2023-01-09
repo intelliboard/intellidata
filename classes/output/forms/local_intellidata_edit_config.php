@@ -77,6 +77,9 @@ class local_intellidata_edit_config extends \moodleform {
         $mform->addElement('hidden', 'datatype');
         $mform->setType('datatype', PARAM_ALPHA);
 
+        $mform->addElement('hidden', 'tableindex');
+        $mform->setType('tableindex', PARAM_TEXT);
+
         $this->add_action_buttons();
         $this->set_data($data);
     }

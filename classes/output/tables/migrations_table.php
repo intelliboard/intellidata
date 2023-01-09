@@ -25,6 +25,7 @@
 
 namespace local_intellidata\output\tables;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\datatypes_service;
 
@@ -128,7 +129,7 @@ class migrations_table {
             if (isset($tabledatatypes[$datatypename])) {
                 $tablerecord = $tabledatatypes[$datatypename];
 
-                if ($tablerecord->get('recordscount')) {
+                if ($tablerecord->get('recordscount') || $tablerecord->get('last_exported_id') || $tablerecord->get('migrated')) {
                     $item['status'] = $this->get_status($tablerecord->get('migrated'));
                     $item['progress'] = (($tablerecord->get('migrated'))
                             ? $tablerecord->get('recordscount')
@@ -176,9 +177,13 @@ class migrations_table {
         $output = '';
 
         $output .= \html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
+
+        $output .= $this->calculate_progress_button();
+
         $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'enablemigration']);
         $output .= \html_writer::link($url, get_string('enablemigration', 'local_intellidata'),
-            ['class' => 'btn btn-primary', 'onclick' => "if (!confirm('" . get_string('resetmigrationmsg', 'local_intellidata') .
+            ['class' => 'btn btn-primary', 'onclick' => "if (!confirm('" .
+                get_string('resetmigrationmsg', 'local_intellidata') .
                 "')) return false;"]);
         $output .= \html_writer::end_tag('div');
 
@@ -186,6 +191,25 @@ class migrations_table {
         $table->head = array_values($this->headers);
         $table->data = $this->data;
         $output .= \html_writer::table($table);
+
+        return $output;
+    }
+
+    /**
+     * Get the html for the calculate progress button.
+     *
+     */
+    public function calculate_progress_button() {
+
+        $output = '';
+
+        if (!SettingsHelper::get_setting('enableprogresscalculation')) {
+            $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'calculateprogress']);
+            $output .= \html_writer::link($url, get_string('calculateprogress', 'local_intellidata'),
+                ['class' => 'btn btn-primary mr-1', 'onclick' => "if (!confirm('" .
+                    get_string('calculateprogressmsg', 'local_intellidata') .
+                    "')) return false;"]);
+        }
 
         return $output;
     }

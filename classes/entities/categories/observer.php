@@ -42,7 +42,7 @@ class observer {
      * @param \core\event\course_category_created $event
      */
     public static function course_category_created(\core\event\course_category_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $category = $event->get_record_snapshot('course_categories', $eventdata['objectid']);
@@ -57,7 +57,7 @@ class observer {
      * @param \core\event\course_category_updated $event
      */
     public static function course_category_updated(\core\event\course_category_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $category = $event->get_record_snapshot('course_categories', $eventdata['objectid']);
@@ -72,7 +72,7 @@ class observer {
      * @param \core\event\course_category_deleted $event
      */
     public static function course_category_deleted(\core\event\course_category_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $category = new \stdClass();

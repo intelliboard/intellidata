@@ -49,21 +49,13 @@ class qasmigration extends \local_intellidata\entities\migration {
      */
     public function get_sql($count = false, $condition = null, $conditionparams = [], $timestart = null) {
 
-        $sqlwhere = 'qas.id > 0'; $params = [];
-
         $select = ($count) ?
             "SELECT COUNT(" . $this->tablealias . ".id) as recordscount" :
             "SELECT qas.id, qas.questionattemptid, qas.state, qas.fraction, qas.timecreated";
 
         $sql = "$select
-                FROM {" . $this->table . "} " . $this->tablealias . "
-               WHERE $sqlwhere";
+                FROM {" . $this->table . "} " . $this->tablealias;
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, []);
     }
 }

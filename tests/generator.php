@@ -50,7 +50,7 @@ class generator {
      * @return \stdClass
      * @throws \moodle_exception
      */
-    public static function create_user(array $data = array()): \stdClass {
+    public static function create_user(array $data = []): \stdClass {
         global $CFG;
 
         require_once($CFG->dirroot . '/user/lib.php');
@@ -64,13 +64,51 @@ class generator {
     }
 
     /**
+     * Generate users.
+     *
+     * @param int $num
+     * @return \stdClass
+     * @throws \moodle_exception
+     */
+    public static function create_users(int $num = 0): array {
+
+        $users = [];
+
+        for ($i = 1; $i <= $num; $i++) {
+            $newuser = self::create_user();
+            $users[$newuser->id] = $newuser;
+        }
+
+        return $users;
+    }
+
+    /**
      * Generate a cohort.
      *
      * @param array $data
      * @return \stdClass
      */
-    public static function create_cohort(array $data): \stdClass {
+    public static function create_cohort(array $data = []): \stdClass {
         return self::data_generator()->create_cohort($data);
+    }
+
+    /**
+     * Generate cohorts.
+     *
+     * @param int $num
+     * @return \stdClass
+     * @throws \moodle_exception
+     */
+    public static function create_cohorts(int $num = 0): array {
+
+        $cohorts = [];
+
+        for ($i = 1; $i <= $num; $i++) {
+            $newcohort = self::create_cohort();
+            $cohorts[$newcohort->id] = $newcohort;
+        }
+
+        return $cohorts;
     }
 
     /**
@@ -79,8 +117,27 @@ class generator {
      * @param array $data
      * @return \core_course_category
      */
-    public static function create_category(array $data) {
+    public static function create_category(array $data = []) {
         return self::data_generator()->create_category($data);
+    }
+
+    /**
+     * Generate categories.
+     *
+     * @param int $num
+     * @return \stdClass
+     * @throws \moodle_exception
+     */
+    public static function create_categories(int $num = 0): array {
+
+        $categories = [];
+
+        for ($i = 1; $i <= $num; $i++) {
+            $newcategory = self::create_category();
+            $categories[$newcategory->id] = $newcategory;
+        }
+
+        return $categories;
     }
 
     /**
@@ -115,8 +172,27 @@ class generator {
      * @param array $data
      * @return \stdClass
      */
-    public static function create_course(array $data = array()) {
+    public static function create_course(array $data = []) {
         return self::data_generator()->create_course($data);
+    }
+
+    /**
+     * Generate courses.
+     *
+     * @param int $num
+     * @return \stdClass
+     * @throws \moodle_exception
+     */
+    public static function create_courses(int $num = 0): array {
+
+        $courses = [];
+
+        for ($i = 1; $i <= $num; $i++) {
+            $newcourse = self::create_course();
+            $courses[$newcourse->id] = $newcourse;
+        }
+
+        return $courses;
     }
 
     /**
@@ -127,6 +203,23 @@ class generator {
      */
     public static function enrol_user(array $data) {
         return self::data_generator()->enrol_user($data['userid'], $data['courseid']);
+    }
+
+    /**
+     * Enrol users.
+     *
+     * @param array $data
+     * @return bool
+     */
+    public static function enrol_users(int $courseid, array $users) {
+
+        $enrols = [];
+
+        foreach ($users as $user) {
+            $enrols = self::data_generator()->enrol_user($user->id, $courseid);
+        }
+
+        return $enrols;
     }
 
     /**

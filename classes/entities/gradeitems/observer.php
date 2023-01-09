@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\grade_item_deleted $event
      */
     public static function grade_item_deleted(\core\event\grade_item_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $gradeitem = new \stdClass();

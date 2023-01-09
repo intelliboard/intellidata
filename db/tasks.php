@@ -24,14 +24,24 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = [
     [
-        'classname' => 'local_intellidata\task\export_task',
+        'classname' => 'local_intellidata\task\export_files_task',
         'blocking' => 0,
         'minute' => 0,
         'hour' => '*',
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 1
+        'disabled' => 0
+    ],
+    [
+        'classname' => 'local_intellidata\task\export_data_task',
+        'blocking' => 0,
+        'minute' => 15,
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 0
     ],
     [
         'classname' => 'local_intellidata\task\cleaner_task',
@@ -56,6 +66,16 @@ $tasks = [
         'classname' => 'local_intellidata\task\track_bbb_meetings',
         'blocking' => 0,
         'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 1
+    ],
+    [
+        'classname' => 'local_intellidata\task\copy_intelliboard_tracking',
+        'blocking' => 0,
+        'minute' => '*/2',
         'hour' => '*',
         'day' => '*',
         'month' => '*',

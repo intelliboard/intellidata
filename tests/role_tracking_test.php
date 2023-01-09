@@ -100,7 +100,7 @@ class local_intellidata_role_tracking_testcase extends \advanced_testcase {
         global $DB;
 
         if (test_helper::is_new_phpunit()) {
-            $this->resetAfterTest(false);
+            $this->resetAfterTest(true);
         } else {
             $this->test_assign();
         }

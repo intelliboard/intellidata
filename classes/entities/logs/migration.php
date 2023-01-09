@@ -63,12 +63,8 @@ class migration extends \local_intellidata\entities\migration {
                  WHERE " . $this->where();
 
         $sqlparams = $this->sqlparams();
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $sqlparams += $conditionparams;
-        }
 
-        return [$sql, $sqlparams];
+        return $this->set_condition($condition, $conditionparams, $sql, $sqlparams);
     }
 
     /**

@@ -42,7 +42,7 @@ class observer {
      * @param \core\event\course_module_completion_updated $event
      */
     public static function course_module_completion_updated(\core\event\course_module_completion_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $completion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
