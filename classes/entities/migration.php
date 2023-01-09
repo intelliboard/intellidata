@@ -93,11 +93,8 @@ abstract class migration {
      * @throws \dml_exception
      */
     public function get_records($params) {
-        global $DB;
 
-        list($sql, $sqlparams) = $this->get_sql();
-
-        $records = $DB->get_recordset_sql($sql, $sqlparams, $params['start'], $params['limit']);
+        $records = $this->get_data($params);
 
         return $this->prepare_records($records);
     }
@@ -112,17 +109,30 @@ abstract class migration {
      * @throws \dml_exception
      */
     public function export_records($params, $tablename) {
-        global $DB;
 
-        list($sql, $sqlparams) = $this->get_sql();
-
-        $records = $DB->get_recordset_sql($sql, $sqlparams, $params['start'], $params['limit']);
+        $records = $this->get_data($params);
 
         return $this->prepare_export_records($records, $tablename);
     }
 
     /**
-     * Get records from DB.
+     * Get data from DB.
+     *
+     * @param $params
+     * @return \moodle_recordset
+     * @throws \dml_exception
+     */
+    protected function get_data($params) {
+        global $DB;
+
+        list($sql, $sqlparams) = $this->get_sql();
+        $sql = $this->set_order($sql);
+
+        return $DB->get_recordset_sql($sql, $sqlparams, $params['start'], $params['limit']);
+    }
+
+    /**
+     * Get count records from DB.
      *
      * @param null $condition
      * @param array $sqlparams
@@ -317,5 +327,49 @@ abstract class migration {
      */
     public function set_datatype($datatype) {
         return $this->datatype = $datatype;
+    }
+
+    /**
+     * Apply condition to the sql.
+     *
+     * @param $datatype
+     * @return mixed
+     */
+    public function set_condition($condition = null, $conditionparams = [], $sql = '', $params = []) {
+
+        if (!empty($condition)) {
+            $sql .= (count($params)) ? " AND " : ' WHERE ';
+            $sql .= $this->apply_tablealias($condition);
+
+            $params += $conditionparams;
+        }
+
+        return [$sql, $params];
+    }
+
+    /**
+     * Apply table alias to condition.
+     *
+     * @param $condition
+     * @return mixed|string
+     */
+    public function apply_tablealias($condition) {
+        return (!empty($this->tablealias) && !stristr($condition, $this->tablealias . '.'))
+            ? $this->tablealias . '.' . $condition : $condition;
+    }
+
+    /**
+     * Apply order for table.
+     *
+     * @param $sql
+     * @return string
+     */
+    protected function set_order($sql) {
+
+        if (!stristr($sql, 'ORDER BY')) {
+            $sql .= " ORDER BY " . (!empty($this->tablealias) ? $this->tablealias . "." : "") . "id";
+        }
+
+        return $sql;
     }
 }

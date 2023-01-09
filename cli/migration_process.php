@@ -86,9 +86,8 @@ $exportservice = new export_service();
 
 // Disable reset migrations.
 if (empty($options['noreset'])) {
-    // Clean migrations logs database.
-    $exportlogrepository = new export_log_repository();
-    $exportlogrepository->clear_migrated();
+    // Clean migration details and logs database.
+    MigrationHelper::reset_migration_details();
 
     // Delete all IntelliData files.
     $filesrecords = $exportservice->delete_files(['timemodified' => time()]);

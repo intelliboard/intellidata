@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\cohort_created $event
      */
     public static function cohort_created(\core\event\cohort_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $cohort = $event->get_record_snapshot('cohort', $eventdata['objectid']);
@@ -56,7 +56,7 @@ class observer {
      * @param \core\event\cohort_updated $event
      */
     public static function cohort_updated(\core\event\cohort_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $cohort = $event->get_record_snapshot('cohort', $eventdata['objectid']);
@@ -71,7 +71,7 @@ class observer {
      * @param \core\event\cohort_deleted $event
      */
     public static function cohort_deleted(\core\event\cohort_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $cohort = new \stdClass();

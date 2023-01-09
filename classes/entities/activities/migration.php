@@ -52,24 +52,19 @@ class migration extends \local_intellidata\entities\migration {
         $where = 'cm.deletioninprogress = :deletioninprogress';
         $select = ($count) ?
             "SELECT COUNT(cm.id) as recordscount" :
-            "SELECT cm.id, cm.course AS courseid, m.name AS module,cm.instance,
-                cm.visible,cm.added AS timecreated,cm.completionexpected,cm.completion";
+            "SELECT cm.id, cm.course AS courseid, m.name AS module, cm.instance,
+                cm.visible, cm.added AS timecreated, cm.completionexpected, cm.completion";
 
         $sql = "$select
                 FROM {course_modules} cm
-                JOIN {modules} m ON m.id=cm.module
+                JOIN {modules} m ON m.id = cm.module
                WHERE $where";
 
         $params = [
             'deletioninprogress' => 0
         ];
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, $params);
     }
 
     /**

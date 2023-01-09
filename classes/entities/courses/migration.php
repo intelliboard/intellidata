@@ -47,7 +47,10 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'c.id > 1';
+
+        $where = 'c.id > :cid';
+        $sqlparams = ['cid' => 1];
+
         $select = ($count) ?
             "SELECT COUNT(c.id) as recordscount" :
             "SELECT c.*";
@@ -56,10 +59,6 @@ class migration extends \local_intellidata\entities\migration {
                   FROM {".$this->table."} c
                  WHERE $where";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-        }
-
-        return [$sql, $conditionparams];
+        return $this->set_condition($condition, $conditionparams, $sql, $sqlparams);
     }
 }

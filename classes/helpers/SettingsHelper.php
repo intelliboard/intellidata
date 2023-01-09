@@ -29,6 +29,7 @@ namespace local_intellidata\helpers;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\repositories\tracking\tracking_repository;
+use local_intellidata\repositories\export_id_repository;
 
 class SettingsHelper {
 
@@ -41,14 +42,13 @@ class SettingsHelper {
         'encryptionkey' => '',
         'clientidentifier' => '',
         'cleaner_duration' => DAYSECS * 14,
-        'migrationrecordslimit' => '1000000',
+        'migrationrecordslimit' => '100000',
         'migrationwriterecordslimit' => '10000',
-        'exportrecordslimit' => '10000',
+        'exportrecordslimit' => '100000',
         'exportfilesduringmigration' => 1,
         'resetmigrationprogress' => 0,
+        'resetimporttrackingprogress' => 0,
         'tracklogsdatatypes' => 0,
-        'debugenabled' => 0,
-        'directsqlenabled' => 0,
         'exportdataformat' => 'csv',
         'defaultlayout' => 'standard',
         // User Tracking.
@@ -77,9 +77,24 @@ class SettingsHelper {
         'migrationstart' => 0,
         'migrationdatatype' => '',
         'lastexportdate' => 0,
+        'exportdatatype' => '',
+        'exportstart' => 0,
         // Advanced Settings.
         'enabledatavalidation' => 0,
-        'enabledatacleaning' => 0
+        'enabledatacleaning' => 0,
+        'enableprogresscalculation' => 0,
+        'divideexportbydatatype' => 0,
+        'eventstracking' => 1,
+        'debugenabled' => 0,
+        'directsqlenabled' => 0,
+        'trackingidsmode' => export_id_repository::TRACK_IDS_MODE_REQUEST,
+        'intelliboardcopydatatype' => null,
+        'intelliboardcopyprocessedlimit' => 0
+    ];
+
+    const NOTUPDATABLE_SETTINGS = [
+        'encryptionkey',
+        'clientidentifier'
     ];
 
     /**
@@ -119,6 +134,17 @@ class SettingsHelper {
         }
 
         return $config;
+    }
+
+    /**
+     * Set config value.
+     *
+     * @param $configname
+     * @param $configvalue
+     * @return void
+     */
+    public static function set_setting($configname, $configvalue) {
+        set_config($configname, $configvalue, ParamsHelper::PLUGIN);
     }
 
     /**
@@ -337,5 +363,21 @@ class SettingsHelper {
     public static function set_lastmigrationdate($time = null) {
         $value = ($time === null) ? time() : $time;
         set_config('lastmigrationdate', $value, ParamsHelper::PLUGIN);
+    }
+
+    /**
+     * Validate if setting is updatable.
+     */
+    public static function is_setting_updatable($settingname) {
+
+        if (!isset(self::DEFAULT_VALUES[$settingname])) {
+            return false;
+        }
+
+        if (in_array($settingname, self::NOTUPDATABLE_SETTINGS)) {
+            return false;
+        }
+
+        return true;
     }
 }

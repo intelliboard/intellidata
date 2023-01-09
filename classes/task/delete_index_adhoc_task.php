@@ -19,37 +19,28 @@
  * @package    local_intellidata
  * @category   task
  * @author     IntelliBoard Inc.
- * @copyright  2020 IntelliBoard
+ * @copyright  2022 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace local_intellidata\task;
-use local_intellidata\helpers\DebugHelper;
-use local_intellidata\services\export_service;
-use local_intellidata\helpers\TrackingHelper;
-use local_intellidata\helpers\SettingsHelper;
-
 defined('MOODLE_INTERNAL') || die();
 
+use local_intellidata\helpers\DBManagerHelper;
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\repositories\config_repository;
+use local_intellidata\services\datatypes_service;
 
 /**
- * Task to process datafiles export.
+ * Task to delete index from table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
- * @copyright  2020 IntelliBoard
+ * @copyright  2022 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cleaner_task extends \core\task\scheduled_task {
-
-    /**
-     * Get a descriptive name for this task (shown to admins).
-     *
-     * @return string
-     */
-    public function get_name() {
-        return get_string('cleaner_task', 'local_intellidata');
-    }
+class delete_index_adhoc_task extends \core\task\adhoc_task {
 
     /**
      * Do the job.
@@ -57,21 +48,27 @@ class cleaner_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        if (TrackingHelper::enabled() &&
-            $cleanerduration = SettingsHelper::get_setting('cleaner_duration')) {
+        if (TrackingHelper::enabled()) {
 
             DebugHelper::enable_moodle_debug();
 
-            mtrace("IntelliData Cleaner CRON started!");
+            $data = $this->get_custom_data();
 
-            $timemodified = time() - (int)$cleanerduration;
+            if (!empty($data->datatype)) {
 
-            $exportservice = new export_service();
-            $filesrecords = $exportservice->delete_files(['timemodified' => $timemodified]);
+                $datatypes = datatypes_service::get_all_datatypes();
 
-            mtrace("IntelliData Cleaner: $filesrecords deleted.");
+                if (!empty($data->tableindex) && !empty($datatypes[$data->datatype]['table'])) {
 
-            mtrace("IntelliData Cleaner CRON ended!");
+                    $table = $datatypes[$data->datatype]['table'];
+                    $index = $data->tableindex;
+
+                    mtrace('IntelliData: Deleting DB index "' . $index . '" in table "' . $table . '"');
+
+                    DBManagerHelper::delete_index($table, $index);
+                }
+
+            }
         }
     }
 }

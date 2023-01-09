@@ -23,6 +23,7 @@
  * @website    http://intelliboard.net/
  */
 
+use local_intellidata\persistent\export_ids;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\export_service;
@@ -31,6 +32,9 @@ use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\persistent\export_logs;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\DBHelper;
+use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\export_id_repository;
 
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
@@ -270,23 +274,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $index = new xmldb_index('logid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, array('logid', 'timepoint'));
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
-        }
-
-        $table = new xmldb_table('local_intelliboard_tracking');
-        if ($dbman->table_exists($table)) {
-            \local_intellidata\helpers\TrackingHelper::disable_tracking();
-            mtrace("Start import user trackings from IntelliBoard plugin!<br>");
-            $trackingfixmapper = local_intellidata\helpers\UpgradeHelper::copy_intelliboard_tracking();
-            mtrace("Tracking table imported!<br>");
-
-            mtrace("Start import user tracking logs from IntelliBoard plugin!<br>");
-            local_intellidata\helpers\UpgradeHelper::copy_intelliboard_logs($trackingfixmapper);
-            mtrace("Tracking logs table imported!<br>");
-
-            mtrace("Start import user tracking log details from IntelliBoard plugin!<br>");
-            local_intellidata\helpers\UpgradeHelper::copy_intelliboard_details();
-            mtrace("Tracking log details table imported!<br>");
-            \local_intellidata\helpers\TrackingHelper::enable_tracking();
         }
 
         upgrade_plugin_savepoint(true, 2021111010, 'local', 'intellidata');
@@ -952,6 +939,83 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2022110400, 'local', 'intellidata');
+    }
+
+    // Reset and add new survey to the export.
+    if ($oldversion < 2022112905) {
+        // Define table local_intellidata_export_ids to be created.
+        $table = new xmldb_table('local_intellidata_export_ids');
+
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Adding fields to table local_intellidata_export_ids.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('datatype', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('dataid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
+
+        // Adding keys to table local_intellidata_reports.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for local_intellidata_export_ids.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_plugin_savepoint(true, 2022112905, 'local', 'intellidata');
+    }
+
+    // Add indexes for tracking tables.
+    if ($oldversion < 2022121500) {
+
+        $tables = [
+            'local_intellidata_tracking',
+            'local_intellidata_trdetails',
+            'local_intellidata_trlogs'
+        ];
+
+        // Add index to tables.
+        foreach ($tables as $table) {
+            $table = new xmldb_table($table);
+            $index = new xmldb_index('timemodified_idx', XMLDB_INDEX_NOTUNIQUE, ['timemodified']);
+            if (!$dbman->index_exists($table, $index)) {
+                $dbman->add_index($table, $index);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2022121500, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2022121501) {
+        $table = new xmldb_table('local_intellidata_config');
+        $field = new xmldb_field('tableindex', XMLDB_TYPE_CHAR, '100', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2022121501, 'local', 'intellidata');
+    }
+
+    // Reset and add new survey to the export.
+    if ($oldversion < 2023010612) {
+
+        $datatypes = datatypes_service::get_datatypes();
+        try {
+            foreach ($datatypes as $datatype) {
+                if (isset($datatype['table'])) {
+                    DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
+                }
+            }
+            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
+        } catch (moodle_exception $e) {
+            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        upgrade_plugin_savepoint(true, 2023010612, 'local', 'intellidata');
     }
 
     return true;

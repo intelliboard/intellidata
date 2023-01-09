@@ -88,6 +88,8 @@ class StorageHelper {
     }
 
     /**
+     * Save file.
+     *
      * @param $params
      * @return \stored_file|null
      * @throws \coding_exception
@@ -180,6 +182,8 @@ class StorageHelper {
     }
 
     /**
+     * Retrieve new itemid for file.
+     *
      * @param $filerecord
      * @return int
      * @throws \coding_exception
@@ -210,6 +214,8 @@ class StorageHelper {
     }
 
     /**
+     * Rename file.
+     *
      * @param $source
      * @param $destination
      * @return bool
@@ -232,6 +238,8 @@ class StorageHelper {
     }
 
     /**
+     * Generate filename.
+     *
      * @param int $length
      * @return false|string
      */
@@ -241,6 +249,8 @@ class StorageHelper {
     }
 
     /**
+     * Generate file URL.
+     *
      * @param $file
      * @return \moodle_url
      */
@@ -256,6 +266,8 @@ class StorageHelper {
     }
 
     /**
+     * Delete file.
+     *
      * @param $id
      * @return bool
      * @throws \dml_exception
@@ -273,6 +285,8 @@ class StorageHelper {
     }
 
     /**
+     * Convert filesize.
+     *
      * @param $bytes
      * @return string
      */
@@ -283,6 +297,14 @@ class StorageHelper {
         return sprintf('%.02F', $bytes / pow(1024, $i)) * 1 . ' ' . $sizes[$i];
     }
 
+    /**
+     * Save data to file.
+     *
+     * @param $storagefile
+     * @param $data
+     * @return void
+     * @throws \moodle_exception
+     */
     public static function save_in_file($storagefile, $data) {
         $line = (file_exists($storagefile)) ? PHP_EOL . $data : $data;
 
@@ -292,6 +314,8 @@ class StorageHelper {
     }
 
     /**
+     * Delete all files from path.
+     *
      * @param $path
      * @return bool
      */
@@ -307,6 +331,8 @@ class StorageHelper {
     }
 
     /**
+     * Format data based on config.
+     *
      * @param $format
      * @param $data
      * @return false|string
@@ -329,5 +355,109 @@ class StorageHelper {
         }
 
         return $eventdata;
+    }
+
+    /**
+     * Get data from file.
+     *
+     * @param $storagefile
+     * @param $format
+     * @return array
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public static function get_from_file($storagefile, $format = 'json') {
+
+        if (!file_exists($storagefile)) {
+            DebugHelper::error_log('Error in reading Temp File. File ' . $storagefile . ' not exists');
+            throw new \moodle_exception('filenotexists', 'local_intellidata');
+        }
+
+        $file = fopen($storagefile, 'r');
+
+        $data = [];
+        while (($line = fgets($file)) !== false) {
+            $data[] = ($format == 'json') ? json_decode($line) : explode(',', $line);
+        }
+        fclose($file);
+
+        return $data;
+    }
+
+    /**
+     * Extract data from export files.
+     *
+     * @param $datatype
+     * @param $tempdir
+     * @param $exportfiles
+     * @return array
+     * @throws \moodle_exception
+     */
+    public static function get_data_from_exportfiles($datatype, $tempdir, $exportfiles = []) {
+
+        $data = [];
+
+        if (!count($exportfiles)) {
+            return $data;
+        }
+
+        foreach ($exportfiles as $file) {
+            $data[] = self::extract_data_from_archive($datatype, $tempdir, $file);
+        }
+
+        return array_merge([], ...$data);
+    }
+
+    /**
+     * Extract data from export archive file.
+     *
+     * @param $datatype
+     * @param $tempdir
+     * @param $exportfile
+     * @return array
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public static function extract_data_from_archive($datatype, $tempdir, $exportfile) {
+
+        $fs = get_file_storage();
+        $filesystem = $fs->get_file_system();
+        $context = \context_system::instance();
+
+        $file = $fs->get_file(
+            $context->id,
+            'local_intellidata',
+            $datatype,
+            $exportfile['itemid'],
+            $exportfile['filepath'],
+            $exportfile['filename']
+        );
+
+        $sourcezipfilepath = $filesystem->get_local_path_from_storedfile($file, true);
+        $tempzipfilepath = $tempdir . '/' . $exportfile['filename'];
+
+        $encriptionservice = new encryption_service();
+        if (!$encriptionservice->decrypt_file($sourcezipfilepath, $tempzipfilepath)) {
+            @unlink($tempzipfilepath);
+            DebugHelper::error_log('Error decrypt file: ' . $sourcezipfilepath);
+            throw new \moodle_exception('can_not_decrypt_file', 'local_intellidata');
+        }
+
+        $zippacker = get_file_packer('application/zip');
+
+        // Zip file.
+        $zippacker->extract_to_pathname(
+            $tempzipfilepath, $tempdir
+        );
+
+        $tempfilepath = $tempdir . '/' . str_replace('.zip', '', $exportfile['filename']);
+
+        // Get data from temp file.
+        $data = self::get_from_file($tempfilepath);
+
+        // Remove temp file.
+        unlink($tempfilepath);
+
+        return $data;
     }
 }

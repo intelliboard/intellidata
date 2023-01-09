@@ -37,4 +37,28 @@ class migration extends \local_intellidata\entities\migration {
     public $entity      = '\local_intellidata\entities\userinfodatas\userinfodata';
     public $eventname   = '\core\event\user_created';
     public $table       = 'user_info_data';
+    public $tablealias  = 'uid';
+
+    /**
+     * @param false $count
+     * @param null $condition
+     * @param array $conditionparams
+     * @return array
+     */
+    public function get_sql($count = false, $condition = null, $conditionparams = []) {
+
+        $select = ($count) ?
+            "SELECT COUNT(" .$this->tablealias . ".id) as recordscount" :
+            "SELECT " .$this->tablealias . ".*";
+
+        $sql = "$select
+                  FROM {" . $this->table . "} " .$this->tablealias . "
+             LEFT JOIN {user} u ON u.id = " . $this->tablealias . ".userid";
+
+        if ($condition) {
+            $sql .= " WHERE " . $condition;
+        }
+
+        return [$sql, $conditionparams];
+    }
 }

@@ -69,7 +69,7 @@ class migration extends \local_intellidata\entities\migration {
             $innerwhere = " WHERE $where ";
 
             if ($condition) {
-                $innerwhere .= " AND " . $condition;
+                $innerwhere .= " AND " . $this->apply_tablealias($condition);
                 foreach ($conditionparams as $key => $value) {
                     $newkey = $key . '_inner';
                     $innerwhere = str_replace(':' . $key, ':' . $newkey, $innerwhere);
@@ -104,7 +104,7 @@ class migration extends \local_intellidata\entities\migration {
                  WHERE $where";
 
         if ($condition) {
-            $sql .= " AND " . $condition;
+            $sql .= " AND " . $this->apply_tablealias($condition);
         }
 
         return [$sql, $conditionparams];

@@ -117,7 +117,9 @@ class config_service {
                     $this->datatypes[$datatypename]['timemodified_field'] = $config->timemodified_field;
                 }
             } else {
-                $this->datatypes[$datatypename]['timemodified_field'] = '';
+                $this->datatypes[$datatypename]['timemodified_field'] = ($config->tabletype == datatypeconfig::TABLETYPE_REQUIRED &&
+                    !empty($this->datatypes[$datatypename]['timemodified_field']))
+                        ? $this->datatypes[$datatypename]['timemodified_field'] : '';
             }
         }
 

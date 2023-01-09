@@ -57,7 +57,7 @@ class migration extends \local_intellidata\entities\migration {
                     COUNT(contextinstanceid) AS participations,
                     MAX(timecreated) AS last_participation
                 FROM {logstore_standard_log}
-               WHERE crud IN('c', 'u') AND userid>0 AND contextinstanceid>0 $where
+               WHERE crud IN('c', 'u') AND userid > 0 AND contextinstanceid > 0 $where
             GROUP BY userid, contextinstanceid, contextlevel";
         }
 

@@ -40,31 +40,32 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = [], $timestart = null) {
-        $sqlwhere = '';
-        if ($timestart > 0) {
-            $sqlwhere = " AND timecreated > $timestart ";
-        }
+        $sqlwhere = ''; $sqlparams = [];
 
-        if ($condition) {
-            $sqlwhere .= " AND " . $condition;
+        if ($timestart > 0) {
+            $sqlwhere = " AND timecreated > :timecreated ";
+            $sqlparams['timecreated'] = $timestart;
+        } else if ($condition) {
+            $sqlwhere .= " AND " . $this->apply_tablealias($condition);
+            $sqlparams = array_merge($sqlparams, $conditionparams);
         }
 
         if ($count) {
             $sql = "SELECT
                         COUNT(DISTINCT userid) as recordscount
                       FROM {logstore_standard_log}
-                     WHERE contextid=1 AND eventname = '\\\\core\\\\event\\\\user_loggedin' $sqlwhere";
+                     WHERE contextid = 1 AND eventname = '\\\\core\\\\event\\\\user_loggedin' $sqlwhere";
         } else {
             $sql = "SELECT
                         userid AS id,
                         COUNT(userid) AS logins
                       FROM {logstore_standard_log}
-                     WHERE contextid=1 AND eventname = '\\\\core\\\\event\\\\user_loggedin' $sqlwhere
+                     WHERE contextid = 1 AND eventname = '\\\\core\\\\event\\\\user_loggedin' $sqlwhere
                   GROUP BY userid
                   ORDER BY userid";
         }
 
-        return [$sql, $conditionparams];
+        return [$sql, $sqlparams];
     }
 
     /**

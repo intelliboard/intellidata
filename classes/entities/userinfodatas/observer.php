@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\user_created $event
      */
     public static function user_created(\core\event\user_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }
@@ -52,7 +52,7 @@ class observer {
      * @param \core\event\user_updated $event
      */
     public static function user_updated(\core\event\user_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             self::export_event($event);
         }
     }

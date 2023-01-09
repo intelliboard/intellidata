@@ -49,22 +49,14 @@ class quamigration extends \local_intellidata\entities\migration {
      */
     public function get_sql($count = false, $condition = null, $conditionparams = [], $timestart = null) {
 
-        $sqlwhere = 'qua.id > 0'; $params = [];
-
         $select = ($count) ?
             "SELECT COUNT(qua.id) as recordscount" :
             "SELECT qua.id, qa.id AS attemptid, qua.questionid, qa.uniqueid, qa.timemodified";
 
         $sql = "$select
                 FROM {" . $this->table . "} " . $this->tablealias . "
-           LEFT JOIN {quiz_attempts} qa ON qa.uniqueid = " . $this->tablealias . ".questionusageid
-               WHERE $sqlwhere";
+           LEFT JOIN {quiz_attempts} qa ON qa.uniqueid = " . $this->tablealias . ".questionusageid";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, []);
     }
 }

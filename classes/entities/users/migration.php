@@ -49,7 +49,7 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'deleted = :deleted';
+        $where = $this->tablealias . '.deleted = :deleted';
         $select = ($count) ? "SELECT COUNT(u.id) as recordscount" : "SELECT u.*";
 
         $sql = "$select
@@ -60,12 +60,7 @@ class migration extends \local_intellidata\entities\migration {
             'deleted' => 0
         ];
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-            $params += $conditionparams;
-        }
-
-        return [$sql, $params];
+        return $this->set_condition($condition, $conditionparams, $sql, $params);
     }
 
     /**

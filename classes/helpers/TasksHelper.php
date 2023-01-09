@@ -137,4 +137,38 @@ class TasksHelper {
             ['component' => ParamsHelper::PLUGIN]
         );
     }
+
+    /**
+     * Create adhoc task.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function create_adhoc_task($taskname, $params = null, $nextruntime = 0) {
+
+        $taskname = 'local_intellidata\\task\\' . $taskname;
+
+        // Create next adhoc task.
+        $task = new $taskname;
+
+        if ($params) {
+            $task->set_custom_data($params);
+        }
+
+        if ($nextruntime) {
+            $task->set_next_run_time($nextruntime);
+        }
+
+        \core\task\manager::queue_adhoc_task($task);
+    }
+
+    /**
+     * Create adhoc task to refresh migration progress.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function init_refresh_export_progress_adhoc_task() {
+        self::create_adhoc_task('refresh_export_progress_adhoc_task');
+    }
 }

@@ -24,23 +24,23 @@
  */
 
 namespace local_intellidata\task;
-use local_intellidata\helpers\DebugHelper;
+defined('MOODLE_INTERNAL') || die();
+
 use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
-use local_intellidata\helpers\SettingsHelper;
-
-defined('MOODLE_INTERNAL') || die();
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\ExportHelper;
 
 
 /**
- * Task to process datafiles export.
+ * Task to process data export.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
  * @copyright  2020 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cleaner_task extends \core\task\scheduled_task {
+class export_data_task extends \core\task\scheduled_task {
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -48,7 +48,7 @@ class cleaner_task extends \core\task\scheduled_task {
      * @return string
      */
     public function get_name() {
-        return get_string('cleaner_task', 'local_intellidata');
+        return get_string('export_data_task', 'local_intellidata');
     }
 
     /**
@@ -57,21 +57,12 @@ class cleaner_task extends \core\task\scheduled_task {
      */
     public function execute() {
 
-        if (TrackingHelper::enabled() &&
-            $cleanerduration = SettingsHelper::get_setting('cleaner_duration')) {
+        if (TrackingHelper::enabled()) {
 
             DebugHelper::enable_moodle_debug();
 
-            mtrace("IntelliData Cleaner CRON started!");
-
-            $timemodified = time() - (int)$cleanerduration;
-
             $exportservice = new export_service();
-            $filesrecords = $exportservice->delete_files(['timemodified' => $timemodified]);
-
-            mtrace("IntelliData Cleaner: $filesrecords deleted.");
-
-            mtrace("IntelliData Cleaner CRON ended!");
+            ExportHelper::process_data_export($exportservice, ['cronprocessing' => true]);
         }
     }
 }

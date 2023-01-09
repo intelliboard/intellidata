@@ -43,7 +43,7 @@ class observer {
      * @param \core\event\user_created $event
      */
     public static function user_created(\core\event\user_created $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
@@ -62,7 +62,7 @@ class observer {
      * @param \core\event\user_updated $event
      */
     public static function user_updated(\core\event\user_updated $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
@@ -81,7 +81,7 @@ class observer {
      * @param \core\event\user_deleted $event
      */
     public static function user_deleted(\core\event\user_deleted $event) {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
             $user = new \stdClass();

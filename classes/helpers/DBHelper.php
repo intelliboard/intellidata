@@ -26,6 +26,8 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\persistent\export_ids;
+
 class DBHelper {
     const MYSQL_TYPE = 'mysqli';
     const POSTGRES_TYPE = 'pgsql';
@@ -389,5 +391,88 @@ class DBHelper {
         $letters = ($letters) ? "{$letters}." : '';
 
         return str_replace('#', $letters, $res);
+    }
+
+    /**
+     * Create deleted id triggers.
+     *
+     * @param $datatype
+     * @param $table
+     * @return void
+     * @throws \ddl_change_structure_exception
+     * @throws \dml_exception
+     */
+    public static function create_deleted_id_triger($datatype, $table) {
+        global $CFG, $DB;
+
+        if ($CFG->dbtype == self::POSTGRES_TYPE) {
+            $DB->change_database_structure("CREATE OR REPLACE FUNCTION " . self::get_tables_prefix() . "insert_deleted_id()
+                                                    RETURNS trigger AS $$
+                                                    DECLARE
+                                                        datatype varchar;
+                                                    BEGIN
+                                                        datatype   := TG_ARGV[0];
+                                                        INSERT INTO " . $DB->get_prefix() . export_ids::TABLE . "
+                                                            (dataid, datatype, timecreated) VALUES (OLD.id, datatype, NULL)
+                                                        ON CONFLICT (id) DO NOTHING;
+                                                        RETURN OLD;
+                                                    END
+                                                $$ LANGUAGE plpgsql");
+
+            $DB->execute("DROP TRIGGER IF EXISTS deleted_{$datatype} ON {{$table}}");
+            $DB->execute("CREATE TRIGGER deleted_{$datatype}
+                                BEFORE DELETE ON {{$table}}
+                                FOR EACH ROW
+                                EXECUTE FUNCTION " . self::get_tables_prefix() . "insert_deleted_id('{$datatype}')");
+        } else {
+            $DB->execute("DROP TRIGGER IF EXISTS before_delete_{$datatype}");
+            $DB->execute("CREATE TRIGGER before_delete_{$datatype}
+                                BEFORE DELETE ON {{$table}}
+                                FOR EACH ROW
+                                INSERT IGNORE INTO {" . export_ids::TABLE . "}
+                                    (datatype, dataid, timecreated) VALUES ('{$datatype}', OLD.id, NULL)");
+        }
+    }
+
+    /**
+     * Remove id triggers.
+     *
+     * @param $datatype
+     * @param $table
+     * @return void
+     * @throws \dml_exception
+     */
+    public static function remove_deleted_id_triger($datatype, $table) {
+        global $CFG, $DB;
+
+        if ($CFG->dbtype == self::POSTGRES_TYPE) {
+            $DB->execute("DROP TRIGGER IF EXISTS deleted_{$datatype} ON {{$table}}");
+        } else {
+            $DB->execute("DROP TRIGGER IF EXISTS before_delete_{$datatype}");
+        }
+    }
+
+    /**
+     * Return tables prefix.
+     *
+     * @return mixed
+     */
+    public static function get_tables_prefix() {
+        global $CFG;
+        return (PHPUNIT_TEST) ? $CFG->phpunit_prefix : $CFG->prefix;
+    }
+
+    /**
+     * Delete trigger functions.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public static function remove_deleted_id_functions() {
+        global $CFG, $DB;
+
+        if ($CFG->dbtype == self::POSTGRES_TYPE) {
+            $DB->execute("DROP FUNCTION IF EXISTS " . self::get_tables_prefix() . "insert_deleted_id() CASCADE");
+        }
     }
 }

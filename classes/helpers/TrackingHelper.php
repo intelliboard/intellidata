@@ -60,6 +60,16 @@ class TrackingHelper {
     }
 
     /**
+     * Validate is eventstracking enabled.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function eventstracking_enabled() {
+        return (self::enabled() && SettingsHelper::get_setting('eventstracking')) ? true : false;
+    }
+
+    /**
      * Validate is tracking enabled.
      *
      * @return bool

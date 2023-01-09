@@ -45,6 +45,10 @@ class datatypeconfig extends base {
     const TABLETYPE_OPTIONAL = 1;
     const TABLETYPE_LOGS = 2;
 
+    /** @var int The tables export types. */
+    const TABLETYPE_EVENTS = 1;
+    const TABLETYPE_STATIC = 2;
+
     /** @var int The datatype status. */
     const STATUS_ENABLED = 1;
     const STATUS_DISABLED = 0;
@@ -118,6 +122,11 @@ class datatypeconfig extends base {
                 'null' => NULL_ALLOWED,
                 'description' => 'Additional configuration for datatype.',
             ],
+            'tableindex' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Database Index.',
+                'default' => '',
+            ]
         );
     }
 
