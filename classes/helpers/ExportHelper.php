@@ -105,22 +105,26 @@ class ExportHelper {
     }
 
     /**
+     * Return next table to export.
+     *
      * @param $tables
      * @return int|string
      */
     public static function get_export_table($tables) {
         $exportdatatype = SettingsHelper::get_setting('exportdatatype');
-        return !empty($exportdatatype) ? $exportdatatype : array_key_first($tables);
+        return !empty($exportdatatype) ? $exportdatatype : self::get_first_tablename($tables);
     }
 
     /**
+     * Return next table to process.
+     *
      * @param $tables
      * @param string $processingtable
      * @return int|string
      */
     public static function get_next_table($tables, $processingtable = '') {
 
-        $nexttable = array_key_first($tables);
+        $nexttable = self::get_first_tablename($tables);
         $currenttable = false;
 
         foreach ($tables as $key => $datatype) {
@@ -134,6 +138,17 @@ class ExportHelper {
         }
 
         return $nexttable;
+    }
+
+    /**
+     * Get first table name from tables list.
+     *
+     * @param $tables
+     * @return mixed|string
+     */
+    public static function get_first_tablename($tables) {
+        $firsttable = reset($tables);
+        return (!empty($firsttable['name'])) ? $firsttable['name'] : '';
     }
 
     /**
