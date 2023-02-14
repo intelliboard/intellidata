@@ -252,6 +252,20 @@ $observers = [
         'callback' => '\local_intellidata\entities\cohorts\observer::cohort_deleted',
     ],
 
+    // Course sections events.
+    [
+        'eventname' => '\core\event\course_section_created',
+        'callback' => '\local_intellidata\entities\coursesections\observer::course_section_created',
+    ],
+    [
+        'eventname' => '\core\event\course_section_updated',
+        'callback' => '\local_intellidata\entities\coursesections\observer::course_section_updated',
+    ],
+    [
+        'eventname' => '\core\event\course_section_deleted',
+        'callback' => '\local_intellidata\entities\coursesections\observer::course_section_deleted',
+    ],
+
     // Cohort members events.
     [
         'eventname' => '\core\event\cohort_member_added',

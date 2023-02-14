@@ -85,6 +85,7 @@ class SettingsHelper {
         'enableprogresscalculation' => 0,
         'divideexportbydatatype' => 0,
         'eventstracking' => 1,
+        'exportids' => 1,
         'debugenabled' => 0,
         'directsqlenabled' => 0,
         'trackingidsmode' => export_id_repository::TRACK_IDS_MODE_REQUEST,
@@ -315,9 +316,7 @@ class SettingsHelper {
                             $value = implode(', ', $selected);
                             $subtype = 'multiselect';
                         } else if ($setting instanceof \admin_setting_configselect) {
-                            $value = $setting->choices[
-                                $settingsvalues[$setting->name]
-                            ];
+                            $value = $setting->choices[$settingsvalues[$setting->name]];
                             $subtype = 'select';
                             if ($value instanceof \lang_string) {
                                 $value = $value->out();
