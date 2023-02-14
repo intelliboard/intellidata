@@ -53,7 +53,10 @@ class attemptsmigration extends \local_intellidata\entities\migration {
             "SELECT COUNT(qa.id) as recordscount" :
             "SELECT qa.id, qa.quiz, qa.userid, qa.attempt,
                     qa.timestart, qa.timefinish, qa.state,
-                    (qa.sumgrades/q.sumgrades) * q.grade AS sumgrades";
+                    CASE WHEN q.sumgrades > 0
+                         THEN (qa.sumgrades/q.sumgrades) * q.grade
+                         ELSE 0
+                    END AS sumgrades";
 
         $sql = "$select
                 FROM {quiz_attempts} qa

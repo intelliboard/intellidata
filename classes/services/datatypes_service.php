@@ -479,6 +479,18 @@ class datatypes_service {
                 'databaseexport' => true,
                 'exportids' => true
             ],
+            'coursesections' => [
+                'name' => 'coursesections',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'course_sections',
+                'migration' => 'coursesections\migration',
+                'entity' => 'coursesections\sections',
+                'observer' => 'coursesections\observer',
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
+                'filterbyid' => false,
+                'databaseexport' => false
+            ],
             'ltitypes' => [
                 'name' => 'ltitypes',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
