@@ -139,11 +139,9 @@ class tracking_storage_repository {
                             (array)$record;
                     }
                 } else if ($record->table == 'details') {
-                    if (isset($data[$record->userid][$record->page][$record->param][$record->table]
-                        [$record->currentstamp][$record->timepoint])) {
+                    if (isset($data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint])) {
                         $item = &
-                            $data[$record->userid][$record->page][$record->param][$record->table]
-                            [$record->currentstamp][$record->timepoint];
+                            $data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint];
                         if (isset($record->visits)) {
                             @$item['visits'] += $record->visits;
                         }
@@ -151,8 +149,7 @@ class tracking_storage_repository {
                         $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
 
                     } else {
-                        $data[$record->userid][$record->page][$record->param][$record->table]
-                        [$record->currentstamp][$record->timepoint] = (array)$record;
+                        $data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint] = (array)$record;
                     }
                 }
             }

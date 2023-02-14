@@ -57,6 +57,11 @@ class activity extends \local_intellidata\entities\entity {
                 'description' => 'Course ID.',
                 'default' => 0,
             ),
+            'section' => array(
+                'type' => PARAM_INT,
+                'description' => 'Course sections ID.',
+                'default' => 0,
+            ),
             'module' => array(
                 'type' => PARAM_TEXT,
                 'description' => 'Module type.',

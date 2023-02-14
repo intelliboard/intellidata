@@ -208,9 +208,7 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
             new lang_string('file_compresstracking', $pluginname)
     ];
     if (method_exists($trackingcache, 'store_supports_get_all_keys') && $trackingcache->store_supports_get_all_keys()) {
-        $options[
-            local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE
-        ] = new lang_string('cache_compresstracking', $pluginname);
+        $options[local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE] = new lang_string('cache_compresstracking', $pluginname);
     }
     $setting = new admin_setting_configselect(
         $pluginname . '/' . $name,
@@ -450,6 +448,17 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     $settings->add($setting);
 
     $name = 'divideexportbydatatype';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'exportids';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),
