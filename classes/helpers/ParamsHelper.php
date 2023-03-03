@@ -82,4 +82,13 @@ class ParamsHelper {
             'totaraversion' => !empty($CFG->totara_version) ? $CFG->totara_version : ''
         ];
     }
+
+    /**
+     * Get Moodle version.
+     */
+    public static function get_release() {
+        global $CFG;
+
+        return !empty($CFG->release) ? $CFG->release : null;
+    }
 }

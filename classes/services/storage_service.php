@@ -49,6 +49,14 @@ class storage_service {
     }
 
     /**
+     * @param int $timemodified
+     * @return void
+     */
+    public function update_timemodified_files($timemodified) {
+        $this->repo->update_timemodified_files($timemodified);
+    }
+
+    /**
      * @param array $params
      * @return array
      */

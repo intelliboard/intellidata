@@ -304,13 +304,18 @@ class database_repository {
 
         list($lastexportedtime, $lastexportedid) = self::$exportlogrepository->get_last_processed_data($datatype['name']);
 
-        $sql = ''; $sqlparams = [];
+        $sql = $where = '';
+        $sqlparams = [];
         if ($datatype['timemodified_field']) {
             $where = $datatype['timemodified_field'] . ' > :timemodified';
             $sqlparams['timemodified'] = $lastexportedtime;
-        } else if (!empty($datatype['filterbyid'])) {
-            $where = 'id > ' . $lastexportedid;
-        } else {
+        }
+
+        if (!empty($datatype['filterbyid'])) {
+            $where .= (!empty($where) ? ' OR ' : '') . 'id > '. $lastexportedid;
+        }
+
+        if (empty($where)) {
             $where = 'id > 0';
         }
 

@@ -269,6 +269,47 @@ class file_storage_repository {
         return implode(', ', $fields);
     }
 
+
+    /**
+     * @param int $timemodified
+     *
+     * @return void
+     * @throws \dml_exception
+     */
+    public function update_timemodified_files($timemodified) {
+        global $DB;
+
+        $context = \context_system::instance();
+
+        $conditions = [
+            'contextid = :contextid',
+            'component = :component',
+            'filearea = :filearea'
+        ];
+        $sqlparams = [
+            'contextid' => $context->id,
+            'component' => self::STORAGE_FILES_COMPONENT,
+            'filearea' => $this->datatype['name'],
+        ];
+
+        $wheresql = implode(' AND ', $conditions);
+
+        $filerecords = $DB->get_records_sql(
+            "SELECT *
+                   FROM {files}
+                  WHERE $wheresql
+               ORDER BY itemid",
+            $sqlparams
+        );
+
+        if ($filerecords) {
+            foreach ($filerecords as $filerecord) {
+                $filerecord->timemodified = $timemodified;
+                $DB->update_record('files', $filerecord);
+            }
+        }
+    }
+
     /**
      * Delete files from storage.
      *

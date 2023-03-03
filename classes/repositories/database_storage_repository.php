@@ -235,7 +235,7 @@ class database_storage_repository extends file_storage_repository {
         // Search by other fields (if exist).
         foreach ($params as $key => $value) {
             $sql .= " AND " . $DB->sql_like('data', ':' . $key);
-            $data[$key] = '%"' . $key . '":' . (is_numeric($value) ? $value : '"' . $value . '"') . '%';
+            $data[$key] = '%"' . $key . '":%' . $value . '%';
         }
 
         $sql .= "LIMIT 1";

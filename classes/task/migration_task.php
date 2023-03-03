@@ -94,6 +94,9 @@ class migration_task extends \core\task\scheduled_task {
                     // Send callback to IBN.
                     MigrationHelper::send_callback();
 
+                    // Сhange migration files.
+                    MigrationHelper::change_migration_files();
+
                     // Disable scheduled migration task.
                     MigrationHelper::disable_sheduled_tasks();
                     MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
