@@ -86,7 +86,7 @@ class attempt extends \local_intellidata\entities\entity {
                 'type' => PARAM_TEXT,
                 'description' => 'Attempt grade.',
                 'default' => '',
-            ),
+            )
         );
     }
 

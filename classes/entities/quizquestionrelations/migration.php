@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration Users.
+ * Class for migration Quiz Slots.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -23,10 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizquestionrelations;
+use local_intellidata\helpers\ParamsHelper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class for migration Users.
+ * Class for migration Quiz Slots.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -37,5 +39,30 @@ class migration extends \local_intellidata\entities\migration {
 
     public $entity      = '\local_intellidata\entities\quizquestionrelations\quizquestionrelation';
     public $table       = 'quiz_slots';
+    public $tablealias  = 'qs';
 
+    /**
+     * @param false $count
+     * @param null $condition
+     * @param array $conditionparams
+     * @return array
+     */
+    public function get_sql($count = false, $condition = null, $conditionparams = []) {
+        $release4 = (float)ParamsHelper::get_release() >= 4.0;
+        $select = ($count) ?
+            "SELECT COUNT(" . $this->tablealias . ".id) as recordscount " :
+            "SELECT " . $this->tablealias . ".id, " . $this->tablealias . ".quizid,
+             " . ($release4 ? 'qve' : $this->tablealias) . ".questionid ";
+
+        $sql = "$select
+                FROM {" . $this->table . "} " . $this->tablealias;
+
+        if ($release4) {
+            $sql .= " JOIN {question_references} qre ON qre.itemid = " . $this->tablealias . ".id
+                      JOIN {question_bank_entries} qbe ON qbe.id = qre.questionbankentryid
+                      JOIN {question_versions} qve ON qve.questionbankentryid = qbe.id";
+        }
+
+        return $this->set_condition($condition, $conditionparams, $sql, []);
+    }
 }

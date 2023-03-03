@@ -60,11 +60,6 @@ class SettingsHelper {
         'ajaxfrequency' => '30',
         'trackadmin' => 0,
         'trackmedia' => 0,
-        // BBB meetings.
-        'enablebbbmeetings' => 0,
-        'enablebbbdebug' => 0,
-        'bbbapiendpoint' => '',
-        'bbbserversecret' => '',
         // IB Next LTI.
         'ltitoolurl' => '',
         'lticonsumerkey' => '',

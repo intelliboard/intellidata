@@ -63,16 +63,6 @@ $tasks = [
         'disabled' => 1
     ],
     [
-        'classname' => 'local_intellidata\task\track_bbb_meetings',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*',
-        'month' => '*',
-        'dayofweek' => '*',
-        'disabled' => 1
-    ],
-    [
         'classname' => 'local_intellidata\task\copy_intelliboard_tracking',
         'blocking' => 0,
         'minute' => '*/2',

@@ -184,6 +184,26 @@ class export_service {
     }
 
     /**
+     * @param int $timemodified
+     * @param array $params
+     *
+     * @return void
+     */
+    public function change_files_after_migration($timemodified, $params = []) {
+        $datatypes = $this->filter_datatypes($params);
+        if (count($datatypes)) {
+            foreach ($datatypes as $datatype) {
+                $storageservice = new storage_service($datatype);
+                $storageservice->update_timemodified_files($params);
+
+                $datatype['name'] = $this->get_migration_name($datatype);
+                $storageservice = new storage_service($datatype);
+                $storageservice->update_timemodified_files($timemodified);
+            }
+        }
+    }
+
+    /**
      * @param array $params
      * @param array $exclude
      * @return int|void

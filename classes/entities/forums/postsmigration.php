@@ -67,6 +67,10 @@ class postsmigration extends \local_intellidata\entities\migration {
             $params += [
                 'deleted' => 0
             ];
+        } else {
+            if (!$count) {
+                $select .= ', 0 AS deleted';
+            }
         }
 
         $sql = "$select

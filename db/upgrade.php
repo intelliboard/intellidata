@@ -113,29 +113,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020102300, 'local', 'intellidata');
     }
 
-    if ($oldversion < 2021011200) {
-
-        // Define table local_intellidata_bbb_rec_tr to be created.
-        $table = new xmldb_table('local_intellidata_bbb_rec_tr');
-
-        // Adding fields to table local_intellidata_bbb_rec_tr.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('session_id', XMLDB_TYPE_CHAR, '255', null, null, null, null);
-        $table->add_field('track_at', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
-        $table->add_field('tracked_at', XMLDB_TYPE_INTEGER, '11', null, null, null, null);
-
-        // Adding keys to table local_intellidata_bbb_rec_tr.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-        // Conditionally launch create table for local_intellidata_bbb_rec_tr.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Intellidata savepoint reached.
-        upgrade_plugin_savepoint(true, 2021011200, 'local', 'intellidata');
-    }
-
     if ($oldversion < 2021020400) {
 
         // Define table local_intellidata_tracked_bb to be delete.
@@ -1036,6 +1013,19 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         \core\task\manager::queue_adhoc_task($exporttask);
 
         upgrade_plugin_savepoint(true, 2023020701, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023022801) {
+
+        // Define table local_intellidata_bbb_rec_tr to be delete.
+        $table = new xmldb_table('local_intellidata_bbb_rec_tr');
+
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Intellidata savepoint reached.
+        upgrade_plugin_savepoint(true, 2023022801, 'local', 'intellidata');
     }
 
     return true;
