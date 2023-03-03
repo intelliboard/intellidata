@@ -511,7 +511,7 @@ class datatypes_service {
                 'entity' => 'survey\survey',
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
-                'filterbyid' => false,
+                'filterbyid' => true,
                 'databaseexport' => true,
                 'exportids' => true
             ],
@@ -679,17 +679,31 @@ class datatypes_service {
     private static function format_required_datatypes($datatypes) {
 
         if (count($datatypes)) {
-
             $params = [
                 'eventstracking' => SettingsHelper::get_setting('eventstracking')
             ];
 
             foreach ($datatypes as $table => $datatype) {
-                $datatypes[$table] = self::format_required_datatype($datatype, $params);
+                $datatype = self::format_required_datatype($datatype, $params);
+                $datatypes[$table] = self::change_parameters_by_version($datatype);
             }
         }
 
         return $datatypes;
+    }
+
+    /**
+     * Data type parameters changed by version.
+     * @param array $datatype
+     * @return array
+     */
+    private static function change_parameters_by_version($datatype) {
+        $entityclass = self::get_datatype_entity_class(self::get_datatype_entity_path($datatype));
+        if (class_exists($entityclass)) {
+            $datatype = $entityclass::change_parameters_by_version($datatype);
+        }
+
+        return $datatype;
     }
 
     /**
@@ -698,7 +712,6 @@ class datatypes_service {
      * @return array
      */
     private static function format_required_datatype($datatype, $params) {
-
         // Switch events tracking to static export.
         if (!empty(empty($params['eventstracking']))) {
 

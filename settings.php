@@ -281,57 +281,6 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-
-    // BBB meetings.
-    $settings->add(new admin_setting_heading(
-        $pluginname . '/bbbmeetings', get_string('bbbmeetings', $pluginname), ''
-    ));
-
-    $name = 'enablebbbmeetings';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
-
-    // BBB debug.
-    $name = 'bbb_debug';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string('enablebbbdebug', $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
-
-    // BBB API endpoint.
-    $name = 'bbbapiendpoint';
-    $setting = new admin_setting_configtext(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        PARAM_TEXT
-    );
-    $settings->add($setting);
-
-    // BBB server secret.
-    $name = 'bbbserversecret';
-    $setting = new admin_setting_configtext(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        PARAM_TEXT
-    );
-    $settings->add($setting);
-
     // IB Next LTI.
     $settings->add(new admin_setting_heading(
         $pluginname . '/lti', get_string('lticonfiguration', $pluginname), ''
@@ -402,28 +351,6 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     $settings->add(new admin_setting_heading(
         $pluginname . '/advancedsettings', get_string('advancedsettings', $pluginname), ''
     ));
-
-    $name = 'enabledatavalidation';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
-
-    $name = 'enabledatacleaning';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
 
     $name = 'enableprogresscalculation';
     $setting = new admin_setting_configcheckbox(

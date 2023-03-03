@@ -73,13 +73,8 @@ class entity {
      * @return \stdClass
      */
     final public function set_values($record) {
-        $properties = self::properties_definition($this->returnfields);
-
-        foreach ($properties as $property => $definition) {
-            if (!isset($record->{$property})) {
-                continue;
-            }
-            $this->set($property, $record->{$property});
+        foreach ($record as $key => $value) {
+            $this->data[$key] = $value;
         }
     }
 
@@ -96,14 +91,6 @@ class entity {
      * @return \local_intellidata\entities\entity
      */
     final public function set($property, $value) {
-        if (!self::has_property($property)) {
-            throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
-        }
-        $methodname = 'set_' . $property;
-        if (method_exists($this, $methodname)) {
-            $this->$methodname($value);
-            return $this;
-        }
         return $this->raw_set($property, $value);
     }
 
@@ -120,13 +107,6 @@ class entity {
      * @return mixed
      */
     final public function get($property) {
-        if (!self::has_property($property)) {
-            throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
-        }
-        $methodname = 'get_' . $property;
-        if (method_exists($this, $methodname)) {
-            return $this->$methodname();
-        }
         return $this->raw_get($property);
     }
 
@@ -158,12 +138,6 @@ class entity {
      * @return mixed
      */
     final protected function raw_get($property) {
-        if (!self::has_property($property)) {
-            throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
-        }
-        if (!array_key_exists($property, $this->data) && !self::is_property_required($property)) {
-            $this->raw_set($property, self::get_property_default_value($property));
-        }
         return isset($this->data[$property]) ? $this->data[$property] : null;
     }
 
@@ -183,13 +157,6 @@ class entity {
      * @return $this
      */
     final protected function raw_set($property, $value) {
-        if (!self::has_property($property)) {
-            throw new coding_exception('Unexpected property \'' . s($property) .'\' requested.');
-        }
-        if (!array_key_exists($property, $this->data) || $this->data[$property] != $value) {
-            // If the value is changing, we invalidate the model.
-            $this->validated = false;
-        }
         $this->data[$property] = $value;
 
         return $this;
@@ -255,89 +222,6 @@ class entity {
     }
 
     /**
-     * Gets all the formatted properties.
-     *
-     * Formatted properties are properties which have a format associated with them.
-     *
-     * @return array Keys are property names, values are property format names.
-     */
-    final public static function get_formatted_properties() {
-        $properties = self::properties_definition();
-
-        $formatted = array();
-        foreach ($properties as $property => $definition) {
-            $propertyformat = $property . 'format';
-            if (($definition['type'] == PARAM_RAW || $definition['type'] == PARAM_CLEANHTML)
-                && array_key_exists($propertyformat, $properties)
-                && $properties[$propertyformat]['type'] == PARAM_INT) {
-                $formatted[$property] = $propertyformat;
-            }
-        }
-
-        return $formatted;
-    }
-
-    /**
-     * Gets the default value for a property.
-     *
-     * This assumes that the property exists.
-     *
-     * @param string $property The property name.
-     * @return mixed
-     */
-    final protected static function get_property_default_value($property) {
-        $properties = self::properties_definition();
-        if (!isset($properties[$property]['default'])) {
-            return null;
-        }
-        $value = $properties[$property]['default'];
-        if ($value instanceof \Closure) {
-            return $value();
-        }
-        return $value;
-    }
-
-    /**
-     * Gets the error message for a property.
-     *
-     * This assumes that the property exists.
-     *
-     * @param string $property The property name.
-     * @return lang_string
-     */
-    final protected static function get_property_error_message($property) {
-        $properties = self::properties_definition();
-        if (!isset($properties[$property]['message'])) {
-            return new lang_string('invaliddata', 'error');
-        }
-        return $properties[$property]['message'];
-    }
-
-    /**
-     * Returns whether or not a property was defined.
-     *
-     * @param  string $property The property name.
-     * @return boolean
-     */
-    final public static function has_property($property) {
-        $properties = self::properties_definition();
-        return isset($properties[$property]);
-    }
-
-    /**
-     * Returns whether or not a property is required.
-     *
-     * By definition a property with a default value is not required.
-     *
-     * @param  string $property The property name.
-     * @return boolean
-     */
-    final public static function is_property_required($property) {
-        $properties = self::properties_definition();
-        return !array_key_exists('default', $properties[$property]);
-    }
-
-    /**
      * Populate this class with data from a DB record.
      *
      * Note that this does not use any custom setter because the data here is intended to
@@ -347,10 +231,7 @@ class entity {
      * @return persistent
      */
     final public function from_record(stdClass $record) {
-        $record = (array) $record;
-        foreach ($record as $property => $value) {
-            $this->raw_set($property, $value);
-        }
+        $this->data = (array)$record;
         return $this;
     }
 
@@ -363,13 +244,17 @@ class entity {
      * @return \stdClass
      */
     final public function to_record() {
-        $data = new stdClass();
-        $properties = self::properties_definition($this->returnfields);
+        $record = [];
+        $properties = static::properties_definition($this->returnfields);
+
         foreach ($properties as $property => $definition) {
-            $data->$property = $this->raw_get($property);
+            if (!isset($this->data[$property])) {
+                continue;
+            }
+            $record[$property] = $this->data[$property];
         }
 
-        return $data;
+        return (object)$record;
     }
 
     /**
@@ -399,17 +284,8 @@ class entity {
     final public function export() {
         global $USER;
 
-        if (!$this->is_valid()) {
-            $errors = $this->get_errors();
-            $errors['data'] = '(' . self::$datatype . ') ' . json_encode($this->data);
-            throw new invalid_persistent_exception($errors);
-        }
-
         // Before create hook.
         $this->before_export();
-
-        // Clean properties.
-        $this->clean_data();
 
         // We can safely set those values bypassing the validation because we know what we're doing.
         $now = time();
@@ -417,12 +293,7 @@ class entity {
         $this->raw_set('recordusermodified', $USER->id);
         $this->raw_set('crud', $this->get_crud());
 
-        $record = $this->to_record();
-
-        // We ensure that this is flagged as validated.
-        $this->validated = true;
-
-        return $record;
+        return $this->to_record();
     }
 
     /**
@@ -446,163 +317,6 @@ class entity {
      * @return void
      */
     protected function before_validate() {
-    }
-
-    /**
-     * Validates the data.
-     *
-     * Developers can implement addition validation by defining a method as follows. Note that
-     * the method MUST return a lang_string() when there is an error, and true when the data is valid.
-     *
-     * protected function validate_propertyname($value) {
-     *     if ($value !== 'My expected value') {
-     *         return new lang_string('invaliddata', 'error');
-     *     }
-     *     return true
-     * }
-     *
-     * It is OK to use other properties in your custom validation methods when you need to, however note
-     * they might not have been validated yet, so try not to rely on them too much.
-     *
-     * Note that the validation methods should be protected. Validating just one field is not
-     * recommended because of the possible dependencies between one field and another,also the
-     * field ID can be used to check whether the object is being updated or created.
-     *
-     * When validating foreign keys the persistent should only check that the associated model
-     * exists. The validation methods should not be used to check for a change in that relationship.
-     * The API method setting the attributes on the model should be responsible for that.
-     * E.g. On a course model, the method validate_categoryid will check that the category exists.
-     * However, if a course can never be moved outside of its category it would be up to the calling
-     * code to ensure that the category ID will not be altered.
-     *
-     * @return array|true Returns true when the validation passed, or an array of properties with errors.
-     */
-    final public function validate() {
-
-        // Before validate hook.
-        $this->before_validate();
-
-        // Ignore validation if not enabled.
-        if (!$this->validation_enabled()) {
-            $this->validated = true;
-        }
-
-        // If this object has not been validated yet.
-        if ($this->validated !== true) {
-
-            $errors = [];
-            $properties = self::properties_definition($this->returnfields);
-            foreach ($properties as $property => $definition) {
-
-                // Get the data, bypassing the potential custom getter which could alter the data.
-                $value = $this->raw_get($property);
-
-                // Check if the property is required.
-                if ($value === null && self::is_property_required($property)) {
-                    $errors[$property] = new lang_string('requiredelement', 'form');
-                    continue;
-                }
-
-                // Check that type of value is respected.
-                try {
-                    if ($definition['type'] === PARAM_BOOL && $value === false) {
-                        // Validate_param() does not like false with PARAM_BOOL, better to convert it to int.
-                        $value = 0;
-                    }
-                    if ($definition['type'] === PARAM_CLEANHTML) {
-                        // We silently clean for this type. It may introduce changes even to valid data.
-                        $value = clean_param($value, PARAM_CLEANHTML);
-                    }
-                    if ($definition['type'] === PARAM_RAW || $definition['type'] === PARAM_TEXT) {
-                        // We silently clean for this type to avoid utf encoding problems.
-                        $value = clean_param($value, PARAM_RAW);
-                    }
-                    validate_param($value, $definition['type'], $definition['null']);
-                } catch (\Exception $e) {
-                    $errors[$property] = self::get_property_error_message($property);
-                    continue;
-                }
-
-                // Check that the value is part of a list of allowed values.
-                if (isset($definition['choices']) && !in_array($value, $definition['choices'])) {
-                    $errors[$property] = self::get_property_error_message($property);
-                    continue;
-                }
-
-                // Call custom validation method.
-                $method = 'validate_' . $property;
-                if (method_exists($this, $method)) {
-
-                    $valid = $this->{$method}($value);
-                    if ($valid !== true) {
-                        if (!($valid instanceof lang_string)) {
-                            throw new coding_exception('Unexpected error message.');
-                        }
-                        $errors[$property] = $valid;
-                        continue;
-                    }
-                }
-            }
-
-            $this->validated = true;
-            $this->errors = $errors;
-        }
-
-        return empty($this->errors) ? true : $this->errors;
-    }
-
-    /**
-     * Returns whether or not the model is valid.
-     *
-     * @return boolean True when it is.
-     */
-    final public function is_valid() {
-        return $this->validate() === true;
-    }
-
-    /**
-     * Returns the validation errors.
-     *
-     * @return array
-     */
-    final public function get_errors() {
-        $this->validate();
-        return $this->errors;
-    }
-
-    /**
-     * Clean data.
-     *
-     * @return void
-     * @throws \coding_exception
-     */
-    final public function clean_data() {
-
-        if ($this->cleaning_enabled()) {
-
-            $properties = self::properties_definition($this->returnfields);
-
-            foreach ($properties as $property => $definition) {
-
-                // Get the data, bypassing the potential custom getter which could alter the data.
-                $value = $this->raw_get($property);
-
-                // Check if the property is required.
-                if ($value === null) {
-                    continue;
-                }
-
-                if ($definition['type'] === PARAM_BOOL && $value === false) {
-                    $value = 0;
-                } else if ($definition['type'] === PARAM_CLEANHTML) {
-                    $value = clean_param($value, PARAM_CLEANHTML);
-                } else {
-                    $value = clean_param($value, $definition['type']);
-                }
-
-                $this->raw_set($property, $value);
-            }
-        }
     }
 
     /**
@@ -631,19 +345,4 @@ class entity {
 
         return $fields;
     }
-
-    /*
-     * Check if validation enabled.
-     */
-    final public function validation_enabled() {
-        return SettingsHelper::get_setting('enabledatavalidation');
-    }
-
-    /*
-     * Check if cleaning enabled.
-     */
-    final public function cleaning_enabled() {
-        return SettingsHelper::get_setting('enabledatacleaning');
-    }
-
 }

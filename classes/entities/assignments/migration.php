@@ -55,7 +55,7 @@ class migration extends \local_intellidata\entities\migration {
 
         $select = $join = $plugins = [];
         foreach ($xmltables as $xmltable) {
-            if (!in_array($xmltable['plugintype'], $plugins) && $xmltable['plugintype'] == 'assignsubmission') {
+            if (isset($xmltable['plugintype']) && !in_array($xmltable['plugintype'], $plugins) && $xmltable['plugintype'] == 'assignsubmission') {
                 $select[] = "CASE WHEN MAX({$xmltable['name']}.id) IS NOT NULL THEN '{$xmltable['plugin']}' ELSE '' END";
                 $join[] = "LEFT JOIN {{$xmltable['name']}} {$xmltable['name']} on {$xmltable['name']}.submission = s.id";
 

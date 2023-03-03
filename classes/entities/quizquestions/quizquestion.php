@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizquestions;
+use local_intellidata\helpers\ParamsHelper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -75,4 +77,18 @@ class quizquestion extends \local_intellidata\entities\entity {
         ];
     }
 
+    /**
+     * Data type parameters changed by version.
+     *
+     * @param array $datatypeparams
+     * @return array
+     */
+    public static function change_parameters_by_version($datatypeparams) {
+        if ((float)ParamsHelper::get_release() < 3.7) {
+            $datatypeparams['databaseexport'] = true;
+            $datatypeparams['exportids'] = true;
+        }
+
+        return $datatypeparams;
+    }
 }

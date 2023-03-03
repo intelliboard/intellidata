@@ -29,6 +29,7 @@ namespace local_intellidata\helpers;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
+use local_intellidata\services\export_service;
 
 class MigrationHelper {
     const MIGRATIONS_COMPLETED_STATUS = 'migrationcompleted';
@@ -40,8 +41,7 @@ class MigrationHelper {
         '\local_intellidata\task\cleaner_task',
         '\local_intellidata\task\export_data_task',
         '\local_intellidata\task\export_files_task',
-        '\local_intellidata\task\migration_task',
-        '\local_intellidata\task\track_bbb_meetings'
+        '\local_intellidata\task\migration_task'
     ];
 
     /**
@@ -152,6 +152,18 @@ class MigrationHelper {
 
         // Reset export process.
         ExportHelper::reset_export_details();
+    }
+
+    /**
+     * Update migration files after the migration is complete.
+     *
+     * @return void
+     */
+    public static function change_migration_files() {
+        $timemodified = time();
+
+        $exportservice = new export_service();
+        $exportservice->change_files_after_migration($timemodified);
     }
 
     /**

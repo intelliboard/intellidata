@@ -124,8 +124,7 @@ class config_service {
         }
 
         // Set filterbyid param.
-        $this->datatypes[$datatypename]['filterbyid'] = empty($this->datatypes[$datatypename]['timemodified_field']) &&
-            !empty($config->filterbyid);
+        $this->datatypes[$datatypename]['filterbyid'] = (bool)$config->filterbyid;
 
         // Set table rewritable.
         if ($config->tabletype == datatypeconfig::TABLETYPE_OPTIONAL) {

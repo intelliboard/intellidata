@@ -174,17 +174,6 @@ $string['required_data_format'] = 'Data format is required. Please configure adm
 $string['migrated'] = 'Migrated';
 $string['lastexportedid'] = 'Last Exported ID';
 
-// BigBlueButton meetings.
-$string['bbbapiendpoint'] = 'BBB API endpoint';
-$string['bbbserversecret'] = 'BBB server secret';
-$string['check_active_meetings'] = 'Check active meetings';
-$string['bbbmeetings'] = 'BigBlueButton meetings';
-$string['enablebbbmeetings'] = 'Enable monitoring of BigBlueButton meetings';
-$string['enablebbbdebug'] = 'BigBlueButton debug mode';
-$string['datatype_bbbattendees'] = 'BBB attendees';
-$string['datatype_bbbmeetings'] = 'BBB meetings';
-$string['datatype_bbbrecordings'] = 'BBB recordings';
-
 // IB Next LTI.
 $string['lticonfiguration'] = 'LTI Configuration';
 $string['lti_toggle_debug_data'] = 'Toggle Debug Data';
