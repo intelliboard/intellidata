@@ -194,7 +194,7 @@ class export_service {
         if (count($datatypes)) {
             foreach ($datatypes as $datatype) {
                 $storageservice = new storage_service($datatype);
-                $storageservice->update_timemodified_files($params);
+                $storageservice->update_timemodified_files($timemodified);
 
                 $datatype['name'] = $this->get_migration_name($datatype);
                 $storageservice = new storage_service($datatype);
