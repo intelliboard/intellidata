@@ -59,7 +59,7 @@ class postsmigration extends \local_intellidata\entities\migration {
 
         // Validate deleted field.
         $dbschema = new dbschema_service();
-        if ($dbschema->column_exists('forumposts', 'deleted')) {
+        if ($dbschema->column_exists('forum_posts', 'deleted')) {
             if (!$count) {
                 $select .= ', p.deleted';
             }
