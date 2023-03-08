@@ -248,10 +248,11 @@ class entity {
         $properties = static::properties_definition($this->returnfields);
 
         foreach ($properties as $property => $definition) {
-            if (!isset($this->data[$property])) {
-                continue;
+            if (array_key_exists($property, $this->data)) {
+                $record[$property] = $this->data[$property];
+            } else {
+                $record[$property] = null;
             }
-            $record[$property] = $this->data[$property];
         }
 
         return (object)$record;
