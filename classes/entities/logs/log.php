@@ -24,7 +24,7 @@
  */
 namespace local_intellidata\entities\logs;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Role Assignment.

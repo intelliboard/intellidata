@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\enrolments;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\entities\enrolments\enrolment;
 use local_intellidata\helpers\TrackingHelper;

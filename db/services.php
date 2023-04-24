@@ -165,7 +165,16 @@ $functions = [
         'classpath'   => 'local/intellidata/classes/api/datalib.php',
         'description' => 'Run SQL and retrieve data from LMS',
         'type'        => 'read'
-    ]
+    ],
+    'local_intellidata_get_bbcollsessions_data' => [
+        'classname'     => 'local_intellidata_exportlib',
+        'methodname'    => 'get_bbcollsessions',
+        'classpath'     => 'local/intellidata/classes/api/exportlib.php',
+        'description'   => 'Get get Blackboard Collaborate Sessions relations to Course',
+        'type'          => 'read',
+        'ajax'          => true,
+        'loginrequired' => false
+    ],
 ];
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -189,7 +198,8 @@ $services = [
             'local_intellidata_enable_processing',
             'local_intellidata_get_plugin_config',
             'local_intellidata_set_plugin_config',
-            'local_intellidata_get_data'
+            'local_intellidata_get_data',
+            'local_intellidata_get_bbcollsessions_data'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\logs;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use \local_intellidata\entities\logs\log;
 use \local_intellidata\helpers\TrackingHelper;

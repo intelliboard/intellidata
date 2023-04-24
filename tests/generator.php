@@ -24,7 +24,7 @@
  * @website    http://intelliboard.net/
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use phpunit_util;
 
@@ -164,6 +164,15 @@ class generator {
      */
     public static function create_group(array $data) {
         return self::data_generator()->create_group($data);
+    }
+
+    /**
+     * Generate group member.
+     *
+     * @param array $data
+     */
+    public static function create_group_member(array $data) {
+        return self::data_generator()->create_group_member($data);
     }
 
     /**

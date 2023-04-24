@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\roles;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\entities\roles\roleassignment;
 use local_intellidata\helpers\TrackingHelper;
@@ -73,7 +73,7 @@ class observer {
         $eventdata = $event->get_data();
         $context = $event->get_context();
 
-        if (!in_array($context->contextlevel, array_keys(RolesHelper::CONTEXTLIST)) or
+        if (!in_array($context->contextlevel, array_keys(RolesHelper::CONTEXTLIST)) ||
             !isset($eventdata['other']['id'])) {
             return;
         }

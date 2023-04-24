@@ -24,7 +24,7 @@
  */
 namespace local_intellidata\entities\survey;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Survey Answers.

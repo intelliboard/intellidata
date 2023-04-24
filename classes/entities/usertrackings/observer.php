@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\usertrackings;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use \local_intellidata\helpers\TrackingHelper;
 

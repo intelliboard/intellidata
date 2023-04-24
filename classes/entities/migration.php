@@ -32,7 +32,7 @@ use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\ParamsHelper;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Abstract class for core objects saved to the DB.

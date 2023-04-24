@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\coursesections;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Course Sections.

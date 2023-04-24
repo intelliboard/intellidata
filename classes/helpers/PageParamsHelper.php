@@ -45,7 +45,7 @@ class PageParamsHelper {
         if (isset($PAGE->cm->id)) {
             $pageparams['page'] = self::PAGETYPE_MODULE;
             $pageparams['param'] = $PAGE->cm->id;
-        } else if (isset($PAGE->course->id) and $SITE->id != $PAGE->course->id) {
+        } else if (isset($PAGE->course->id) && $SITE->id != $PAGE->course->id) {
             $pageparams['page'] = self::PAGETYPE_COURSE;
             $pageparams['param'] = $PAGE->course->id;
         } else {

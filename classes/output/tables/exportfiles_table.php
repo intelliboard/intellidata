@@ -24,8 +24,8 @@
  */
 
 namespace local_intellidata\output\tables;
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
 
 use html_writer;
 use local_intellidata\helpers\StorageHelper;

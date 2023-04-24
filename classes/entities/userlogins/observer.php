@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\userlogins;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use \local_intellidata\helpers\TrackingHelper;
 use \local_intellidata\services\events_service;

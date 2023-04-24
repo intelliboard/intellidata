@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\quizzes;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use \local_intellidata\entities\quizzes\attempt;
 use \local_intellidata\helpers\TrackingHelper;
@@ -63,9 +63,12 @@ class observer {
         $attempt = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
         $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
         $attempt->crud = $eventdata['crud'];
-        $attempt->sumgrades = ($attempt->sumgrades && $quiz->sumgrades)
-            ? (($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade)
-            : 0;
+
+        $attempt->points = $quiz->score = 0;
+        if ($attempt->sumgrades && $quiz->sumgrades) {
+            $attempt->points = ($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade;
+            $attempt->score = ($attempt->sumgrades / $quiz->sumgrades) * 100;
+        }
 
         $entity = new attempt($attempt, $fields);
         $data = $entity->export();

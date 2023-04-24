@@ -25,8 +25,6 @@
 
 namespace local_intellidata\entities\assignments;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_intellidata\entities\assignments\submission;
 use local_intellidata\helpers\DBManagerHelper;
 use local_intellidata\helpers\TrackingHelper;
@@ -69,6 +67,35 @@ class observer {
             $submission->submission_type = str_replace('assignsubmission_', '', $eventdata['objecttable']);
 
             self::export_event($eventdata, $submission);
+        }
+    }
+
+    /**
+     * Triggered when 'submission_status_viewed' event is triggered.
+     *
+     * @param \mod_assign\event\submission_status_viewed $event
+     */
+    public static function submission_status_viewed(\mod_assign\event\submission_status_viewed $event) {
+        global $DB;
+
+        if (TrackingHelper::eventstracking_enabled()) {
+            $eventdata = $event->get_data();
+            $condition = [
+                'userid' => $eventdata['userid'],
+                'assignid' => $eventdata['other']['assignid'],
+                'timecreated' => $eventdata['timecreated']
+            ];
+
+            $submissionssql = "SELECT *
+                    FROM {assign_submission}
+                    WHERE assignment=:assignid AND userid=:userid AND timecreated=:timecreated
+                    ORDER BY attemptnumber DESC";
+
+            $submission = $DB->get_record_sql($submissionssql, $condition);
+            if ($submission) {
+                $submission->submission_type = self::get_submission_type($submission->id);
+                self::export_event($eventdata, $submission);
+            }
         }
     }
 

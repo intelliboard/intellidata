@@ -76,6 +76,7 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="userid_page_param_idx" UNIQUE="false" FIELDS="userid, page, param"/>
+        <INDEX NAME="page_param_idx" UNIQUE="false" FIELDS="page, param"/>
         <INDEX NAME="timemodified_idx" UNIQUE="false" FIELDS="timemodified"/>
       </INDEXES>
     </TABLE>

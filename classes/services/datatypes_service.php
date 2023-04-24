@@ -258,6 +258,32 @@ class datatypes_service {
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
+
+            'coursegroups' => [
+                'name' => 'coursegroups',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'groups',
+                'migration' => 'groups\migration',
+                'entity' => 'groups\group',
+                'observer' => 'groups\observer',
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
+                'filterbyid' => false,
+                'databaseexport' => false
+            ],
+            'coursegroupmembers' => [
+                'name' => 'coursegroupmembers',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'groups_members',
+                'migration' => 'groupmembers\migration',
+                'entity' => 'groupmembers\groupmember',
+                'observer' => 'groupmembers\observer',
+                'rewritable' => false,
+                'timemodified_field' => 'timeadded',
+                'filterbyid' => false,
+                'databaseexport' => false
+            ],
+
             'cohortmembers' => [
                 'name' => 'cohortmembers',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
@@ -401,7 +427,8 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => true,
+                'exportids' => true
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',

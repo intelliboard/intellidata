@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizzes;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration quizz attempts.
@@ -56,7 +56,11 @@ class attemptsmigration extends \local_intellidata\entities\migration {
                     CASE WHEN q.sumgrades > 0
                          THEN (qa.sumgrades/q.sumgrades) * q.grade
                          ELSE 0
-                    END AS sumgrades";
+                    END AS points,
+                    CASE WHEN q.sumgrades > 0
+                         THEN ((qa.sumgrades/q.sumgrades) * 100)
+                         ELSE 0
+                    END AS score";
 
         $sql = "$select
                 FROM {quiz_attempts} qa

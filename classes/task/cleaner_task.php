@@ -29,7 +29,7 @@ use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\SettingsHelper;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 
 /**

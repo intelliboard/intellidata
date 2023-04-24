@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use grade_category;
 use grade_grade;
@@ -43,13 +43,19 @@ require_once($CFG->libdir . '/gradelib.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_usergrade_tracking_testcase extends \advanced_testcase {
+class usergrade_tracking_test extends \advanced_testcase {
+
     public function setUp(): void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
     }
 
+    /**
+     * @covers \local_intellidata\entities\usergrades\usergrade
+     * @covers \local_intellidata\entities\usergrades\migration
+     * @covers \local_intellidata\entities\usergrades\observer
+     */
     public function test_graded() {
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(true);

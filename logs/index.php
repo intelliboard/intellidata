@@ -44,7 +44,7 @@ $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
-if ($id and $action == 'delete') {
+if ($id && $action == 'delete') {
 
     // Delete file by id.
     StorageHelper::delete_file($id);

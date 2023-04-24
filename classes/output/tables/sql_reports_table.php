@@ -22,8 +22,7 @@
  */
 
 namespace local_intellidata\output\tables;
-
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/tablelib.php');
 

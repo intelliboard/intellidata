@@ -24,7 +24,7 @@
  */
 
 namespace local_intellidata\task;
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\MigrationHelper;
@@ -94,7 +94,7 @@ class migration_task extends \core\task\scheduled_task {
                     // Send callback to IBN.
                     MigrationHelper::send_callback();
 
-                    // Сhange migration files.
+                    // Change callback to IBN.
                     MigrationHelper::change_migration_files();
 
                     // Disable scheduled migration task.

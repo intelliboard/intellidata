@@ -23,13 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\database_repository;
-
-defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * Export_id_repository migration test case.
@@ -39,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2022
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_database_repository_testcase extends \advanced_testcase {
+class database_repository_test extends \advanced_testcase {
 
     /**
      * Test init() method.
@@ -47,6 +44,7 @@ class local_intellidata_database_repository_testcase extends \advanced_testcase 
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
+     * @covers \local_intellidata\repositories\database_repository::init
      */
     public function test_init() {
         $this->resetAfterTest(true);

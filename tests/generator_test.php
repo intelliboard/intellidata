@@ -23,7 +23,7 @@
  * @website    http://intelliboard.net/
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,7 +41,7 @@ use local_intellidata\persistent\tracking;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
-class local_intellidata_generator_testcase extends \advanced_testcase {
+class generator_test extends \advanced_testcase {
 
     /**
      * Setup tests.
@@ -59,6 +59,7 @@ class local_intellidata_generator_testcase extends \advanced_testcase {
      * @return void
      * @throws \coding_exception
      * @throws \moodle_exception
+     * @covers \local_intellidata\generator::create_tracking
      */
     public function test_tracking_generator() {
 

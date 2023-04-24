@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\forums;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\entities\forums\forumdiscussion;
 use local_intellidata\entities\forums\forumpost;

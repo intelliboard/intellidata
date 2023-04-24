@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\usertrackings;
-defined('MOODLE_INTERNAL') || die();
+
 
 class trackinglogdetailsmigration extends \local_intellidata\entities\migration {
     public $entity      = '\local_intellidata\entities\usertrackings\trackinglogdetail';

@@ -27,8 +27,6 @@ namespace local_intellidata\event;
 use core\event\base;
 use local_intellidata\helpers\ParamsHelper;
 
-defined('MOODLE_INTERNAL') || die();
-
 class local_intellidata_sql_request extends base {
 
     /**

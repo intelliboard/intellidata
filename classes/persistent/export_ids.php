@@ -24,8 +24,6 @@
 
 namespace local_intellidata\persistent;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class storage
  *

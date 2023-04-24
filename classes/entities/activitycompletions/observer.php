@@ -25,8 +25,6 @@
 
 namespace local_intellidata\entities\activitycompletions;
 
-defined('MOODLE_INTERNAL') || die();
-
 use local_intellidata\entities\activitycompletions\activitycompletion;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\events_service;

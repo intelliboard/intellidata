@@ -34,7 +34,7 @@ class OAuthRequest {
     public static $postinput = 'php://input';
 
     public function __construct($httpmethod, $httpurl, $parameters = null) {
-        @$parameters or $parameters = array();
+        @$parameters || $parameters = [];
         $this->parameters = $parameters;
         $this->httpmethod = $httpmethod;
         $this->httpurl = $httpurl;
@@ -49,11 +49,11 @@ class OAuthRequest {
         if ($_SERVER['SERVER_PORT'] != "80" && $_SERVER['SERVER_PORT'] != "443" && strpos(':', $_SERVER['HTTP_HOST']) < 0) {
             $port = ':' . $_SERVER['SERVER_PORT'];
         }
-        @$httpurl or $httpurl = $scheme .
+        @$httpurl || $httpurl = $scheme .
             '://' . $_SERVER['HTTP_HOST'] .
             $port .
             $_SERVER['REQUEST_URI'];
-        @$httpmethod or $httpmethod = $_SERVER['REQUEST_METHOD'];
+        @$httpmethod || $httpmethod = $_SERVER['REQUEST_METHOD'];
 
         // We weren't handed any parameters, so let's find the ones relevant to
         // this request.
@@ -86,7 +86,7 @@ class OAuthRequest {
      * pretty much a helper function to set up the request
      */
     public static function from_consumer_and_token($consumer, $token, $httpmethod, $httpurl, $parameters = null) {
-        @$parameters or $parameters = array();
+        @$parameters || $parameters = [];
         $defaults = array(
             "oauth_version" => self::$version,
             "oauth_nonce" => self::generate_nonce(),
@@ -206,7 +206,7 @@ class OAuthRequest {
         $host = $parts['host'];
         $path = @$parts['path'];
 
-        $port or $port = ($scheme == 'https') ? '443' : '80';
+        $port || $port = ($scheme == 'https') ? '443' : '80';
 
         if (($scheme == 'https' && $port != '443') || ($scheme == 'http' && $port != '80')) {
             $host = "$host:$port";

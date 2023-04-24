@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\logs;
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\helpers\RolesHelper;
 use local_intellidata\repositories\export_log_repository;
