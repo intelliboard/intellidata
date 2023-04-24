@@ -31,7 +31,7 @@ use local_intellidata\services\dbschema_service;
 use stdClass;
 use lang_string;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Users.
@@ -179,7 +179,7 @@ class entity {
         foreach ($def as $property => $definition) {
 
             // Include only return fields.
-            if (count($returnfields) and !in_array($property, $returnfields)) {
+            if (count($returnfields) && !in_array($property, $returnfields)) {
                 unset($def[$property]);
                 continue;
             }

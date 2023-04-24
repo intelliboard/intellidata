@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizquestionanswers;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Activities.
@@ -71,6 +71,11 @@ class quizquestionattempts extends \local_intellidata\entities\entity {
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when record modified.',
                 'default' => 0,
+            ),
+            'maxmark' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'The grade for this question,.',
+                'default' => '',
             )
         );
     }

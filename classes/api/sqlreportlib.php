@@ -167,7 +167,9 @@ class local_intellidata_sqlreportlib extends external_api {
                     $key = 'build_by_sql_search';
                     $query = "SELECT t.*
                                     FROM ({$query}) t
-                                   WHERE t." . $DB->sql_like('`' . $params->search_column . '`', ':' . $key, false, false);
+                                   WHERE t." . $DB->sql_like('`' . $params->search_column . '`',
+                                       ':' . $key, false, false
+                                    );
                     $sqlparams[$key] = '%' . $params->search_value . '%';
                 }
             }

@@ -25,7 +25,7 @@
 namespace local_intellidata\entities\quizquestions;
 use local_intellidata\helpers\ParamsHelper;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Activities.

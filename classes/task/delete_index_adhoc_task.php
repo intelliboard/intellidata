@@ -24,7 +24,7 @@
  */
 
 namespace local_intellidata\task;
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\helpers\DBManagerHelper;
 use local_intellidata\helpers\DebugHelper;

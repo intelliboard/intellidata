@@ -26,8 +26,6 @@ namespace local_intellidata\persistent;
 
 use local_intellidata\persistent\base;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class storage
  *

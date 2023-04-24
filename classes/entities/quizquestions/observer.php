@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\quizquestions;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\entities\quizquestions\quizquestion;
 use \local_intellidata\helpers\TrackingHelper;

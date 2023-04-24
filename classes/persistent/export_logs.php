@@ -27,8 +27,6 @@ namespace local_intellidata\persistent;
 use local_intellidata\persistent\base;
 use mod_h5pactivity\event\statement_received_testcase;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class storage
  *

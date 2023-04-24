@@ -25,7 +25,7 @@
 namespace local_intellidata\entities\quizquestionrelations;
 use local_intellidata\helpers\ParamsHelper;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Quiz Slots.

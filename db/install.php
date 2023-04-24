@@ -31,8 +31,6 @@ use local_intellidata\services\intelliboard_service;
 use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\DebugHelper;
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_local_intellidata_install() {
 
     // Set exportformat for csv.

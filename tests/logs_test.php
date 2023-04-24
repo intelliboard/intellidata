@@ -21,12 +21,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\persistent\logs;
 use local_intellidata\entities\users\user;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * User migration test case.
@@ -36,8 +34,13 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_logs_testcase extends \advanced_testcase {
+class logs_test extends \advanced_testcase {
 
+    /**
+     * Test create log.
+     *
+     * @covers \local_intellidata\persistent\logs::create
+     */
     public function test_create() {
 
         $this->resetAfterTest(true);

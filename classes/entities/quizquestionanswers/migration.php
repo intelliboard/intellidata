@@ -25,7 +25,7 @@
 namespace local_intellidata\entities\quizquestionanswers;
 use local_intellidata\helpers\DBHelper;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Users.

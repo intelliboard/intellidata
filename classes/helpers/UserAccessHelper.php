@@ -55,6 +55,6 @@ class UserAccessHelper {
      * @throws \coding_exception
      */
     public static function is_logged_in() {
-        return (isloggedin() and !isguestuser()) ? true : false;
+        return (isloggedin() && !isguestuser()) ? true : false;
     }
 }

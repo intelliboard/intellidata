@@ -24,7 +24,7 @@
  */
 namespace local_intellidata\entities\quizquestionanswers;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Users.

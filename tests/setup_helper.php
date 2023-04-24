@@ -24,7 +24,7 @@
  * @website    http://intelliboard.net/
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\helpers\SettingsHelper;
 

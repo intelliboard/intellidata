@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\exceptions;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * General invalid parameter exception.

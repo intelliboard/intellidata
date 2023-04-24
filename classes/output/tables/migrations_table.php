@@ -29,8 +29,6 @@ use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\datatypes_service;
 
-defined('MOODLE_INTERNAL') || die();
-
 class migrations_table {
 
     private $fields;

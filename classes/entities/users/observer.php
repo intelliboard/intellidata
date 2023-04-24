@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\users;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use \local_intellidata\entities\users\user;
 use \local_intellidata\helpers\TrackingHelper;

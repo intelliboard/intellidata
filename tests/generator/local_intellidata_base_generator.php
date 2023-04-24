@@ -24,9 +24,6 @@
  * @website    http://intelliboard.net/
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-
 /**
  * IntelliData data generator class
  *

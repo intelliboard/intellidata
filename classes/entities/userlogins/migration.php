@@ -24,7 +24,7 @@
  */
 namespace local_intellidata\entities\userlogins;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 class migration extends \local_intellidata\entities\migration {
 

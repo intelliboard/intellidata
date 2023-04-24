@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\services\export_service;
@@ -45,7 +45,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
  * @copyright  2022
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_migration_testcase extends \advanced_testcase {
+class migration_test extends \advanced_testcase {
 
     private $migrationrecordslimit = 20;
 
@@ -75,6 +75,7 @@ class local_intellidata_migration_testcase extends \advanced_testcase {
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
      */
     public function test_migration_cli() {
 
@@ -121,6 +122,9 @@ class local_intellidata_migration_testcase extends \advanced_testcase {
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
+     * @covers \local_intellidata\services\export_service
+     * @covers \local_intellidata\helpers\StorageHelper
      */
     public function test_migration_task() {
 
