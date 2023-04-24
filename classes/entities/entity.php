@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities;
-defined('MOODLE_INTERNAL') || die();
+
 
 use coding_exception;
 use core\invalid_persistent_exception;
@@ -216,7 +216,7 @@ abstract class entity {
         foreach ($def as $property => $definition) {
 
             // Include only return fields.
-            if (count($returnfields) and !in_array($property, $returnfields)) {
+            if (count($returnfields) && !in_array($property, $returnfields)) {
                 unset($def[$property]);
                 continue;
             }

@@ -208,7 +208,9 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
             new lang_string('file_compresstracking', $pluginname)
     ];
     if (method_exists($trackingcache, 'store_supports_get_all_keys') && $trackingcache->store_supports_get_all_keys()) {
-        $options[local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE] = new lang_string('cache_compresstracking', $pluginname);
+        $options[local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE] = new lang_string(
+            'cache_compresstracking', $pluginname
+        );
     }
     $setting = new admin_setting_configselect(
         $pluginname . '/' . $name,

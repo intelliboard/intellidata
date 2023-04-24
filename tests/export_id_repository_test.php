@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -43,7 +43,7 @@ use local_intellidata\persistent\tracking;
  * @copyright  2022
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_export_id_repository_testcase extends \advanced_testcase {
+class export_id_repository_test extends \advanced_testcase {
 
     /**
      * Test save() method.
@@ -51,6 +51,7 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
+     * @covers \local_intellidata\repositories\export_id_repository::save
      */
     public function test_save() {
         global $DB;
@@ -90,6 +91,8 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
+     * @covers \local_intellidata\repositories\export_id_repository::save
+     * @covers \local_intellidata\repositories\export_id_repository::clean_deleted_ids
      */
     public function test_clean_deleted_ids() {
         global $DB;
@@ -151,6 +154,8 @@ class local_intellidata_export_id_repository_testcase extends \advanced_testcase
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
+     * @covers \local_intellidata\repositories\export_id_repository::save
+     * @covers \local_intellidata\repositories\export_id_repository::get_deleted_ids
      */
     public function test_get_deleted_ids() {
         global $DB;

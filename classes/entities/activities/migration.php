@@ -25,8 +25,6 @@
 namespace local_intellidata\entities\activities;
 use local_intellidata\helpers\DBHelper;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for migration Users.
  *

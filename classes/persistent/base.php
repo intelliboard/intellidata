@@ -28,8 +28,6 @@ namespace local_intellidata\persistent;
 
 use stdClass;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class base
  *

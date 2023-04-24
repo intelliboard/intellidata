@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\helpers\StorageHelper;
 
@@ -41,13 +41,19 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_enrol_tracking_testcase extends \advanced_testcase {
+class enrol_tracking_test extends \advanced_testcase {
+
     public function setUp(): void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
     }
 
+    /**
+     * @covers \local_intellidata\entities\enrolments\enrolment
+     * @covers \local_intellidata\entities\enrolments\migration
+     * @covers \local_intellidata\entities\enrolments\observer::user_enrolment_created
+     */
     public function test_create() {
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(false);
@@ -91,6 +97,11 @@ class local_intellidata_enrol_tracking_testcase extends \advanced_testcase {
         $this->assertEquals($entitydata, $datarecorddata);
     }
 
+    /**
+     * @covers \local_intellidata\entities\enrolments\enrolment
+     * @covers \local_intellidata\entities\enrolments\migration
+     * @covers \local_intellidata\entities\enrolments\observer::user_enrolment_updated
+     */
     public function test_update() {
         global $DB;
 
@@ -148,6 +159,11 @@ class local_intellidata_enrol_tracking_testcase extends \advanced_testcase {
         $this->assertEquals($entitydata, $datarecorddata);
     }
 
+    /**
+     * @covers \local_intellidata\entities\enrolments\enrolment
+     * @covers \local_intellidata\entities\enrolments\migration
+     * @covers \local_intellidata\entities\enrolments\observer::user_enrolment_deleted
+     */
     public function test_delete() {
         global $DB;
 

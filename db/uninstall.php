@@ -31,8 +31,6 @@ use local_intellidata\repositories\export_id_repository;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\helpers\DebugHelper;
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_local_intellidata_uninstall() {
 
     // Remove database triggers.

@@ -25,7 +25,7 @@
 namespace local_intellidata\entities\forums;
 use local_intellidata\services\dbschema_service;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Forum Posts.

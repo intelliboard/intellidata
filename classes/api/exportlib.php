@@ -505,4 +505,97 @@ class local_intellidata_exportlib extends external_api {
         );
     }
 
+    /**
+     * @return external_function_parameters
+     */
+    public static function get_bbcollsessions_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_TEXT, 'Request params'),
+        ]);
+    }
+
+    /**
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_bbcollsessions($data) {
+        global $CFG, $DB;
+
+        require_once($CFG->libdir . "/adminlib.php");
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::get_bbcollsessions_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'sessionslist' => PARAM_TEXT,
+            'limit' => PARAM_INT,
+            'offset' => PARAM_INT,
+        ]);
+
+        $sessionslist = explode(',', $params['sessionslist']);
+
+        if (empty($sessionslist)) {
+            return [
+                'data' => 'Empty list of sessions',
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        if ($params['limit'] > 1000 || $params['limit'] < 1) {
+            return [
+                'data' => 'Limit is required',
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        if (!get_component_version('mod_collaborate')) {
+            return [
+                'data' => 'Blackboard Collaborate not installed',
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        list($in, $params) = $DB->get_in_or_equal($sessionslist);
+        $data = $DB->get_records_select(
+            'collaborate', "sessionuid $in", $params, '', 'id,course,sessionuid', $params['limit'], $params['offset']
+        );
+
+        $encryptionservice = new encryption_service();
+        return [
+            'data' => $encryptionservice->encrypt(json_encode($data)),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * @return external_single_structure
+     */
+    public static function get_bbcollsessions_returns() {
+        return new external_single_structure([
+            'data' => new external_value(PARAM_TEXT, 'Encrypted data'),
+            'status' => new external_value(PARAM_TEXT, 'Response status'),
+        ]);
+    }
+
 }

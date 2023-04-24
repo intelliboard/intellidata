@@ -1028,5 +1028,85 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023022801, 'local', 'intellidata');
     }
 
+    if ($oldversion < 2023030601) {
+
+        $configservice = new config_service(['survey' => datatypes_service::get_all_datatypes()['survey']]);
+        $configservice->setup_config('reset');
+
+        // Intellidata savepoint reached.
+        upgrade_plugin_savepoint(true, 2023030601, 'local', 'intellidata');
+    }
+
+    // Add new datatypes to the export.
+    if ($oldversion < 2023031701) {
+
+        $exportlogrepository = new export_log_repository();
+
+        // Add new datatypes to the plugin config and export.
+        $datatypes = [
+            'coursegroups',
+            'coursegroupmembers'
+        ];
+
+        foreach ($datatypes as $datatype) {
+            // Insert or update log record for datatype.
+            $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+            // Add new datatypes to export ad-hoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatype]
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        upgrade_plugin_savepoint(true, 2023031701, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023041800) {
+        // Add index to local_intellidata_tracking.
+        $table = new xmldb_table('local_intellidata_tracking');
+        $index = new xmldb_index('page_param_idx', XMLDB_INDEX_NOTUNIQUE, ['page', 'param']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        upgrade_plugin_savepoint(true, 2023041800, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023042000) {
+
+        $datatypes = [
+            'users', 'quizattempts', 'quizquestionattempts'
+        ];
+
+        $exportlogrepository = new export_log_repository();
+        foreach ($datatypes as $datatype) {
+            $record = datatypeconfig::get_record(['datatype' => $datatype]);
+
+            // Reset export logs.
+            $exportlogrepository->reset_datatype($datatype);
+
+            // Delete old export files.
+            $exportservice = new export_service();
+            $exportservice->delete_files([
+                'datatype' => $datatype,
+                'timemodified' => time()
+            ]);
+
+            // Add task to migrate records.
+            if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
+                $exporttask = new export_adhoc_task();
+                $exporttask->set_custom_data([
+                    'datatypes' => [$record->get('datatype')]
+                ]);
+
+                \core\task\manager::queue_adhoc_task($exporttask);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2023042000, 'local', 'intellidata');
+    }
+
     return true;
 }

@@ -24,7 +24,7 @@
  */
 namespace local_intellidata\entities\quizquestionanswers;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Users.
@@ -51,7 +51,7 @@ class quamigration extends \local_intellidata\entities\migration {
 
         $select = ($count) ?
             "SELECT COUNT(qua.id) as recordscount" :
-            "SELECT qua.id, qa.id AS attemptid, qua.questionid, qa.uniqueid, qa.timemodified";
+            "SELECT qua.id, qa.id AS attemptid, qua.questionid, qa.uniqueid, qa.timemodified, qua.maxmark";
 
         $sql = "$select
                 FROM {" . $this->table . "} " . $this->tablealias . "

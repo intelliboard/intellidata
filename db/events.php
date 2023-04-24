@@ -237,6 +237,10 @@ $observers = [
         'eventname' => '\mod_assign\event\submission_status_updated',
         'callback' => '\local_intellidata\entities\assignments\observer::submission_status_updated',
     ],
+    [
+        'eventname' => '\mod_assign\event\submission_status_viewed',
+        'callback' => '\local_intellidata\entities\assignments\observer::submission_status_viewed',
+    ],
 
     // Cohorts events.
     [
@@ -280,6 +284,30 @@ $observers = [
     [
         'eventname' => '\core\event\grade_item_deleted',
         'callback' => '\local_intellidata\entities\gradeitems\observer::grade_item_deleted',
+    ],
+
+    // Groups events.
+    [
+        'eventname' => '\core\event\group_created',
+        'callback' => '\local_intellidata\entities\groups\observer::group_created',
+    ],
+    [
+        'eventname' => '\core\event\group_deleted',
+        'callback' => '\local_intellidata\entities\groups\observer::group_deleted',
+    ],
+    [
+        'eventname' => '\core\event\group_updated',
+        'callback' => '\local_intellidata\entities\groups\observer::group_updated',
+    ],
+
+    // Group members events.
+    [
+        'eventname' => '\core\event\group_member_removed',
+        'callback' => '\local_intellidata\entities\groupmembers\observer::group_member_removed',
+    ],
+    [
+        'eventname' => '\core\event\group_member_added',
+        'callback' => '\local_intellidata\entities\groupmembers\observer::group_member_added',
     ],
 
     // Participations.

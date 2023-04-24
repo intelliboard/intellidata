@@ -25,7 +25,7 @@
 
 namespace local_intellidata\entities\coursecompletions;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 use local_intellidata\entities\coursecompletions\coursecompletion;
 use local_intellidata\helpers\TrackingHelper;

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\userinfodatas;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration UserInfoDatas.

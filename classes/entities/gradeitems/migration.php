@@ -24,7 +24,7 @@
  */
 namespace local_intellidata\entities\gradeitems;
 
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for migration Grade Items.

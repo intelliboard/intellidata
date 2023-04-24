@@ -21,15 +21,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\persistent\export_logs;
 use local_intellidata\entities\users\user;
 use local_intellidata\entities\courses\course;
 use local_intellidata\entities\enrolments\enrolment;
 use local_intellidata\repositories\export_log_repository;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * User migration test case.
@@ -39,7 +37,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_export_logs_testcase extends \advanced_testcase {
+class export_logs_test extends \advanced_testcase {
 
     private $userdatatype;
     private $coursedatatype;
@@ -53,6 +51,11 @@ class local_intellidata_export_logs_testcase extends \advanced_testcase {
         $this->exportlogrepository = new export_log_repository();
     }
 
+    /**
+     * Test export log table creation.
+     *
+     * @covers \local_intellidata\repositories\export_log_repository::save_last_processed_data
+     */
     public function test_save_last_processed_data() {
         $this->resetAfterTest(false);
 
@@ -77,6 +80,9 @@ class local_intellidata_export_logs_testcase extends \advanced_testcase {
         $this->assertEquals(true, export_logs::count_records(['datatype' => $this->coursedatatype]));
     }
 
+    /**
+     * @covers \local_intellidata\repositories\export_log_repository::save_migrated
+     */
     public function test_save_migrated() {
         $this->resetAfterTest(false);
 
@@ -91,6 +97,10 @@ class local_intellidata_export_logs_testcase extends \advanced_testcase {
         $this->assertEquals(1, $record->get('migrated'));
     }
 
+    /**
+     * @covers \local_intellidata\repositories\export_log_repository::save_last_processed_data
+     * @covers \local_intellidata\repositories\export_log_repository::get_last_processed_data
+     */
     public function test_get_last_processed_data() {
         $this->resetAfterTest(false);
 
@@ -110,6 +120,9 @@ class local_intellidata_export_logs_testcase extends \advanced_testcase {
         $this->assertEquals(0, $lastexportedtime);
     }
 
+    /**
+     * @covers \local_intellidata\repositories\export_log_repository::get_migrated_datatypes
+     */
     public function test_get_migrated_datatypes() {
         $this->resetAfterTest(false);
 
@@ -119,6 +132,10 @@ class local_intellidata_export_logs_testcase extends \advanced_testcase {
         $this->assertContains($this->userdatatype, $migrated);
     }
 
+    /**
+     * @covers \local_intellidata\repositories\export_log_repository::clear_migrated
+     * @covers \local_intellidata\repositories\export_log_repository::get_migrated_datatypes
+     */
     public function test_clear_migrated() {
         $this->resetAfterTest(true);
 

@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizzes;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Quiz Attempt.
@@ -82,11 +82,16 @@ class attempt extends \local_intellidata\entities\entity {
                 'description' => 'Attempt status.',
                 'default' => '',
             ),
-            'sumgrades' => array(
+            'score' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Attempt grade in percent.',
+                'default' => '',
+            ),
+            'points' => array(
                 'type' => PARAM_TEXT,
                 'description' => 'Attempt grade.',
                 'default' => '',
-            )
+            ),
         );
     }
 

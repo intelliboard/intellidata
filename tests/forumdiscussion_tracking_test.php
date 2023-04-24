@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,13 +42,19 @@ use local_intellidata\helpers\StorageHelper;
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_furumdiscussion_tracking_test extends \advanced_testcase {
+class forumdiscussion_tracking_test extends \advanced_testcase {
+
     public function setUp(): void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
     }
 
+    /**
+     * @covers \local_intellidata\entities\forums\forumdiscussion
+     * @covers \local_intellidata\entities\forums\discussionsmigration
+     * @covers \local_intellidata\entities\forums\observer::discussion_created
+     */
     public function test_create() {
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(false);
@@ -108,6 +114,11 @@ class local_intellidata_furumdiscussion_tracking_test extends \advanced_testcase
         $this->assertEquals($entitydata, $datarecorddata);
     }
 
+    /**
+     * @covers \local_intellidata\entities\forums\forumdiscussion
+     * @covers \local_intellidata\entities\forums\discussionsmigration
+     * @covers \local_intellidata\entities\forums\observer::discussion_updated
+     */
     public function test_update() {
         global $DB;
 
@@ -169,6 +180,11 @@ class local_intellidata_furumdiscussion_tracking_test extends \advanced_testcase
         $this->assertEquals($entitydata, $datarecorddata);
     }
 
+    /**
+     * @covers \local_intellidata\entities\forums\forumdiscussion
+     * @covers \local_intellidata\entities\forums\discussionsmigration
+     * @covers \local_intellidata\entities\forums\observer::discussion_moved
+     */
     public function test_move() {
         global $DB;
 
@@ -237,6 +253,11 @@ class local_intellidata_furumdiscussion_tracking_test extends \advanced_testcase
         $this->assertEquals($entitydata->id, $datarecorddata->id);
     }
 
+    /**
+     * @covers \local_intellidata\entities\forums\forumdiscussion
+     * @covers \local_intellidata\entities\forums\discussionsmigration
+     * @covers \local_intellidata\entities\forums\observer::discussion_deleted
+     */
     public function test_delete() {
         global $DB;
 

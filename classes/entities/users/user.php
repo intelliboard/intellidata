@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\users;
-defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for preparing data for Users.
@@ -101,6 +101,11 @@ class user extends \local_intellidata\entities\entity {
                 'type' => PARAM_INT,
                 'description' => 'User status.',
                 'default' => 1,
+            ),
+            'idnumber' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'User ID number.',
+                'default' => '',
             ),
         );
     }

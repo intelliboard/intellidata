@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use completion_info;
 use local_intellidata\helpers\StorageHelper;
@@ -42,13 +42,19 @@ require_once($CFG->dirroot . '/lib/completionlib.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_activitycompletion_tracking_testcase extends \advanced_testcase {
+class activitycompletion_tracking_test extends \advanced_testcase {
+
     public function setUp(): void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
     }
 
+    /**
+     * @covers \local_intellidata\entities\activitycompletions\activitycompletion
+     * @covers \local_intellidata\entities\activitycompletions\migration
+     * @covers \local_intellidata\entities\activitycompletions\observer::course_module_completion_updated
+     */
     public function test_update() {
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(true);

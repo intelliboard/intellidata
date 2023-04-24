@@ -24,8 +24,8 @@
 namespace local_intellidata\output\forms;
 
 use local_intellidata\persistent\datatypeconfig;
+defined('MOODLE_INTERNAL') || die;
 
-defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/formslib.php');
 

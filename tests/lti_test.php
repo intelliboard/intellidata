@@ -21,11 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata\tests;
+namespace local_intellidata;
 
 use local_intellidata\services\lti_service;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * User migration test case.
@@ -35,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class local_intellidata_lti_testcase extends \advanced_testcase {
+class lti_test extends \advanced_testcase {
 
     private $endpoint;
     private $key;
@@ -55,6 +53,9 @@ class local_intellidata_lti_testcase extends \advanced_testcase {
         set_config('ltidebug', $this->debug, 'local_intellidata');
     }
 
+    /**
+     * @covers \local_intellidata\services\lti_service
+     */
     public function test_save_last_processed_data() {
         $this->resetAfterTest(false);
 
