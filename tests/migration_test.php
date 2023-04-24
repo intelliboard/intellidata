@@ -35,6 +35,8 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 
 
 /**
@@ -44,6 +46,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
  * @subpackage intellidata
  * @copyright  2022
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ *
+ * @runTestsInSeparateProcesses
  */
 class migration_test extends \advanced_testcase {
 
