@@ -116,7 +116,7 @@ jobs:
         if: ${{ always() }}
         run: |
           moodle-plugin-ci phpunit --coverage-clover
-	      cat coverage.xml
+	  cat coverage.xml
           cd moodle
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
