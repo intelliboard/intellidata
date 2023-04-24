@@ -115,8 +115,7 @@ jobs:
       - name: PHPUnit tests
         if: ${{ always() }}
         run: |
-          moodle-plugin-ci phpunit --coverage-clover
-	  cat coverage.xml
+          moodle-plugin-ci phpunit --coverage-text
           cd moodle
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
