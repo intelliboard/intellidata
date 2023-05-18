@@ -24,6 +24,8 @@
  */
 namespace local_intellidata\entities\coursesections;
 
+use local_intellidata\helpers\DebugHelper;
+
 
 /**
  * Class for migration Course Sections.
@@ -50,7 +52,11 @@ class migration extends \local_intellidata\entities\migration {
         require_once($CFG->dirroot . '/course/lib.php');
 
         foreach ($records as $record) {
-            $record->name = $record->name ? : get_section_name($record->course, $record->section);
+            try {
+                $record->name = $record->name ? : get_section_name($record->course, $record->section);
+            } catch (\Exception $e) {
+                DebugHelper::error_log($e->getMessage());
+            }
 
             $entity = new $this->entity($record);
             $recorddata = $entity->export();
