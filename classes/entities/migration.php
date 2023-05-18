@@ -49,6 +49,10 @@ abstract class migration {
     public $tablealias          = null;
     public $crud                = 'c';
     public $datatype            = null;
+    public $writerecordslimits  = null;
+    public $migrationservice  = null;
+    public $exportservice  = null;
+    public $exportlogrepository  = null;
 
     /**
      * Migration constructor.
