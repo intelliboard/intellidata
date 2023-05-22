@@ -83,7 +83,7 @@ class cache_storage_repository extends file_storage_repository {
      * @return string
      */
     private function get_datatype_keys($cache) {
-        $cachekeys = $cache->get_all_keys();
+        $cachekeys = (method_exists($cache, 'get_all_keys')) ? $cache->get_all_keys() : [];
 
         $datatypekeys = [];
         foreach ($cachekeys as $key) {
