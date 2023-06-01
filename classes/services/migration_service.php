@@ -108,6 +108,8 @@ class migration_service {
         if (!$migration->can_migrate()) {
             $migration->set_migrated();
 
+            $migrationdatatype = MigrationHelper::get_next_table($this->tables, $tablename);
+            MigrationHelper::set_next_migration_params($migrationdatatype);
             mtrace("Migration for table $tablename cannot be processed...");
             return false;
         }
