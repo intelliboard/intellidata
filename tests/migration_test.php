@@ -25,6 +25,7 @@
 
 namespace local_intellidata;
 
+use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
@@ -65,12 +66,45 @@ class migration_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
         setup_helper::disable_eventstracking();
         setup_helper::set_migration_limit($this->migrationrecordslimit);
+    }
+
+    /**
+     * Test for enabled migration task.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
+     */
+    public function test_migration_task_enabled() {
+        global $DB;
+
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(true);
+        }
+
+        MigrationHelper::enabled_migration_task();
+
+        // Check disabling the task - export_files_task.
+        $this->assertTrue(
+            $DB->record_exists('task_scheduled', ['classname' => '\local_intellidata\task\export_files_task', 'disabled' => 1])
+        );
+
+        // Check disabling the task - export_data_task.
+        $this->assertTrue(
+            $DB->record_exists('task_scheduled', ['classname' => '\local_intellidata\task\export_data_task', 'disabled' => 1])
+        );
+
+        // Check enablement the task - migration_task.
+        $this->assertTrue(
+            $DB->record_exists('task_scheduled', ['classname' => MigrationHelper::MIGRATIONS_TASK_CLASS, 'disabled' => 0])
+        );
     }
 
     /**

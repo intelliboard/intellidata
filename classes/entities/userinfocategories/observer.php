@@ -71,7 +71,7 @@ class observer {
      * @param \core\event\user_info_category_deleted $event
      */
     public static function user_info_category_deleted(\core\event\user_info_category_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $userinfocategory = new \stdClass();
@@ -84,8 +84,8 @@ class observer {
     /**
      * Export event method.
      *
+     * @param $userinfocategory
      * @param $eventdata
-     * @param $eventname
      * @param array $fields
      * @throws \core\invalid_persistent_exception
      */
@@ -94,7 +94,6 @@ class observer {
 
         $entity = new userinfocategory($userinfocategory, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

@@ -175,6 +175,13 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => false
     ],
+    'local_intellidata_get_adhoc_tasks' => [
+        'classname'     => 'local_intellidata_logslib',
+        'methodname'    => 'get_adhoc_tasks',
+        'classpath'     => 'local/intellidata/classes/api/logslib.php',
+        'description'   => 'Get plugin scheduled adhoc tasks list from Moodle.',
+        'type'          => 'read'
+    ]
 ];
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -199,7 +206,8 @@ $services = [
             'local_intellidata_get_plugin_config',
             'local_intellidata_set_plugin_config',
             'local_intellidata_get_data',
-            'local_intellidata_get_bbcollsessions_data'
+            'local_intellidata_get_bbcollsessions_data',
+            'local_intellidata_get_adhoc_tasks'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

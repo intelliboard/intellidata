@@ -68,7 +68,6 @@ class observer {
 
         $entity = new participation($record, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

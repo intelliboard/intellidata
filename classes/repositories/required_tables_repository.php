@@ -37,7 +37,6 @@ class required_tables_repository extends base_tables_repository {
     public static function exclude_tables($dbtables) {
 
         $tablestodelete = self::get_excluded_tables($dbtables);
-
         if (count($tablestodelete)) {
             foreach ($tablestodelete as $key) {
                 unset($dbtables[$key]);
@@ -107,15 +106,6 @@ class required_tables_repository extends base_tables_repository {
                 'default' => 'с',
                 'null' => false
             ];
-
-            if (!empty($datatype['observer'])) {
-                $entityfields['eventname'] = [
-                    'type' => PARAM_TEXT,
-                    'description' => 'Event name.',
-                    'default' => '',
-                    'null' => false
-                ];
-            }
 
             $entities[$datatype['name']] = [
                 'name' => $datatype['name'],

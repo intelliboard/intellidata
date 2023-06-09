@@ -140,4 +140,18 @@ class config_repository {
 
         return false;
     }
+
+    /**
+     * Enable config for specific datatype.
+     *
+     * @param $datatype
+     * @return bool
+     * @throws \coding_exception
+     */
+    public function enable(string $datatype) {
+        if ($record = datatypeconfig::get_record(['datatype' => $datatype])) {
+            $record->set('status', datatypeconfig::STATUS_ENABLED);
+            $record->save();
+        }
+    }
 }

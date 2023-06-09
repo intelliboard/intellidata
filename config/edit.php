@@ -26,10 +26,7 @@ use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\config_service;
 use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\helpers\DBHelper;
 use local_intellidata\repositories\export_log_repository;
-use local_intellidata\services\export_service;
-use local_intellidata\task\export_adhoc_task;
 use local_intellidata\task\create_index_adhoc_task;
 use local_intellidata\task\delete_index_adhoc_task;
 
@@ -56,27 +53,9 @@ if (!$record) {
 }
 
 $exportlogrepository = new export_log_repository();
-
+$configservice = new config_service();
 if ($action == 'reset') {
-
-    // Reset export logs.
-    $exportlogrepository->reset_datatype($datatype);
-
-    // Delete old export files.
-    $exportservice = new export_service();
-    $exportservice->delete_files([
-        'datatype' => $datatype,
-        'timemodified' => time()
-    ]);
-
-    // Add task to migrate records.
-    if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
-        $exporttask = new export_adhoc_task();
-        $exporttask->set_custom_data([
-            'datatypes' => [$record->get('datatype')]
-        ]);
-        \core\task\manager::queue_adhoc_task($exporttask);
-    }
+    $configservice->reset_config_datatype($record);
 
     redirect($returnurl, get_string('resetmsg', 'local_intellidata'));
 
@@ -107,13 +86,12 @@ if ($action == 'reset') {
 
     redirect($returnurl, get_string('taskaddedforindexdeletion', 'local_intellidata'));
 }
-
-if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
-    throw new \moodle_exception('wrongdatatype', 'local_intellidata');
-}
+$isrequired = $record->is_required_by_default();
 
 $datatypeconfig = datatypes_service::get_datatype($datatype);
-$datatypeconfig['timemodifiedfields'] = config_service::get_available_timemodified_fields($datatype);
+if (!$isrequired) {
+    $datatypeconfig['timemodifiedfields'] = config_service::get_available_timemodified_fields($datatypeconfig['table']);
+}
 
 $exportlog = $exportlogrepository->get_datatype_export_log($datatype);
 
@@ -127,7 +105,8 @@ $PAGE->set_heading($title);
 $editform = new local_intellidata_edit_config(null, [
     'data' => $record->to_record(),
     'config' => (object)$datatypeconfig,
-    'exportlog' => $exportlog
+    'exportlog' => $exportlog,
+    'is_required' => $isrequired
 ]);
 
 if ($editform->is_cancelled()) {
@@ -135,78 +114,10 @@ if ($editform->is_cancelled()) {
 } else if ($data = $editform->get_data()) {
 
     if (!empty($data->reset)) {
-        $data = (new config_service)->create_config($datatype, $datatypeconfig);
+        $data = $configservice->create_config($datatype, $datatypeconfig);
         $returnurl = $pageurl;
     } else {
-
-        // Delete index for old timemodified_field.
-        if (!empty($record->get('tableindex')) &&
-            $data->timemodified_field != $record->get('timemodified_field')) {
-
-            $deleteindextask = new delete_index_adhoc_task();
-            $deleteindextask->set_custom_data([
-                'datatype' => $record->get('datatype'),
-                'tableindex' => $record->get('tableindex')
-            ]);
-            \core\task\manager::queue_adhoc_task($deleteindextask);
-
-            $data->tableindex = '';
-        }
-
-        // Validate export rules.
-        if (!empty($data->timemodified_field)) {
-            if (!isset($datatypeconfig['timemodifiedfields'][$data->timemodified_field])) {
-                $data->timemodified_field = '';
-                $data->filterbyid = datatypeconfig::STATUS_DISABLED;
-                $data->rewritable = datatypeconfig::STATUS_ENABLED;
-            } else {
-                $data->filterbyid = datatypeconfig::STATUS_DISABLED;
-                $data->rewritable = datatypeconfig::STATUS_DISABLED;
-            }
-        } else if ($data->filterbyid) {
-            $data->timemodified_field = '';
-            $data->rewritable = datatypeconfig::STATUS_DISABLED;
-        } else if ($data->rewritable) {
-            $data->timemodified_field = '';
-            $data->filterbyid = datatypeconfig::STATUS_DISABLED;
-        } else {
-            $data->rewritable = datatypeconfig::STATUS_ENABLED;
-        }
-
-        $record->set('events_tracking', (!empty($data->events_tracking))
-            ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED);
-        $record->set('timemodified_field', $data->timemodified_field);
-        $record->set('filterbyid', $data->filterbyid);
-        $record->set('rewritable', $data->rewritable);
-        $record->set('status', $data->status);
-        $record->set('tableindex', $data->tableindex);
-        $record->save();
-
-        // Process export log.
-        if ((!$data->enableexport || !$data->status) && !empty($exportlog)) {
-
-            // Remove triggers.
-            try {
-                $datatype = datatypes_service::get_datatypes()[$datatype];
-                DBHelper::remove_deleted_id_triger($datatype['name'], $datatype['table']);
-            } catch (moodle_exception $e) {
-                DebugHelper::error_log($e->getMessage());
-            }
-
-            // Remove datatype from the export logs table.
-            $exportlogrepository->remove_datatype($datatype['name']);
-        } else if (empty($exportlog) && $data->enableexport) {
-            // Add datatype to the export logs table.
-            $exportlogrepository->insert_datatype($datatype);
-
-            // Create triggers.
-            try {
-                $datatype = datatypes_service::get_datatypes()[$datatype];
-                DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
-            } catch (moodle_exception $e) {
-                DebugHelper::error_log($e->getMessage());
-            }
-        }
+        $configservice->save_config($record, $data);
     }
 
     redirect($returnurl, get_string('configurationsaved', 'local_intellidata'));

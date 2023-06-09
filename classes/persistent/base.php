@@ -79,7 +79,7 @@ abstract class base extends \core\persistent {
      * @return bool
      * @throws \coding_exception
      */
-    public function exists(): bool {
+    public function exists() {
         return ((int) $this->get('id'));
     }
 

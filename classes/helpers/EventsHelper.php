@@ -26,6 +26,9 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\repositories\config_repository;
+use local_intellidata\persistent\datatypeconfig;
+
 class EventsHelper {
 
     const CRUD_CREATED = 'c';
@@ -33,4 +36,46 @@ class EventsHelper {
     const CRUD_UPDATED = 'u';
     const CRUD_DELETED = 'd';
 
+    /**
+     * Returns list of deleted events.
+     *
+     * @return array
+     */
+    public static function deleted_eventslist() {
+        $eventslist = self::events_list();
+        return self::filter_deleted_events($eventslist);
+    }
+
+    /**
+     * Retrievs list of all events.
+     *
+     * @return array
+     */
+    protected static function events_list() {
+        return (method_exists('\tool_monitor\eventlist', 'get_all_eventlist'))
+            ? \tool_monitor\eventlist::get_all_eventlist(true)
+            : [];
+    }
+
+    /**
+     * Filters deleted events from the list.
+     *
+     * @param array $eventslist
+     * @return array
+     */
+    protected static function filter_deleted_events(array $eventslist) {
+        $filteredevents = [];
+
+        if (count($eventslist)) {
+            foreach ($eventslist as $eventclass => $eventname) {
+                $eventdata = $eventclass::get_static_info();
+                if (isset($eventdata['crud']) && $eventdata['crud'] == self::CRUD_DELETED &&
+                    !empty($eventdata['objecttable'])) {
+                    $filteredevents[$eventdata['objecttable']] = $eventclass;
+                }
+            }
+        }
+
+        return $filteredevents;
+    }
 }

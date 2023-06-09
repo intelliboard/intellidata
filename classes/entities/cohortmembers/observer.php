@@ -57,7 +57,7 @@ class observer {
      * @param \core\event\cohort_member_removed $event
      */
     public static function cohort_member_removed(\core\event\cohort_member_removed $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $cohortmember = new \stdClass();
@@ -73,7 +73,6 @@ class observer {
 
         $entity = new cohortmember($cohortmemberdata, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

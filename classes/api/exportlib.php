@@ -393,15 +393,12 @@ class local_intellidata_exportlib extends external_api {
 
         // Insert or update log record for datatype.
         $exportlogrepository = new export_log_repository();
+        $exportdatatypes = [];
         try {
             foreach ($params['datatypes'] as $datatypename) {
+                $datatypename = datatypes_service::generate_optional_datatype($datatypename);
                 $exportlogrepository->insert_datatype($datatypename);
-                try {
-                    $datatype = datatypes_service::get_datatypes()[$datatypename];
-                    DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
-                } catch (moodle_exception $e) {
-                    DebugHelper::error_log($e->getMessage());
-                }
+                $exportdatatypes[] = $datatypename;
             }
         } catch (\moodle_exception $e) {
             return [
@@ -414,7 +411,7 @@ class local_intellidata_exportlib extends external_api {
         if ($params['exportfiles']) {
             $exporttask = new export_adhoc_task();
             $exporttask->set_custom_data([
-                'datatypes' => $params['datatypes'],
+                'datatypes' => $exportdatatypes,
                 'callbackurl' => $params['callbackurl']
             ]);
             \core\task\manager::queue_adhoc_task($exporttask);

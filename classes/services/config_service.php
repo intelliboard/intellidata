@@ -24,9 +24,16 @@
  */
 
 namespace local_intellidata\services;
+
+use local_intellidata\helpers\EventsHelper;
+use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\system_tables_repository;
+use local_intellidata\task\delete_index_adhoc_task;
+use local_intellidata\task\export_adhoc_task;
 
 class config_service {
 
@@ -57,7 +64,6 @@ class config_service {
      * @return array|mixed
      */
     public function get_datatypes() {
-
         if (count($this->datatypes)) {
             foreach ($this->datatypes as $datatypename => $defaultconfig) {
                 $this->apply_config($datatypename, $defaultconfig);
@@ -68,6 +74,8 @@ class config_service {
     }
 
     /**
+     * Setup config for all datatypes.
+     *
      * @return array|mixed
      */
     public function setup_config($forceresetconfig = true) {
@@ -78,6 +86,31 @@ class config_service {
         }
 
         $this->delete_missed_tables_config();
+
+        // Insert deleted tables events.
+        $this->apply_optional_tables_events();
+    }
+
+    public function reset_config_datatype($record) {
+        $exportlogrepository = new export_log_repository();
+        // Reset export logs.
+        $exportlogrepository->reset_datatype($record->get('datatype'));
+
+        // Delete old export files.
+        $exportservice = new export_service();
+        $exportservice->delete_files([
+            'datatype' => $record->get('datatype'),
+            'timemodified' => time()
+        ]);
+
+        // Add task to migrate records.
+        if ($record->is_required_by_default()) {
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$record->get('datatype')]
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
     }
 
     /**
@@ -86,7 +119,7 @@ class config_service {
      * @param $datatypename
      * @param $defaultconfig
      */
-    public function apply_config($datatypename, $defaultconfig, $forceresetconfig = false) {
+    private function apply_config($datatypename, $defaultconfig, $forceresetconfig = false) {
 
         // Setup config if not exists.
         if (!isset($this->config[$datatypename]) || $forceresetconfig) {
@@ -106,18 +139,19 @@ class config_service {
             $this->datatypes[$datatypename]['observer'] = false;
         }
 
+        $isoptional = datatypes_service::is_optional($datatypename, $config->tabletype);
         // Rewrite timemodified field.
         if (isset($config->timemodified_field)) {
             if (!empty($config->timemodified_field)) {
-                if ($config->tabletype == datatypeconfig::TABLETYPE_OPTIONAL) {
+                if ($isoptional) {
                     $this->datatypes[$datatypename]['timemodified_field'] = (
-                        $this->dbschema->column_exists($datatypename, $config->timemodified_field)
+                        $this->dbschema->column_exists($this->datatypes[$datatypename]['table'], $config->timemodified_field)
                     ) ? $config->timemodified_field : '';
                 } else {
                     $this->datatypes[$datatypename]['timemodified_field'] = $config->timemodified_field;
                 }
             } else {
-                $this->datatypes[$datatypename]['timemodified_field'] = ($config->tabletype == datatypeconfig::TABLETYPE_REQUIRED &&
+                $this->datatypes[$datatypename]['timemodified_field'] = (datatypes_service::is_required_by_default($datatypename) &&
                     !empty($this->datatypes[$datatypename]['timemodified_field']))
                         ? $this->datatypes[$datatypename]['timemodified_field'] : '';
             }
@@ -126,11 +160,17 @@ class config_service {
         // Set filterbyid param.
         $this->datatypes[$datatypename]['filterbyid'] = (bool)$config->filterbyid;
 
+        // Set tabletype param.
+        $this->datatypes[$datatypename]['tabletype'] = (int)$config->tabletype;
+
         // Set table rewritable.
-        if ($config->tabletype == datatypeconfig::TABLETYPE_OPTIONAL) {
+        if ($isoptional) {
             $this->datatypes[$datatypename]['rewritable'] = !$config->filterbyid &&
                 (!empty($config->rewritable) || empty($this->datatypes[$datatypename]['timemodified_field']));
         }
+
+        // Set deleted event param.
+        $this->datatypes[$datatypename]['deletedevent'] = $config->deletedevent;
 
         $this->datatypes[$datatypename]['params'] = $config->params;
     }
@@ -159,6 +199,91 @@ class config_service {
     }
 
     /**
+     * @param \local_intellidata\persistent\datatypeconfig $recordconfig
+     * @param \stdClass $dataconfig
+     * @return void
+     */
+    public function save_config($recordconfig, $dataconfig) {
+        // Delete index for old timemodified_field.
+        if (!empty($recordconfig->get('tableindex')) &&
+            $dataconfig->timemodified_field != $recordconfig->get('timemodified_field')) {
+            $this->create_delete_index_adhoc_task($recordconfig);
+            $dataconfig->tableindex = '';
+        }
+
+        if (!$recordconfig->is_required_by_default()) {
+            $timemodifiedfields = self::get_available_timemodified_fields($recordconfig->get('datatype'));
+            // Validate export rules.
+            if (!empty($dataconfig->timemodified_field)) {
+                if (!isset($timemodifiedfields[$dataconfig->timemodified_field])) {
+                    $dataconfig->timemodified_field = '';
+                    $dataconfig->filterbyid = datatypeconfig::STATUS_DISABLED;
+                    $dataconfig->rewritable = datatypeconfig::STATUS_ENABLED;
+                } else {
+                    $dataconfig->filterbyid = datatypeconfig::STATUS_DISABLED;
+                    $dataconfig->rewritable = datatypeconfig::STATUS_DISABLED;
+                }
+            } else if ($dataconfig->filterbyid) {
+                $dataconfig->timemodified_field = '';
+                $dataconfig->rewritable = datatypeconfig::STATUS_DISABLED;
+            } else if ($dataconfig->rewritable) {
+                $dataconfig->timemodified_field = '';
+                $dataconfig->filterbyid = datatypeconfig::STATUS_DISABLED;
+            } else {
+                $dataconfig->rewritable = datatypeconfig::STATUS_ENABLED;
+            }
+
+            $recordconfig->set('events_tracking', (!empty($dataconfig->events_tracking))
+                ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED);
+            $recordconfig->set('timemodified_field', $dataconfig->timemodified_field);
+            $recordconfig->set('filterbyid', $dataconfig->filterbyid);
+            $recordconfig->set('rewritable', $dataconfig->rewritable);
+            $recordconfig->set('status', $dataconfig->status);
+            $recordconfig->set('tableindex', $dataconfig->tableindex);
+        } else {
+            $recordconfig->set('tabletype', $dataconfig->tabletype);
+        }
+
+        $recordconfig->save();
+
+        if (!$recordconfig->is_required_by_default()) {
+            // Process export log.
+            $this->export_log($recordconfig, $dataconfig);
+        }
+    }
+
+    /**
+     * @param \local_intellidata\persistent\datatypeconfig $recordconfig
+     * @param \stdClass $dataconfig
+     * @return void
+     */
+    private function export_log($recordconfig, $dataconfig) {
+        $datatype = $recordconfig->get('datatype');
+        $exportlogrepository = new export_log_repository();
+        $exportlog = $exportlogrepository->get_datatype_export_log($datatype);
+        if ((!$dataconfig->enableexport || !$dataconfig->status) && !empty($exportlog)) {
+            // Remove datatype from the export logs table.
+            $exportlogrepository->remove_datatype($datatype);
+        } else if (empty($exportlog) && $dataconfig->enableexport) {
+            // Add datatype to the export logs table.
+            $exportlogrepository->insert_datatype($datatype);
+        }
+    }
+
+    /**
+     * @param \local_intellidata\persistent\datatypeconfig $recordconfig
+     * @return mixed
+     */
+    private function create_delete_index_adhoc_task($recordconfig) {
+        $deleteindextask = new delete_index_adhoc_task();
+        $deleteindextask->set_custom_data([
+            'datatype' => $recordconfig->get('datatype'),
+            'tableindex' => $recordconfig->get('tableindex')
+        ]);
+        \core\task\manager::queue_adhoc_task($deleteindextask);
+    }
+
+    /**
      * Returns config record status.
      *
      * @param $conf
@@ -170,7 +295,7 @@ class config_service {
             return datatypeconfig::STATUS_ENABLED;
         }
 
-        if (count(system_tables_repository::get_excluded_tables([$conf['name']]))) {
+        if (count(system_tables_repository::get_excluded_tables([$conf['table']]))) {
             return datatypeconfig::STATUS_DISABLED;
         }
 
@@ -202,11 +327,13 @@ class config_service {
     /**
      * Returns timemodified field based on DB table.
      *
-     * @param $datatype
+     * @param string $datatypetable
      * @return array|false
      */
-    public static function get_available_timemodified_fields($datatype) {
-        return (new dbschema_service())->get_available_updates_fieldnames($datatype);
+    public static function get_available_timemodified_fields($datatypetable) {
+        return (new dbschema_service())->get_available_updates_fieldnames(
+            datatypes_service::get_optional_table($datatypetable)
+        );
     }
 
     /**
@@ -243,6 +370,33 @@ class config_service {
         }
 
         return false;
+    }
+
+    /**
+     * Returns exportids configuration.
+     *
+     * @param $datatype
+     * @return array|false
+     */
+    public static function get_exportids_config_optional($datatype = null) {
+
+        // Do not export deleted records when globally disabled.
+        if (!SettingsHelper::get_setting('exportids')) {
+            return false;
+        }
+
+        // Do not export deleted records when deleted event exists and is tracking.
+        if ((int)SettingsHelper::get_setting('exportdeletedrecords') == SettingsHelper::EXPORTDELETED_TRACKEVENTS
+            && !empty($datatype->deletedevent)) {
+            return false;
+        }
+
+        // Rewritable will export all records each time and do not need to track deleted records.
+        if (!empty($datatype->rewritable)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -291,6 +445,18 @@ class config_service {
                 'timemodified_field' => '',
                 'filterbyid' => false,
                 'rewritable' => true
+            ],
+            'tenant' => [
+                'filterbyid' => true,
+                'rewritable' => false
+            ],
+            'tool_tenant' => [
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
+            ],
+            'tool_tenant_user' => [
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
             ]
         ];
 
@@ -313,8 +479,34 @@ class config_service {
                 }
 
                 // Delete missed tables.
-                if (!$this->dbschema->table_exists($config->datatype)) {
+                $datatype = datatypes_service::get_optional_table($config->datatype);
+                if (!$this->dbschema->table_exists($datatype)) {
                     $this->repo->delete($config->datatype);
+                }
+            }
+        }
+    }
+
+    /**
+     * Apply events tracking for optional tables.
+     *
+     * @throws \coding_exception
+     */
+    private function apply_optional_tables_events() {
+        if (count($this->config)) {
+            $eventslist = EventsHelper::deleted_eventslist();
+
+            foreach ($this->config as $config) {
+                if ($config->tabletype != datatypeconfig::TABLETYPE_OPTIONAL) {
+                    continue;
+                }
+
+                $table = datatypes_service::get_optional_table($config->datatype);
+                if (isset($eventslist[$table])) {
+                    $config->deletedevent = $eventslist[$table];
+                    unset($config->params);
+
+                    $this->repo->save($config->datatype, $config);
                 }
             }
         }

@@ -87,7 +87,7 @@ class observer {
      * @param \mod_forum\event\discussion_deleted $event
      */
     public static function discussion_deleted(\mod_forum\event\discussion_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $discussion = new \stdClass();
@@ -143,7 +143,7 @@ class observer {
      * @param \mod_forum\event\post_deleted $event
      */
     public static function post_deleted(\mod_forum\event\post_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $post = new \stdClass();
@@ -158,7 +158,6 @@ class observer {
 
         $entity = new forumdiscussion($discussion, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
@@ -169,7 +168,6 @@ class observer {
 
         $entity = new forumpost($post, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

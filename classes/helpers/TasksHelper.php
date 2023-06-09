@@ -27,6 +27,8 @@
 namespace local_intellidata\helpers;
 
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\DebugHelper;
+use core\task\manager;
 
 class TasksHelper {
 
@@ -37,6 +39,8 @@ class TasksHelper {
     const LOG_TABLE = 'task_log';
 
     /**
+     * Validate adhoc tasks.
+     *
      * @param $table
      * @return bool
      * @throws \dml_exception
@@ -49,7 +53,7 @@ class TasksHelper {
             return true;
         }
 
-        $runningtasks = \core\task\manager::get_running_tasks();
+        $runningtasks = manager::get_running_tasks();
         $adhoctasks = $DB->get_records('task_adhoc', ['classname' => '\local_intellidata\task\export_adhoc_task']);
 
         if (count($runningtasks)) {
@@ -159,7 +163,31 @@ class TasksHelper {
             $task->set_next_run_time($nextruntime);
         }
 
-        \core\task\manager::queue_adhoc_task($task);
+        manager::queue_adhoc_task($task);
+    }
+
+    /**
+     * Delete adhoc task.
+     *
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function delete_adhoc_task(int $taskid) {
+        global $DB;
+
+        $record = $DB->get_record('task_adhoc', ['id' => $taskid]);
+
+        if ($record) {
+            $task = manager::adhoc_task_from_record($record);
+
+            // Complete task if it is running.
+            if ($task->get_timestarted() && $task->get_pid()) {
+                manager::adhoc_task_complete($task);
+            } else {
+                // Delete task if it is not running.
+                $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
+            }
+        }
     }
 
     /**
@@ -170,5 +198,23 @@ class TasksHelper {
      */
     public static function init_refresh_export_progress_adhoc_task() {
         self::create_adhoc_task('refresh_export_progress_adhoc_task');
+    }
+
+
+    /**
+     * Get IntelliData adhoc tasks scheduled.
+     *
+     * @param array $params
+     * @return array
+     * @throws \dml_exception
+     */
+    public static function get_adhoc_tasks() {
+        global $DB;
+
+        return $DB->get_records_select(
+            "task_adhoc",
+            'component = :component',
+            ['component' => ParamsHelper::PLUGIN]
+        );
     }
 }

@@ -87,7 +87,7 @@ class observer {
      * @param \core\event\course_deleted $event
      */
     public static function course_deleted(\core\event\course_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $course = new \stdClass();
@@ -102,7 +102,6 @@ class observer {
 
         $entity = new course($coursedata, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

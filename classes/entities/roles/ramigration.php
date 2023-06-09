@@ -56,7 +56,8 @@ class ramigration extends \local_intellidata\entities\migration {
 
         $select = ($count) ?
             "SELECT COUNT(ra.id) as recordscount" :
-            "SELECT ra.id, ra.roleid, ra.userid, ra.timemodified, cxt.contextlevel, cxt.instanceid as courseid";
+            "SELECT ra.id, ra.roleid, ra.userid, ra.timemodified, ra.component,
+                    ra.itemid, cxt.contextlevel, cxt.instanceid as courseid";
 
         $sql = "$select
                   FROM {role_assignments} ra
@@ -78,7 +79,6 @@ class ramigration extends \local_intellidata\entities\migration {
             $entity = new $this->entity($record);
             $recorddata = $entity->export();
             $recorddata->recordtimecreated = $record->timemodified;
-            $recorddata->eventname = $this->eventname;
 
             yield $recorddata;
         }

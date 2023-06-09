@@ -34,6 +34,8 @@ class events_service {
     protected $eventtype            = null;
 
     /**
+     * Events service constructor.
+     *
      * @param $eventtype
      */
     public function __construct($eventtype) {
@@ -42,6 +44,8 @@ class events_service {
     }
 
     /**
+     * Track event.
+     *
      * @param $eventdata
      */
     public function track($eventdata) {

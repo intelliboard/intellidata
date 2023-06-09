@@ -76,7 +76,6 @@ class observer {
 
         $entity = new userlogin($userdata, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

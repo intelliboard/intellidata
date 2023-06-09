@@ -33,6 +33,7 @@ use local_intellidata\services\export_service;
 
 class MigrationHelper {
     const MIGRATIONS_COMPLETED_STATUS = 'migrationcompleted';
+    const MIGRATIONS_TASK_CLASS = '\local_intellidata\task\migration_task';
 
     /**
      * @var string[]
@@ -41,7 +42,7 @@ class MigrationHelper {
         '\local_intellidata\task\cleaner_task',
         '\local_intellidata\task\export_data_task',
         '\local_intellidata\task\export_files_task',
-        '\local_intellidata\task\migration_task'
+        self::MIGRATIONS_TASK_CLASS
     ];
 
     /**
@@ -95,6 +96,16 @@ class MigrationHelper {
             if (!in_array($task, $exclude)) {
                 self::set_disabled_sheduled_task($task, false);
             }
+        }
+    }
+
+    public static function enabled_migration_task() {
+        global $DB;
+
+        $classname = self::MIGRATIONS_TASK_CLASS;
+        if ($DB->record_exists('task_scheduled', ['classname' => $classname])) {
+            self::enable_sheduled_tasks();
+            self::disable_sheduled_tasks([self::MIGRATIONS_TASK_CLASS]);
         }
     }
 

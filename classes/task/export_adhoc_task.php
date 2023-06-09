@@ -54,6 +54,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
     public function execute() {
 
         if (TrackingHelper::enabled()) {
+            raise_memory_limit(MEMORY_HUGE);
 
             // Divide adhoc task to smaller tasks if needed.
             if ((int)SettingsHelper::get_setting('divideexportbydatatype')) {

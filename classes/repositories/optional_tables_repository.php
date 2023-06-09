@@ -35,7 +35,6 @@ class optional_tables_repository extends base_tables_repository {
      * @return mixed
      */
     public static function exclude_tables($dbtables) {
-
         $tablestodelete = self::get_excluded_tables($dbtables);
 
         if (count($tablestodelete)) {

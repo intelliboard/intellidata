@@ -88,7 +88,6 @@ class observer {
 
         $entity = new coursecompletion($data, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
