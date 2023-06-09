@@ -29,8 +29,9 @@ namespace local_intellidata\repositories;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\persistent\export_logs;
+use local_intellidata\services\config_service;
 use local_intellidata\services\dbschema_service;
-use local_intellidata\services\datatypes_service;
+use local_intellidata\services\datatypes_service;;
 
 class export_log_repository {
 
@@ -246,6 +247,7 @@ class export_log_repository {
      */
     public function get_optional_datatypes() {
         $records = export_logs::get_records(['tabletype' => export_logs::TABLE_TYPE_CUSTOM]);
+
         $config = config_repository::get_optional_datatypes();
 
         $result = [];
@@ -260,14 +262,35 @@ class export_log_repository {
             }
 
             // Exclude datatype if there is no tables in DB.
-            if (!$dbschema->table_exists($datatype)) {
+            if (!$dbschema->table_exists(datatypes_service::get_optional_table($datatype))) {
                 continue;
             }
 
-            $result[$datatype] = $record;
+            $result[$datatype] = $this->apply_config_to_optional_datatype(
+                $record,
+                isset($config[$datatype]) ? $config[$datatype] : null
+            );
         }
 
         return $result;
+    }
+
+    /**
+     * Apply config to optional datatype.
+     *
+     * @param $datatyperecord
+     * @param $config
+     * @return mixed
+     */
+    public function apply_config_to_optional_datatype($datatyperecord, $config = null) {
+
+        $datatype = $datatyperecord->to_record();
+
+        if (!empty($config->deletedevent)) {
+            $datatype->deletedevent = $config->deletedevent;
+        }
+
+        return $datatype;
     }
 
     /**
@@ -395,5 +418,29 @@ class export_log_repository {
         }
 
         return $logs;
+    }
+
+    /**
+     * Get datatype from event.
+     *
+     * @param string $eventname
+     * @return string
+     * @throws \dml_exception
+     */
+    public function get_datatype_from_event(string $eventname) {
+        global $DB;
+
+        $datatype = $DB->get_record_sql(
+            "SELECT el.datatype, dc.deletedevent
+                   FROM {" . export_logs::TABLE . "} el
+              LEFT JOIN {" .  datatypeconfig::TABLE . "} dc ON dc.datatype = el.datatype
+                  WHERE dc.deletedevent = :eventname
+                    AND dc.status = :status", [
+                'eventname' => $eventname,
+                'status' => datatypeconfig::STATUS_ENABLED
+            ]
+        );
+
+        return $datatype->datatype ?? '';
     }
 }

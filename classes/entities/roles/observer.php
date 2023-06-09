@@ -56,7 +56,7 @@ class observer {
     public static function role_unassigned(\core\event\role_unassigned $event) {
         global $DB;
 
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             if (!$DB->record_exists('role_assignments', [
@@ -85,12 +85,13 @@ class observer {
         $ra->courseid = $eventdata['contextinstanceid'];
         $ra->userid = $eventdata['relateduserid'];
         $ra->roleid = $eventdata['objectid'];
+        $ra->component = $roleassignments->component;
+        $ra->itemid = $roleassignments->itemid;
         $ra->crud = $eventdata['crud'];
         $ra->contexttype = RolesHelper::get_contexttype($context->contextlevel);
 
         $entity = new roleassignment($ra, []);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

@@ -40,7 +40,7 @@ class lti_test extends \advanced_testcase {
     private $secret;
     private $debug;
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
         $this->endpoint = 'http://localhost/lti';
         $this->key = 'lticonsumerkey';

@@ -64,6 +64,7 @@ class migration_task extends \core\task\scheduled_task {
      */
     public function execute() {
         if (TrackingHelper::enabled()) {
+            raise_memory_limit(MEMORY_HUGE);
 
             DebugHelper::enable_moodle_debug();
 

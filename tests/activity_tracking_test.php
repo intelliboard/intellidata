@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  */
 class activity_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -77,7 +77,7 @@ class activity_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'activities']);
-        $datarecord = $storage->get_log_entity_data('course_module_created', $data);
+        $datarecord = $storage->get_log_entity_data('c', $data);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
@@ -120,7 +120,7 @@ class activity_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'activities']);
-        $datarecord = $storage->get_log_entity_data('course_module_updated', $data);
+        $datarecord = $storage->get_log_entity_data('u', $data);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);
@@ -161,7 +161,7 @@ class activity_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'activities']);
-        $datarecord = $storage->get_log_entity_data('course_module_deleted');
+        $datarecord = $storage->get_log_entity_data('d');
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

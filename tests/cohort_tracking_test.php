@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  */
 class cohort_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -73,7 +73,7 @@ class cohort_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'cohorts']);
 
-        $datarecord = $storage->get_log_entity_data('cohort_created', ['id' => $cohort->id]);
+        $datarecord = $storage->get_log_entity_data('c', ['id' => $cohort->id]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -110,7 +110,7 @@ class cohort_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'cohorts']);
 
-        $datarecord = $storage->get_log_entity_data('cohort_updated', ['id' => $cohort->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $cohort->id]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -144,7 +144,7 @@ class cohort_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'cohorts']);
 
-        $datarecord = $storage->get_log_entity_data('cohort_deleted', ['id' => $cohort->id]);
+        $datarecord = $storage->get_log_entity_data('d', ['id' => $cohort->id]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = json_decode($datarecord->data);

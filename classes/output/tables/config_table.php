@@ -281,12 +281,10 @@ class config_table extends \table_sql {
                 );
             }
 
-            if ($values->tabletype == datatypeconfig::TABLETYPE_OPTIONAL) {
-                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
-                $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
-                    'core', ['class' => 'iconsmall']), null
-                );
-            }
+            $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams);
+            $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/edit', get_string('edit'),
+                'core', ['class' => 'iconsmall']), null
+            );
         }
 
         $buttons = $this->index_actions($values, $buttons);

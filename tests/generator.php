@@ -50,7 +50,7 @@ class generator {
      * @return \stdClass
      * @throws \moodle_exception
      */
-    public static function create_user(array $data = []): \stdClass {
+    public static function create_user(array $data = []) {
         global $CFG;
 
         require_once($CFG->dirroot . '/user/lib.php');
@@ -70,7 +70,7 @@ class generator {
      * @return \stdClass
      * @throws \moodle_exception
      */
-    public static function create_users(int $num = 0): array {
+    public static function create_users(int $num = 0) {
 
         $users = [];
 
@@ -88,7 +88,7 @@ class generator {
      * @param array $data
      * @return \stdClass
      */
-    public static function create_cohort(array $data = []): \stdClass {
+    public static function create_cohort(array $data = []) {
         return self::data_generator()->create_cohort($data);
     }
 
@@ -99,7 +99,7 @@ class generator {
      * @return \stdClass
      * @throws \moodle_exception
      */
-    public static function create_cohorts(int $num = 0): array {
+    public static function create_cohorts(int $num = 0) {
 
         $cohorts = [];
 
@@ -128,7 +128,7 @@ class generator {
      * @return \stdClass
      * @throws \moodle_exception
      */
-    public static function create_categories(int $num = 0): array {
+    public static function create_categories(int $num = 0) {
 
         $categories = [];
 
@@ -192,7 +192,7 @@ class generator {
      * @return \stdClass
      * @throws \moodle_exception
      */
-    public static function create_courses(int $num = 0): array {
+    public static function create_courses(int $num = 0) {
 
         $courses = [];
 

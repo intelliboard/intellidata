@@ -22,16 +22,16 @@
  *
  * @package    local
  * @subpackage intellidata
- * @copyright  2020
+ * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'local/intellidata:trackdata' => array(
+$capabilities = [
+    'local/intellidata:trackdata' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
+        'archetypes' => [
             'user' => CAP_ALLOW,
             'frontpage' => CAP_ALLOW,
             'student' => CAP_ALLOW,
@@ -39,30 +39,36 @@ $capabilities = array(
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
             'manager' => CAP_ALLOW
-        )
-    ),
-    'local/intellidata:viewlogs' => array(
+        ]
+    ],
+    'local/intellidata:viewlogs' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        )
-    ),
-    'local/intellidata:viewconfig' => array(
+        'archetypes' => []
+    ],
+    'local/intellidata:viewconfig' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        )
-    ),
-    'local/intellidata:editconfig' => array(
+        'archetypes' => []
+    ],
+    'local/intellidata:editconfig' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        )
-    ),
-    'local/intellidata:viewlti' => array(
+        'archetypes' => []
+    ],
+    'local/intellidata:viewlti' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-        )
-    ),
-);
+        'archetypes' => []
+    ],
+    'local/intellidata:viewadhoctasks' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => []
+    ],
+    'local/intellidata:deleteadhoctasks' => [
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => []
+    ]
+];

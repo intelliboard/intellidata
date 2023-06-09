@@ -31,6 +31,7 @@ use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\EventsHelper;
 use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
@@ -332,7 +333,6 @@ class database_repository {
                       FROM {" . $datatype['table'] . "}
                      WHERE $where
                   ORDER BY id";
-
         }
 
         return [$sql, $sqlparams];
@@ -441,29 +441,65 @@ class database_repository {
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
-    public static function export_ids($datatype, $showlogs = true) {
+    public function export_ids($datatype, $showlogs = true) {
 
-        if (!SettingsHelper::get_setting('exportids') ||
-            !isset($datatype['table']) || empty($datatype['exportids'])) {
+        // Validate if need to export deleted ids.
+        if (!$this->process_exportids_enabled($datatype)) {
             return;
         }
 
         if ($showlogs) {
             $starttime = microtime();
-            mtrace("Storing datatype ids started at " . date('r') . "...");
+            mtrace("Storing datatype '" . $datatype['name'] . "' ids started at " . date('r') . "...");
         }
 
+        $this->process_export_ids($datatype, $showlogs);
+
+        if ($showlogs) {
+            $difftime = microtime_diff($starttime, microtime());
+            mtrace("Storing datatype '" . $datatype['name'] . "' ids completed at " . date('r') . ".");
+            mtrace("Storing datatype '" . $datatype['name'] . "' ids took " . $difftime . " seconds.");
+        }
+    }
+
+    private function process_export_ids($datatype, $showlogs) {
         // Process deleted records.
         self::process_deleted_records($datatype, $showlogs);
 
         // Process created records.
         self::process_created_records($datatype, $showlogs);
+    }
 
-        if ($showlogs) {
-            $difftime = microtime_diff($starttime, microtime());
-            mtrace("Storing datatype ids completed at " . date('r') . ".");
-            mtrace("Storing datatype ids took " . $difftime . " seconds.");
+    /**
+     * Validate if exportids enabled for specific datatype.
+     *
+     * @param array $datatype
+     * @return bool
+     * @throws \dml_exception
+     */
+    private function process_exportids_enabled(array $datatype) {
+
+        // Do not export ids when disabled on system level.
+        if (!SettingsHelper::get_setting('exportids')) {
+            return false;
         }
+
+        // Do not export ids when disabled for specific datatype.
+        if (empty($datatype['exportids'])) {
+            return false;
+        }
+
+        // Do not export ids for datatype without DB table.
+        if (!isset($datatype['table'])) {
+            return false;
+        }
+
+        // Do not export ids when datatype is rewritable.
+        if (!empty($datatype['rewritable'])) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -491,8 +527,7 @@ class database_repository {
      * Save data to storage.
      *
      * @param $datatype
-     * @param $data
-     * @param false $eventname
+     * @param $showlogs
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
@@ -505,7 +540,7 @@ class database_repository {
         if ($deletedrecords->valid()) {
 
             if ($showlogs) {
-                mtrace("Storing datatype ids: generating deleted events...");
+                mtrace("Storing datatype '" . $datatype['name'] . "' ids: generating deleted events...");
             }
 
             $deletedids = []; $records = []; $i = 1; $cleanlogs = false;
@@ -539,7 +574,8 @@ class database_repository {
                 if ($cleanlogs) {
                     mtrace('');
                 }
-                mtrace("Storing datatype ids: deleted " . count($deletedids) . " ids at " . date('r') . ".");
+                mtrace("Storing datatype '" . $datatype['name'] . "' ids: deleted " .
+                    count($deletedids) . " ids at " . date('r') . ".");
             }
         }
     }
@@ -562,7 +598,7 @@ class database_repository {
         if ($createdrecords->valid()) {
 
             if ($showlogs) {
-                mtrace("Storing datatype ids: saving new ids...");
+                mtrace("Storing datatype'" . $datatype['name'] . "'  ids: saving new ids...");
             }
 
             $records = []; $created = 0; $i = 1; $cleanlogs = false;
@@ -592,7 +628,7 @@ class database_repository {
                 if ($cleanlogs) {
                     mtrace('');
                 }
-                mtrace("Storing datatype ids: created " . $created . " ids at " . date('r') . ".");
+                mtrace("Storing datatype '" . $datatype['name'] . "' ids: created " . $created . " ids at " . date('r') . ".");
             }
         }
     }

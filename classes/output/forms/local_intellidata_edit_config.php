@@ -24,6 +24,8 @@
 namespace local_intellidata\output\forms;
 
 use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\services\datatypes_service;
+
 defined('MOODLE_INTERNAL') || die;
 
 
@@ -38,6 +40,37 @@ class local_intellidata_edit_config extends \moodleform {
      * @throws \coding_exception
      */
     public function definition() {
+        $mform = $this->_form;
+        $data = $this->_customdata['data'];
+
+        if (isset($this->_customdata['is_required']) && $this->_customdata['is_required']) {
+            $this->required_form();
+        } else {
+            $this->optional_form();
+        }
+
+        $mform->addElement('hidden', 'datatype');
+        $mform->setType('datatype', PARAM_ALPHA);
+
+        $mform->addElement('hidden', 'tableindex');
+        $mform->setType('tableindex', PARAM_TEXT);
+
+        $this->add_action_buttons();
+        $this->set_data($data);
+    }
+
+    protected function required_form() {
+        $mform = $this->_form;
+
+        $options = [
+            datatypeconfig::TABLETYPE_REQUIRED => get_string('required', 'local_intellidata'),
+            datatypeconfig::TABLETYPE_OPTIONAL => get_string('optional', 'local_intellidata')
+        ];
+        $mform->addElement('select', 'tabletype', get_string('tabletype', 'local_intellidata'), $options);
+        $mform->setType('tabletype', PARAM_INT);
+    }
+
+    protected function optional_form() {
         $mform = $this->_form;
         $data = $this->_customdata['data'];
         $config = $this->_customdata['config'];
@@ -73,15 +106,6 @@ class local_intellidata_edit_config extends \moodleform {
         $mform->setType('rewritable', PARAM_INT);
         $mform->disabledIf('rewritable', 'timemodified_field', 'neq', '');
         $mform->disabledIf('rewritable', 'filterbyid', 'checked');
-
-        $mform->addElement('hidden', 'datatype');
-        $mform->setType('datatype', PARAM_ALPHA);
-
-        $mform->addElement('hidden', 'tableindex');
-        $mform->setType('tableindex', PARAM_TEXT);
-
-        $this->add_action_buttons();
-        $this->set_data($data);
     }
 
     /**

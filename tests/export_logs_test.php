@@ -44,7 +44,7 @@ class export_logs_test extends \advanced_testcase {
     private $enrolmentdatatype;
     private $exportlogrepository;
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->userdatatype = user::TYPE;
         $this->coursedatatype = course::TYPE;
         $this->enrolmentdatatype = enrolment::TYPE;

@@ -47,7 +47,7 @@ if ($action == 'enablemigration') {
     set_config('resetmigrationprogress', 1, 'local_intellidata');
 
     // Enable cron task.
-    MigrationHelper::enable_sheduled_tasks();
+    MigrationHelper::enabled_migration_task();
 
     redirect($pageurl, get_string('migrationenabled', 'local_intellidata'));
 } else if ($action == 'calculateprogress') {

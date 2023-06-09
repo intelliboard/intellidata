@@ -81,7 +81,7 @@ class observer {
      * @param \core\event\user_deleted $event
      */
     public static function user_deleted(\core\event\user_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $user = new \stdClass();
@@ -96,7 +96,6 @@ class observer {
 
         $entity = new user($userdata, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

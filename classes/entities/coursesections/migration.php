@@ -60,7 +60,6 @@ class migration extends \local_intellidata\entities\migration {
 
             $entity = new $this->entity($record);
             $recorddata = $entity->export();
-            $recorddata->eventname = $this->eventname;
 
             yield $recorddata;
         }

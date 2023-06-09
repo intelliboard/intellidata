@@ -24,7 +24,7 @@
 
 namespace local_intellidata\persistent;
 
-use local_intellidata\persistent\base;
+use local_intellidata\services\datatypes_service;
 
 /**
  * Class storage
@@ -37,6 +37,8 @@ class datatypeconfig extends base {
 
     /** The table name. */
     const TABLE = 'local_intellidata_config';
+
+    const OPTIONAL_TABLE_PREFIX = 'db_';
 
     /** @var int The table type. */
     const TABLETYPE_REQUIRED = 0;
@@ -125,8 +127,30 @@ class datatypeconfig extends base {
                 'description' => 'Database Index.',
                 'null' => NULL_ALLOWED,
                 'default' => '',
+            ],
+            'deletedevent' => [
+                'type' => PARAM_RAW,
+                'description' => 'Deleted record event.',
+                'null' => NULL_ALLOWED,
+                'default' => '',
             ]
         );
+    }
+
+    /**
+     * @return mixed
+     * @throws \coding_exception
+     */
+    public function is_required_by_default() {
+        return datatypes_service::is_required_by_default($this->get('datatype'));
+    }
+
+    /**
+     * @return mixed
+     * @throws \coding_exception
+     */
+    public function get_data_type() {
+        return $this->get('datatype');
     }
 
     /**

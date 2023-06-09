@@ -15,7 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use local_intellidata\api\apilib;
-use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\encryption_service;
 use local_intellidata\helpers\TasksHelper;
@@ -130,7 +129,7 @@ class local_intellidata_logslib extends external_api {
         $exportlogrepository = new export_log_repository();
 
         if (!SettingsHelper::get_setting('enableprogresscalculation')) {
-            MigrationHelper::calculate_migration_progress(false);
+            TasksHelper::init_refresh_export_progress_adhoc_task();
         }
 
         return [
@@ -143,6 +142,63 @@ class local_intellidata_logslib extends external_api {
      * @return external_single_structure
      */
     public static function get_export_logs_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * Get adhoc tasks logs.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_adhoc_tasks_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * Get scheduled adhoc tasks list.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_adhoc_tasks() {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $tasks = TasksHelper::get_adhoc_tasks();
+        $encryptionservice = new encryption_service();
+
+        return [
+            'data' => $encryptionservice->encrypt(
+                json_encode($tasks)
+            ),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * Returns description of method result value.
+     *
+     * @return external_single_structure
+     */
+    public static function get_adhoc_tasks_returns() {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),

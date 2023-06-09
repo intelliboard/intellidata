@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  */
 class cohortmember_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -88,7 +88,7 @@ class cohortmember_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'cohortmembers']);
 
-        $datarecord = $storage->get_log_entity_data('cohort_member_added', $data);
+        $datarecord = $storage->get_log_entity_data('c', $data);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -135,7 +135,7 @@ class cohortmember_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'cohortmembers']);
 
-        $datarecord = $storage->get_log_entity_data('cohort_member_removed', $data);
+        $datarecord = $storage->get_log_entity_data('d', $data);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = json_decode($datarecord->data);

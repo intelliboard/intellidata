@@ -26,7 +26,7 @@ use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\helpers\SettingsHelper;
 
-require('../../../config.php');
+require_once('../../../config.php');
 
 $action = optional_param('action', '', PARAM_TEXT);
 $query = optional_param('query', '', PARAM_TEXT);

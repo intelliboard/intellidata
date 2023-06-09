@@ -34,7 +34,7 @@ define('CLI_SCRIPT', true);
 require(__DIR__.'/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
-raise_memory_limit(MEMORY_EXTRA);
+raise_memory_limit(MEMORY_HUGE);
 
 $longoptions = [
     'datatype' => '',

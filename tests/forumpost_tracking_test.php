@@ -44,7 +44,7 @@ use local_intellidata\helpers\StorageHelper;
  */
 class forumpost_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -120,7 +120,7 @@ class forumpost_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumposts']);
 
-        $datarecord = $storage->get_log_entity_data('post_created', $data);
+        $datarecord = $storage->get_log_entity_data('c', $data);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -198,7 +198,7 @@ class forumpost_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumposts']);
 
-        $datarecord = $storage->get_log_entity_data('post_updated', $data);
+        $datarecord = $storage->get_log_entity_data('u', $data);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -273,7 +273,7 @@ class forumpost_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumposts']);
-        $datarecord = $storage->get_log_entity_data('post_deleted', $data);
+        $datarecord = $storage->get_log_entity_data('d', $data);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);
