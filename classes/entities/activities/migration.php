@@ -115,7 +115,6 @@ class migration extends \local_intellidata\entities\migration {
             $cm->params = $instance['params'];
             $entity = new $this->entity($cm);
             $cmdata = $entity->export();
-            $cmdata->eventname = $this->eventname;
 
             yield $cmdata;
         }

@@ -44,7 +44,7 @@ use local_intellidata\helpers\StorageHelper;
  */
 class forumdiscussion_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -107,7 +107,7 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumdiscussions']);
-        $datarecord = $storage->get_log_entity_data('discussion_created', $data);
+        $datarecord = $storage->get_log_entity_data('c', $data);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);
@@ -173,7 +173,7 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumdiscussions']);
-        $datarecord = $storage->get_log_entity_data('discussion_updated', $data);
+        $datarecord = $storage->get_log_entity_data('u', $data);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);
@@ -246,7 +246,7 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumdiscussions']);
-        $datarecord = $storage->get_log_entity_data('discussion_moved', $data);
+        $datarecord = $storage->get_log_entity_data('u', $data);
         $datarecorddata = json_decode($datarecord->data);
 
         $this->assertNotEmpty($datarecord);
@@ -311,7 +311,7 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'forumdiscussions']);
-        $datarecord = $storage->get_log_entity_data('discussion_deleted', $data);
+        $datarecord = $storage->get_log_entity_data('d', $data);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

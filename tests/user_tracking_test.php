@@ -42,7 +42,7 @@ use local_intellidata\helpers\StorageHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
 class user_tracking_test extends \advanced_testcase {
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -72,7 +72,7 @@ class user_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'users']);
-        $datarecord = $storage->get_log_entity_data('user_created', ['id' => $user->id]);
+        $datarecord = $storage->get_log_entity_data('c', ['id' => $user->id]);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);
@@ -108,7 +108,7 @@ class user_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'users']);
-        $datarecord = $storage->get_log_entity_data('user_updated', ['id' => $user->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $user->id]);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);
@@ -141,7 +141,7 @@ class user_tracking_test extends \advanced_testcase {
         $entitydata = $entity->export();
 
         $storage = StorageHelper::get_storage_service(['name' => 'users']);
-        $datarecord = $storage->get_log_entity_data('user_deleted', ['id' => $user->id]);
+        $datarecord = $storage->get_log_entity_data('d', ['id' => $user->id]);
 
         $datarecorddata = json_decode($datarecord->data);
 

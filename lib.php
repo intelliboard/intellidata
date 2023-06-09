@@ -96,31 +96,7 @@ function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, 
  * @throws dml_exception
  */
 function local_intellidata_extend_navigation(global_navigation $nav) {
-    global $PAGE, $CFG;
-
-    try {
-        $mynode = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE);
-        $mynode->collapse = true;
-        $mynode->make_inactive();
-
-        $context = context_system::instance();
-        if (isloggedin()
-            && !empty(SettingsHelper::get_setting('ltitoolurl'))
-            && has_capability('local/intellidata:viewlti', $context)) {
-
-            $name = SettingsHelper::get_lti_title();
-            $url = new moodle_url('/local/intellidata/lti.php');
-            $nav->add($name, $url);
-            $node = $mynode->add($name, $url, 0, null, 'intellidata_lti', new pix_icon('i/area_chart', '', 'local_intellidata'));
-            $node->showinflatnavigation = true;
-
-            if (SettingsHelper::get_setting('custommenuitem') && isset($CFG->custommenuitems)) {
-                $CFG->custommenuitems .= "\n" . $name . "|" . $url->out(false);
-            }
-        }
-    } catch (Exception $e) {
-        DebugHelper::error_log($e->getMessage());
-    }
+    (new \local_intellidata\helpers\CustomMenuHelper())->setup($nav);
 }
 
 /**

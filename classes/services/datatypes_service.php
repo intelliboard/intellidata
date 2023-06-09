@@ -28,9 +28,8 @@ namespace local_intellidata\services;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\logs_tables_repository;
-use local_intellidata\services\dbschema_service;
-use local_intellidata\services\export_service;
 use local_intellidata\services\config_service;
+use local_intellidata\services\dbschema_service;
 use local_intellidata\persistent\datatypeconfig;
 
 class datatypes_service {
@@ -75,7 +74,7 @@ class datatypes_service {
      * @param $datatype
      * @return mixed|string
      */
-    public static function get_datatype_entity_path($datatype) {
+    public static function get_datatype_entity_path(array $datatype) {
         return !empty($datatype['entity']) ? $datatype['entity'] : '';
     }
 
@@ -121,7 +120,7 @@ class datatypes_service {
     }
 
     /**
-     * Get static datatypes.
+     * Get datatypes with events.
      *
      * @return array|array[]
      */
@@ -141,13 +140,15 @@ class datatypes_service {
     }
 
     /**
+     * Returns all migration datatypes.
+     *
      * @return array|array[]
      */
     public static function get_migrating_datatypes() {
-        $datatypes = self::get_datatypes(false);
+        $datatypes = self::get_datatypes();
 
         foreach ($datatypes as $key => $item) {
-            if (empty($item['migration'])) {
+            if (empty($item['migration']) || ($item['tabletype'] != datatypeconfig::TABLETYPE_REQUIRED)) {
                 unset($datatypes[$key]);
             }
         }
@@ -156,6 +157,8 @@ class datatypes_service {
     }
 
     /**
+     * Returns all datatypes.
+     *
      * @return array|array[]
      */
     public static function get_all_datatypes() {
@@ -170,6 +173,8 @@ class datatypes_service {
     }
 
     /**
+     * Returns all required datatypes.
+     *
      * @return array[]
      */
     public static function get_required_datatypes() {
@@ -184,17 +189,6 @@ class datatypes_service {
                 'observer' => 'users\observer',
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
-                'filterbyid' => false,
-                'databaseexport' => false
-            ],
-            'userlogins' => [
-                'name' => 'userlogins',
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'migration' => 'userlogins\migration',
-                'entity' => 'userlogins\userlogin',
-                'observer' => 'userlogins\observer',
-                'rewritable' => false,
-                'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
@@ -258,7 +252,6 @@ class datatypes_service {
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
-
             'coursegroups' => [
                 'name' => 'coursegroups',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
@@ -283,7 +276,6 @@ class datatypes_service {
                 'filterbyid' => false,
                 'databaseexport' => false
             ],
-
             'cohortmembers' => [
                 'name' => 'cohortmembers',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
@@ -366,7 +358,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => false
             ],
             'modules' => [
                 'name' => 'modules',
@@ -379,7 +371,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => false
             ],
             'forumdiscussions' => [
                 'name' => 'forumdiscussions',
@@ -593,18 +585,6 @@ class datatypes_service {
                 'databaseexport' => true,
                 'exportids' => false
             ],
-            'participation' => [
-                'name' => 'participation',
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'migration' => 'participations\migration',
-                'entity' => 'participations\participation',
-                'observer' => 'participations\observer',
-                'rewritable' => false,
-                'timemodified_field' => 'timecreated',
-                'filterbyid' => false,
-                'databaseexport' => false,
-                'exportids' => false
-            ],
             'userinfocategories' => [
                 'name' => 'userinfocategories',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
@@ -638,10 +618,54 @@ class datatypes_service {
                 'timemodified_field' => 'u.timemodified',
                 'filterbyid' => false,
                 'databaseexport' => false
-            ]
+            ],
+            'participation' => [
+                'name' => 'participation',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'participations\migration',
+                'entity' => 'participations\participation',
+                'observer' => 'participations\observer',
+                'rewritable' => false,
+                'timemodified_field' => 'timecreated',
+                'filterbyid' => false,
+                'databaseexport' => false,
+                'exportids' => false
+            ],
+            'userlogins' => [
+                'name' => 'userlogins',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => 'userlogins\migration',
+                'entity' => 'userlogins\userlogin',
+                'observer' => 'userlogins\observer',
+                'rewritable' => false,
+                'timemodified_field' => 'timecreated',
+                'filterbyid' => false,
+                'databaseexport' => false
+            ],
         ];
 
         return self::format_required_datatypes($datatypes);
+    }
+
+    /**
+     * Сheck if the date type is required by default.
+     *
+     * @param string $datatype
+     * @return bool
+     */
+    public static function is_required_by_default($datatype) {
+        return array_key_exists($datatype, self::get_required_datatypes());
+    }
+
+    /**
+     * Сheck if the date type is optional.
+     *
+     * @param string $datatype
+     * @param int $datatype
+     * @return bool
+     */
+    public static function is_optional($datatype, $tabletype) {
+        return !self::is_required_by_default($datatype) && ($tabletype == datatypeconfig::TABLETYPE_OPTIONAL);
     }
 
     /**
@@ -663,6 +687,33 @@ class datatypes_service {
     }
 
     /**
+     * @param string $datatype
+     *
+     * @return string
+     */
+    public static function generate_optional_datatype($datatype) {
+        if (strpos($datatype, datatypeconfig::OPTIONAL_TABLE_PREFIX) !== false) {
+            return $datatype;
+        }
+
+        return datatypeconfig::OPTIONAL_TABLE_PREFIX . $datatype;
+    }
+
+    /**
+     * @param string $configdatatype
+     *
+     * @return string
+     */
+    public static function get_optional_table($configdatatype) {
+        if (strpos($configdatatype, datatypeconfig::OPTIONAL_TABLE_PREFIX) === 0) {
+            $search = '/' . preg_quote(datatypeconfig::OPTIONAL_TABLE_PREFIX, '/') . '/';
+            return preg_replace($search, '', $configdatatype, 1);
+        }
+
+        return $configdatatype;
+    }
+
+    /**
      * @return array
      */
     public static function get_all_optional_datatypes() {
@@ -673,7 +724,7 @@ class datatypes_service {
 
         if (count($alltables)) {
             foreach ($alltables as $table) {
-                $datatypes[$table] = self::format_optional_datatypes($table);
+                $datatypes[self::generate_optional_datatype($table)] = self::format_optional_datatypes($table);
             }
         }
 
@@ -690,8 +741,10 @@ class datatypes_service {
         $datatypes = [];
 
         if (count($customdatatypes)) {
-            foreach ($customdatatypes as $datatype => $notneeded) {
-                $datatypes[$datatype] = self::format_optional_datatypes($datatype);
+            foreach ($customdatatypes as $datatypename => $datatype) {
+                $datatypes[self::generate_optional_datatype($datatypename)] = self::format_optional_datatypes(
+                    $datatypename, $datatype
+                );
             }
         }
 
@@ -703,7 +756,7 @@ class datatypes_service {
      *
      * @return array
      */
-    private static function format_required_datatypes($datatypes) {
+    public static function format_required_datatypes($datatypes) {
 
         if (count($datatypes)) {
             $params = [
@@ -740,12 +793,12 @@ class datatypes_service {
      */
     private static function format_required_datatype($datatype, $params) {
         // Switch events tracking to static export.
-        if (!empty(empty($params['eventstracking']))) {
+        if (empty($params['eventstracking'])) {
 
             $datatype['databaseexport'] = (!empty($datatype['timemodified_field']) || !empty($datatype['rewritable']))
                 ? true : $datatype['databaseexport'];
 
-            if (!isset($datatype['exportids'])) {
+            if (empty($datatype['observer']) && !isset($datatype['exportids'])) {
                 $datatype['exportids'] = (!empty($datatype['timemodified_field']))
                     ? true : $datatype['databaseexport'];
             }
@@ -759,31 +812,38 @@ class datatypes_service {
      *
      * @return array
      */
-    private static function format_optional_datatypes($datatype) {
+    private static function format_optional_datatypes($datatypename, $datatype = null) {
+        $datatype = $datatype ?? new \stdClass();
 
-        $timemodifiedfield = config_service::get_timemodified_field($datatype);
-        $filterbyidconf = (empty($timemodifiedfield) && config_service::get_filterbyid_config($datatype)) ? true : false;
-        $rewritableconf = ((!$timemodifiedfield && !$filterbyidconf) || config_service::get_rewritable_config($datatype))
-            ? true : false;
+        $datatypename = self::generate_optional_datatype($datatypename);
+        $table = self::get_optional_table($datatypename);
+
+        $datatype->timemodified_field = config_service::get_timemodified_field($table);
+        $datatype->filterbyid = empty($datatype->timemodified_field) &&
+                                    config_service::get_filterbyid_config($table);
+        $datatype->rewritable = (!$datatype->timemodified_field && !$datatype->filterbyid) ||
+                            config_service::get_rewritable_config($datatypename);
 
         $data = [
-            'name' => $datatype,
+            'name' => $datatypename,
             'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
-            'table' => $datatype,
+            'table' => $table,
             'migration' => false,
             'entity' => false,
             'observer' => false,
-            'timemodified_field' => $timemodifiedfield,
-            'filterbyid' => $filterbyidconf,
-            'rewritable' => $rewritableconf,
+            'timemodified_field' => $datatype->timemodified_field,
+            'filterbyid' => $datatype->filterbyid,
+            'rewritable' => $datatype->rewritable,
             'databaseexport' => true,
-            'exportids' => true
+            'exportids' => config_service::get_exportids_config_optional($datatype)
         ];
 
         return $data;
     }
 
     /**
+     * Return logs datatypes.
+     *
      * @return array
      */
     public static function get_logs_datatypes() {

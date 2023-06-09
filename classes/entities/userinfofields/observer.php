@@ -71,7 +71,7 @@ class observer {
      * @param \core\event\user_info_field_deleted $event
      */
     public static function user_info_field_deleted(\core\event\user_info_field_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
 
             $userinfofield = new \stdClass();
@@ -84,8 +84,8 @@ class observer {
     /**
      * Export event method.
      *
+     * @param $userinfofield
      * @param $eventdata
-     * @param $eventname
      * @param array $fields
      * @throws \core\invalid_persistent_exception
      */
@@ -94,7 +94,6 @@ class observer {
 
         $entity = new userinfofield($userinfofield, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

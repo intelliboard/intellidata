@@ -372,5 +372,11 @@ $observers = [
     [
         'eventname' => '*',
         'callback' => '\local_intellidata\entities\logs\observer::log_created',
+    ],
+
+    // Deleted events.
+    [
+        'eventname' => '*',
+        'callback' => '\local_intellidata\observers\record_deleted::execute',
     ]
 ];

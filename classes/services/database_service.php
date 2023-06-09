@@ -80,18 +80,18 @@ class database_service {
         $params = $this->get_params_for_process($params);
 
         // Get tables list to process.
-        $tables = $this->get_tables_to_export($params);
+        $datatypes = $this->get_tables_to_export($params);
 
         // Process each table migration.
-        if (count($tables)) {
-            foreach ($tables as $key => $table) {
+        if (count($datatypes)) {
+            foreach ($datatypes as $datatype) {
 
                 // Validate the table can be migrated.
-                if (!$this->validate($table)) {
+                if (!$this->validate($datatype)) {
                     continue;
                 }
 
-                $this->export($table, $params);
+                $this->export($datatype, $params);
             }
         }
 

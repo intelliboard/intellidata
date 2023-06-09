@@ -23,7 +23,6 @@
  * @website    http://intelliboard.net/
  */
 
-use local_intellidata\persistent\export_ids;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\export_service;
@@ -976,25 +975,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022121501, 'local', 'intellidata');
     }
 
-    // Reset and add new survey to the export.
-    if ($oldversion < 2023010612) {
-
-        $datatypes = datatypes_service::get_datatypes();
-        try {
-            foreach ($datatypes as $datatype) {
-                if (isset($datatype['table'])) {
-                    DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
-                }
-            }
-            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
-        } catch (moodle_exception $e) {
-            SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
-            DebugHelper::error_log($e->getMessage());
-        }
-
-        upgrade_plugin_savepoint(true, 2023010612, 'local', 'intellidata');
-    }
-
     // Add new datatypes to the export.
     if ($oldversion < 2023020701) {
 
@@ -1026,15 +1006,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
 
         // Intellidata savepoint reached.
         upgrade_plugin_savepoint(true, 2023022801, 'local', 'intellidata');
-    }
-
-    if ($oldversion < 2023030601) {
-
-        $configservice = new config_service(['survey' => datatypes_service::get_all_datatypes()['survey']]);
-        $configservice->setup_config('reset');
-
-        // Intellidata savepoint reached.
-        upgrade_plugin_savepoint(true, 2023030601, 'local', 'intellidata');
     }
 
     // Add new datatypes to the export.
@@ -1106,6 +1077,160 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2023042000, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023050404) {
+
+        $datatypes = [
+            'competency', 'competency_usercomp', 'competency_coursecomp',
+            'competency_usercompcourse', 'competency_modulecomp', 'competency_plan',
+            'competency_usercompplan', 'tenant', 'tool_tenant', 'tool_tenant_user',
+            'roleassignments'
+        ];
+
+        $exportlogrepository = new export_log_repository();
+        foreach ($datatypes as $datatype) {
+            $record = datatypeconfig::get_record(['datatype' => $datatype]);
+
+            if (!$record) {
+                continue;
+            }
+
+            // Reset export logs.
+            $exportlogrepository->reset_datatype($datatype);
+        }
+
+        upgrade_plugin_savepoint(true, 2023050404, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023051500) {
+        \local_intellidata\helpers\TasksHelper::init_refresh_export_progress_adhoc_task();
+
+        upgrade_plugin_savepoint(true, 2023051500, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023051602) {
+        $table = new xmldb_table('local_intellidata_config');
+        $field = new xmldb_field('deletedevent', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2023051602, 'local', 'intellidata');
+    }
+
+    // Remove DB triggers.
+    if ($oldversion < 2023051700) {
+
+        $datatypes = datatypes_service::get_datatypes();
+        try {
+            foreach ($datatypes as $datatype) {
+                if (isset($datatype['table'])) {
+                    DBHelper::remove_deleted_id_triger($datatype['name'], $datatype['table']);
+                }
+            }
+
+            DBHelper::remove_deleted_id_functions();
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        upgrade_plugin_savepoint(true, 2023051700, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023060500) {
+
+        // Delete old export files.
+        $datatypes = datatypes_service::get_optional_datatypes_for_export();
+        $exportservice = new export_service();
+        $exportservice->delete_files(['datatypes' => $datatypes]);
+
+        // Delete old datatype export ids.
+        $DB->execute("DELETE FROM {local_intellidata_export_ids} WHERE datatype NOT IN
+        (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
+            [
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'tabletype2' => datatypeconfig::TABLETYPE_LOGS,
+            ]);
+
+        // Delete old datatype storage.
+        $DB->execute("DELETE FROM {local_intellidata_storage} WHERE datatype NOT IN
+        (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
+            [
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'tabletype2' => datatypeconfig::TABLETYPE_LOGS
+            ]);
+
+        // Delete old datatype logs.
+        $DB->execute("DELETE FROM {local_intellidata_logs} WHERE datatype NOT IN
+        (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
+            [
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'tabletype2' => datatypeconfig::TABLETYPE_LOGS
+            ]);
+
+        $prefix = datatypeconfig::OPTIONAL_TABLE_PREFIX;
+        $DB->execute(
+            "UPDATE {local_intellidata_config}
+            SET datatype = CONCAT('{$prefix}', datatype)
+            WHERE tabletype = :tabletype AND  datatype NOT LIKE '" . $prefix . "%'",
+            [
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+            ]
+        );
+
+        $DB->execute(
+            "UPDATE {local_intellidata_export_log}
+            SET datatype = CONCAT('{$prefix}', datatype),
+                last_exported_time=0,
+                last_exported_id=0,
+                migrated=0,
+                timestart=0,
+                recordsmigrated=0,
+                recordscount=0
+            WHERE tabletype = :tabletype AND  datatype NOT LIKE '" . $prefix . "%'",
+            [
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+            ]
+        );
+
+        $configservice = new config_service(datatypes_service::get_all_optional_datatypes());
+        $configservice->setup_config();
+
+        upgrade_plugin_savepoint(true, 2023060500, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023060600) {
+        // Delete duplicates config datatypes.
+        $ids = $DB->get_records_sql('SELECT max(id)
+                                           FROM {local_intellidata_config}
+                                       GROUP BY datatype
+                                         HAVING COUNT(*) > 1');
+        $ids = array_keys($ids);
+        if ($ids) {
+            $DB->execute("DELETE FROM {local_intellidata_config}
+                            WHERE id IN (" . implode(',', $ids) . ")");
+        }
+
+        $datatypes = datatypes_service::get_datatypes();
+        try {
+            foreach ($datatypes as $datatype) {
+                if (isset($datatype['table'])) {
+                    $datatypename = datatypes_service::get_optional_table($datatype['name']);
+                    DBHelper::remove_deleted_id_triger($datatypename, $datatype['table']);
+                }
+            }
+
+            DBHelper::remove_deleted_id_functions();
+        } catch (moodle_exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        $configservice = new config_service(datatypes_service::get_all_optional_datatypes());
+        $configservice->setup_config();
+
+        upgrade_plugin_savepoint(true, 2023060600, 'local', 'intellidata');
     }
 
     return true;

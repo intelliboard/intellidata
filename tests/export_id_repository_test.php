@@ -30,10 +30,8 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 
-use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_id_repository;
 use local_intellidata\persistent\export_ids;
-use local_intellidata\persistent\tracking;
 
 /**
  * Export_id_repository migration test case.
@@ -126,16 +124,6 @@ class export_id_repository_test extends \advanced_testcase {
         // Validate deletion.
         $ids = [];
 
-        // Validate export with triggers.
-        SettingsHelper::set_setting('trackingidsmode', $exportidrepository::TRACK_IDS_MODE_TRIGGER);
-        $exportidrepository->clean_deleted_ids($datatype, $ids);
-        $this->assertEquals(0, export_ids::count_records());
-
-        // Validate export with request.
-        $exportidrepository->save($records);
-        $this->assertEquals($recordsnum, export_ids::count_records(['datatype' => $datatype]));
-
-        SettingsHelper::set_setting('trackingidsmode', $exportidrepository::TRACK_IDS_MODE_REQUEST);
         $exportidrepository->clean_deleted_ids($datatype, $ids);
         $this->assertEquals($recordsnum, export_ids::count_records());
 

@@ -31,9 +31,6 @@ use local_intellidata\helpers\SettingsHelper;
 
 class export_id_repository {
 
-    const TRACK_IDS_MODE_REQUEST = 1;
-    const TRACK_IDS_MODE_TRIGGER = 2;
-
     /**
      * Get deleted records IDs.
      *
@@ -43,31 +40,7 @@ class export_id_repository {
      * @throws \dml_exception
      */
     public function get_deleted_ids($datatype, $table) {
-        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
-        if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
-            return $this->get_deleted_ids_trigger($datatype);
-        } else {
-            return $this->get_deleted_ids_request($datatype, $table);
-        }
-    }
-
-    /**
-     * Get deleted records IDs.
-     *
-     * @param $table
-     * @return \moodle_recordset
-     * @throws \dml_exception
-     */
-    public function get_deleted_ids_trigger($datatype) {
-        global $DB;
-
-        $inparams = [
-            'datatype' => $datatype
-        ];
-
-        return $DB->get_recordset_sql("SELECT dataid AS id
-                                                 FROM {" . export_ids::TABLE . "}
-                                                WHERE datatype = :datatype", $inparams);
+        return $this->get_deleted_ids_request($datatype, $table);
     }
 
     /**
@@ -159,11 +132,6 @@ class export_id_repository {
     public function get_created_ids($datatype, $table) {
         global $DB;
 
-        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
-        if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
-            return null;
-        }
-
         $ids = [];
         $count = 0;
         $lastid = 0;
@@ -240,12 +208,6 @@ class export_id_repository {
      */
     public function clean_deleted_ids(string $datatype, array $deletedids) {
         global $DB;
-
-        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
-        if ($trackidsmode == self::TRACK_IDS_MODE_TRIGGER) {
-            $this->clean_deleted_ids_trigger($datatype);
-            return;
-        }
 
         if (!count($deletedids)) {
             return;

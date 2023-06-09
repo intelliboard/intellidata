@@ -140,6 +140,7 @@
         <FIELD NAME="rewritable" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="filterbyid" TYPE="int" LENGTH="1" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="events_tracking" TYPE="int" LENGTH="1" DEFAULT="1" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="deletedevent" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="11" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="11" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="11" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>

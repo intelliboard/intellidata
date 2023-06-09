@@ -40,20 +40,6 @@ function xmldb_local_intellidata_install() {
     $configservice = new config_service(datatypes_service::get_all_datatypes());
     $configservice->setup_config();
 
-    // Setup database triggers.
-    $datatypes = datatypes_service::get_datatypes();
-    try {
-        foreach ($datatypes as $datatype) {
-            if (isset($datatype['table'])) {
-                DBHelper::create_deleted_id_triger($datatype['name'], $datatype['table']);
-            }
-        }
-        SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_TRIGGER);
-    } catch (moodle_exception $e) {
-        SettingsHelper::set_setting('trackingidsmode', export_id_repository::TRACK_IDS_MODE_REQUEST);
-        DebugHelper::error_log($e->getMessage());
-    }
-
     // Send IB prospects.
     try {
         $ibservice = new intelliboard_service();

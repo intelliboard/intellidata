@@ -60,7 +60,6 @@ class observer {
     private static function export_event($data, $eventdata, $fields = []) {
         $entity = new activitycompletion($data, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

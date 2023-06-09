@@ -80,7 +80,6 @@ class migration extends \local_intellidata\entities\migration {
             $grade = observer::prepare_data($gradeobject, $gradeitems[$gradeobject->itemid]);
             $entity = new $this->entity($grade);
             $gradedata = $entity->export();
-            $gradedata->eventname = $this->eventname;
 
             yield $gradedata;
         }

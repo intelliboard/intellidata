@@ -212,12 +212,12 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
-     * @param string $eventname
+     * @param string $crud
      * @param array $params
      * @return false|mixed
      * @throws \dml_exception
      */
-    public function get_log_entity_data(string $eventname, array $params = []) {
+    public function get_log_entity_data(string $crud, array $params = []) {
         global $DB;
 
         $sql = "SELECT *
@@ -229,8 +229,8 @@ class database_storage_repository extends file_storage_repository {
         ];
 
         // Search by event name.
-        $sql .= " AND " . $DB->sql_like('data', ':searcheventdata');
-        $data['searcheventdata'] = '%' . $eventname . '%';
+        $sql .= " AND " . $DB->sql_like('data', ':searcheventcrud');
+        $data['searcheventcrud'] = '%"crud":%"' . $crud . '"%';
 
         // Search by other fields (if exist).
         foreach ($params as $key => $value) {

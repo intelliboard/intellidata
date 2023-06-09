@@ -59,9 +59,11 @@ class dbschema_service {
     }
 
     /**
+     * @param bool $export
+     *
      * @return array
      */
-    public function get_tables() {
+    public function get_tables($export = false) {
 
         // Tables list from database.
         $dbtables = $this->get_tableslist();
@@ -69,6 +71,7 @@ class dbschema_service {
         // Tables list with keys from install.xml.
         $xmltables = DBManagerHelper::get_install_xml_tables();
 
+        $exportres = [];
         foreach ($dbtables as $tablename) {
             $table = [
                 'name' => $tablename,
@@ -79,9 +82,13 @@ class dbschema_service {
             $this->tables[$tablename] = (isset($xmltables[$tablename]))
                 ? array_merge($table, $xmltables[$tablename])
                 : $table;
+
+            if ($export) {
+                $exportres[datatypes_service::generate_optional_datatype($tablename)] = $this->tables[$tablename];
+            }
         }
 
-        return $this->tables;
+        return $export ? $exportres : $this->tables;
     }
 
     /**
@@ -89,9 +96,6 @@ class dbschema_service {
      */
     public function get_tableslist() {
         $tables = $this->get_all_tableslist();
-
-        // Exclude required tables.
-        $tables = required_tables_repository::exclude_tables($tables);
 
         // Exclude system tables.
         $tables = optional_tables_repository::exclude_tables($tables);
@@ -103,12 +107,7 @@ class dbschema_service {
      * @return array
      */
     public function get_optional_tableslist() {
-        $tables = $this->get_all_tableslist();
-
-        // Exclude required tables.
-        $tables = required_tables_repository::exclude_tables($tables);
-
-        return $tables;
+        return $this->get_all_tableslist();
     }
 
     /**
@@ -289,8 +288,6 @@ class dbschema_service {
      * @return array
      */
     public function export() {
-        $this->get_tables();
-
-        return $this->tables;
+        return $this->get_tables(true);
     }
 }

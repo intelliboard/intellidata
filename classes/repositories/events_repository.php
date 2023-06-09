@@ -34,6 +34,8 @@ use local_intellidata\services\export_service;
 class events_repository {
 
     /**
+     * Create record.
+     *
      * @param $eventtype
      * @param $eventdata
      * @throws \dml_exception

@@ -50,7 +50,7 @@ class SettingsHelper {
         'resetimporttrackingprogress' => 0,
         'tracklogsdatatypes' => 0,
         'exportdataformat' => 'csv',
-        'defaultlayout' => 'standard',
+        'defaultlayout' => 'base',
         // User Tracking.
         'enabledtracking' => 1,
         'compresstracking' => tracking_repository::TYPE_CACHE,
@@ -81,9 +81,9 @@ class SettingsHelper {
         'divideexportbydatatype' => 0,
         'eventstracking' => 1,
         'exportids' => 1,
+        'exportdeletedrecords' => self::EXPORTDELETED_TRACKEVENTS,
         'debugenabled' => 0,
         'directsqlenabled' => 0,
-        'trackingidsmode' => export_id_repository::TRACK_IDS_MODE_REQUEST,
         'intelliboardcopydatatype' => null,
         'intelliboardcopyprocessedlimit' => 0
     ];
@@ -92,6 +92,15 @@ class SettingsHelper {
         'encryptionkey',
         'clientidentifier'
     ];
+
+    /**
+     * @var int Export deleted records disabled.
+     */
+    const EXPORTDELETED_DISABLED = 0;
+    /**
+     * @var int Export deleted records with moodle events tracking.
+     */
+    const EXPORTDELETED_TRACKEVENTS = 1;
 
     /**
      * Get config for export format.
@@ -171,6 +180,19 @@ class SettingsHelper {
         }
 
         return $options;
+    }
+
+    /**
+     * Return options for export deleted records.
+     *
+     * @return array
+     * @throws \coding_exception
+     */
+    public static function get_exportdeletedrecords_options() {
+        return [
+            self::EXPORTDELETED_DISABLED => get_string('disabled', ParamsHelper::PLUGIN),
+            self::EXPORTDELETED_TRACKEVENTS => get_string('trackevents', ParamsHelper::PLUGIN)
+        ];
     }
 
     /**

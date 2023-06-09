@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  */
 class role_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -94,7 +94,7 @@ class role_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'roleassignments']);
-        $datarecord = $storage->get_log_entity_data('role_assigned');
+        $datarecord = $storage->get_log_entity_data('c');
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
@@ -152,7 +152,7 @@ class role_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'roleassignments']);
-        $datarecord = $storage->get_log_entity_data('role_unassigned', $data);
+        $datarecord = $storage->get_log_entity_data('d', $data);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

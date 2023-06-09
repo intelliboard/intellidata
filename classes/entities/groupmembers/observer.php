@@ -41,7 +41,7 @@ class observer {
      * @param \core\event\group_member_removed $event
      */
     public static function group_member_removed(\core\event\group_member_removed $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
 
             self::export_event($event->get_data());
         }
@@ -84,7 +84,6 @@ class observer {
 
         $entity = new groupmember($groupdata, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);

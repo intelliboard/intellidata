@@ -72,6 +72,16 @@ class roleassignment extends \local_intellidata\entities\entity {
                 'description' => 'Assignment context type.',
                 'default' => 0,
             ),
+            'component' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Assignment component.',
+                'default' => '',
+            ),
+            'itemid' => array(
+                'type' => PARAM_INT,
+                'description' => 'Assignment item ID.',
+                'default' => 0,
+            ),
         );
     }
 

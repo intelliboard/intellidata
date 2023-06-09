@@ -48,7 +48,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function setUp(): void {
+    public function setUp():void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
     }

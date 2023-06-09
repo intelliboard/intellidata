@@ -398,6 +398,16 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'exportdeletedrecords';
+    $setting = new admin_setting_configselect(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        SettingsHelper::get_exportdeletedrecords_options()
+    );
+    $settings->add($setting);
+
     $name = 'debugenabled';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
@@ -443,14 +453,32 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
         $ADMIN->add('intellidata', new admin_externalpage(
             'intellidatasql',
             new lang_string('sqlreports', $pluginname),
-            $CFG->wwwroot.'/local/intellidata/sql_reports/index.php')
+            $CFG->wwwroot.'/local/intellidata/sql_reports/index.php'
+            )
         );
     }
 
     $ADMIN->add('intellidata',
         new admin_externalpage('intellidataconfig',
             new lang_string('configuration', $pluginname),
-            $CFG->wwwroot.'/local/intellidata/config/index.php')
+            $CFG->wwwroot.'/local/intellidata/config/index.php'
+        )
+    );
+
+    // Page with list of adhoc tasks.
+    $ADMIN->add('intellidata',
+        new admin_externalpage('intellidataadhoctasks',
+            new lang_string('exportadhoctasks', $pluginname),
+            $CFG->wwwroot.'/local/intellidata/logs/adhoctasks.php'
+        )
+    );
+
+    // IntelliBoard.net help page.
+    $ADMIN->add('intellidata',
+        new admin_externalpage('intelliboardhelp',
+            new lang_string('help', $pluginname),
+            $CFG->wwwroot.'/local/intellidata/help.php'
+        )
     );
 
 }

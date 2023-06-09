@@ -215,7 +215,6 @@ class observer {
     private static function export_event($eventdata, $submission, $fields = []) {
         $entity = new submission($submission, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
         $data->crud = $eventdata['crud'];
 
         $tracking = new events_service($entity::TYPE);

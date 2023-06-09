@@ -90,32 +90,9 @@ class export_service {
                     }
                 }
             }
-
-            // Clean export ids.
-            $this->clean_exportids($datatypes);
         }
 
         return $files;
-    }
-
-    /*
-     * Delete export ids saved with triggers.
-     */
-    private function clean_exportids($datatypes) {
-
-        $exportidrepository = new export_id_repository();
-        $trackidsmode = SettingsHelper::get_setting('trackingidsmode');
-
-        if ($trackidsmode == $exportidrepository::TRACK_IDS_MODE_TRIGGER) {
-            foreach ($datatypes as $datatype) {
-
-                if (!isset($datatype['table']) || !empty($datatype['exportids'])) {
-                    continue;
-                }
-
-                $exportidrepository->clean_deleted_ids($datatype['name'], []);
-            }
-        }
     }
 
     /**
@@ -213,7 +190,9 @@ class export_service {
         $filesdeleted = 0;
         $alldatatypes = $this->datatypes;
 
-        if (!empty($params['datatype']) && isset($alldatatypes[$params['datatype']])) {
+        if (!empty($params['datatypes'])) {
+            $datatypes = $params['datatypes'];
+        } else if (!empty($params['datatype']) && isset($alldatatypes[$params['datatype']])) {
             $datatypes = [$params['datatype'] => $alldatatypes[$params['datatype']]];
         } else if (!empty($params['datatype']) && !isset($alldatatypes[$params['datatype']])) {
             $datatypes = [];

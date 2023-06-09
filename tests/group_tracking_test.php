@@ -42,7 +42,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  */
 class group_tracking_test extends \advanced_testcase {
 
-    public function setUp(): void {
+    public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
@@ -80,7 +80,7 @@ class group_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'coursegroups']);
 
-        $datarecord = $storage->get_log_entity_data('group_created', ['id' => $group->id]);
+        $datarecord = $storage->get_log_entity_data('c', ['id' => $group->id]);
         $this->assertNotEmpty($datarecord);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $gdata);
 
@@ -137,7 +137,7 @@ class group_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'coursegroupmembers']);
 
-        $datarecord = $storage->get_log_entity_data('group_member_added', ['id' => $groupm->id]);
+        $datarecord = $storage->get_log_entity_data('c', ['id' => $groupm->id]);
         $this->assertNotEmpty($datarecord);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $gmdata);
 
@@ -173,7 +173,7 @@ class group_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'coursegroups']);
 
-        $datarecord = $storage->get_log_entity_data('group_updated', ['id' => $group->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $group->id]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $gdata);
@@ -217,7 +217,7 @@ class group_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'coursegroupmembers']);
 
-        $datarecord = $storage->get_log_entity_data('group_member_removed', $groupm);
+        $datarecord = $storage->get_log_entity_data('d', $groupm);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $groupm);
@@ -251,7 +251,7 @@ class group_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'coursegroups']);
 
-        $datarecord = $storage->get_log_entity_data('group_deleted', ['id' => $group->id]);
+        $datarecord = $storage->get_log_entity_data('d', ['id' => $group->id]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = json_decode($datarecord->data);

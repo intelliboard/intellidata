@@ -76,4 +76,17 @@ class renderer extends plugin_renderer_base {
 
         return $this->render_from_template($template, $context);
     }
+
+    /**
+     * Return content for "Help" page.
+     *
+     * @param help $page
+     * @return bool|string
+     * @throws \moodle_exception
+     */
+    public function render_help(\local_intellidata\output\help $page) {
+        return $this->render_from_template(
+            'local_intellidata/help', $page->export_for_template($this)
+        );
+    }
 }

@@ -27,6 +27,7 @@ use core\invalid_persistent_exception;
 use local_intellidata\helpers\DBManagerHelper;
 use local_intellidata\helpers\EventsHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\services\datatypes_service;
 use local_intellidata\services\dbschema_service;
 use stdClass;
 use lang_string;
@@ -333,7 +334,7 @@ class entity {
             return $fields;
         }
 
-        $columns = $dbschema->get_table_columns(self::$datatype);
+        $columns = $dbschema->get_table_columns(datatypes_service::get_optional_table(self::$datatype));
 
         foreach ($columns as $column) {
             $fields[$column->name] = [

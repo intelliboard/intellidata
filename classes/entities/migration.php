@@ -44,7 +44,6 @@ abstract class migration {
 
     public $encryptionservice   = null;
     public $entity              = null;
-    public $eventname           = null;
     public $table               = null;
     public $tablealias          = null;
     public $crud                = 'c';
@@ -213,10 +212,6 @@ abstract class migration {
         foreach ($records as $record) {
             $entity = new $this->entity($record);
             $entitydata = $entity->export();
-
-            if ($this->eventname) {
-                $entitydata->eventname = $this->eventname;
-            }
 
             yield $entitydata;
         }

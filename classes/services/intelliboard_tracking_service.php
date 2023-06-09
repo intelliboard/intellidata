@@ -124,9 +124,15 @@ class intelliboard_tracking_service {
 
         list($sql, $conditions) = $DB->get_in_or_equal(self::TRACKING_TYPES);
         $querytrack = " {local_intelliboard_tracking} WHERE courseid IS NOT NULL AND page {$sql} ";
-        $allcount = $DB->count_records_sql("SELECT COUNT(*) FROM {$querytrack}", $conditions);
 
-        if ($offset < $allcount) {
+        $sqltracking = "SELECT MAX(id) as id FROM {local_intellidata_tracking} WHERE page {$sql}";
+        $lastidentifier = 0;
+        if ($lasttracking = $DB->get_record_sql($sqltracking, $conditions)) {
+            $lastidentifier = $lasttracking->id ? : 0;
+        }
+
+        $sqlhastracking = "SELECT id FROM {local_intelliboard_tracking} WHERE page {$sql} AND id > {$lastidentifier}";
+        if ($DB->record_exists_sql($sqlhastracking, $conditions)) {
             $DB->execute("INSERT INTO {local_intellidata_tracking}
                                 SELECT
                                     id,
@@ -142,7 +148,8 @@ class intelliboard_tracking_service {
                                     CONCAT('{\"browser\":\"', useragent, '\",\"os\":\"', useros, '\"}') AS useragent,
                                     userip AS ip
                                 FROM {$querytrack}
-                                ORDER BY id ASC LIMIT {$limit} OFFSET {$offset}", $conditions);
+                                 AND id > {$lastidentifier}
+                                ORDER BY id ASC LIMIT {$limit}", $conditions);
         } else {
             // All data copied.
             $finish1 = true;
@@ -203,18 +210,19 @@ class intelliboard_tracking_service {
 
         mtrace("Import 'user trackings logs' records: from - " . $offset . ', to - ' . $willprocessed);
 
-        $allcount = $DB->count_records("local_intelliboard_logs");
+        $lastidentifier = 0;
+        if ($lasttracking = $DB->get_record_sql("SELECT MAX(id) as id FROM {local_intellidata_trlogs}")) {
+            $lastidentifier = $lasttracking->id ? : 0;
+        }
 
-        if ($offset < $allcount) {
+        if ($DB->record_exists_sql("SELECT id FROM {local_intelliboard_logs} WHERE id > {$lastidentifier}")) {
             $DB->execute("INSERT INTO {local_intellidata_trlogs}
                                    SELECT *, 0 AS timemodified
                                      FROM {local_intelliboard_logs}
-                                      ORDER BY id ASC LIMIT {$limit} OFFSET {$offset}");
-        }
+                                     WHERE id > {$lastidentifier}
+                                      ORDER BY id ASC LIMIT {$limit}");
 
-        if ($allcount > $willprocessed) {
             $this->set_progress_limit($willprocessed);
-
             return false;
         }
 
@@ -284,19 +292,19 @@ class intelliboard_tracking_service {
 
         mtrace("Import 'user trackings log details'  records: from - " . $offset . ', to - ' . $willprocessed);
 
-        $allcount = $DB->count_records("local_intelliboard_details");
-
-        if ($offset < $allcount) {
-            $DB->execute(
-                "INSERT INTO {local_intellidata_trdetails}
-                      SELECT *, 0 AS timemodified
-                        FROM {local_intelliboard_details}
-                       ORDER BY id ASC LIMIT {$limit} OFFSET {$offset}");
+        $lastidentifier = 0;
+        if ($lasttracking = $DB->get_record_sql("SELECT MAX(id) as id FROM {local_intellidata_trdetails}")) {
+            $lastidentifier = $lasttracking->id ? : 0;
         }
 
-        if ($allcount > $willprocessed) {
-            $this->set_progress_limit($willprocessed);
+        if ($DB->record_exists_sql("SELECT id FROM {local_intelliboard_details} WHERE id > {$lastidentifier}")) {
+            $DB->execute("INSERT INTO {local_intellidata_trdetails}
+                                   SELECT *, 0 AS timemodified
+                                     FROM {local_intelliboard_details}
+                                    WHERE id > {$lastidentifier}
+                                 ORDER BY id ASC LIMIT {$limit}");
 
+            $this->set_progress_limit($willprocessed);
             return false;
         }
 
@@ -348,7 +356,7 @@ class intelliboard_tracking_service {
      * @return array.
      */
     private function get_limit_data() {
-        $querylimit = (int)SettingsHelper::get_setting('exportrecordslimit');
+        $querylimit = (int)SettingsHelper::get_setting('exportrecordslimit') * 10;
 
         $processedlimit = $this->get_progress_limit();
 

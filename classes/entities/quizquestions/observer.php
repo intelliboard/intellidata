@@ -64,7 +64,7 @@ class observer {
      * @param \core\event\question_deleted $event
      */
     public static function question_deleted(\core\event\question_deleted $event) {
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             self::export_event($event);
         }
     }
@@ -77,7 +77,6 @@ class observer {
 
         $entity = new quizquestion($question, $fields);
         $data = $entity->export();
-        $data->eventname = $eventdata['eventname'];
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
