@@ -78,7 +78,7 @@ class migration extends \local_intellidata\entities\migration {
 
             $submissionssql = "SELECT
                         s.id AS submission_id,
-                        TRIM(BOTH ',' FROM CONCAT($select)) AS submission_type
+                        CONCAT($select, '') AS submission_type
                     FROM {assign_submission} s
                          $join
                     $innerwhere

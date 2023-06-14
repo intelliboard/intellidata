@@ -50,15 +50,18 @@ class adhoctasks_table extends \table_sql {
         $this->define_columns(array_keys($this->fields));
         $this->define_headers($this->get_headers());
 
+        $where = 'id > 0'; $sqlparams = [];
+
         $fields = "id, classname, nextruntime, faildelay, customdata, '' as actions";
-        if (!empty($CFG->version) and ($CFG->version > 2021052501)) {
+
+        if (!empty($CFG->version) && ($CFG->version > 2021052501)) {
             $fields .= ", timecreated, timestarted, pid";
+
+            $where .= ' AND component = :component';
+            $sqlparams = ['component' => ParamsHelper::PLUGIN];
         }
 
         $from = "{task_adhoc}";
-
-        $where = 'component = :component';
-        $sqlparams = ['component' => ''];
 
         $this->set_sql($fields, $from, $where, $sqlparams);
 
@@ -86,7 +89,7 @@ class adhoctasks_table extends \table_sql {
             ],
         ];
 
-        if (!empty($CFG->version) and ($CFG->version > 2021052501)) {
+        if (!empty($CFG->version) && ($CFG->version > 2021052501)) {
             $fields = array_merge($fields, [
                 'timecreated' => [
                     'label' => get_string('timecreated', ParamsHelper::PLUGIN),
