@@ -238,8 +238,8 @@ class database_storage_repository extends file_storage_repository {
             $data[$key] = '%"' . $key . '":%' . $value . '%';
         }
 
-        $sql .= "LIMIT 1";
+        $records = $DB->get_records_sql($sql, $data, 0, 1);
 
-        return $DB->get_record_sql($sql, $data);
+        return count($records) ? reset($records) : null;
     }
 }
