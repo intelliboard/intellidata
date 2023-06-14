@@ -233,7 +233,7 @@ class observer {
 
         $select = $join = [];
         foreach ($xmltables as $xmltable) {
-            if ($xmltable['plugintype'] == 'assignsubmission') {
+            if ($xmltable['plugintype'] === 'assignsubmission') {
                 $select[] = "CASE WHEN MAX({$xmltable['name']}.id) IS NOT NULL THEN '{$xmltable['plugin']}' ELSE '' END";
                 $join[] = "LEFT JOIN {{$xmltable['name']}} {$xmltable['name']} on {$xmltable['name']}.submission=s.id";
             }
@@ -247,7 +247,7 @@ class observer {
 
             $submissionssql = "SELECT
                         s.id AS submission_id,
-                        TRIM(BOTH ',' FROM CONCAT($select)) AS submission_type
+                        CONCAT($select, '') AS submission_type
                     FROM {assign_submission} s
                          $join
                     $innerwhere
@@ -256,8 +256,8 @@ class observer {
             $record = $DB->get_record_sql($submissionssql, $condition);
 
             return (isset($record->submission_type)) ? $record->submission_type : '';
-        } else {
-            return '';
         }
+
+        return '';
     }
 }
