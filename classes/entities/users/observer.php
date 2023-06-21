@@ -47,10 +47,8 @@ class observer {
             $eventdata = $event->get_data();
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
-            $user->fullname = fullname($user);
-            $user->state = ($user->confirmed && !$user->suspended) ?
-                ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
-            $user->lastlogin = max($user->lastlogin, $user->currentlogin);
+
+            self::prepare_user_data_to_export($user);
 
             self::export_event($user, $eventdata);
         }
@@ -66,13 +64,56 @@ class observer {
             $eventdata = $event->get_data();
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
-            $user->fullname = fullname($user);
-            $user->state = ($user->confirmed && !$user->suspended) ?
-                ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
-            $user->lastlogin = max($user->lastlogin, $user->currentlogin);
+
+            self::prepare_user_data_to_export($user);
 
             self::export_event($user, $eventdata);
         }
+    }
+
+    /**
+     * Triggered when 'user_loggedin' event is triggered.
+     *
+     * @param \core\event\user_loggedin $event
+     */
+    public static function user_loggedin(\core\event\user_loggedin $event) {
+        if (TrackingHelper::enabled()) {
+            $eventdata = $event->get_data();
+
+            $user = $event->get_record_snapshot('user', $eventdata['objectid']);
+
+            self::prepare_user_data_to_export($user);
+
+            self::export_event($user, $eventdata);
+        }
+    }
+
+    /**
+     * Triggered when 'user_loggedout' event is triggered.
+     *
+     * @param \core\event\user_loggedout $event
+     */
+    public static function user_loggedout(\core\event\user_loggedout $event) {
+        if (TrackingHelper::enabled()) {
+            $eventdata = $event->get_data();
+            $user = $event->get_record_snapshot('user', $eventdata['objectid']);
+
+            self::prepare_user_data_to_export($user);
+
+            self::export_event($user, $eventdata);
+        }
+    }
+
+    /**
+     * Format user data for export.
+     *
+     * @param \stdClass $user
+     */
+    public static function prepare_user_data_to_export(&$user) {
+        $user->fullname = fullname($user);
+        $user->state = ($user->confirmed && !$user->suspended) ?
+            ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
+        $user->lastlogin = max($user->lastlogin, $user->currentlogin);
     }
 
     /**

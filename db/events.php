@@ -39,6 +39,14 @@ $observers = [
         'eventname' => '\core\event\user_deleted',
         'callback' => '\local_intellidata\entities\users\observer::user_deleted',
     ],
+    [
+        'eventname' => '\core\event\user_loggedin',
+        'callback' => '\local_intellidata\entities\users\observer::user_loggedin',
+    ],
+    [
+        'eventname' => '\core\event\user_loggedout',
+        'callback' => '\local_intellidata\entities\users\observer::user_loggedout',
+    ],
 
     // Users Auth events.
     [
