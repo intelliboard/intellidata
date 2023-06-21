@@ -181,13 +181,24 @@ class TasksHelper {
             $task = manager::adhoc_task_from_record($record);
 
             // Complete task if it is running.
-            if ($task->get_timestarted() && $task->get_pid()) {
+            if (self::is_task_running($task)) {
                 manager::adhoc_task_complete($task);
             } else {
                 // Delete task if it is not running.
                 $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
             }
         }
+    }
+
+    /**
+     * Validate if task is currently running.
+     *
+     * @param $task
+     * @return bool
+     */
+    public static function is_task_running($task) {
+        return method_exists($task, 'get_timestarted') && $task->get_timestarted()
+            && $task->get_pid();
     }
 
     /**

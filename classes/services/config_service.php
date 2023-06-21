@@ -211,6 +211,7 @@ class config_service {
             $dataconfig->tableindex = '';
         }
 
+        $oldtabletype = $recordconfig->get('tabletype');
         if (!$recordconfig->is_required_by_default()) {
             $timemodifiedfields = self::get_available_timemodified_fields($recordconfig->get('datatype'));
             // Validate export rules.
@@ -249,7 +250,23 @@ class config_service {
         if (!$recordconfig->is_required_by_default()) {
             // Process export log.
             $this->export_log($recordconfig, $dataconfig);
+        } else if (($recordconfig->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) &&
+            ($recordconfig->get('tabletype') != $oldtabletype)) {
+            $this->create_export_adhoc_task([$recordconfig->get('datatype')]);
         }
+    }
+
+    /**
+     * @param array $datatypes
+     *
+     * @return void
+     */
+    private function create_export_adhoc_task($datatypes) {
+        $exporttask = new \local_intellidata\task\export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => $datatypes
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
     }
 
     /**
@@ -474,7 +491,7 @@ class config_service {
             foreach ($this->config as $config) {
 
                 // Delete only optional datatypes. Ignore required and logs datatypes.
-                if ($config->tabletype != datatypeconfig::TABLETYPE_OPTIONAL) {
+                if (!datatypes_service::is_optional($config->datatype, $config->datatype)) {
                     continue;
                 }
 
