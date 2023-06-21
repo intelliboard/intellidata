@@ -154,4 +154,29 @@ class config_service_test extends \advanced_testcase {
         $datatype->rewritable = true;
         $this->assertFalse(config_service::get_exportids_config_optional($datatype));
     }
+
+    /**
+     * Test get_exportids_config_optional method with checking rewritable.
+     *
+     * @return void
+     * @throws dml_exception
+     * @covers \local_intellidata\services\config_service::delete_missed_tables_config
+     */
+    public function test_delete_required_optional_datatype_delete_missed_tables_config() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $datatype = 'userlogins';
+        $record = datatypeconfig::get_record(['datatype' => $datatype]);
+        $configservice = new config_service();
+
+        $data = new \stdClass();
+        $data->tabletype = datatypeconfig::TABLETYPE_OPTIONAL;
+        $configservice->save_config($record, $data);
+
+        $configservice = new config_service(datatypes_service::get_all_optional_datatypes());
+        $configservice->setup_config(false);
+
+        $this->assertTrue($DB->record_exists('local_intellidata_config', ['datatype' => $datatype]));
+    }
 }
