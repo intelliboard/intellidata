@@ -52,14 +52,16 @@ class adhoctasks_table extends \table_sql {
 
         $where = 'id > 0'; $sqlparams = [];
 
-        $fields = "id, classname, nextruntime, faildelay, customdata, '' as actions";
+        $fields = "id, classname, nextruntime";
 
         if (!empty($CFG->version) && ($CFG->version > 2021052501)) {
             $fields .= ", timecreated, timestarted, pid";
 
-            $where .= ' AND component = :component';
+            $where .= " AND component = :component";
             $sqlparams = ['component' => ParamsHelper::PLUGIN];
         }
+
+        $fields .= ", faildelay, customdata, '' as actions";
 
         $from = "{task_adhoc}";
 
@@ -197,7 +199,7 @@ class adhoctasks_table extends \table_sql {
      * @throws \coding_exception
      */
     public function col_pid($values) {
-        return $this->col_datetime($values->pid) ?? '-';
+        return $values->pid ?? '-';
     }
 
     /**

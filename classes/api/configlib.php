@@ -19,6 +19,11 @@ use local_intellidata\services\encryption_service;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\TasksHelper;
+use local_intellidata\services\config_service;
+use local_intellidata\repositories\export_log_repository;
+use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\task\migration_adhoc_task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -161,6 +166,252 @@ class local_intellidata_configlib extends external_api {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+
+    /**
+     * Parameters for reset_datatype() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function reset_datatype_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Reset specific datatype for export.
+     *
+     * @param $data
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function reset_datatype($data) {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::reset_datatype_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'datatype' => PARAM_TEXT
+        ]);
+
+        $exportlogrepository = new export_log_repository();
+        $datatype = $exportlogrepository->get_datatype($params['datatype']);
+
+        if ($datatype) {
+            $record = datatypeconfig::get_record(['datatype' => $datatype->get('datatype')]);
+
+            $configservice = new config_service();
+            $configservice->reset_config_datatype($record);
+
+            $encryptionservice = new encryption_service();
+
+            return [
+                'data' => $encryptionservice->encrypt('Datatype successfully resetted'),
+                'status' => apilib::STATUS_SUCCESS
+            ];
+        }
+
+        return [
+            'data' => 'Datatype not enabled for export.',
+            'status' => apilib::STATUS_ERROR
+        ];
+    }
+
+    /**
+     * Return data for reset_datatype() method.
+     *
+     * @return external_single_structure
+     */
+    public static function reset_datatype_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Response message.'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * Parameters for reset_migration() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function reset_migration_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * Reset and restart migration.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function reset_migration() {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        // Reset migration.
+        set_config('resetmigrationprogress', 1, 'local_intellidata');
+
+        // Enable cron task.
+        MigrationHelper::enabled_migration_task();
+
+        $encryptionservice = new encryption_service();
+
+        return [
+            'data' => $encryptionservice->encrypt('Migration successfully restarted'),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * Return data for reset_migration() method.
+     *
+     * @return external_single_structure
+     */
+    public static function reset_migration_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Response message.'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * Parameters for run_migration() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function run_migration_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * Run migration task.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function run_migration() {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $tasksmanager = new core\task\manager();
+
+        if (!method_exists($tasksmanager, 'get_scheduled_task') ||
+            !method_exists($tasksmanager, 'is_runnable') ||
+            !method_exists($tasksmanager, 'run_from_cli')) {
+
+            return [
+                'data' => "Tasks manager outdated",
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        $taskname = MigrationHelper::MIGRATIONS_TASK_CLASS;
+        $task = \core\task\manager::get_scheduled_task($taskname);
+        if (!$task) {
+            return [
+                'data' => "Task '$taskname' not found",
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        if (!\core\task\manager::is_runnable()) {
+            return [
+                'data' => get_string('cannotfindthepathtothecli', 'tool_task'),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        if (!$task->can_run()) {
+            return [
+                'data' => get_string('nopermissions', 'error'),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Validate is task is already running.
+        if (TasksHelper::is_task_running($task)) {
+            return [
+                'data' => 'Task already running',
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Run task.
+        ob_start();
+        \core\task\manager::run_from_cli($task);
+        $output = ob_get_clean();
+
+        $encryptionservice = new encryption_service();
+
+        return [
+            'data' => $encryptionservice->encrypt($output),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * Return data for run_migration() method.
+     *
+     * @return external_single_structure
+     */
+    public static function run_migration_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
             )
         );
