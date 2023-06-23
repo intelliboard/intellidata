@@ -207,4 +207,70 @@ class local_intellidata_logslib extends external_api {
         );
     }
 
+    /**
+     * Get running tasks list.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_running_tasks_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * Get running tasks list.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_running_tasks() {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $encryptionservice = new encryption_service();
+        $tasksmanager = new core\task\manager();
+
+        if (!method_exists($tasksmanager, 'get_running_tasks')) {
+            return [
+                'data' => 'get_running_tasks method not found',
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        $tasks = \core\task\manager::get_running_tasks();
+
+        return [
+            'data' => $encryptionservice->encrypt(
+                json_encode($tasks)
+            ),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * Returns description of method get_running().
+     *
+     * @return external_single_structure
+     */
+    public static function get_running_tasks_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
 }

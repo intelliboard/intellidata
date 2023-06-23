@@ -181,6 +181,34 @@ $functions = [
         'classpath'     => 'local/intellidata/classes/api/logslib.php',
         'description'   => 'Get plugin scheduled adhoc tasks list from Moodle.',
         'type'          => 'read'
+    ],
+    'local_intellidata_reset_migration' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'reset_migration',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Reset full migration in Plugin.',
+        'type'          => 'write'
+    ],
+    'local_intellidata_reset_datatype' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'reset_datatype',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Reset specific datatype in Plugin.',
+        'type'          => 'write'
+    ],
+    'local_intellidata_run_migration' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'run_migration',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Schedule adhoc migration task.',
+        'type'          => 'write'
+    ],
+    'local_intellidata_get_running_tasks' => [
+        'classname'     => 'local_intellidata_logslib',
+        'methodname'    => 'get_running_tasks',
+        'classpath'     => 'local/intellidata/classes/api/logslib.php',
+        'description'   => 'Get plugin running tasks list from Moodle.',
+        'type'          => 'read'
     ]
 ];
 
@@ -207,7 +235,11 @@ $services = [
             'local_intellidata_set_plugin_config',
             'local_intellidata_get_data',
             'local_intellidata_get_bbcollsessions_data',
-            'local_intellidata_get_adhoc_tasks'
+            'local_intellidata_get_adhoc_tasks',
+            'local_intellidata_reset_migration',
+            'local_intellidata_reset_datatype',
+            'local_intellidata_run_migration',
+            'local_intellidata_get_running_tasks'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

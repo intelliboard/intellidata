@@ -197,8 +197,7 @@ class TasksHelper {
      * @return bool
      */
     public static function is_task_running($task) {
-        return method_exists($task, 'get_timestarted') && $task->get_timestarted()
-            && $task->get_pid();
+        return method_exists($task, 'get_timestarted') && $task->get_timestarted();
     }
 
     /**
