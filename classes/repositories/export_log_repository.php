@@ -29,9 +29,8 @@ namespace local_intellidata\repositories;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\persistent\export_logs;
-use local_intellidata\services\config_service;
 use local_intellidata\services\dbschema_service;
-use local_intellidata\services\datatypes_service;;
+use local_intellidata\services\datatypes_service;
 
 class export_log_repository {
 
@@ -418,6 +417,17 @@ class export_log_repository {
         }
 
         return $logs;
+    }
+
+    /**
+     * Get datatype record.
+     *
+     * @param $datatype
+     * @return array|int[]
+     * @throws \coding_exception
+     */
+    public function get_datatype($datatype) {
+        return export_logs::get_record(['datatype' => $datatype]);
     }
 
     /**

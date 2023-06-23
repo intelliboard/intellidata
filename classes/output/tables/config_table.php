@@ -67,7 +67,7 @@ class config_table extends \table_sql {
         $from = "{" . datatypeconfig::TABLE . "} c
                 LEFT JOIN {" . export_logs::TABLE . "} el ON el.datatype = c.datatype";
 
-        $where = 'c.id > 1';
+        $where = 'c.id > 0';
 
         if (!empty($searchquery)) {
             $where .= " AND " . $DB->sql_like('c.datatype', ':searchquery', false, false, false);
