@@ -71,11 +71,16 @@ class dbschema_service {
         // Tables list with keys from install.xml.
         $xmltables = DBManagerHelper::get_install_xml_tables();
 
+        // Get datatypes config.
+        $configservice = new config_service(datatypes_service::get_all_datatypes());
+        $datatypes = $configservice->get_datatypes();
+
         $exportres = [];
         foreach ($dbtables as $tablename) {
             $table = [
                 'name' => $tablename,
-                'fields' => $this->get_table_fields($tablename)
+                'fields' => $this->get_table_fields($tablename),
+                'config' => $datatypes[datatypes_service::generate_optional_datatype($tablename)] ?? []
             ];
 
             // Merge with install.xml keys and set plugintype/pluginname.
