@@ -52,7 +52,7 @@ class migration extends \local_intellidata\entities\migration {
         $select = ($count) ?
             "SELECT COUNT(" . $this->tablealias . ".id) as recordscount " :
             "SELECT " . $this->tablealias . ".id, " . $this->tablealias . ".quizid,
-             " . ($release4 ? 'qve' : $this->tablealias) . ".questionid ";
+             " . ($release4 ? 'qve' : $this->tablealias) . ".questionid, " . $this->tablealias . ".slot";
 
         $sql = "$select
                 FROM {" . $this->table . "} " . $this->tablealias;

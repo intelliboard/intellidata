@@ -62,6 +62,11 @@ class quizquestionrelation extends \local_intellidata\entities\entity {
                 'description' => 'Question ID.',
                 'default' => 0,
             ),
+            'slot' => array(
+                'type' => PARAM_INT,
+                'description' => 'Slot Number.',
+                'default' => 0,
+            ),
         );
     }
 
