@@ -51,7 +51,7 @@ class quamigration extends \local_intellidata\entities\migration {
 
         $select = ($count) ?
             "SELECT COUNT(qua.id) as recordscount" :
-            "SELECT qua.id, qa.id AS attemptid, qua.questionid, qa.uniqueid, qa.timemodified, qua.maxmark";
+            "SELECT qua.id, qa.id AS attemptid, qua.questionid, qa.uniqueid, qa.timemodified, qua.maxmark, qua.slot";
 
         $sql = "$select
                 FROM {" . $this->table . "} " . $this->tablealias . "

@@ -76,7 +76,12 @@ class quizquestionattempts extends \local_intellidata\entities\entity {
                 'type' => PARAM_TEXT,
                 'description' => 'The grade for this question,.',
                 'default' => '',
-            )
+            ),
+            'slot' => array(
+                'type' => PARAM_INT,
+                'description' => 'Slot number.',
+                'default' => 0,
+            ),
         );
     }
 
