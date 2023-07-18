@@ -53,14 +53,13 @@ class generator {
     public static function create_user(array $data = []) {
         global $CFG;
 
-        require_once($CFG->dirroot . '/user/lib.php');
+        $user = self::data_generator()->create_user($data);
 
-        if (test_helper::is_new_phpunit()) {
-            return self::data_generator()->create_user($data);
+        if (!test_helper::is_user_generator_with_events()) {
+            \core\event\user_created::create_from_userid($user->id)->trigger();
         }
 
-        $data['id'] = user_create_user($data);
-        return (object)$data;
+        return $user;
     }
 
     /**
@@ -148,7 +147,7 @@ class generator {
      * @throws \moodle_exception
      */
     public static function get_category(int $id) {
-        if (test_helper::is_new_phpunit()) {
+        if (test_helper::is_new_phpunit() && class_exists('core_course_category')) {
             return \core_course_category::get($id);
         }
 

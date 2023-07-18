@@ -23,12 +23,9 @@
  * @website    http://intelliboard.net/
  */
 
-use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\repositories\export_id_repository;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\intelliboard_service;
-use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\DebugHelper;
 
 function xmldb_local_intellidata_install() {
@@ -39,6 +36,9 @@ function xmldb_local_intellidata_install() {
     // Setup config in database.
     $configservice = new config_service(datatypes_service::get_all_datatypes());
     $configservice->setup_config();
+
+    // Enable required native datatypes.
+    datatypes_service::enable_required_native_datatypes();
 
     // Send IB prospects.
     try {

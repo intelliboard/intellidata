@@ -274,7 +274,8 @@ class exportlogs_table extends \table_sql {
             'local_intellidata/header_search_input',
             [
                 'action' => $PAGE->url,
-                'query' => $PAGE->url->get_param('query')
+                'query' => $PAGE->url->get_param('query'),
+                'sesskey' => sesskey()
             ]
         );
     }

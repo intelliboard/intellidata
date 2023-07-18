@@ -220,7 +220,8 @@ class adhoctasks_table extends \table_sql {
         $buttons = [];
         $urlparams = ['id' => $values->id];
 
-        $aurl = new \moodle_url('/local/intellidata/logs/adhoctasks.php', $urlparams + ['action' => 'delete']);
+        $aurl = new \moodle_url('/local/intellidata/logs/adhoctasks.php', $urlparams + [
+            'action' => 'delete', 'sesskey' => sesskey()]);
         $buttons[] = $OUTPUT->action_icon(
             $aurl,
             new \pix_icon('t/delete', get_string('deletetask', ParamsHelper::PLUGIN),

@@ -33,6 +33,10 @@ $action = optional_param('action', '', PARAM_TEXT);
 
 require_login();
 
+if (!empty($action)) {
+    require_sesskey();
+}
+
 $context = context_system::instance();
 require_capability('local/intellidata:viewadhoctasks', $context);
 

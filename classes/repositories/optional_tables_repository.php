@@ -30,7 +30,10 @@ use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\repositories\config_repository;
 
 class optional_tables_repository extends base_tables_repository {
+
     /**
+     * Exclude tables from the list of tables to be processed.
+     *
      * @param $dbtables
      * @return mixed
      */
@@ -47,6 +50,8 @@ class optional_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Retrieve tables to exclude from the list of tables to be processed.
+     *
      * @param $dbtables
      * @return array
      */
@@ -61,6 +66,8 @@ class optional_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Validate single table to be excluded or not.
+     *
      * @param $dbtables
      * @param $table
      * @param $keystodelete
@@ -72,6 +79,8 @@ class optional_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Tables list from config table to exclude from the list of tables to be processed.
+     *
      * @return string[]
      */
     protected static function get_defined_tables() {

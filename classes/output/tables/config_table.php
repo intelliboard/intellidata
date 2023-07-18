@@ -134,7 +134,7 @@ class config_table extends \table_sql {
 
         $headers[] = get_string('actions', 'local_intellidata');
 
-        return$headers;
+        return $headers;
     }
 
     /**
@@ -239,7 +239,8 @@ class config_table extends \table_sql {
         if ($values->tabletype == datatypeconfig::TABLETYPE_LOGS) {
             $urlparams = ['id' => $values->id];
             if ($values->exportenabled) {
-                $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + ['action' => 'reset']);
+                $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + [
+                    'action' => 'reset', 'sesskey' => sesskey()]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
@@ -256,7 +257,8 @@ class config_table extends \table_sql {
                 'core', ['class' => 'iconsmall']), null
             );
 
-            $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + ['action' => 'delete']);
+            $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + [
+                'action' => 'delete', 'sesskey' => sesskey()]);
             $buttons[] = $OUTPUT->action_icon(
                 $aurl,
                 new \pix_icon('t/delete', get_string('delete'),
@@ -269,7 +271,8 @@ class config_table extends \table_sql {
         } else {
             $urlparams = ['datatype' => $values->datatype];
             if ($values->exportenabled) {
-                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'reset']);
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + [
+                    'action' => 'reset', 'sesskey' => sesskey()]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
@@ -308,7 +311,8 @@ class config_table extends \table_sql {
             $urlparams = ['datatype' => $values->datatype];
 
             if (!empty($values->tableindex)) {
-                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'deleteindex']);
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + [
+                    'action' => 'deleteindex', 'sesskey' => sesskey()]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/switch_minus', get_string('deleteindex', 'local_intellidata'),
@@ -320,7 +324,8 @@ class config_table extends \table_sql {
                         "')) return false;"]
                 );
             } else if (!empty($values->timemodified_field)) {
-                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + ['action' => 'createindex']);
+                $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + [
+                    'action' => 'createindex', 'sesskey' => sesskey()]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/switch_plus', get_string('createindex', 'local_intellidata'),
@@ -418,7 +423,8 @@ class config_table extends \table_sql {
      */
     public function reset_button() {
 
-        $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'reset']);
+        $reseturl = new \moodle_url('/local/intellidata/config/index.php', [
+            'action' => 'reset', 'sesskey' => sesskey()]);
         $output = \html_writer::link($reseturl, get_string('resettodefault', 'local_intellidata'),
             ['class' => 'btn btn-primary mr-1']);
 
@@ -432,7 +438,8 @@ class config_table extends \table_sql {
      */
     public function import_button() {
 
-        $reseturl = new \moodle_url('/local/intellidata/config/index.php', ['action' => 'import']);
+        $reseturl = new \moodle_url('/local/intellidata/config/index.php', [
+            'action' => 'import', 'sesskey' => sesskey()]);
         $output = \html_writer::link($reseturl, get_string('refreshconfig', 'local_intellidata'),
             ['class' => 'btn btn-primary mr-1']);
 
@@ -467,7 +474,8 @@ class config_table extends \table_sql {
             'local_intellidata/header_search_input',
             [
                 'action' => $PAGE->url,
-                'query' => $PAGE->url->get_param('query')
+                'query' => $PAGE->url->get_param('query'),
+                'sesskey' => sesskey()
             ]
         );
     }

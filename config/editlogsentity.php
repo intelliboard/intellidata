@@ -25,15 +25,20 @@ use local_intellidata\output\forms\local_intellidata_editlogsentity_config;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\repositories\config_repository;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
 
 require('../../../config.php');
 
-$id = optional_param('id', '', PARAM_INT);
+$id = optional_param('id', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_TEXT);
 
 require_login();
+
+if (!empty($action)) {
+    require_sesskey();
+}
 
 $context = context_system::instance();
 require_capability('local/intellidata:editconfig', $context);
@@ -44,7 +49,8 @@ $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
-$record = datatypeconfig::get_record(['id' => $id]);
+$configrepository = new config_repository();
+$record = $configrepository->get_record(['id' => $id]);
 
 if ($record && $record->get('tabletype') != datatypeconfig::TABLETYPE_LOGS) {
     throw new \moodle_exception('wrongdatatype', 'local_intellidata');
@@ -102,7 +108,10 @@ if ($action == 'reset' && $record->get('datatype')) {
     }
 
     // Delete config record.
-    $record->delete();
+    $configrepository->delete($record->get('datatype'));
+
+    // Cache config after deletion.
+    $configrepository->cache_config();
 
     redirect($returnurl, get_string('deletemsg', 'local_intellidata'));
 }
@@ -130,7 +139,12 @@ if ($editform->is_cancelled()) {
     $record->set('rewritable', $data->rewritable);
     $record->set('status', $data->status);
     $record->set('params', json_encode($data->params));
-    $record->save();
+
+    // Save config.
+    $configrepository->save($datatype, $record->to_record());
+
+    // Cache config after updates.
+    $configrepository->cache_config();
 
     // Process export log.
     if ((!$data->enableexport || !$data->status) && !empty($exportlog)) {

@@ -27,7 +27,10 @@
 namespace local_intellidata\repositories;
 
 class system_tables_repository extends base_tables_repository {
+
     /**
+     * Exclude tables from the list of tables to be processed.
+     *
      * @param $dbtables
      * @return mixed
      */
@@ -45,6 +48,8 @@ class system_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Retrieve tables to exclude from the list of tables to be processed.
+     *
      * @param $dbtables
      * @return array
      */
@@ -60,6 +65,8 @@ class system_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Validate single table to exclude from the list.
+     *
      * @param $dbtables
      * @param $table
      * @param $keystodelete
@@ -71,6 +78,8 @@ class system_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Validate table by template to exclude from the list.
+     *
      * @param $dbtables
      * @param $table
      * @param $keystodelete
@@ -86,6 +95,8 @@ class system_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Tables list to exclude from the list of tables to be processed.
+     *
      * @return array
      */
     protected static function get_defined_tables() {
@@ -174,7 +185,6 @@ class system_tables_repository extends base_tables_repository {
             'task*',
             'qtype*',
             'question_calculated*',
-            'question_categories',
             'question_dataset*',
             'question_ddwtos',
             'question_gapselect',

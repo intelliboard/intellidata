@@ -64,10 +64,19 @@ class config_service {
      * @return array|mixed
      */
     public function get_datatypes() {
+
+        $created = 0;
         if (count($this->datatypes)) {
             foreach ($this->datatypes as $datatypename => $defaultconfig) {
-                $this->apply_config($datatypename, $defaultconfig);
+                if ($this->apply_config($datatypename, $defaultconfig)) {
+                    $created++;
+                }
             }
+        }
+
+        // Cache config if any new records created.
+        if ($created) {
+            $this->cache_config();
         }
 
         return $this->datatypes;
@@ -79,18 +88,34 @@ class config_service {
      * @return array|mixed
      */
     public function setup_config($forceresetconfig = true) {
+
+        $created = 0;
         if (count($this->datatypes)) {
             foreach ($this->datatypes as $datatypename => $defaultconfig) {
-                $this->apply_config($datatypename, $defaultconfig, $forceresetconfig);
+                if ($this->apply_config($datatypename, $defaultconfig, $forceresetconfig)) {
+                    $created++;
+                }
             }
         }
 
-        $this->delete_missed_tables_config();
+        $deleted = $this->delete_missed_tables_config();
 
         // Insert deleted tables events.
-        $this->apply_optional_tables_events();
+        $updated = $this->apply_optional_tables_events();
+
+        // Cache config if any changes applied for force reset config.
+        if ($forceresetconfig || $created || $deleted || $updated) {
+            $this->cache_config();
+        }
     }
 
+    /**
+     * Reset datatype to re-export.
+     *
+     * @param $record
+     * @return void
+     * @throws \coding_exception
+     */
     public function reset_config_datatype($record) {
         $exportlogrepository = new export_log_repository();
         // Reset export logs.
@@ -121,9 +146,12 @@ class config_service {
      */
     private function apply_config($datatypename, $defaultconfig, $forceresetconfig = false) {
 
+        $created = 0;
+
         // Setup config if not exists.
         if (!isset($this->config[$datatypename]) || $forceresetconfig) {
-            $this->config[$datatypename] = $this->create_config($datatypename, $defaultconfig);
+            $this->config[$datatypename] = $this->create_config($datatypename, $defaultconfig, true);
+            $created = true;
         }
 
         $config = $this->config[$datatypename];
@@ -173,6 +201,9 @@ class config_service {
         $this->datatypes[$datatypename]['deletedevent'] = $config->deletedevent;
 
         $this->datatypes[$datatypename]['params'] = $config->params;
+
+        // Cache config if any new config record created.
+        return $created;
     }
 
     /**
@@ -182,12 +213,13 @@ class config_service {
      * @param $defaultconfig
      * @return mixed
      */
-    public function create_config($datatypename, $defaultconfig) {
+    public function create_config($datatypename, $defaultconfig, $bulk = false) {
         $config = new \stdClass();
         $config->tabletype = $defaultconfig['tabletype'];
         $config->datatype = $datatypename;
         $config->status = self::get_config_status($defaultconfig);
-        $config->timemodified_field = ($defaultconfig['timemodified_field'] === false) ? '' : $defaultconfig['timemodified_field'];
+        $config->timemodified_field = ($defaultconfig['timemodified_field'] === false)
+            ? '' : $defaultconfig['timemodified_field'];
         $config->rewritable = ($defaultconfig['rewritable'])
             ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
         $config->filterbyid = ($defaultconfig['filterbyid'])
@@ -195,7 +227,13 @@ class config_service {
         $config->events_tracking = (!empty($defaultconfig['observer']))
             ? datatypeconfig::STATUS_ENABLED : datatypeconfig::STATUS_DISABLED;
 
-        return $this->repo->save($datatypename, $config);
+        $config = $this->repo->save($datatypename, $config);
+
+        if (!$bulk) {
+            $this->cache_config();
+        }
+
+        return $config;
     }
 
     /**
@@ -245,7 +283,10 @@ class config_service {
             $recordconfig->set('tabletype', $dataconfig->tabletype);
         }
 
-        $recordconfig->save();
+        $this->repo->save($recordconfig->get('datatype'), $recordconfig->to_record());
+
+        // Cache config after deletion.
+        $this->cache_config();
 
         if (!$recordconfig->is_required_by_default()) {
             // Process export log.
@@ -474,6 +515,10 @@ class config_service {
             'tool_tenant_user' => [
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
+            ],
+            'question_categories' => [
+                'filterbyid' => true,
+                'rewritable' => false
             ]
         ];
 
@@ -487,11 +532,13 @@ class config_service {
      */
     private function delete_missed_tables_config() {
 
+        $recordsdeleted = 0;
+
         if (count($this->config)) {
             foreach ($this->config as $config) {
 
                 // Delete only optional datatypes. Ignore required and logs datatypes.
-                if (!datatypes_service::is_optional($config->datatype, $config->datatype)) {
+                if (!datatypes_service::is_optional($config->datatype, $config->tabletype)) {
                     continue;
                 }
 
@@ -499,9 +546,12 @@ class config_service {
                 $datatype = datatypes_service::get_optional_table($config->datatype);
                 if (!$this->dbschema->table_exists($datatype)) {
                     $this->repo->delete($config->datatype);
+                    $recordsdeleted++;
                 }
             }
         }
+
+        return $recordsdeleted;
     }
 
     /**
@@ -510,6 +560,9 @@ class config_service {
      * @throws \coding_exception
      */
     private function apply_optional_tables_events() {
+
+        $updated = 0;
+
         if (count($this->config)) {
             $eventslist = EventsHelper::deleted_eventslist();
 
@@ -519,13 +572,41 @@ class config_service {
                 }
 
                 $table = datatypes_service::get_optional_table($config->datatype);
-                if (isset($eventslist[$table])) {
+                if (isset($eventslist[$table]) && $config->deletedevent != $eventslist[$table]) {
                     $config->deletedevent = $eventslist[$table];
                     unset($config->params);
 
                     $this->repo->save($config->datatype, $config);
+                    $updated++;
                 }
             }
         }
+
+        return $updated;
+    }
+
+    /**
+     * Cache config.
+     *
+     * @return void
+     */
+    public function cache_config() {
+
+        $config = $this->repo->cache_config();
+
+        if (count($config)) {
+            $this->config = $config;
+        }
+    }
+
+    /**
+     * Delete config record.
+     *
+     * @param $datatype
+     * @return bool
+     * @throws \coding_exception
+     */
+    public function delete_config($datatype) {
+        return $this->repo->delete($datatype);
     }
 }

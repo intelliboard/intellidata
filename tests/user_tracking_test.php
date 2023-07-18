@@ -30,6 +30,7 @@ global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 use local_intellidata\helpers\StorageHelper;
 
@@ -54,6 +55,7 @@ class user_tracking_test extends \advanced_testcase {
      * @covers \local_intellidata\entities\users\observer::user_created
      */
     public function test_create() {
+        global $DB;
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(false);
         }
@@ -69,6 +71,7 @@ class user_tracking_test extends \advanced_testcase {
 
         $entity = new \local_intellidata\entities\users\user($user);
         $entitydata = $entity->export();
+
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'users']);

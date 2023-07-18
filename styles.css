@@ -50,7 +50,7 @@
 
 .intellidata-support-text {
     max-width: 60%;
-    color: #333333;
+    color: #333;
     margin-bottom: 40px;
     z-index: 1;
     position: relative;
@@ -61,7 +61,7 @@
 
 .intellidata-support-text h2 {
     font-size: 1.2rem;
-    color: #333333;
+    color: #333;
 }
 
 .intellidata-support-version a {
@@ -142,8 +142,7 @@
 
 @media screen and (max-width: 1400px) {
     .intellidata-support-links-header,
-    .intellidata-proposal
-    {
+    .intellidata-proposal {
         font-size: 14px;
         line-height: 20px;
     }
@@ -175,7 +174,7 @@
 
     body .intellidata-support {
         height: auto;
-        background: #F7FAFE !important;
+        background: #f7fafe !important;
     }
 }
 
