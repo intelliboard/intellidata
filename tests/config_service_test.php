@@ -65,13 +65,18 @@ class config_service_test extends \advanced_testcase {
 
         $DB->execute("DELETE FROM {" . datatypeconfig::TABLE . "}");
 
+        // Validate config empty.
         $this->assertFalse($DB->record_exists(datatypeconfig::TABLE, $optionalconfigwithdeletedevent));
 
         $configservice = new config_service(datatypes_service::get_all_datatypes());
         $configservice->setup_config(true);
+        $config = $configservice->get_config();
 
-        // Validate config empty.
+        // Validate record from DB.
         $this->assertTrue($DB->record_exists(datatypeconfig::TABLE, $optionalconfigwithdeletedevent));
+
+        // Validate record from cache.
+        $this->assertTrue(isset($config[$optionalconfigwithdeletedevent['datatype']]));
 
         // Validate required datatype.
         $requiredconfigwithevent = [
@@ -83,7 +88,11 @@ class config_service_test extends \advanced_testcase {
             'filterbyid' => 0,
             'events_tracking' => 1
         ];
+        // Validate record from DB.
         $this->assertTrue($DB->record_exists(datatypeconfig::TABLE, $requiredconfigwithevent));
+
+        // Validate record from cache.
+        $this->assertTrue(isset($config[$requiredconfigwithevent['datatype']]));
 
         // Validate required datatype.
         $requiredconfigrewritable = [
@@ -94,7 +103,11 @@ class config_service_test extends \advanced_testcase {
             'filterbyid' => 0,
             'events_tracking' => 0
         ];
+        // Validate record from DB.
         $this->assertTrue($DB->record_exists(datatypeconfig::TABLE, $requiredconfigrewritable));
+
+        // Validate record from cache.
+        $this->assertTrue(isset($config[$requiredconfigrewritable['datatype']]));
     }
 
     /**
@@ -177,6 +190,28 @@ class config_service_test extends \advanced_testcase {
         $configservice = new config_service(datatypes_service::get_all_optional_datatypes());
         $configservice->setup_config(false);
 
-        $this->assertTrue($DB->record_exists('local_intellidata_config', ['datatype' => $datatype]));
+        // Validate record from DB.
+        $this->assertTrue($DB->record_exists(datatypeconfig::TABLE, ['datatype' => $datatype]));
+
+        // Validate record from cache.
+        $config = $configservice->get_config();
+        $this->assertTrue(isset($config[$datatype]));
+    }
+
+    /**
+     * Test cache_config method.
+     *
+     * @return void
+     * @covers \local_intellidata\services\config_service::cache_config
+     */
+    public function test_cache_config() {
+
+        $this->resetAfterTest();
+
+        $configservice = new config_service();
+        $config = $configservice->get_config();
+        $configservice->cache_config();
+
+        $this->assertEquals($config, $configservice->get_config());
     }
 }

@@ -106,11 +106,11 @@
         var player = new Vimeo.Player(iframe);
 
         $('.intellidata-support-player button').on('click', function() {
-            jQuery('.intellidata-support-player').hide();
+            $('.intellidata-support-player').hide();
             player.pause();
         });
         $('.intellidata-support-play').on('click', function() {
-            jQuery('.intellidata-support-player').show();
+            $('.intellidata-support-player').show();
             player.play();
         });
     });

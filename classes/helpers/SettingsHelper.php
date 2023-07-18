@@ -85,7 +85,8 @@ class SettingsHelper {
         'debugenabled' => 0,
         'directsqlenabled' => 0,
         'intelliboardcopydatatype' => null,
-        'intelliboardcopyprocessedlimit' => 0
+        'intelliboardcopyprocessedlimit' => 0,
+        'cacheconfig' => 1
     ];
 
     const NOTUPDATABLE_SETTINGS = [

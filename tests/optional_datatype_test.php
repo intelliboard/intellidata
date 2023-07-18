@@ -56,18 +56,21 @@ class optional_datatype_test extends \advanced_testcase {
      * Test get all optional tables.
      *
      * @return void
-     * @covers \local_intellidata\services\dbschema_service::get_optional_tableslist
+     * @covers \local_intellidata\services\dbschema_service::get_tableslist
      */
-    public function test_get_all_optional_table() {
+    public function test_get_tableslist() {
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(false);
         }
 
         $userdatatype = 'user';
         $dbschemaservice = new dbschema_service();
-        $alltables = $dbschemaservice->get_optional_tableslist();
+        $alltables = $dbschemaservice->get_tableslist();
 
-        $this->assertIsArray($alltables);
+        test_helper::assert_is_array(
+            $this,
+            $alltables
+        );
 
         $this->assertArrayHasKey($userdatatype, $alltables);
     }
@@ -83,9 +86,10 @@ class optional_datatype_test extends \advanced_testcase {
             $this->resetAfterTest(false);
         }
 
-        $alloptionaldatatypes = datatypes_service::get_all_optional_datatypes();
-
-        $this->assertIsArray($alloptionaldatatypes);
+        test_helper::assert_is_array(
+            $this,
+            datatypes_service::get_all_optional_datatypes()
+        );
     }
 
     /**
@@ -111,7 +115,10 @@ class optional_datatype_test extends \advanced_testcase {
 
         $this->assertArrayHasKey($datatype, $alloptionaldatatypes);
 
-        $this->assertIsArray($alloptionaldatatypes[$datatype]);
+        test_helper::assert_is_array(
+            $this,
+            $alloptionaldatatypes
+        );
 
         $this->assertEquals($tablename, $alloptionaldatatypes[$datatype]['table']);
     }
@@ -133,7 +140,11 @@ class optional_datatype_test extends \advanced_testcase {
         $dbschemaservice = new dbschema_service();
 
         $exportdata = $dbschemaservice->export();
-        $this->assertIsArray($exportdata);
+
+        test_helper::assert_is_array(
+            $this,
+            datatypes_service::get_all_optional_datatypes()
+        );
 
         $datatype = datatypes_service::generate_optional_datatype('user');
         $this->assertArrayHasKey($datatype, $exportdata);
@@ -142,6 +153,6 @@ class optional_datatype_test extends \advanced_testcase {
 
         $this->assertArrayHasKey('fields', $exportdata[$datatype]);
 
-        $this->assertIsBool($dbschemaservice->table_exists($datatype));
+        $this->assertFalse($dbschemaservice->table_exists($datatype));
     }
 }

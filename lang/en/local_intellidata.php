@@ -349,5 +349,6 @@ $string['support_column2_text'] = "Walk through how to integrate your data sourc
 $string['support_column3_title'] = "Get Recommendations";
 $string['support_column3_text'] = "Get recommendations on how IntelliBoard can be implemented based on your business-specific needs.";
 $string['support_text3'] = "To proceed with your setup, please <a href='https://intelliboard.net/scheduledemo' target='_blank'><u>schedule a demo</u></a> with us.";
-$string['support_text4'] = "If you have <b><i>already purchased</i></b> a license and see this screen, please contact your Account Manager for assistance.
-";
+$string['support_text4'] = "If you have <b><i>already purchased</i></b> a license and see this screen, please contact your Account Manager for assistance.";
+$string['cachedef_config'] = 'IntelliData Datatypes Configuration';
+$string['cacheconfig'] = 'Cache datatypes configuration';

@@ -22,11 +22,11 @@
  */
 
 use local_intellidata\output\forms\local_intellidata_edit_config;
-use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\config_service;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\repositories\config_repository;
 use local_intellidata\task\create_index_adhoc_task;
 use local_intellidata\task\delete_index_adhoc_task;
 
@@ -37,6 +37,10 @@ $action = optional_param('action', '', PARAM_TEXT);
 
 require_login();
 
+if (!empty($action)) {
+    require_sesskey();
+}
+
 $context = context_system::instance();
 require_capability('local/intellidata:editconfig', $context);
 
@@ -46,7 +50,8 @@ $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
-$record = datatypeconfig::get_record(['datatype' => $datatype]);
+$configrepository = new config_repository();
+$record = $configrepository->get_record(['datatype' => $datatype]);
 
 if (!$record) {
     throw new \moodle_exception('wrongdatatype', 'local_intellidata');
@@ -62,7 +67,10 @@ if ($action == 'reset') {
 } else if ($action == 'createindex') {
 
     $record->set('tableindex', $record->get('timemodified_field'));
-    $record->save();
+    $configrepository->save($record->get('datatype'), $record->to_record());
+
+    // Cache config after deletion.
+    $configrepository->cache_config();
 
     $createindextask = new create_index_adhoc_task();
     $createindextask->set_custom_data([
@@ -82,7 +90,10 @@ if ($action == 'reset') {
     \core\task\manager::queue_adhoc_task($deleteindextask);
 
     $record->set('tableindex', '');
-    $record->save();
+    $configrepository->save($record->get('datatype'), $record->to_record());
+
+    // Cache config after deletion.
+    $configrepository->cache_config();
 
     redirect($returnurl, get_string('taskaddedforindexdeletion', 'local_intellidata'));
 }

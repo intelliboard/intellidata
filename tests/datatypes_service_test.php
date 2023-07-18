@@ -28,6 +28,7 @@ namespace local_intellidata;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\repositories\required_tables_repository;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\persistent\datatypeconfig;
 
@@ -531,6 +532,57 @@ class datatypes_service_test extends \advanced_testcase {
         $this->assertTrue($datatype['rewritable']);
         $this->assertTrue($datatype['databaseexport']);
         $this->assertFalse($datatype['exportids']);
+    }
+
+    /**
+     * Test enabling required native tables.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @covers \local_intellidata\services\datatypes_service::enable_required_native_datatypes
+     */
+    public function test_enable_required_native_datatypes () {
+
+        $exportlogrepository = new export_log_repository();
+        $requirednativetables = required_tables_repository::get_required_native_tables();
+
+        $configrepository = new config_repository();
+        $config = $configrepository->get_config();
+
+        // Initial plugin installation validation.
+        foreach ($requirednativetables as $table) {
+
+            $datatypename = datatypes_service::generate_optional_datatype($table);
+            $datatype = $exportlogrepository->get_datatype($datatypename);
+
+            if (isset($config[$datatypename])) {
+                $this->assertEquals($datatypename, $datatype->get('datatype'));
+            } else {
+                $this->assertFalse($datatype);
+            }
+        }
+
+        // Remove datatypes from export.
+        foreach ($requirednativetables as $table) {
+            $datatypename = datatypes_service::generate_optional_datatype($table);
+            $exportlogrepository->remove_datatype($datatypename);
+
+            $this->assertFalse($exportlogrepository->get_datatype($datatypename));
+        }
+
+        datatypes_service::enable_required_native_datatypes();
+
+        // Validate datatypes are enabled.
+        foreach ($requirednativetables as $table) {
+            $datatypename = datatypes_service::generate_optional_datatype($table);
+            $datatype = $exportlogrepository->get_datatype($datatypename);
+
+            if (isset($config[$datatypename])) {
+                $this->assertEquals($datatypename, $datatype->get('datatype'));
+            } else {
+                $this->assertFalse($datatype);
+            }
+        }
     }
 
 }

@@ -42,6 +42,10 @@ $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
+if (!empty($action)) {
+    require_sesskey();
+}
+
 if ($action == 'enablemigration') {
     // Reset migration.
     set_config('resetmigrationprogress', 1, 'local_intellidata');
