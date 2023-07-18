@@ -199,7 +199,8 @@ class record_deleted_observer_test extends \advanced_testcase {
         $storagefile = $filestoragerepository->get_storage_file();
 
         // Validate temp file not exists.
-        $this->assertFileDoesNotExist($storagefile);
+        $assertfiledoesnotexistmethod = test_helper::assert_file_does_not_exist_method($this);
+        $this->$assertfiledoesnotexistmethod($storagefile);
     }
 
     /**

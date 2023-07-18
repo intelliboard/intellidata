@@ -26,8 +26,10 @@
 namespace local_intellidata\services;
 
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\config_repository;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\logs_tables_repository;
+use local_intellidata\repositories\required_tables_repository;
 use local_intellidata\services\config_service;
 use local_intellidata\services\dbschema_service;
 use local_intellidata\persistent\datatypeconfig;
@@ -718,7 +720,7 @@ class datatypes_service {
      */
     public static function get_all_optional_datatypes() {
         $dbschemaservice = new dbschema_service();
-        $alltables = $dbschemaservice->get_optional_tableslist();
+        $alltables = $dbschemaservice->get_tableslist();
 
         $datatypes = [];
 
@@ -901,5 +903,37 @@ class datatypes_service {
         }
 
         return $datatypes;
+    }
+
+    /**
+     * Enable required native datatypes.
+     *
+     * @return void
+     * @throws \coding_exception
+     */
+    public static function enable_required_native_datatypes() {
+
+        $exportlogrepository = new export_log_repository();
+
+        $configrepository = new config_repository();
+        $config = $configrepository->get_config();
+
+        $requirednativetables = required_tables_repository::get_required_native_tables();
+
+        foreach ($requirednativetables as $table) {
+
+            $datatypename = self::generate_optional_datatype($table);
+
+            if (isset($config[$datatypename])) {
+
+                // Enable datatype config.
+                $configrepository->save($datatypename, ['status' => datatypeconfig::STATUS_ENABLED]);
+
+                // Include table for export.
+                $exportlogrepository->insert_datatype($datatypename);
+            }
+        }
+
+        $configrepository->cache_config();
     }
 }

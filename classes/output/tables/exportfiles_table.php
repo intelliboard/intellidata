@@ -183,7 +183,7 @@ class exportfiles_table extends \table_sql {
             new \pix_icon('t/download', get_string('download'), 'core', array('class' => 'iconsmall'))
         );
 
-        $aurl = new \moodle_url('/local/intellidata/logs/index.php', $urlparams + array('action' => 'delete'));
+        $aurl = new \moodle_url('/local/intellidata/logs/index.php', $urlparams + ['action' => 'delete', 'sesskey' => sesskey()]);
         $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/delete', get_string('delete'),
             'core', array('class' => 'iconsmall')), null,
             ['onclick' => "if (!confirm('".get_string('deletefileconfirmation', 'local_intellidata')."')) return false;"]
@@ -229,14 +229,12 @@ class exportfiles_table extends \table_sql {
 
         if ($this->is_downloadable() && !$this->is_downloading()) {
 
-            $renderer = $PAGE->get_renderer('local_intellidata');
-
             $output = $OUTPUT->download_dataformat_selector(get_string('downloadas', 'table'),
                 $this->baseurl->out_omit_querystring(), 'download', $this->baseurl->params());
 
             $output .= \html_writer::start_tag('div', ['class' => 'form-group d-flex justify-content-end']);
 
-            $exporturl = new \moodle_url('/local/intellidata/logs/index.php', ['action' => 'export']);
+            $exporturl = new \moodle_url('/local/intellidata/logs/index.php', ['action' => 'export', 'sesskey' => sesskey()]);
             $output .= \html_writer::link($exporturl, get_string('exportfiles', 'local_intellidata'),
                 ['class' => 'btn btn-primary mr-1']);
 
@@ -294,7 +292,8 @@ class exportfiles_table extends \table_sql {
             'local_intellidata/header_search_input',
             [
                 'action' => $PAGE->url,
-                'query' => $PAGE->url->get_param('query')
+                'query' => $PAGE->url->get_param('query'),
+                'sesskey' => sesskey()
             ]
         );
     }

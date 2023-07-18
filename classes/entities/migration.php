@@ -125,7 +125,7 @@ abstract class migration {
      * @return \moodle_recordset
      * @throws \dml_exception
      */
-    protected function get_data($params) {
+    public function get_data($params) {
         global $DB;
 
         list($sql, $sqlparams) = $this->get_sql();

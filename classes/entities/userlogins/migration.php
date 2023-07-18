@@ -26,6 +26,9 @@ namespace local_intellidata\entities\userlogins;
 
 
 
+use local_intellidata\helpers\DBHelper;
+use local_intellidata\helpers\ParamsHelper;
+
 class migration extends \local_intellidata\entities\migration {
 
     public $entity = '\local_intellidata\entities\userlogins\userlogin';
@@ -40,6 +43,7 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = [], $timestart = null) {
+        $release4 = (float)ParamsHelper::get_release() >= 4.0;
         $sqlwhere = ''; $sqlparams = [];
 
         if ($timestart > 0) {
@@ -50,16 +54,21 @@ class migration extends \local_intellidata\entities\migration {
             $sqlparams = array_merge($sqlparams, $conditionparams);
         }
 
+        $additionalfromsql = '';
+        if ($release4 && DBHelper::is_mysql_type()) {
+            $additionalfromsql = 'USE INDEX({logsstanlog_con_ix})';
+        }
+
         if ($count) {
             $sql = "SELECT
                         COUNT(DISTINCT userid) as recordscount
-                      FROM {logstore_standard_log}
+                      FROM {logstore_standard_log} $additionalfromsql
                      WHERE contextid = 1 AND eventname = '\\\\core\\\\event\\\\user_loggedin' $sqlwhere";
         } else {
             $sql = "SELECT
                         userid AS id,
                         COUNT(userid) AS logins
-                      FROM {logstore_standard_log}
+                      FROM {logstore_standard_log} $additionalfromsql
                      WHERE contextid = 1 AND eventname = '\\\\core\\\\event\\\\user_loggedin' $sqlwhere
                   GROUP BY userid
                   ORDER BY userid";

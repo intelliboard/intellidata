@@ -102,17 +102,13 @@ class dbschema_service {
     public function get_tableslist() {
         $tables = $this->get_all_tableslist();
 
-        // Exclude system tables.
+        // Exclude not existing DB tables.
         $tables = optional_tables_repository::exclude_tables($tables);
 
-        return $tables;
-    }
+        // Exclude system tables.
+        $tables = system_tables_repository::exclude_tables($tables);
 
-    /**
-     * @return array
-     */
-    public function get_optional_tableslist() {
-        return $this->get_all_tableslist();
+        return $tables;
     }
 
     /**

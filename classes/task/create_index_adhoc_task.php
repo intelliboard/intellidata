@@ -57,8 +57,8 @@ class create_index_adhoc_task extends \core\task\adhoc_task {
             if (!empty($data->datatype)) {
 
                 $configrepository = new config_repository();
-                $config = $configrepository->get_config(['datatype' => $data->datatype]);
-                $config = reset($config);
+                $config = $configrepository->get_record(['datatype' => $data->datatype]);
+                $config = $config->to_record();
 
                 $datatypes = datatypes_service::get_all_datatypes();
 

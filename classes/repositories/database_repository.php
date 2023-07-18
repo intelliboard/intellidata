@@ -308,7 +308,7 @@ class database_repository {
         $sql = $where = '';
         $sqlparams = [];
         if ($datatype['timemodified_field']) {
-            $where = $datatype['timemodified_field'] . ' > :timemodified';
+            $where = $datatype['timemodified_field'] . ' >= :timemodified';
             $sqlparams['timemodified'] = $lastexportedtime;
         }
 

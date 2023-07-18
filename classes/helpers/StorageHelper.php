@@ -433,9 +433,9 @@ class StorageHelper {
             $exportfile['filename']
         );
 
-        $sourcezipfilepath = $filesystem->get_local_path_from_storedfile($file, true);
         $tempzipfilepath = $tempdir . '/' . $exportfile['filename'];
 
+        $sourcezipfilepath = $filesystem->get_local_path_from_storedfile($file, true);
         $encriptionservice = new encryption_service();
         if (!$encriptionservice->decrypt_file($sourcezipfilepath, $tempzipfilepath)) {
             @unlink($tempzipfilepath);

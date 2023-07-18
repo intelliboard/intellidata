@@ -27,6 +27,8 @@ namespace local_intellidata;
 
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\services\datatypes_service;
+use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\repositories\file_storage_repository;
@@ -135,7 +137,8 @@ class migration_test extends \advanced_testcase {
         $storagefile = $filestoragerepository->get_storage_file();
 
         // Validate temp file not exists.
-        $this->assertFileDoesNotExist($storagefile);
+        $assertfiledoesnotexistmethod = test_helper::assert_file_does_not_exist_method($this);
+        $this->$assertfiledoesnotexistmethod($storagefile);
 
         // Generate users.
         generator::create_users($this->recordsnum['users']);
@@ -168,6 +171,10 @@ class migration_test extends \advanced_testcase {
 
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(true);
+        }
+
+        if (!test_helper::is_get_local_path_from_storedfile_callable()) {
+            return $this->assertTrue(true, 'Skipping test_migration_task test.');
         }
 
         // Enable exporting files.
@@ -236,6 +243,54 @@ class migration_test extends \advanced_testcase {
             $exportfiles['migration_cohorts']
         );
         $this->validate_cohorts($data);
+    }
+
+    /**
+     * Test migration SQL queries.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
+     */
+    public function test_migration_queries() {
+
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(true);
+        }
+
+        $exportservice = new export_service();
+        $exportservice->set_migration_mode();
+
+        $encryptionservice = new encryption_service();
+        $migrationservice = new migration_service(null, $exportservice);
+
+        $datatypes = datatypes_service::get_migrating_datatypes();
+
+        $params = [
+            'start' => 0,
+            'limit' => $this->migrationrecordslimit
+        ];
+
+        foreach ($datatypes as $datatype) {
+
+            $migration = datatypes_service::init_migration($datatype, null, false);
+            $migration->init_services([
+                'migrationservice' => $migrationservice,
+                'encryptionservice' => $encryptionservice,
+                'exportservice' => $exportservice
+            ]);
+
+            if ($migration->can_migrate()) {
+
+                $migration->get_records_count();
+
+                $this->assertInstanceOf(
+                    'moodle_recordset',
+                    $migration->get_data($params)
+                );
+            }
+        }
     }
 
     /**

@@ -33,6 +33,10 @@ $query = optional_param('query', '', PARAM_TEXT);
 
 require_login();
 
+if (!empty($action) || !empty($query)) {
+    require_sesskey();
+}
+
 $context = context_system::instance();
 require_capability('local/intellidata:viewconfig', $context);
 $pageurl = new \moodle_url('/local/intellidata/config/index.php', ['query' => $query]);
@@ -44,7 +48,11 @@ $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 // Validate config table setup.
 if (!empty($action)) {
     $configservice = new config_service(datatypes_service::get_all_datatypes());
-    $configservice->setup_config($action == 'reset');
+    $configservice->setup_config($action === 'reset');
+
+    // Cache config after deletion.
+    $configservice->cache_config();
+
     redirect($pageurl, get_string('configurationsaved', 'local_intellidata'));
 }
 

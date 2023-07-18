@@ -100,10 +100,19 @@ class config_test extends \advanced_testcase {
             ];
             $configservice->save_config($record, (object)$data);
 
+            // Validate record from DB.
             $record = datatypeconfig::get_record(['datatype' => $reqdatatype]);
             $this->assertEquals(datatypeconfig::TABLETYPE_OPTIONAL, $record->get('tabletype'));
 
             $this->assertFalse(($record->get('timemodified_field') == 'test_field') || ($record->get('timemodified_field') == ''));
+
+            // Validate record from cache.
+            $config = $configservice->get_config();
+            $this->assertTrue(isset($config[$reqdatatype]));
+
+            $record = $config[$reqdatatype];
+            $this->assertEquals(datatypeconfig::TABLETYPE_OPTIONAL, $record->tabletype);
+            $this->assertFalse(($record->timemodified_field === 'test_field') || ($record->timemodified_field === ''));
         }
     }
 
@@ -134,10 +143,18 @@ class config_test extends \advanced_testcase {
             ];
             $configservice->save_config($record, (object)$data);
 
+            // Validate record from DB.
             $record = datatypeconfig::get_record(['datatype' => $optdatatype]);
             $this->assertEquals(datatypeconfig::TABLETYPE_OPTIONAL, $record->get('tabletype'));
+            $this->assertTrue($record->get('timemodified_field') === '');
 
-            $this->assertTrue($record->get('timemodified_field') == '');
+            // Validate record from cache.
+            $config = $configservice->get_config();
+            $this->assertTrue(isset($config[$optdatatype]));
+
+            $record = $config[$optdatatype];
+            $this->assertEquals(datatypeconfig::TABLETYPE_OPTIONAL, $record->tabletype);
+            $this->assertTrue($record->timemodified_field === '');
         }
     }
 
@@ -163,14 +180,21 @@ class config_test extends \advanced_testcase {
             ];
             // Change datatype paramert - tabletype.
             $configservice->save_config($record, (object)$data);
-            $record = datatypeconfig::get_record(['datatype' => $reqdatatype]);
 
             $datatypeconfig = datatypes_service::get_datatype($reqdatatype);
             $datatypeconfig['timemodifiedfields'] = config_service::get_available_timemodified_fields($datatypeconfig['table']);
             $configservice->create_config($reqdatatype, $datatypeconfig);
 
+            // Validate record from DB.
             $record = datatypeconfig::get_record(['datatype' => $reqdatatype]);
             $this->assertEquals(datatypeconfig::TABLETYPE_REQUIRED, $record->get('tabletype'));
+
+            // Validate record from cache.
+            $config = $configservice->get_config();
+            $this->assertTrue(isset($config[$reqdatatype]));
+
+            $record = $config[$reqdatatype];
+            $this->assertEquals(datatypeconfig::TABLETYPE_REQUIRED, $record->tabletype);
         }
     }
 

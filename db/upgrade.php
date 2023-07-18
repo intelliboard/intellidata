@@ -32,8 +32,7 @@ use local_intellidata\persistent\export_logs;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\DBHelper;
-use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\repositories\export_id_repository;
+use local_intellidata\helpers\DatatypesHelper;
 
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
@@ -1231,6 +1230,39 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $configservice->setup_config();
 
         upgrade_plugin_savepoint(true, 2023060600, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023070500) {
+
+        // Delete excluded tables.
+        DatatypesHelper::delete_excluded_tables();
+
+        upgrade_plugin_savepoint(true, 2023070500, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023070503) {
+
+        $datatypes = [
+            'question_categories'
+        ];
+
+        $exportlogrepository = new export_log_repository();
+        foreach ($datatypes as $datatype) {
+            $datatype = datatypes_service::generate_optional_datatype($datatype);
+            $record = datatypeconfig::get_record(['datatype' => $datatype]);
+
+            if (!$record) {
+                continue;
+            }
+
+            $configservice = new config_service([$datatype => datatypes_service::get_datatype($datatype)]);
+            $configservice->setup_config();
+
+            // Reset export logs.
+            $exportlogrepository->reset_datatype($datatype);
+        }
+
+        upgrade_plugin_savepoint(true, 2023070503, 'local', 'intellidata');
     }
 
     return true;

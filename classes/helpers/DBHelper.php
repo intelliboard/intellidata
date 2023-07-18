@@ -32,6 +32,8 @@ class DBHelper {
     const MYSQL_TYPE = 'mysqli';
     const POSTGRES_TYPE = 'pgsql';
     const MARIADB_TYPE = 'mariadb';
+    const MSSQL_TYPE = 'mssql';
+    const SQLSRV_TYPE = 'sqlsrv';
 
     /**
      * @param $id
@@ -188,6 +190,12 @@ class DBHelper {
             'JSON_EXTRACT' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     return "JSON_EXTRACT($value, '$.{$params['path']}')";
+                },
+                self::MSSQL_TYPE => function($value, $params) {
+                    return "JSON_VALUE($value, '$.{$params['path']}')";
+                },
+                self::SQLSRV_TYPE => function($value, $params) {
+                    return "JSON_VALUE($value, '$.{$params['path']}')";
                 },
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "$value::json->>'{$params['path']}'";
@@ -433,5 +441,21 @@ class DBHelper {
         if ($CFG->dbtype == self::POSTGRES_TYPE) {
             $DB->execute("DROP FUNCTION IF EXISTS " . self::get_tables_prefix() . "insert_deleted_id() CASCADE");
         }
+    }
+
+    /**
+     * Check if database is mysql type.
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function is_mysql_type() {
+        global $CFG;
+
+        if ($CFG->dbtype == self::MYSQL_TYPE || $CFG->dbtype == self::MARIADB_TYPE) {
+            return true;
+        }
+
+        return false;
     }
 }

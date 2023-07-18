@@ -26,30 +26,63 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\datatypeconfig;
+use local_intellidata\repositories\config\database_config_repository;
+use local_intellidata\repositories\config\cache_config_repository;
 
 class config_repository {
 
+    public $repo = null;
+
+    public function __construct() {
+        $this->repo = self::get_repository();
+    }
+
+    public static function get_repository() {
+        return (SettingsHelper::get_setting('cacheconfig'))
+            ? new cache_config_repository()
+            : new database_config_repository();
+    }
+
     /**
-     * Get config records from DB.
+     * Get configuration.
      *
      * @param array $params
      * @return config[]
      */
     public function get_config($params = []) {
-        $config = [];
-        $dbconfig = datatypeconfig::get_records($params);
+        return $this->repo->get_config($params);
+    }
 
-        if (count($dbconfig)) {
-            foreach ($dbconfig as $conf) {
-                $confdata = $conf->to_record();
-                $confdata->params = $conf->get('params');
+    /**
+     * Returns optional datatypes list.
+     *
+     * @param array $params
+     * @return config[]
+     */
+    public static function get_optional_datatypes($status = null) {
+        return (self::get_repository())->get_optional_datatypes($status);
+    }
 
-                $config[$conf->get('datatype')] = $confdata;
-            }
-        }
+    /**
+     * Returns logs datatypes list.
+     *
+     * @param array $params
+     * @return config[]
+     */
+    public static function get_logs_datatypes($status = null) {
+        return (self::get_repository())->get_logs_datatypes($status);
+    }
 
-        return $config;
+    /**
+     * Get config record from DB.
+     *
+     * @param $params
+     * @return false|datatypeconfig
+     */
+    public function get_record($params = []) {
+        return datatypeconfig::get_record($params);
     }
 
     /**
@@ -62,7 +95,7 @@ class config_repository {
     public function save($datatype, $data) {
 
         $recordid = 0;
-        if ($record = datatypeconfig::get_record(['datatype' => $datatype])) {
+        if ($record = $this->get_record(['datatype' => $datatype])) {
             $recordid = $record->get('id');
         }
 
@@ -70,59 +103,6 @@ class config_repository {
         $config->save();
 
         return $config->to_record();
-    }
-
-    /**
-     * Returns optional datatypes list.
-     *
-     * @param array $params
-     * @return config[]
-     */
-    public static function get_optional_datatypes($status = null) {
-        $config = [];
-        $params = ['tabletype' => datatypeconfig::TABLETYPE_OPTIONAL];
-
-        if ($status !== null) {
-            $params['status'] = $status;
-        }
-
-        $dbconfig = datatypeconfig::get_records($params);
-
-        if (count($dbconfig)) {
-            foreach ($dbconfig as $conf) {
-                $config[$conf->get('datatype')] = $conf->to_record();
-            }
-        }
-
-        return $config;
-    }
-
-    /**
-     * Returns logs datatypes list.
-     *
-     * @param array $params
-     * @return config[]
-     */
-    public static function get_logs_datatypes($status = null) {
-        $config = [];
-        $params = ['tabletype' => datatypeconfig::TABLETYPE_LOGS];
-
-        if ($status !== null) {
-            $params['status'] = $status;
-        }
-
-        $dbconfig = datatypeconfig::get_records($params);
-
-        if (count($dbconfig)) {
-            foreach ($dbconfig as $conf) {
-                $configdata = $conf->to_record();
-                $configdata->params = $conf->get('params');
-
-                $config[$conf->get('datatype')] = $configdata;
-            }
-        }
-
-        return $config;
     }
 
     /**
@@ -134,7 +114,7 @@ class config_repository {
      */
     public function delete($datatype) {
 
-        if ($record = datatypeconfig::get_record(['datatype' => $datatype])) {
+        if ($record = $this->get_record(['datatype' => $datatype])) {
             return (new datatypeconfig($record->get('id')))->delete();
         }
 
@@ -149,9 +129,21 @@ class config_repository {
      * @throws \coding_exception
      */
     public function enable(string $datatype) {
-        if ($record = datatypeconfig::get_record(['datatype' => $datatype])) {
+        if ($record = $this->get_record(['datatype' => $datatype])) {
             $record->set('status', datatypeconfig::STATUS_ENABLED);
             $record->save();
+
+            $this->cache_config();
         }
+    }
+
+    /**
+     * Cache config.
+     *
+     * @return void
+     * @throws \coding_exception
+     */
+    public function cache_config() {
+        return $this->repo->cache_config();
     }
 }

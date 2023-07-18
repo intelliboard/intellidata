@@ -115,4 +115,18 @@ class required_tables_repository extends base_tables_repository {
 
         return $entities;
     }
+
+    /**
+     * Return required native tables list.
+     *
+     * @return string[]
+     */
+    public static function get_required_native_tables() {
+        return [
+            'competency', 'competency_usercomp', 'competency_coursecomp',
+            'competency_usercompcourse', 'competency_modulecomp', 'competency_plan',
+            'competency_usercompplan', 'tenant', 'tool_tenant', 'tool_tenant_user',
+            'roleassignments', 'question_categories'
+        ];
+    }
 }

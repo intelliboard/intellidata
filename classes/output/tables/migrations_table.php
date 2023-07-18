@@ -178,7 +178,7 @@ class migrations_table {
 
         $output .= $this->calculate_progress_button();
 
-        $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'enablemigration']);
+        $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'enablemigration', 'sesskey' => sesskey()]);
         $output .= \html_writer::link($url, get_string('enablemigration', 'local_intellidata'),
             ['class' => 'btn btn-primary', 'onclick' => "if (!confirm('" .
                 get_string('resetmigrationmsg', 'local_intellidata') .
@@ -202,7 +202,8 @@ class migrations_table {
         $output = '';
 
         if (!SettingsHelper::get_setting('enableprogresscalculation')) {
-            $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'calculateprogress']);
+            $url = new \moodle_url('/local/intellidata/migrations/index.php', [
+                'action' => 'calculateprogress', 'sesskey' => sesskey()]);
             $output .= \html_writer::link($url, get_string('calculateprogress', 'local_intellidata'),
                 ['class' => 'btn btn-primary mr-1', 'onclick' => "if (!confirm('" .
                     get_string('calculateprogressmsg', 'local_intellidata') .

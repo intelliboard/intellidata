@@ -39,6 +39,16 @@ class test_helper {
     }
 
     /**
+     * Validate user/lib.php version.
+     *
+     * @return bool
+     */
+    public static function is_user_generator_with_events() {
+        global $CFG;
+        return $CFG->version >= 2020061522;
+    }
+
+    /**
      * Validate data.
      *
      * @param $data
@@ -53,4 +63,39 @@ class test_helper {
         }, ARRAY_FILTER_USE_KEY);
     }
 
+    /**
+     * Return correct assertion method.
+     *
+     * @param $object
+     * @return string
+     */
+    public static function assert_file_does_not_exist_method($object) {
+        return method_exists($object, 'assertFileDoesNotExist')
+            ? 'assertFileDoesNotExist' : 'assertFileNotExists';
+    }
+
+    /**
+     * Assert isArray.
+     *
+     * @param $object
+     * @param $array
+     * @return string
+     */
+    public static function assert_is_array($object, $array) {
+        return method_exists($object, 'assertIsArray')
+            ? $object->assertIsArray($array)
+            : $object->assertTrue((bool)count($array));
+    }
+
+    /**
+     * Validate if get_local_path_from_storedfile is callable.
+     *
+     * @return bool
+     */
+    public static function is_get_local_path_from_storedfile_callable() {
+        $fs = get_file_storage();
+        $filesystem = $fs->get_file_system();
+
+        return is_callable([$filesystem, 'get_local_path_from_storedfile']);
+    }
 }

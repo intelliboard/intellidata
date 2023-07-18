@@ -27,6 +27,7 @@
 }}
 <div class="simplesearchform d-flex justify-content-end">
   <form autocomplete="off" action="{{action}}" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
+    <input type="hidden" name="sesskey" value="{{ sesskey }}">
     <div class="input-group">
       <label for="searchinput-{{uniqid}}">
         <span class="sr-only">{{#str}} search, core {{/str}}</span>

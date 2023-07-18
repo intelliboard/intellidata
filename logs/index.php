@@ -36,6 +36,10 @@ $query        = optional_param('query', '', PARAM_TEXT);
 
 require_login();
 
+if (!empty($action) || !empty($query)) {
+    require_sesskey();
+}
+
 $context = context_system::instance();
 require_capability('local/intellidata:viewlogs', $context);
 
