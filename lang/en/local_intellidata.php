@@ -352,3 +352,5 @@ $string['support_text3'] = "To proceed with your setup, please <a href='https://
 $string['support_text4'] = "If you have <b><i>already purchased</i></b> a license and see this screen, please contact your Account Manager for assistance.";
 $string['cachedef_config'] = 'IntelliData Datatypes Configuration';
 $string['cacheconfig'] = 'Cache datatypes configuration';
+$string['forcedisablemigration'] = 'Force disable migration';
+$string['migrationdisabled'] = 'Migration Disabled';

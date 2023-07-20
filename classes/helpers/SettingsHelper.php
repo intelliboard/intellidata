@@ -86,7 +86,8 @@ class SettingsHelper {
         'directsqlenabled' => 0,
         'intelliboardcopydatatype' => null,
         'intelliboardcopyprocessedlimit' => 0,
-        'cacheconfig' => 1
+        'cacheconfig' => 1,
+        'forcedisablemigration' => 0
     ];
 
     const NOTUPDATABLE_SETTINGS = [
@@ -368,6 +369,9 @@ class SettingsHelper {
 
     /**
      * Set last export date.
+     *
+     * @param $time
+     * @return void
      */
     public static function set_lastexportdate($time = null) {
         $value = ($time === null) ? time() : $time;
@@ -376,6 +380,9 @@ class SettingsHelper {
 
     /**
      * Set last migration date.
+     *
+     * @param $time
+     * @return void
      */
     public static function set_lastmigrationdate($time = null) {
         $value = ($time === null) ? time() : $time;
@@ -384,6 +391,9 @@ class SettingsHelper {
 
     /**
      * Validate if setting is updatable.
+     *
+     * @param $settingname
+     * @return bool
      */
     public static function is_setting_updatable($settingname) {
 

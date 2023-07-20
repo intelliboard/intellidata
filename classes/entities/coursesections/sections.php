@@ -66,6 +66,11 @@ class sections extends \local_intellidata\entities\entity {
                 'description' => 'Section Name.',
                 'default' => '',
             ],
+            'sequence' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Activity sequence.',
+                'default' => '',
+            ],
             'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Course visible status.',
