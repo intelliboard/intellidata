@@ -26,9 +26,8 @@
 namespace local_intellidata;
 
 use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
-use local_intellidata\services\datatypes_service;
-use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\repositories\file_storage_repository;
@@ -246,51 +245,99 @@ class migration_test extends \advanced_testcase {
     }
 
     /**
-     * Test migration SQL queries.
+     * Test migration task with plugin enabled.
      *
      * @return void
      * @throws \coding_exception
      * @throws \dml_exception
      * @covers \local_intellidata\services\migration_service
      */
-    public function test_migration_queries() {
+    public function test_migration_task_with_plugin_enabled() {
 
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(true);
         }
 
-        $exportservice = new export_service();
-        $exportservice->set_migration_mode();
+        SettingsHelper::set_setting('enabled', 0);
+        $migrationtask = new migration_task();
+        ob_start();
+        $migrationtask->execute();
+        $output = ob_get_contents();
+        ob_get_clean();
 
-        $encryptionservice = new encryption_service();
-        $migrationservice = new migration_service(null, $exportservice);
+        $this->assertTrue((bool)stristr($output, get_string('pluginnotconfigured', 'local_intellidata')));
+    }
 
-        $datatypes = datatypes_service::get_migrating_datatypes();
+    /**
+     * Test migration task with plugin disabled.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
+     */
+    public function test_migration_task_with_plugin_disabled() {
 
-        $params = [
-            'start' => 0,
-            'limit' => $this->migrationrecordslimit
-        ];
-
-        foreach ($datatypes as $datatype) {
-
-            $migration = datatypes_service::init_migration($datatype, null, false);
-            $migration->init_services([
-                'migrationservice' => $migrationservice,
-                'encryptionservice' => $encryptionservice,
-                'exportservice' => $exportservice
-            ]);
-
-            if ($migration->can_migrate()) {
-
-                $migration->get_records_count();
-
-                $this->assertInstanceOf(
-                    'moodle_recordset',
-                    $migration->get_data($params)
-                );
-            }
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(true);
         }
+
+        SettingsHelper::set_setting('enabled', 1);
+        $migrationtask = new migration_task();
+        ob_start();
+        $migrationtask->execute();
+        $output = ob_get_contents();
+        ob_get_clean();
+
+        $this->assertFalse((bool)stristr($output, get_string('pluginnotconfigured', 'local_intellidata')));
+    }
+
+    /**
+     * Test migration task with force migration setting enabled.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
+     */
+    public function test_migration_task_force_migration_disabled_setting_enabled() {
+
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(true);
+        }
+
+        SettingsHelper::set_setting('forcedisablemigration', 1);
+        $migrationtask = new migration_task();
+        ob_start();
+        $migrationtask->execute();
+        $output = ob_get_contents();
+        ob_get_clean();
+
+        $this->assertTrue((bool)stristr($output, get_string('migrationdisabled', 'local_intellidata')));
+    }
+
+    /**
+     * Test migration task with force migration setting disabled.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @covers \local_intellidata\services\migration_service
+     */
+    public function test_migration_task_force_migration_disabled_setting_disabled() {
+
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(true);
+        }
+
+        SettingsHelper::set_setting('forcedisablemigration', 0);
+        $migrationtask = new migration_task();
+        ob_start();
+        $migrationtask->execute();
+        $output = ob_get_contents();
+        ob_get_clean();
+
+        $this->assertFalse((bool)stristr($output, get_string('migrationdisabled', 'local_intellidata')));
     }
 
     /**

@@ -505,8 +505,8 @@ class config_service {
                 'rewritable' => true
             ],
             'tenant' => [
-                'filterbyid' => true,
-                'rewritable' => false
+                'filterbyid' => false,
+                'rewritable' => true
             ],
             'tool_tenant' => [
                 'rewritable' => false,

@@ -1194,13 +1194,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             ]
         );
 
-        $configservice = new config_service(datatypes_service::get_all_optional_datatypes());
-        $configservice->setup_config();
-
-        upgrade_plugin_savepoint(true, 2023060500, 'local', 'intellidata');
-    }
-
-    if ($oldversion < 2023060600) {
         // Delete duplicates config datatypes.
         $ids = $DB->get_records_sql('SELECT max(id)
                                            FROM {local_intellidata_config}
@@ -1212,6 +1205,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
                             WHERE id IN (" . implode(',', $ids) . ")");
         }
 
+        // Delete triggers if exists.
         $datatypes = datatypes_service::get_datatypes();
         try {
             foreach ($datatypes as $datatype) {
@@ -1229,7 +1223,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $configservice = new config_service(datatypes_service::get_all_optional_datatypes());
         $configservice->setup_config();
 
-        upgrade_plugin_savepoint(true, 2023060600, 'local', 'intellidata');
+        upgrade_plugin_savepoint(true, 2023060500, 'local', 'intellidata');
     }
 
     if ($oldversion < 2023070500) {
@@ -1263,6 +1257,24 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2023070503, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2023071901) {
+
+        $exportlogrepository = new export_log_repository();
+        $datatype = 'coursesections';
+
+        // Insert or update log record for datatype.
+        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+        // Add new datatypes to export ad-hoc task.
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$datatype]
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2023071901, 'local', 'intellidata');
     }
 
     return true;
