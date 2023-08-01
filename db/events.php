@@ -205,6 +205,10 @@ $observers = [
         'eventname' => '\mod_quiz\event\attempt_submitted',
         'callback' => '\local_intellidata\entities\quizzes\observer::attempt_submitted',
     ],
+    [
+        'eventname' => '\mod_quiz\event\attempt_deleted',
+        'callback' => '\local_intellidata\entities\quizzes\observer::attempt_deleted',
+    ],
 
     // Quiz questions events.
     [
@@ -265,6 +269,10 @@ $observers = [
     ],
 
     // Course sections events.
+    [
+        'eventname' => '\core\event\course_module_created',
+        'callback' => '\local_intellidata\entities\coursesections\observer::course_module_created',
+    ],
     [
         'eventname' => '\core\event\course_section_created',
         'callback' => '\local_intellidata\entities\coursesections\observer::course_section_created',
