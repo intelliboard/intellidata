@@ -25,8 +25,7 @@
 
 namespace local_intellidata\entities\coursesections;
 
-
-
+use local_intellidata\helpers\DebugHelper;
 use \local_intellidata\helpers\TrackingHelper;
 use \local_intellidata\services\events_service;
 
@@ -34,6 +33,25 @@ use \local_intellidata\services\events_service;
  * Event observer for transcripts.
  */
 class observer {
+
+    /**
+     * Triggered when 'course_module_created' event is triggered.
+     *
+     * @param \core\event\course_module_created $event
+     */
+    public static function course_module_created(\core\event\course_module_created $event) {
+        if (TrackingHelper::enabled()) {
+            $eventdata = $event->get_data();
+
+            $cm = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+            if ($cm && $cm->section) {
+                $section = $event->get_record_snapshot('course_sections', $cm->section);
+                self::generate_section_name($section);
+
+                self::export_event($section, ['crud' => 'u']);
+            }
+        }
+    }
 
     /**
      * Triggered when 'course_section_created' event is triggered.
@@ -45,6 +63,7 @@ class observer {
             $eventdata = $event->get_data();
 
             $section = $event->get_record_snapshot('course_sections', $eventdata['objectid']);
+            self::generate_section_name($section);
 
             self::export_event($section, $eventdata);
         }
@@ -60,6 +79,7 @@ class observer {
             $eventdata = $event->get_data();
 
             $section = $event->get_record_snapshot('course_sections', $eventdata['objectid']);
+            self::generate_section_name($section);
 
             self::export_event($section, $eventdata);
         }
@@ -99,5 +119,24 @@ class observer {
         $tracking->track($data);
     }
 
+    /**
+     * Generate default section name when section name is empty.
+     *
+     * @param \stdClass $section
+     *
+     * @return void
+     */
+    private static function generate_section_name(&$section) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/course/lib.php');
+        if (empty($section->name)) {
+            try {
+                $section->name = get_section_name($section->course, $section->section);
+            } catch (\Exception $e) {
+                DebugHelper::error_log($e->getMessage());
+            }
+        }
+    }
 }
 
