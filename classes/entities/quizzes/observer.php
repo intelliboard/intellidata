@@ -58,6 +58,17 @@ class observer {
         }
     }
 
+    /**
+     * Triggered when 'attempt_deleted' event is triggered.
+     *
+     * @param \mod_quiz\event\attempt_deleted $event
+     */
+    public static function attempt_deleted(\mod_quiz\event\attempt_deleted $event) {
+        if (TrackingHelper::eventstracking_enabled()) {
+            self::export_event($event);
+        }
+    }
+
     private static function export_event($event, $fields = []) {
         $eventdata = $event->get_data();
         $attempt = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);

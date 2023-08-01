@@ -51,6 +51,11 @@ class cohort extends \local_intellidata\entities\entity {
                 'description' => 'Cohort ID.',
                 'default' => 0,
             ),
+            'contextid' => array(
+                'type' => PARAM_INT,
+                'description' => 'Cohort Context ID.',
+                'default' => 0,
+            ),
             'name' => array(
                 'type' => PARAM_TEXT,
                 'description' => 'Cohort Name.',
