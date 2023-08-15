@@ -83,6 +83,7 @@ class observer {
 
             $activitdata->module = $eventdata['other']['modulename'];
             $activitdata->instance = $instance->id;
+            $activitdata->section = $cm->section;
             $activitdata->instancename = $instance->name;
             $activitdata->visible = $cm->visible;
             $activitdata->timecreated = $cm->added;
