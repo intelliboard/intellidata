@@ -55,7 +55,7 @@ class migration extends \local_intellidata\entities\migration {
 
         $sql = "$select
                 FROM {course_modules} cm
-                JOIN {modules} m ON m.id = cm.module
+           LEFT JOIN {modules} m ON m.id = cm.module
                WHERE $where";
 
         $params = [

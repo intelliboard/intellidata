@@ -64,7 +64,7 @@ class attemptsmigration extends \local_intellidata\entities\migration {
 
         $sql = "$select
                 FROM {quiz_attempts} qa
-                JOIN {quiz} q ON q.id = qa.quiz";
+           LEFT JOIN {quiz} q ON q.id = qa.quiz";
 
         return $this->set_condition($condition, $conditionparams, $sql, []);
     }
