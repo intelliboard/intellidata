@@ -53,7 +53,7 @@ class surveyanswersmigration extends \local_intellidata\entities\migration {
 
         $sql = "$select
                   FROM {" . $this->table . "} sa
-                  JOIN {survey_questions} sq ON sq.id = sa.question
+             LEFT JOIN {survey_questions} sq ON sq.id = sa.question
                  WHERE $where";
 
         if ($condition) {
