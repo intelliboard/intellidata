@@ -209,6 +209,27 @@ $functions = [
         'classpath'     => 'local/intellidata/classes/api/logslib.php',
         'description'   => 'Get plugin running tasks list from Moodle.',
         'type'          => 'read'
+    ],
+    'local_intellidata_calculate_migration_progress' => [
+        'classname'     => 'local_intellidata_logslib',
+        'methodname'    => 'calculate_migration_progress',
+        'classpath'     => 'local/intellidata/classes/api/logslib.php',
+        'description'   => 'Trigger migration calculation adhoc task.',
+        'type'          => 'write'
+    ],
+    'local_intellidata_delete_adhoc_task' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'delete_adhoc_task',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Deletes plugin adhoc task.',
+        'type'          => 'write'
+    ],
+    'local_intellidata_save_task' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'save_task',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Save plugin task configuration.',
+        'type'          => 'write'
     ]
 ];
 
@@ -239,7 +260,10 @@ $services = [
             'local_intellidata_reset_migration',
             'local_intellidata_reset_datatype',
             'local_intellidata_run_migration',
-            'local_intellidata_get_running_tasks'
+            'local_intellidata_get_running_tasks',
+            'local_intellidata_calculate_migration_progress',
+            'local_intellidata_delete_adhoc_task',
+            'local_intellidata_save_task'
         ],
         'restrictedusers' => 0,
         'enabled' => 1,

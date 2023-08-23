@@ -169,7 +169,8 @@ class TasksHelper {
     /**
      * Delete adhoc task.
      *
-     * @return array
+     * @param int $taskid
+     * @return bool
      * @throws \dml_exception
      */
     public static function delete_adhoc_task(int $taskid) {
@@ -177,7 +178,10 @@ class TasksHelper {
 
         $record = $DB->get_record('task_adhoc', ['id' => $taskid]);
 
-        if ($record) {
+        if ($record &&
+            ($record->component == ParamsHelper::PLUGIN || stripos($record->classname, ParamsHelper::PLUGIN) !== false)
+        ) {
+
             $task = manager::adhoc_task_from_record($record);
 
             // Complete task if it is running.
@@ -187,7 +191,11 @@ class TasksHelper {
                 // Delete task if it is not running.
                 $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
             }
+
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -221,10 +229,46 @@ class TasksHelper {
     public static function get_adhoc_tasks() {
         global $DB;
 
+        $whereclasslike = $DB->sql_like(
+            'classname', ':classname', false, false, false
+        );
+
         return $DB->get_records_select(
             "task_adhoc",
-            'component = :component',
-            ['component' => ParamsHelper::PLUGIN]
+            '(component = :component OR ' . $whereclasslike . ')',
+            [
+                'component' => ParamsHelper::PLUGIN,
+                'classname' => '%' . ParamsHelper::PLUGIN . '%'
+            ],
+            'id'
         );
+    }
+
+    /**
+     * Save scheduled task.
+     *
+     * @param string $classname
+     * @param array $data
+     * @return bool
+     */
+    public static function save_scheduled_task(string $classname, array $data) {
+
+        $task = manager::get_scheduled_task($classname);
+
+        if ($task && stripos($classname, ParamsHelper::PLUGIN) !== false) {
+
+            $task->set_minute($data['minute']);
+            $task->set_hour($data['hour']);
+            $task->set_month($data['month']);
+            $task->set_day_of_week($data['dayofweek']);
+            $task->set_day($data['day']);
+            $task->set_disabled($data['disabled']);
+            $task->set_customised(true);
+
+            manager::configure_scheduled_task($task);
+            return true;
+        }
+
+        return false;
     }
 }

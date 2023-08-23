@@ -16,6 +16,7 @@
 
 use local_intellidata\api\apilib;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\services\encryption_service;
 use local_intellidata\helpers\TasksHelper;
 use local_intellidata\repositories\export_log_repository;
@@ -127,10 +128,6 @@ class local_intellidata_logslib extends external_api {
 
         $encryptionservice = new encryption_service();
         $exportlogrepository = new export_log_repository();
-
-        if (!SettingsHelper::get_setting('enableprogresscalculation')) {
-            TasksHelper::init_refresh_export_progress_adhoc_task();
-        }
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($exportlogrepository->get_export_logs())),
@@ -268,6 +265,63 @@ class local_intellidata_logslib extends external_api {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * Calculate migration progress parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function calculate_migration_progress_parameters() {
+        return new external_function_parameters([]);
+    }
+
+    /**
+     * Calculate migration progress.
+     *
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function calculate_migration_progress() {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        if (!SettingsHelper::get_setting('enableprogresscalculation')) {
+            TasksHelper::init_refresh_export_progress_adhoc_task();
+        }
+
+        return [
+            'data' => get_string('calculateprogresssuccessmsg', ParamsHelper::PLUGIN),
+            'status' => apilib::STATUS_SUCCESS
+        ];
+    }
+
+    /**
+     * Calculate migration progress returns.
+     *
+     * @return external_single_structure
+     */
+    public static function calculate_migration_progress_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Response message'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
             )
         );
