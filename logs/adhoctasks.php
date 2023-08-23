@@ -47,9 +47,9 @@ $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
 
 if ($id && $action == 'delete' &&
     has_capability('local/intellidata:deleteadhoctasks', $context)) {
-    TasksHelper::delete_adhoc_task($id);
+    $msg = TasksHelper::delete_adhoc_task($id) ? 'taskdeleted' : 'tasknotdeleted';
 
-    redirect($pageurl, get_string('taskdeleted', ParamsHelper::PLUGIN));
+    redirect($pageurl, get_string($msg, ParamsHelper::PLUGIN));
 }
 
 $title = get_string('exportadhoctasks', ParamsHelper::PLUGIN);

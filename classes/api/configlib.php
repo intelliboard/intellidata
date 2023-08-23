@@ -14,6 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core\task\manager;
 use local_intellidata\api\apilib;
 use local_intellidata\services\encryption_service;
 use local_intellidata\helpers\SettingsHelper;
@@ -409,6 +410,169 @@ class local_intellidata_configlib extends external_api {
      * @return external_single_structure
      */
     public static function run_migration_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Response message.'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * Parameters for delete_adhoc_task() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function delete_adhoc_task_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Delete plugin adhoc task.
+     *
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function delete_adhoc_task($data) {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::reset_datatype_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'id' => PARAM_INT
+        ]);
+
+        if (TasksHelper::delete_adhoc_task($params['id'])) {
+            return [
+                'data' => get_string('taskdeleted', ParamsHelper::PLUGIN),
+                'status' => apilib::STATUS_SUCCESS
+            ];
+        }
+
+        return [
+            'data' => get_string('tasknotdeleted', ParamsHelper::PLUGIN),
+            'status' => apilib::STATUS_ERROR
+        ];
+    }
+
+    /**
+     * Return data for delete_adhoc_task() method.
+     *
+     * @return external_single_structure
+     */
+    public static function delete_adhoc_task_returns() {
+        return new external_single_structure(
+            array(
+                'data' => new external_value(PARAM_TEXT, 'Response message.'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            )
+        );
+    }
+
+    /**
+     * Parameters for save_task() method.
+     *
+     * @return external_function_parameters
+     */
+    public static function save_task_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Save plugin task configuration.
+     *
+     * @param $data
+     * @return array
+     * @throws coding_exception
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function save_task($data) {
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::reset_datatype_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'taskname' => PARAM_TEXT,
+            'disabled' => PARAM_INT,
+            'minute' => PARAM_TEXT,
+            'hour' => PARAM_TEXT,
+            'day' => PARAM_TEXT,
+            'month' => PARAM_TEXT,
+            'dayofweek' => PARAM_TEXT
+        ]);
+
+        $classname = 'local_intellidata\task\\' . $params['taskname'];
+
+        try {
+            if (TasksHelper::save_scheduled_task($classname, $params)) {
+                return [
+                    'data' => get_string('scheduledtaskupdated', ParamsHelper::PLUGIN),
+                    'status' => apilib::STATUS_SUCCESS
+                ];
+            }
+        } catch (Exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR
+            ];
+        }
+
+        return [
+            'data' => get_string('scheduledtasknotupdated', ParamsHelper::PLUGIN),
+            'status' => apilib::STATUS_ERROR
+        ];
+    }
+
+    /**
+     * Return data for delete_adhoc_task() method.
+     *
+     * @return external_single_structure
+     */
+    public static function save_task_returns() {
         return new external_single_structure(
             array(
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
