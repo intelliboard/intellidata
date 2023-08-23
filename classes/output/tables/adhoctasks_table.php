@@ -37,7 +37,7 @@ class adhoctasks_table extends \table_sql {
     protected $context = null;
 
     public function __construct($uniqueid) {
-        global $PAGE, $CFG;
+        global $PAGE, $CFG, $DB;
 
         $this->context = \context_system::instance();
         parent::__construct($uniqueid);
@@ -50,15 +50,21 @@ class adhoctasks_table extends \table_sql {
         $this->define_columns(array_keys($this->fields));
         $this->define_headers($this->get_headers());
 
-        $where = 'id > 0'; $sqlparams = [];
+        $where = 'id > 0';
+        $sqlparams = ['classname' => '%' . ParamsHelper::PLUGIN . '%'];
+        $whereclasslike = $DB->sql_like(
+            'classname', ':classname', false, false, false
+        );
 
         $fields = "id, classname, nextruntime";
 
         if (!empty($CFG->version) && ($CFG->version > 2021052501)) {
             $fields .= ", timecreated, timestarted, pid";
 
-            $where .= " AND component = :component";
-            $sqlparams = ['component' => ParamsHelper::PLUGIN];
+            $where .= " AND (component = :component OR " . $whereclasslike . ")";
+            $sqlparams['component'] = ParamsHelper::PLUGIN;
+        } else {
+            $where .= " AND " . $whereclasslike;
         }
 
         $fields .= ", faildelay, customdata, '' as actions";
