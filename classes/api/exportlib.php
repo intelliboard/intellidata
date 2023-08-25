@@ -23,6 +23,7 @@ use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\DebugHelper;
@@ -229,10 +230,13 @@ class local_intellidata_exportlib extends external_api {
         $exportservice = new export_service();
         $exportlogrepository = new export_log_repository();
 
+        $datatypestoignore = SettingsHelper::get_datatypes_to_ignore_in_migration();
+
         $migrateddatatypes = $exportlogrepository->get_migrated_datatypes();
         $alldatatypes = [];
         foreach ($exportservice->get_datatypes() as $name => $datatype) {
-            if ($datatype['migration'] && $datatype['tabletype'] == datatypeconfig::TABLETYPE_REQUIRED) {
+            if ($datatype['migration'] && $datatype['tabletype'] == datatypeconfig::TABLETYPE_REQUIRED &&
+                !datatypes_service::is_datatype_ignored($name, $datatypestoignore)) {
                 $alldatatypes[] = $name;
             }
         }

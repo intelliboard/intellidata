@@ -32,6 +32,8 @@ class DBHelper {
     const MYSQL_TYPE = 'mysqli';
     const POSTGRES_TYPE = 'pgsql';
     const MARIADB_TYPE = 'mariadb';
+    const MSSQL_TYPE = 'mssql';
+    const SQLSRV_TYPE = 'sqlsrv';
 
     /**
      * @param $id

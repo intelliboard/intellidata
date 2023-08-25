@@ -164,7 +164,18 @@ class datatypes_service {
      * @return bool
      */
     public static function is_migrating_datatype($datatype, $datatypestoignore = []) {
-        return !empty($datatype['migration']) && !in_array($datatype['name'], $datatypestoignore);
+        return !empty($datatype['migration']) && !self::is_datatype_ignored($datatype['name'], $datatypestoignore);
+    }
+
+    /**
+     * Validate if datatype ignored.
+     *
+     * @param $datatypename
+     * @param $datatypestoignore
+     * @return bool
+     */
+    public static function is_datatype_ignored($datatypename, $datatypestoignore = []) {
+        return in_array($datatypename, $datatypestoignore);
     }
 
     /**

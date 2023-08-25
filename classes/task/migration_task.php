@@ -76,8 +76,6 @@ class migration_task extends \core\task\scheduled_task {
             return true;
         }
 
-        raise_memory_limit(MEMORY_HUGE);
-
         DebugHelper::enable_moodle_debug();
 
         $params = [];
