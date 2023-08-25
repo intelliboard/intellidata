@@ -25,8 +25,7 @@
 
 namespace local_intellidata\entities\coursesections;
 
-
-
+use local_intellidata\helpers\DebugHelper;
 use \local_intellidata\helpers\TrackingHelper;
 use \local_intellidata\services\events_service;
 
@@ -44,7 +43,8 @@ class observer {
         if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
-            $section = $event->get_record_snapshot('course_sections', $eventdata['objectid']);
+            $section = $event->get_record_snapshot('course_sections', $cm->section);
+            self::generate_section_name($section);
 
             self::export_event($section, $eventdata);
         }
@@ -60,6 +60,7 @@ class observer {
             $eventdata = $event->get_data();
 
             $section = $event->get_record_snapshot('course_sections', $eventdata['objectid']);
+            self::generate_section_name($section);
 
             self::export_event($section, $eventdata);
         }
@@ -98,6 +99,26 @@ class observer {
 
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
+    }
+
+    /**
+     * Generate default section name when section name is empty.
+     *
+     * @param \stdClass $section
+     *
+     * @return void
+     */
+    private static function generate_section_name(&$section) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/course/lib.php');
+        if (empty($section->name)) {
+            try {
+                $section->name = get_section_name($section->course, $section->section);
+            } catch (\Exception $e) {
+                DebugHelper::error_log($e->getMessage());
+            }
+        }
     }
 
 }

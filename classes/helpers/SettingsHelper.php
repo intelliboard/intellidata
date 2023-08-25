@@ -85,7 +85,9 @@ class SettingsHelper {
         'directsqlenabled' => 0,
         'trackingidsmode' => export_id_repository::TRACK_IDS_MODE_REQUEST,
         'intelliboardcopydatatype' => null,
-        'intelliboardcopyprocessedlimit' => 0
+        'intelliboardcopyprocessedlimit' => 0,
+        'datatypesignoreinmigration' => '',
+        'forcedisablemigration' => 0
     ];
 
     const NOTUPDATABLE_SETTINGS = [
@@ -373,5 +375,22 @@ class SettingsHelper {
         }
 
         return true;
+    }
+
+    /**
+     * Return datatypes array which should be ignored in migration.
+     *
+     * @return array|false|string[]
+     * @throws \dml_exception
+     */
+    public static function get_datatypes_to_ignore_in_migration() {
+
+        $setting = self::get_setting('datatypesignoreinmigration');
+
+        if (!empty($setting)) {
+            return explode(',', $setting);
+        }
+
+        return [];
     }
 }

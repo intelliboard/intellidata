@@ -85,6 +85,8 @@ class observer {
         $ra->courseid = $eventdata['contextinstanceid'];
         $ra->userid = $eventdata['relateduserid'];
         $ra->roleid = $eventdata['objectid'];
+        $ra->component = $roleassignments->component;
+        $ra->itemid = $roleassignments->itemid;
         $ra->crud = $eventdata['crud'];
         $ra->contexttype = RolesHelper::get_contexttype($context->contextlevel);
 

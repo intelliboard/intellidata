@@ -80,6 +80,12 @@ if (!TrackingHelper::enabled()) {
     exit(0);
 }
 
+// Validate if forcedisablemigration setting enabled.
+if (MigrationHelper::migration_disabled()) {
+    mtrace(get_string('migrationdisabled', 'local_intellidata'));
+    exit(0);
+}
+
 DebugHelper::enable_moodle_debug();
 
 $exportservice = new export_service();

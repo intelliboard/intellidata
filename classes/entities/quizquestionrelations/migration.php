@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizquestionrelations;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\ParamsHelper;
 
 
@@ -39,7 +40,7 @@ class migration extends \local_intellidata\entities\migration {
 
     public $entity      = '\local_intellidata\entities\quizquestionrelations\quizquestionrelation';
     public $table       = 'quiz_slots';
-    public $tablealias  = 'qs';
+    public $tablealias  = 't';
 
     /**
      * @param false $count
@@ -49,18 +50,47 @@ class migration extends \local_intellidata\entities\migration {
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
         $release4 = (float)ParamsHelper::get_release() >= 4.0;
-        $select = ($count) ?
-            "SELECT COUNT(" . $this->tablealias . ".id) as recordscount " :
-            "SELECT " . $this->tablealias . ".id, " . $this->tablealias . ".quizid,
-             " . ($release4 ? 'qve' : $this->tablealias) . ".questionid ";
-
-        $sql = "$select
-                FROM {" . $this->table . "} " . $this->tablealias;
 
         if ($release4) {
-            $sql .= " JOIN {question_references} qre ON qre.itemid = " . $this->tablealias . ".id
-                      JOIN {question_bank_entries} qbe ON qbe.id = qre.questionbankentryid
-                      JOIN {question_versions} qve ON qve.questionbankentryid = qbe.id";
+            $select = ($count) ?
+                "SELECT COUNT(t.id) as recordscount " :
+                "SELECT t.id, t.quizid, t.questionid, t.slot, t.type";
+
+            $catidsql = DBHelper::get_operator('JSON_EXTRACT', 'qsr.filtercondition', ['path' => 'questioncategoryid']);
+
+            $sql = "$select
+                    FROM (
+                        SELECT
+                            qs.id,
+                            qs.quizid,
+                            MAX(qve.questionid) AS questionid,
+                            qs.slot,
+                            'q' AS type
+                        FROM {quiz_slots} qs
+                          JOIN {question_references} qre ON qre.itemid = qs.id
+                          JOIN {question_versions} qve ON qve.questionbankentryid = qre.questionbankentryid
+                        GROUP BY qs.id, qs.quizid, qs.slot
+
+                        UNION
+
+                        SELECT
+                            qs.id,
+                            qs.quizid,
+                            qc.id AS questionid,
+                            qs.slot,
+                            'c' AS type
+                        FROM {quiz_slots} qs
+                          JOIN {question_set_references} qsr ON qsr.questionarea = 'slot' AND qsr.itemid = qs.id
+                          JOIN {question_categories} qc ON qc.contextid = qsr.questionscontextid
+                                                           AND qc.id = CAST({$catidsql} AS DECIMAL)
+                    ) t ";
+        } else {
+            $select = ($count) ?
+                "SELECT COUNT(t.id) as recordscount " :
+                "SELECT t.id, t.quizid, t.questionid, t.slot, 'q' AS type";
+
+            $sql = "$select
+                FROM {quiz_slots} t";
         }
 
         return $this->set_condition($condition, $conditionparams, $sql, []);

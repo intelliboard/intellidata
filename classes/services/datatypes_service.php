@@ -145,14 +145,26 @@ class datatypes_service {
      */
     public static function get_migrating_datatypes() {
         $datatypes = self::get_datatypes(false);
+        $datatypestoignore = SettingsHelper::get_datatypes_to_ignore_in_migration();
 
         foreach ($datatypes as $key => $item) {
-            if (empty($item['migration'])) {
+            if (!self::is_migrating_datatype($item, $datatypestoignore)) {
                 unset($datatypes[$key]);
             }
         }
 
         return $datatypes;
+    }
+
+    /**
+     * Validate if datatype should migrate.
+     *
+     * @param $datatype
+     * @param $datatypestoignore
+     * @return bool
+     */
+    public static function is_migrating_datatype($datatype, $datatypestoignore = []) {
+        return !empty($datatype['migration']) && !in_array($datatype['name'], $datatypestoignore);
     }
 
     /**

@@ -55,7 +55,7 @@ class migration extends \local_intellidata\entities\migration {
 
         $sql = "$select
                 FROM {course_modules} cm
-                JOIN {modules} m ON m.id = cm.module
+           LEFT JOIN {modules} m ON m.id = cm.module
                WHERE $where";
 
         $params = [
@@ -86,6 +86,11 @@ class migration extends \local_intellidata\entities\migration {
 
         $moduleinstances = [];
         foreach ($moduletypeinstances as $modulename => $fullids) {
+
+            if (!isset($moduleinstances[$modulename])) {
+                $moduleinstances[$modulename] = [];
+            }
+
             foreach (array_chunk($fullids, 10000) as $ids) {
                 list($insql, $inparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED);
 
@@ -95,7 +100,6 @@ class migration extends \local_intellidata\entities\migration {
 
                 $instances = $DB->get_records_sql($sql, $inparams);
 
-                $moduleinstances[$modulename] = [];
                 foreach ($instances as $instance) {
                     $moduleinstances[$modulename][$instance->id] = [
                         'name' => $instance->name,

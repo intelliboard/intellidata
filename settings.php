@@ -398,6 +398,17 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'forcedisablemigration';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
     $name = 'debugenabled';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
@@ -417,6 +428,15 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
         SettingsHelper::get_defaut_config_value($name),
         true,
         false
+    );
+    $settings->add($setting);
+
+    $name = 'datatypesignoreinmigration';
+    $setting = new admin_setting_configtextarea(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name)
     );
     $settings->add($setting);
 

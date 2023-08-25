@@ -308,3 +308,6 @@ $string['copyintelliboardtracking'] = 'Divide export by datatype';
 $string['importintelliboardtracking'] = 'Import user trackings from IntelliBoard plugin';
 $string['eventstracking'] = 'Events Tracking';
 $string['exportids'] = 'Export deleted IDS';
+$string['datatypesignoreinmigration'] = 'Datatypes list ignore in migration';
+$string['forcedisablemigration'] = 'Force disable migration';
+$string['migrationdisabled'] = 'Migration Disabled';

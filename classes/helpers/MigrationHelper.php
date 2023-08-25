@@ -191,4 +191,13 @@ class MigrationHelper {
             }
         }
     }
+
+    /**
+     * Validate if migration force disabled.
+     *
+     * @return bool
+     */
+    public static function migration_disabled() {
+        return !empty(SettingsHelper::get_setting('forcedisablemigration'));
+    }
 }
