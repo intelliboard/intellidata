@@ -43,7 +43,7 @@ class observer {
         if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
-            $section = $event->get_record_snapshot('course_sections', $cm->section);
+            $section = $event->get_record_snapshot('course_sections', $eventdata['objectid']);
             self::generate_section_name($section);
 
             self::export_event($section, $eventdata);
