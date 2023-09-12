@@ -86,6 +86,9 @@ class migration extends \local_intellidata\entities\migration {
 
         $moduleinstances = [];
         foreach ($moduletypeinstances as $modulename => $fullids) {
+            if (empty($modulename)) {
+                continue;
+            }
 
             if (!isset($moduleinstances[$modulename])) {
                 $moduleinstances[$modulename] = [];

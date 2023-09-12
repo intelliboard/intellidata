@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\encryption_service;
@@ -126,12 +127,12 @@ abstract class migration {
      * @throws \dml_exception
      */
     public function get_data($params) {
-        global $DB;
-
         list($sql, $sqlparams) = $this->get_sql();
         $sql = $this->set_order($sql);
 
-        return $DB->get_recordset_sql($sql, $sqlparams, $params['start'], $params['limit']);
+        $db = DBHelper::get_db_client();
+
+        return $db->get_recordset_sql($sql, $sqlparams, $params['start'], $params['limit']);
     }
 
     /**
@@ -209,8 +210,9 @@ abstract class migration {
      * @return \Generator
      */
     public function prepare_records_iterable($records) {
+        $entity = new $this->entity();
         foreach ($records as $record) {
-            $entity = new $this->entity($record);
+            $entity->set_values($record);
             $entitydata = $entity->export();
 
             yield $entitydata;

@@ -26,6 +26,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
@@ -288,11 +289,11 @@ class database_repository {
      * @throws \dml_exception
      */
     public static function get_records($datatype, $start = 0, $limit = 0) {
-        global $DB;
-
         list($sql, $sqlparams) = self::get_export_sql($datatype);
 
-        return $DB->get_recordset_sql($sql, $sqlparams, $start, $limit);
+        $db = DBHelper::get_db_client();
+
+        return $db->get_recordset_sql($sql, $sqlparams, $start, $limit);
     }
 
     /**
@@ -366,10 +367,17 @@ class database_repository {
                 $migration = datatypes_service::init_migration($datatype, null, false);
                 $records = $migration->prepare_records_iterable($records);
                 $isprepareddata = true;
+            } else {
+                $entity = datatypes_service::init_entity($datatype, $data);
             }
 
             foreach ($records as $record) {
-                $data[] = self::prepare_entity_data($datatype, $record, $isprepareddata);
+                if ($isprepareddata == false) {
+                    $entity->set_values($record);
+                    $record = $entity->export_data();
+                }
+
+                $data[] = self::prepare_entity_data($record);
 
                 // Export data by chanks.
                 if ($i >= self::$writerecordslimits) {
@@ -417,21 +425,14 @@ class database_repository {
     /**
      * Prepare entity for export.
      *
-     * @param array $datatype
      * @param \stdClass $data
-     * @param bool $isentitydata
      *
      * @return false|string
      * @throws \core\invalid_persistent_exception
      * @throws \dml_exception
      */
-    private static function prepare_entity_data($datatype, $data, $isentitydata = false) {
-        if (!$isentitydata) {
-            $entity = datatypes_service::init_entity($datatype, $data);
-            $data = $entity->export_data();
-        }
-
-        return StorageHelper::format_data(SettingsHelper::get_export_dataformat(), $data);
+    private static function prepare_entity_data($data) {
+        return StorageHelper::format_data('csv', $data);
     }
 
     /**

@@ -458,4 +458,30 @@ class DBHelper {
 
         return false;
     }
+
+    public static function get_driver_instance($type) {
+        $classname = $type.'_custom_moodle_database';
+        $libfile   = __DIR__ . "/custom_db_drivers/$classname.php";
+
+        if (!file_exists($libfile)) {
+            return null;
+        }
+
+        require_once($libfile);
+        return new $classname(true);
+    }
+
+    public static function get_db_client() {
+        global $CFG, $DB;
+
+        if ($CFG->dbtype == self::MYSQL_TYPE || $CFG->dbtype == self::MARIADB_TYPE) {
+            $db = self::get_driver_instance($CFG->dbtype);
+            $dbconfig = $DB->export_dbconfig();
+            $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass, $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
+
+            return $db;
+        }
+
+        return $DB;
+    }
 }

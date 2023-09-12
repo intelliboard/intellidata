@@ -224,6 +224,12 @@ $observers = [
         'callback' => '\local_intellidata\entities\quizquestions\observer::question_deleted',
     ],
 
+    // Quiz question relations events.
+    [
+        'eventname' => '\mod_quiz\event\slot_deleted',
+        'callback' => '\local_intellidata\entities\quizquestionrelations\observer::slot_deleted',
+    ],
+
     // Assignment Submissions.
     [
         'eventname' => '\mod_assign\event\submission_created',
