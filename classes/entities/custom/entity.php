@@ -55,6 +55,8 @@ class entity {
 
     /** @var array The list of validation errors. */
     private $errors = array();
+    /** @var array The list of fields. */
+    private $fields = array();
 
     public function __construct($datatype, $record = null, $returnfields = []) {
 
@@ -246,9 +248,12 @@ class entity {
      */
     final public function to_record() {
         $record = [];
-        $properties = static::properties_definition($this->returnfields);
 
-        foreach ($properties as $property => $definition) {
+        if (empty($this->fields)) {
+            $this->fields = static::properties_definition($this->returnfields);
+        }
+
+        foreach ($this->fields as $property => $definition) {
             if (array_key_exists($property, $this->data)) {
                 $record[$property] = $this->data[$property];
             } else {

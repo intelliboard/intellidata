@@ -55,6 +55,9 @@ abstract class entity {
     /** @var boolean If the data was already validated. */
     private $validated = false;
 
+    /** @var array The list of fields. */
+    private $fields = array();
+
     public function __construct($record = null, $returnfields = []) {
         if (count($returnfields)) {
             $this->returnfields = $returnfields;
@@ -287,9 +290,12 @@ abstract class entity {
      */
     final public function to_record() {
         $record = [];
-        $properties = static::properties_definition($this->returnfields);
 
-        foreach ($properties as $property => $definition) {
+        if (empty($this->fields)) {
+            $this->fields = static::properties_definition($this->returnfields);
+        }
+
+        foreach ($this->fields as $property => $definition) {
             if (array_key_exists($property, $this->data)) {
                 $record[$property] = $this->data[$property];
             } else {

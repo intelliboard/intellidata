@@ -89,6 +89,6 @@ class ParamsHelper {
     public static function get_release() {
         global $CFG;
 
-        return !empty($CFG->release) ? $CFG->release : null;
+        return !empty($CFG->release) ? (float)$CFG->release : null;
     }
 }
