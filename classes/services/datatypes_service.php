@@ -25,6 +25,7 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\repositories\export_log_repository;
@@ -346,8 +347,8 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => true,
-                'exportids' => true
+                'databaseexport' => ParamsHelper::get_release() < 3.8,
+                'exportids' => ParamsHelper::get_release() < 3.8
             ],
             'roles' => [
                 'name' => 'roles',
@@ -421,8 +422,8 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => true,
-                'exportids' => true
+                'databaseexport' => ParamsHelper::get_release() < 3.7,
+                'exportids' => ParamsHelper::get_release() < 3.7
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',
@@ -435,7 +436,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => ParamsHelper::get_release() < 4.0
             ],
             'quizquestionattempts' => [
                 'name' => 'quizquestionattempts',

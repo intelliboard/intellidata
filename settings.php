@@ -441,7 +441,7 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    $name = 'directsqlenabled';
+    $name = 'datavalidationenabled';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),

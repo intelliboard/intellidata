@@ -161,12 +161,11 @@ class file_storage_repository extends storage_repository {
         $repository = new usertracking_repository();
 
         if (count($usersdata)) {
+            mtrace("Start Import tracking for " . count($usersdata) ." users");
             foreach ($usersdata as $userid => $userdata) {
 
                 // Export tracking records for individual user.
                 $repository->save_tracking_records($userid, $this->trackingstorage->prepare_usersdata($usersdata));
-
-                mtrace("Imported tracking for user: $userid");
             }
         }
     }

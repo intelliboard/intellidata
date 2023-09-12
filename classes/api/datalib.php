@@ -85,7 +85,7 @@ class local_intellidata_datalib extends external_api {
             'length' => PARAM_INT
         ]);
 
-        if (!SettingsHelper::get_setting('directsqlenabled')) {
+        if (!SettingsHelper::get_setting('datavalidationenabled')) {
             return [
                 'data' => 'directsqldisabled',
                 'status' => apilib::STATUS_ERROR
