@@ -35,6 +35,8 @@ class DBHelper {
     const MSSQL_TYPE = 'mssql';
     const SQLSRV_TYPE = 'sqlsrv';
 
+    public static $customdbclient   = null;
+
     /**
      * @param $id
      * @param $value
@@ -475,11 +477,15 @@ class DBHelper {
         global $CFG, $DB;
 
         if ($CFG->dbtype == self::MYSQL_TYPE || $CFG->dbtype == self::MARIADB_TYPE) {
-            $db = self::get_driver_instance($CFG->dbtype);
-            $dbconfig = $DB->export_dbconfig();
-            $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass, $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
+            if (self::$customdbclient == null) {
+                $db = self::get_driver_instance($CFG->dbtype);
+                $dbconfig = $DB->export_dbconfig();
+                $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass, $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
 
-            return $db;
+                self::$customdbclient = $db;
+            }
+
+            return self::$customdbclient;
         }
 
         return $DB;

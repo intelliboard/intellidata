@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->version  = 2023090500;
 $plugin->requires = 2017111300;
-$plugin->release = '1.129.0';
+$plugin->release = '1.130.0';
 $plugin->maturity = MATURITY_STABLE;
 $plugin->component = 'local_intellidata';
