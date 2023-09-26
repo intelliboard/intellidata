@@ -39,4 +39,20 @@ class migration extends \local_intellidata\entities\migration {
     public $eventname   = '\core\event\question_created';
     public $table       = 'question';
 
+    /**
+     * @param false $count
+     * @param null $condition
+     * @param array $conditionparams
+     * @return array
+     */
+    public function get_sql($count = false, $condition = null, $conditionparams = []) {
+
+        $select = ($count) ?
+            "SELECT COUNT(id) as recordscount" :
+            "SELECT id, name, qtype, defaultmark, SUBSTRING(questiontext, 1, 5000) as questiontext";
+
+        $sql = "$select FROM {" . $this->table . "} ";
+
+        return $this->set_condition($condition, $conditionparams, $sql, []);
+    }
 }

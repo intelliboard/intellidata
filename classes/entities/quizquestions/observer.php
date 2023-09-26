@@ -75,6 +75,8 @@ class observer {
         $question = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
         $question->crud = $eventdata['crud'];
 
+        $question->questiontext = substr($question->questiontext, 0, 5000);
+
         $entity = new quizquestion($question, $fields);
         $data = $entity->export();
 
@@ -83,4 +85,3 @@ class observer {
     }
 
 }
-
