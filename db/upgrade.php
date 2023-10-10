@@ -1146,28 +1146,13 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $exportservice->delete_files(['datatypes' => $datatypes]);
 
         // Delete old datatype export ids.
-        $DB->execute("DELETE FROM {local_intellidata_export_ids} WHERE datatype NOT IN
-        (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
-            [
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'tabletype2' => datatypeconfig::TABLETYPE_LOGS,
-            ]);
+        $DB->execute("TRUNCATE TABLE {local_intellidata_export_ids}");
 
         // Delete old datatype storage.
-        $DB->execute("DELETE FROM {local_intellidata_storage} WHERE datatype NOT IN
-        (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
-            [
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'tabletype2' => datatypeconfig::TABLETYPE_LOGS
-            ]);
+        $DB->execute("TRUNCATE TABLE {local_intellidata_storage}");
 
         // Delete old datatype logs.
-        $DB->execute("DELETE FROM {local_intellidata_logs} WHERE datatype NOT IN
-        (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
-            [
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'tabletype2' => datatypeconfig::TABLETYPE_LOGS
-            ]);
+        $DB->execute("TRUNCATE TABLE {local_intellidata_logs}");
 
         $prefix = datatypeconfig::OPTIONAL_TABLE_PREFIX;
         $DB->execute(
