@@ -77,6 +77,11 @@ class userinfofield extends \local_intellidata\entities\entity {
                 'description' => 'Visible Status.',
                 'default' => 0,
             ),
+            'datatype' => array(
+                'type' => PARAM_TEXT,
+                'description' => 'Field Type.',
+                'default' => '',
+            ),
         );
     }
 
