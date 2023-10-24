@@ -78,7 +78,6 @@ class ramigration extends \local_intellidata\entities\migration {
 
             $entity = new $this->entity($record);
             $recorddata = $entity->export();
-            $recorddata->recordtimecreated = $record->timemodified;
 
             yield $recorddata;
         }
