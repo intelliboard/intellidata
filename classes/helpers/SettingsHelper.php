@@ -42,9 +42,9 @@ class SettingsHelper {
         'encryptionkey' => '',
         'clientidentifier' => '',
         'cleaner_duration' => DAYSECS * 14,
-        'migrationrecordslimit' => '100000000',
+        'migrationrecordslimit' => '1000000',
         'migrationwriterecordslimit' => '10000',
-        'exportrecordslimit' => '100000000',
+        'exportrecordslimit' => '100000',
         'exportfilesduringmigration' => 1,
         'resetmigrationprogress' => 0,
         'resetimporttrackingprogress' => 0,
@@ -87,7 +87,8 @@ class SettingsHelper {
         'intelliboardcopydatatype' => null,
         'intelliboardcopyprocessedlimit' => 0,
         'cacheconfig' => 1,
-        'forcedisablemigration' => 0
+        'forcedisablemigration' => 0,
+        'enablecustomdbdriver' => 0,
     ];
 
     const NOTUPDATABLE_SETTINGS = [
