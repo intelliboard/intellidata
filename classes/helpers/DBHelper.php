@@ -35,7 +35,12 @@ class DBHelper {
     const MSSQL_TYPE = 'mssql';
     const SQLSRV_TYPE = 'sqlsrv';
 
-    public static $customdbclient   = null;
+    public static $customdbclient = null;
+
+    public static $supporteddbclients = [
+        self::MYSQL_TYPE,
+        self::MARIADB_TYPE
+    ];
 
     /**
      * @param $id
@@ -476,7 +481,9 @@ class DBHelper {
     public static function get_db_client() {
         global $CFG, $DB;
 
-        if ($CFG->dbtype == self::MYSQL_TYPE || $CFG->dbtype == self::MARIADB_TYPE) {
+        if (!empty(SettingsHelper::get_setting('enablecustomdbdriver')) &&
+            in_array($CFG->dbtype, self::$supporteddbclients)) {
+
             if (self::$customdbclient == null) {
                 $db = self::get_driver_instance($CFG->dbtype);
                 $dbconfig = $DB->export_dbconfig();

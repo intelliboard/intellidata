@@ -357,3 +357,4 @@ $string['forcedisablemigration'] = 'Force disable migration';
 $string['migrationdisabled'] = 'Migration Disabled';
 $string['scheduledtaskupdated'] = 'Scheduled task successfully updated';
 $string['scheduledtasknotupdated'] = 'Cannot updated Scheduled task';
+$string['enablecustomdbdriver'] = 'Enable custom DB driver';
