@@ -175,7 +175,7 @@ class quizquestions_test extends \advanced_testcase {
      */
     protected function add_random_questions(stdClass $quiz, int $page, int $categoryid, int $number) {
 
-        if (class_exists('\mod_quiz\structure') && class_exists('\mod_quiz\quiz_settings') && method_exists('\mod_quiz\quiz_settings', 'add_random_questions')) {
+        if (class_exists('\mod_quiz\structure') && class_exists('\mod_quiz\quiz_settings') && method_exists('\mod_quiz\structure', 'add_random_questions')) {
 
             $settings = \mod_quiz\quiz_settings::create($quiz->id);
             $structure = \mod_quiz\structure::create_for_quiz($settings);
