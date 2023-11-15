@@ -216,7 +216,14 @@ class record_deleted_observer_test extends \advanced_testcase {
         $selfplugin = enrol_get_plugin('self');
         $studentrole = $DB->get_record('role', ['shortname' => 'student']);
 
-        $course = generator::create_course();
+        $ccount = $DB->count_records('course');
+        $data = [
+            'fullname' => 'ibcourse1' . $ccount,
+            'idnumber' => '1111111' . $ccount,
+            'shortname' => 'ibscourse1' . $ccount
+        ];
+
+        $course = generator::create_course($data);
 
         // Creating enrol instance.
         $instanceid = $selfplugin->add_instance($course, [
