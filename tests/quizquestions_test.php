@@ -32,8 +32,10 @@ require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
+use core_table\local\filter\filter;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\StorageHelper;
+use stdClass;
 
 /**
  * Quiz questions test case.
@@ -80,7 +82,7 @@ class quizquestions_test extends \advanced_testcase {
         $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
 
         quiz_add_quiz_question($question->id, $quiz);
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz, 0, $cat->id, 1);
 
         $data = [
             'id' => $question->id,
@@ -135,7 +137,7 @@ class quizquestions_test extends \advanced_testcase {
         ]);
 
         quiz_add_quiz_question($question->id, $quiz);
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz, 0, $cat->id, 1);
 
         $data = [
             'id' => $question->id,
@@ -159,5 +161,36 @@ class quizquestions_test extends \advanced_testcase {
         $entitydata->questiontext = substr($entitydata->questiontext, 0, 5000);
 
         $this->assertEquals($entitydata, $datarecorddata);
+    }
+
+    /**
+     * Add random question.
+     *
+     * @param stdClass $quizid
+     * @param int $page
+     * @param int $categoryid
+     * @param int $number
+     * @return void
+     * @throws \invalid_parameter_exception
+     */
+    protected function add_random_questions(stdClass $quiz, int $page, int $categoryid, int $number) {
+
+        if (class_exists('\mod_quiz\structure') && class_exists('\mod_quiz\quiz_settings') && method_exists('\mod_quiz\structure', 'add_random_questions')) {
+
+            $settings = \mod_quiz\quiz_settings::create($quiz->id);
+            $structure = \mod_quiz\structure::create_for_quiz($settings);
+            $filtercondition = [
+                'filter' => [
+                    'category' => [
+                        'jointype' => filter::JOINTYPE_DEFAULT,
+                        'values' => [$categoryid],
+                        'filteroptions' => ['includesubcategories' => false],
+                    ],
+                ],
+            ];
+            $structure->add_random_questions($page, $number, $filtercondition);
+        } else {
+            quiz_add_random_questions($quiz, $page, $categoryid, $number, false);
+        }
     }
 }
