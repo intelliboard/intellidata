@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
+use core_table\local\filter\filter;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\StorageHelper;
 use stdClass;
@@ -181,7 +182,7 @@ class quizquestions_test extends \advanced_testcase {
             $filtercondition = [
                 'filter' => [
                     'category' => [
-                        'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                        'jointype' => filter::JOINTYPE_DEFAULT,
                         'values' => [$categoryid],
                         'filteroptions' => ['includesubcategories' => false],
                     ],
