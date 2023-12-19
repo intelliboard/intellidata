@@ -63,7 +63,7 @@ class observer {
             $eventdata = $event->get_data();
 
             $section = $event->get_record_snapshot('course_sections', $eventdata['objectid']);
-            self::generate_section_name($section);
+            self::generate_section_name($section, true);
 
             self::export_event($section, $eventdata);
         }
@@ -126,13 +126,14 @@ class observer {
      *
      * @return void
      */
-    private static function generate_section_name(&$section) {
+    private static function generate_section_name(&$section, $default = false) {
         global $CFG;
 
         require_once($CFG->dirroot . '/course/lib.php');
         if (empty($section->name)) {
             try {
-                $section->name = get_section_name($section->course, $section->section);
+                $section->name = !$default ? get_section_name($section->course, $section->section) :
+                    course_get_format($section->course)->get_default_section_name($section);
             } catch (\Exception $e) {
                 DebugHelper::error_log($e->getMessage());
             }

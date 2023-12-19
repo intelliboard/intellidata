@@ -44,8 +44,14 @@ class record_deleted {
      */
     public static function execute(\core\event\base $event) {
 
+        // Check if there is framework. For MWP.
+        $frameworkid = false;
+        if (!empty($event->other['frameworkid'])) {
+            $frameworkid = $event->other['frameworkid'];
+        }
+
         // Process only deleted events which includes objecttable and objectid.
-        if ($event->crud != EventsHelper::CRUD_DELETED || empty($event->objecttable) || empty($event->objectid)) {
+        if ($event->crud != EventsHelper::CRUD_DELETED || empty($event->objecttable) || (!$frameworkid && empty($event->objectid))) {
             return;
         }
 
@@ -53,6 +59,9 @@ class record_deleted {
             (int)SettingsHelper::get_setting('exportdeletedrecords') == SettingsHelper::EXPORTDELETED_TRACKEVENTS) {
 
             $eventdata = $event->get_data();
+            if ($frameworkid && empty($event->objectid)) {
+                $eventdata['objectid'] = $frameworkid;
+            }
 
             $exportlogrepository = new export_log_repository();
 

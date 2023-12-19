@@ -79,6 +79,8 @@ class SettingsHelper {
         'enabledatacleaning' => 0,
         'enableprogresscalculation' => 0,
         'divideexportbydatatype' => 0,
+        'dividemigrationtbydatatype' => 1,
+        'enablescheduledsnapshot' => 0,
         'eventstracking' => 1,
         'exportids' => 1,
         'exportdeletedrecords' => self::EXPORTDELETED_TRACKEVENTS,
@@ -123,7 +125,9 @@ class SettingsHelper {
      * @return mixed|string
      */
     public static function get_defaut_config_value($configname) {
-        return isset(self::DEFAULT_VALUES[$configname]) ? self::DEFAULT_VALUES[$configname] : '';
+        $defaultvalues = self::DEFAULT_VALUES;
+        $defaultvalues['ltititle'] = get_string('ltititlefield', 'local_intellidata');
+        return isset($defaultvalues[$configname]) ? $defaultvalues[$configname] : '';
     }
 
     /**
