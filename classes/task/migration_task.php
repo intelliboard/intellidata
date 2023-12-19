@@ -79,20 +79,26 @@ class migration_task extends \core\task\scheduled_task {
 
         DebugHelper::enable_moodle_debug();
 
+        if (SettingsHelper::get_setting('dividemigrationtbydatatype')) {
+            // Starting the migration in parts, by datatype.
+            $this->partial_migration();
+        } else {
+            // Running a full migration, all datatypes in one run.
+            $this->full_migration();
+        }
+
+        return true;
+    }
+
+    /**
+     * Starting the migration in parts, by datatype.
+     * @return void
+     */
+    private function partial_migration() {
         $params = [];
         $exportservice = new export_service();
 
-        // Reset migration process if enabled.
-        if (SettingsHelper::get_setting('resetmigrationprogress')) {
-            MigrationHelper::reset_migration_details();
-
-            mtrace("IntelliData Cleaner CRON started!");
-
-            // Delete all IntelliData files.
-            $filesrecords = $exportservice->delete_files(['timemodified' => time()]);
-
-            mtrace("IntelliData Cleaner: $filesrecords deleted.");
-        }
+        $this->reset_migration();
 
         $migrationdatatype = SettingsHelper::get_setting('migrationdatatype');
         if ($migrationdatatype) {
@@ -100,20 +106,9 @@ class migration_task extends \core\task\scheduled_task {
             // Ignore if migration completed.
             if ($migrationdatatype == MigrationHelper::MIGRATIONS_COMPLETED_STATUS) {
 
-                // Export files to Moodledata.
-                ExportHelper::process_files_export($exportservice);
+                $this->complete_migration();
 
-                // Send callback to IBN.
-                MigrationHelper::send_callback();
-
-                // Change callback to IBN.
-                MigrationHelper::change_migration_files();
-
-                // Disable scheduled migration task.
-                MigrationHelper::disable_sheduled_tasks();
-                MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
-
-                return true;
+                return;
             }
 
             $params['datatype'] = $migrationdatatype;
@@ -134,8 +129,74 @@ class migration_task extends \core\task\scheduled_task {
         $migrationservice->process($params, true);
 
         mtrace("IntelliData Migration CRON ended!");
-
-        return true;
     }
 
+    /**
+     * Running a full migration, all datatypes.
+     *
+     * @return void
+     */
+    private function full_migration() {
+        $params = [];
+        $exportservice = new export_service();
+
+        $this->reset_migration();
+
+        $migrationstart = (int) SettingsHelper::get_setting('migrationstart');
+        $params['migrationstart'] = $migrationstart;
+        $params['rewritable'] = false;
+
+        mtrace("IntelliData Migration CRON started!");
+
+        // Set migration time.
+        SettingsHelper::set_lastmigrationdate();
+
+        // Export tables.
+        $exportservice->set_migration_mode();
+        $migrationservice = new migration_service(null, $exportservice);
+        $migrationservice->process($params);
+
+        $this->complete_migration();
+
+        mtrace("IntelliData Migration CRON ended!");
+    }
+
+    /**
+     * The final step of completing the migration process.
+     *
+     * @return void
+     */
+    private function complete_migration() {
+        // Export files to Moodledata.
+        ExportHelper::process_files_export(new export_service());
+
+        // Send callback to IBN.
+        MigrationHelper::send_callback();
+
+        // Change callback to IBN.
+        MigrationHelper::change_migration_files();
+
+        // Disable scheduled migration task.
+        MigrationHelper::disable_sheduled_tasks();
+        MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
+    }
+
+    /**
+     * Delete migration files if the corresponding setting is enabled.
+     *
+     * @return void
+     */
+    private function reset_migration() {
+        // Reset migration process if enabled.
+        if (SettingsHelper::get_setting('resetmigrationprogress')) {
+            MigrationHelper::reset_migration_details();
+
+            mtrace("IntelliData Cleaner CRON started!");
+
+            // Delete all IntelliData files.
+            $filesrecords = (new export_service())->delete_files(['timemodified' => time()]);
+
+            mtrace("IntelliData Cleaner: $filesrecords deleted.");
+        }
+    }
 }
