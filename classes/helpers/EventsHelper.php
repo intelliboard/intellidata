@@ -68,7 +68,13 @@ class EventsHelper {
 
         if (count($eventslist)) {
             foreach ($eventslist as $eventclass => $eventname) {
-                $eventdata = $eventclass::get_static_info();
+                try {
+                    $eventdata = $eventclass::get_static_info();
+                } catch (\Exception $e) {
+                    DebugHelper::error_log($e->getMessage());
+                    continue;
+                }
+
                 if (isset($eventdata['crud']) && $eventdata['crud'] == self::CRUD_DELETED &&
                     !empty($eventdata['objecttable'])) {
                     $filteredevents[$eventdata['objecttable']] = $eventclass;

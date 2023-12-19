@@ -71,4 +71,14 @@ $tasks = [
         'dayofweek' => '*',
         'disabled' => 1
     ],
+    [
+        'classname' => 'local_intellidata\task\daily_snapshot_task',
+        'blocking' => 0,
+        'minute' => 0,
+        'hour' => 0,
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+        'disabled' => 1
+    ],
 ];
