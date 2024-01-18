@@ -56,7 +56,7 @@ class export_ids extends base {
                 'type' => PARAM_INT,
                 'default' => 0,
                 'description' => 'Export create time.',
-            ]
+            ],
         ];
     }
 }

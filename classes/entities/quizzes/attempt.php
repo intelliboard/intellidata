@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\quizzes;
 
-
 /**
  * Class for preparing data for Quiz Attempt.
  *
@@ -46,53 +45,73 @@ class attempt extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Discussion ID.',
                 'default' => 0,
-            ),
-            'quiz' => array(
+            ],
+            'quiz' => [
                 'type' => PARAM_INT,
                 'description' => 'Quiz ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'attempt' => array(
+            ],
+            'attempt' => [
                 'type' => PARAM_INT,
                 'description' => 'Attempt number.',
                 'default' => 0,
-            ),
-            'timestart' => array(
+            ],
+            'timestart' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when attempt started.',
                 'default' => 0,
-            ),
-            'timefinish' => array(
+            ],
+            'timefinish' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when attempt finished.',
                 'default' => 0,
-            ),
-            'state' => array(
+            ],
+            'state' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Attempt status.',
                 'default' => '',
-            ),
-            'score' => array(
+            ],
+            'score' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Attempt grade in percent.',
                 'default' => '',
-            ),
-            'points' => array(
+            ],
+            'points' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Attempt grade.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        $quiz = $DB->get_record('quiz', ['id' => $object->quiz]);
+
+        $object->points = $quiz->score = 0;
+        if ($object->sumgrades && $quiz->sumgrades) {
+            $object->points = ($object->sumgrades / $quiz->sumgrades) * $quiz->grade;
+            $object->score = ($object->sumgrades / $quiz->sumgrades) * 100;
+        }
+        return $object;
+    }
 }

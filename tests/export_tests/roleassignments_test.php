@@ -21,17 +21,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
 
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
-
 
 /**
  * Role migration test case.
@@ -41,12 +46,16 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class role_tracking_test extends \advanced_testcase {
+class roleassignments_test extends \advanced_testcase {
+
+    private $newexportavailable;
 
     public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
+
+        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
     }
 
     /**
@@ -59,47 +68,13 @@ class role_tracking_test extends \advanced_testcase {
             $this->resetAfterTest(false);
         }
 
-        $userdata = [
-            'firstname' => 'ibuser1',
-            'username' => 'ibuser1',
-            'password' => 'Ibuser1!',
-        ];
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->role_assign_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
 
-        $user = generator::create_user($userdata);
-
-        $coursedata = [
-            'fullname' => 'ibcoursecompletion1',
-            'idnumber' => '1111111',
-        ];
-
-        $course = generator::create_course($coursedata);
-
-        $roledata = [
-            'shortname' => 'ibrole1',
-            'name' => 'ibrole1',
-        ];
-
-        $roleid = generator::create_role($roledata);
-
-        $data = [
-            'roleid' => $roleid,
-            'userid' => $user->id,
-            'courseid' => $course->id,
-        ];
-
-        role_assign($data['roleid'], $data['userid'], \context_course::instance($course->id));
-
-        $entity = new \local_intellidata\entities\roles\roleassignment((object)$data);
-        $entitydata = $entity->export();
-        $entitydata = test_helper::filter_fields($entitydata, $data);
-
-        $storage = StorageHelper::get_storage_service(['name' => 'roleassignments']);
-        $datarecord = $storage->get_log_entity_data('c');
-
-        $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
-
-        $this->assertNotEmpty($datarecord);
-        $this->assertEquals($entitydata, $datarecorddata);
+        $this->role_assign_test(0);
     }
 
     /**
@@ -108,31 +83,48 @@ class role_tracking_test extends \advanced_testcase {
      * @covers \local_intellidata\entities\roles\observer::role_unassigned
      */
     public function test_unassign() {
-        global $DB;
-
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(true);
         } else {
             $this->test_assign();
         }
 
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->role_unassign_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->role_unassign_test(0);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function role_unassign_test($tracking) {
+        global $DB;
+
         $userdata = [
             'firstname' => 'ibuser1',
-            'username' => 'ibuser1',
+            'username' => 'ibuser1' . $tracking,
         ];
 
         $user = $DB->get_record('user', $userdata);
 
         $coursedata = [
-            'fullname' => 'ibcoursecompletion1',
-            'idnumber' => '1111111',
+            'fullname' => 'ibcoursecompletion1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
         ];
 
         $course = $DB->get_record('course', $coursedata);
 
         $roledata = [
-            'shortname' => 'ibrole1',
-            'name' => 'ibrole1',
+            'shortname' => 'ibrole1' . $tracking,
+            'name' => 'ibrole1' . $tracking,
         ];
 
         $role = $DB->get_record('role', $roledata);
@@ -153,6 +145,59 @@ class role_tracking_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'roleassignments']);
         $datarecord = $storage->get_log_entity_data('d', $data);
+        $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
+
+        $this->assertNotEmpty($datarecord);
+        $this->assertEquals($entitydata, $datarecorddata);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function role_assign_test($tracking) {
+
+        $userdata = [
+            'firstname' => 'ibuser1',
+            'username' => 'ibuser1' . $tracking,
+            'password' => 'Ibuser1!',
+        ];
+
+        $user = generator::create_user($userdata);
+
+        $coursedata = [
+            'fullname' => 'ibcoursecompletion1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
+        ];
+
+        $course = generator::create_course($coursedata);
+
+        $roledata = [
+            'shortname' => 'ibrole1' . $tracking,
+            'name' => 'ibrole1' . $tracking,
+        ];
+
+        $roleid = generator::create_role($roledata);
+
+        $data = [
+            'roleid' => $roleid,
+            'userid' => $user->id,
+            'courseid' => $course->id,
+        ];
+
+        role_assign($data['roleid'], $data['userid'], \context_course::instance($course->id));
+
+        $entity = new \local_intellidata\entities\roles\roleassignment((object)$data);
+        $entitydata = $entity->export();
+        $entitydata = test_helper::filter_fields($entitydata, $data);
+
+        $storage = StorageHelper::get_storage_service(['name' => 'roleassignments']);
+        $datarecord = $storage->get_log_entity_data('c', $data);
+
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

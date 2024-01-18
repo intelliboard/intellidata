@@ -25,9 +25,9 @@
 
 namespace local_intellidata\entities\quizquestionrelations;
 
-use \local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\datatypes_service;
-use \local_intellidata\services\events_service;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -54,7 +54,7 @@ class observer {
             'id' => $eventdata['objectid'],
             'quizid' => $eventdata['other']['quizid'],
             'slot' => $eventdata['other']['slotnumber'],
-            'crud' => 'd'
+            'crud' => 'd',
         ];
 
         $entity = new quizquestionrelation($record, $fields);

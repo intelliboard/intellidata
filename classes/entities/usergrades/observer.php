@@ -25,8 +25,6 @@
 
 namespace local_intellidata\entities\usergrades;
 
-
-
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\events_service;
 use local_intellidata\task\export_adhoc_task;
@@ -43,18 +41,12 @@ class observer {
      * @param \core\event\user_graded $event
      */
     public static function user_graded(\core\event\user_graded $event) {
-        global $CFG;
-
         if (TrackingHelper::eventstracking_enabled()) {
-
-            require_once($CFG->libdir . '/gradelib.php');
-
             $eventdata = $event->get_data();
 
             $gradeobject = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
-            $gradeitem = \grade_item::fetch(array('id' => $gradeobject->itemid));
 
-            $data = self::prepare_data($gradeobject, $gradeitem);
+            $data = usergrade::prepare_export_data($gradeobject);
 
             self::export_event($data, $eventdata);
         }
@@ -94,33 +86,10 @@ class observer {
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
             'datatypes' => [usergrade::TYPE],
-            'callbackurl' => ''
+            'callbackurl' => '',
         ]);
 
         manager::queue_adhoc_task($exporttask);
-    }
-
-    public static function prepare_data($gradeobject, $gradeitem) {
-        // Each user have own grade max and grade min.
-        $gradeitem->grademax = $gradeobject->rawgrademax;
-        $gradeitem->grademin = $gradeobject->rawgrademin;
-
-        $score = grade_format_gradevalue($gradeobject->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
-        $data = new \stdClass();
-        $data->id = $gradeobject->id;
-        $data->gradeitemid = $gradeobject->itemid;
-        $data->userid = $gradeobject->userid;
-        $data->usermodified = $gradeobject->usermodified;
-        $data->letter = grade_format_gradevalue($gradeobject->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_LETTER);
-        $data->score = str_replace(' %', '', $score);
-        $data->point = ($gradeitem->gradetype == GRADE_TYPE_SCALE) ?
-                            $gradeitem->bounded_grade($gradeobject->finalgrade) :
-                            grade_format_gradevalue($gradeobject->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_REAL);
-        $data->feedback = $gradeobject->feedback;
-        $data->hidden = $gradeobject->hidden;
-        $data->timemodified = $gradeobject->timemodified;
-
-        return $data;
     }
 
     private static function export_event($data, $eventdata, $fields = []) {
@@ -132,6 +101,5 @@ class observer {
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
     }
-
 }
 

@@ -47,13 +47,13 @@ class cache_storage_repository extends storage_repository {
         if ($cache->has($userkey)) {
             $cacherecord = $cache->get($userkey);
         } else {
-            $cacherecord = array('tracking' => null, 'logs' => [], 'details' => []);
+            $cacherecord = ['tracking' => null, 'logs' => [], 'details' => []];
         }
 
         if ($cacherecord['tracking'] != null) {
             $data = $cacherecord['tracking'];
         } else if (!$data = $DB->get_record('local_intellidata_tracking',
-            array('userid' => $trackdata->userid, 'page' => $trackdata->page, 'param' => $trackdata->param),
+            ['userid' => $trackdata->userid, 'page' => $trackdata->page, 'param' => $trackdata->param],
             'id, visits, timespend, lastaccess')) {
             $data = $this->get_default_tracking($trackdata);
             $data->id = $DB->insert_record('local_intellidata_tracking', $data, true);
@@ -69,7 +69,7 @@ class cache_storage_repository extends storage_repository {
             if (isset($cacherecord['logs'][$currentstamp])) {
                 $log = $cacherecord['logs'][$currentstamp];
             } else if (!$log = $DB->get_record('local_intellidata_trlogs',
-                array('trackid' => $data->id, 'timepoint' => $currentstamp))) {
+                ['trackid' => $data->id, 'timepoint' => $currentstamp])) {
                 $log = $this->get_default_log($trackdata, $data, $currentstamp);
                 $log->id = $DB->insert_record('local_intellidata_trlogs', $log, true);
             }
@@ -84,7 +84,7 @@ class cache_storage_repository extends storage_repository {
                 if (isset($cacherecord['details'][$currentstamp][$currenthour])) {
                     $detail = $cacherecord['details'][$currentstamp][$currenthour];
                 } else if (!(isset($log->id) && $detail = $DB->get_record('local_intellidata_trdetails',
-                        array('logid' => $log->id, 'timepoint' => $currenthour)))) {
+                        ['logid' => $log->id, 'timepoint' => $currenthour]))) {
                     $detail = $this->get_default_log_detail($trackdata, $log, $currenthour);
                     $detail->id = $DB->insert_record('local_intellidata_trdetails', $detail, true);
                 }

@@ -95,7 +95,7 @@ class TasksHelper {
 
         $where = ['component = :component'];
         $sqlparams = [
-            'component' => ParamsHelper::PLUGIN
+            'component' => ParamsHelper::PLUGIN,
         ];
 
         if (!empty($params['timestart'])) {
@@ -189,7 +189,7 @@ class TasksHelper {
                 manager::adhoc_task_complete($task);
             } else {
                 // Delete task if it is not running.
-                $DB->delete_records('task_adhoc', array('id' => $task->get_id()));
+                $DB->delete_records('task_adhoc', ['id' => $task->get_id()]);
             }
 
             return true;
@@ -238,7 +238,7 @@ class TasksHelper {
             '(component = :component OR ' . $whereclasslike . ')',
             [
                 'component' => ParamsHelper::PLUGIN,
-                'classname' => '%' . ParamsHelper::PLUGIN . '%'
+                'classname' => '%' . ParamsHelper::PLUGIN . '%',
             ],
             'id'
         );

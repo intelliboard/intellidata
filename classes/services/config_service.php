@@ -125,14 +125,14 @@ class config_service {
         $exportservice = new export_service();
         $exportservice->delete_files([
             'datatype' => $record->get('datatype'),
-            'timemodified' => time()
+            'timemodified' => time(),
         ]);
 
         // Add task to migrate records.
         if ($record->is_required_by_default()) {
             $exporttask = new export_adhoc_task();
             $exporttask->set_custom_data([
-                'datatypes' => [$record->get('datatype')]
+                'datatypes' => [$record->get('datatype')],
             ]);
             \core\task\manager::queue_adhoc_task($exporttask);
         }
@@ -305,7 +305,7 @@ class config_service {
     private function create_export_adhoc_task($datatypes) {
         $exporttask = new \local_intellidata\task\export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => $datatypes
+            'datatypes' => $datatypes,
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
     }
@@ -336,7 +336,7 @@ class config_service {
         $deleteindextask = new delete_index_adhoc_task();
         $deleteindextask->set_custom_data([
             'datatype' => $recordconfig->get('datatype'),
-            'tableindex' => $recordconfig->get('tableindex')
+            'tableindex' => $recordconfig->get('tableindex'),
         ]);
         \core\task\manager::queue_adhoc_task($deleteindextask);
     }
@@ -467,46 +467,46 @@ class config_service {
 
         $config = [
             'badge_issued' => [
-                'timemodified_field' => 'dateissued'
+                'timemodified_field' => 'dateissued',
             ],
             'badge_manual_award' => [
-                'timemodified_field' => 'datemet'
+                'timemodified_field' => 'datemet',
             ],
             'cohort_members' => [
-                'timemodified_field' => 'timeadded'
+                'timemodified_field' => 'timeadded',
             ],
             'course_format_options' => [
                 'filterbyid' => true,
-                'rewritable' => false
+                'rewritable' => false,
             ],
             'feedback_value' => [
                 'filterbyid' => true,
-                'rewritable' => false
+                'rewritable' => false,
             ],
             'comments' => [
-                'timemodified_field' => 'timecreated'
+                'timemodified_field' => 'timecreated',
             ],
             'my_pages' => [
                 'filterbyid' => true,
-                'rewritable' => false
+                'rewritable' => false,
             ],
             'local_intellicart_checkout' => [
-                'timemodified_field' => 'timeupdated'
+                'timemodified_field' => 'timeupdated',
             ],
             'notifications' => [
-                'timemodified_field' => 'timecreated'
+                'timemodified_field' => 'timecreated',
             ],
             'user_lastaccess' => [
-                'timemodified_field' => 'timeaccess'
+                'timemodified_field' => 'timeaccess',
             ],
             'lesson_answers' => [
                 'timemodified_field' => '',
                 'filterbyid' => false,
-                'rewritable' => true
+                'rewritable' => true,
             ],
             'tenant' => [
                 'filterbyid' => false,
-                'rewritable' => true
+                'rewritable' => true,
             ],
             'tool_tenant' => [
                 'rewritable' => false,
@@ -518,8 +518,8 @@ class config_service {
             ],
             'question_categories' => [
                 'filterbyid' => true,
-                'rewritable' => false
-            ]
+                'rewritable' => false,
+            ],
         ];
 
         return ($datatype && !empty($config[$datatype])) ? $config[$datatype] : $config;

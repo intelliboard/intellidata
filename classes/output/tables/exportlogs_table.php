@@ -65,7 +65,7 @@ class exportlogs_table extends \table_sql {
         if (!empty($params['query'])) {
             $where .= " AND " . $DB->sql_like('el.datatype', ':searchquery', false, false, false);
             $sqlparams += [
-                'searchquery' => '%' . $params['query'] . '%'
+                'searchquery' => '%' . $params['query'] . '%',
             ];
         }
 
@@ -100,7 +100,7 @@ class exportlogs_table extends \table_sql {
             ],
             'last_exported_time' => [
                 'label' => get_string('timeend', 'local_intellidata'),
-            ]
+            ],
         ];
 
         return $fields;
@@ -275,7 +275,7 @@ class exportlogs_table extends \table_sql {
             [
                 'action' => $PAGE->url,
                 'query' => $PAGE->url->get_param('query'),
-                'sesskey' => sesskey()
+                'sesskey' => sesskey(),
             ]
         );
     }

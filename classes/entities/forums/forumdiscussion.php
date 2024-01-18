@@ -46,28 +46,28 @@ class forumdiscussion extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Discussion ID.',
                 'default' => 0,
-            ),
-            'forum' => array(
+            ],
+            'forum' => [
                 'type' => PARAM_INT,
                 'description' => 'Forum ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_RAW,
                 'description' => 'Discussion name.',
                 'default' => '',
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when discussion created or updated.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
 }

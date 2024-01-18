@@ -21,7 +21,16 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
+
+use local_intellidata\helpers\SettingsHelper;
+use stdClass;
+use core_table\local\filter\filter;
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,11 +40,6 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
-
-use core_table\local\filter\filter;
-use local_intellidata\helpers\ParamsHelper;
-use local_intellidata\helpers\StorageHelper;
-use stdClass;
 
 /**
  * Quiz questions test case.
@@ -47,10 +51,14 @@ use stdClass;
  */
 class quizquestions_test extends \advanced_testcase {
 
+    private $newexportavailable;
+
     public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
+
+        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
     }
 
     /**
@@ -68,18 +76,36 @@ class quizquestions_test extends \advanced_testcase {
             return;
         }
 
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->create_quiz_questions_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->create_quiz_questions_test(0);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function create_quiz_questions_test($tracking) {
         $coursedata = [
-            'fullname' => 'ibcoursequizquestion1',
-            'idnumber' => '3333333',
+            'fullname' => 'ibcoursequizquestion1' . $tracking,
+            'idnumber' => '3333333' . $tracking,
         ];
         $course = generator::create_course($coursedata);
 
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 3, 'grade' => 100.0));
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'questionsperpage' => 3, 'grade' => 100.0]);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
-        $question = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         quiz_add_quiz_question($question->id, $quiz);
         $this->add_random_questions($quiz, 0, $cat->id, 1);
@@ -89,7 +115,7 @@ class quizquestions_test extends \advanced_testcase {
             'name' => $question->name,
             'questiontext' => $question->questiontext,
             'qtype' => $question->qtype,
-            'defaultmark' => $question->defaultmark
+            'defaultmark' => $question->defaultmark,
         ];
 
         $entity = new \local_intellidata\entities\quizquestions\quizquestion((object)$data);
@@ -127,13 +153,13 @@ class quizquestions_test extends \advanced_testcase {
         $course = generator::create_course($coursedata);
 
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $quiz = $quizgenerator->create_instance(array('course' => $course->id, 'questionsperpage' => 3, 'grade' => 100.0));
+        $quiz = $quizgenerator->create_instance(['course' => $course->id, 'questionsperpage' => 3, 'grade' => 100.0]);
 
         $qtext = random_string(50005);
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
         $question = $questiongenerator->create_question('shortanswer', null, [
-            'category' => $cat->id, 'questiontext' => ['text' => $qtext]
+            'category' => $cat->id, 'questiontext' => ['text' => $qtext],
         ]);
 
         quiz_add_quiz_question($question->id, $quiz);
@@ -144,7 +170,7 @@ class quizquestions_test extends \advanced_testcase {
             'name' => $question->name,
             'questiontext' => $qtext,
             'qtype' => $question->qtype,
-            'defaultmark' => $question->defaultmark
+            'defaultmark' => $question->defaultmark,
         ];
 
         $entity = new \local_intellidata\entities\quizquestions\quizquestion((object)$data);
@@ -166,7 +192,7 @@ class quizquestions_test extends \advanced_testcase {
     /**
      * Add random question.
      *
-     * @param stdClass $quizid
+     * @param stdClass $quiz
      * @param int $page
      * @param int $categoryid
      * @param int $number
@@ -175,7 +201,8 @@ class quizquestions_test extends \advanced_testcase {
      */
     protected function add_random_questions(stdClass $quiz, int $page, int $categoryid, int $number) {
 
-        if (class_exists('\mod_quiz\structure') && class_exists('\mod_quiz\quiz_settings') && method_exists('\mod_quiz\structure', 'add_random_questions')) {
+        if (class_exists('\mod_quiz\structure') && class_exists('\mod_quiz\quiz_settings') &&
+                method_exists('\mod_quiz\structure', 'add_random_questions')) {
 
             $settings = \mod_quiz\quiz_settings::create($quiz->id);
             $structure = \mod_quiz\structure::create_for_quiz($settings);

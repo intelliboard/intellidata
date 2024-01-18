@@ -83,7 +83,7 @@ class cache_config_repository {
 
         // All datatypes config.
         $configtocache = [
-            $this->alldatatypes => $config
+            $this->alldatatypes => $config,
         ];
 
         // Optional datatypes config.

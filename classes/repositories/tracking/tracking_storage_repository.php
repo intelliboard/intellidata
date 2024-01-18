@@ -60,7 +60,7 @@ class tracking_storage_repository {
     }
 
     public function get_files($params = []) {
-        return array_diff(scandir($this->storagefolder), array('..', '.', '.DS_Store'));
+        return array_diff(scandir($this->storagefolder), ['..', '.', '.DS_Store']);
     }
 
     public function delete_file($filename) {
@@ -139,9 +139,11 @@ class tracking_storage_repository {
                             (array)$record;
                     }
                 } else if ($record->table == 'details') {
-                    if (isset($data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint])) {
+                    $recordtable = isset($data[$record->userid][$record->page][$record->param][$record->table]) ?
+                        $data[$record->userid][$record->page][$record->param][$record->table] : [];
+                    if (isset($recordtable[$record->currentstamp][$record->timepoint])) {
                         $item = &
-                            $data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint];
+                            $recordtable[$record->currentstamp][$record->timepoint];
                         if (isset($record->visits)) {
                             @$item['visits'] += $record->visits;
                         }
@@ -149,7 +151,7 @@ class tracking_storage_repository {
                         $item['ajaxrequest'] = min($item['ajaxrequest'], $record->ajaxrequest);
 
                     } else {
-                        $data[$record->userid][$record->page][$record->param][$record->table][$record->currentstamp][$record->timepoint] = (array)$record;
+                        $recordtable[$record->currentstamp][$record->timepoint] = (array)$record;
                     }
                 }
             }

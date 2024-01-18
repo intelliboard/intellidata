@@ -29,10 +29,10 @@ namespace local_intellidata\helpers;
 class RolesHelper {
 
     const CONTEXTLIST = [
-        CONTEXT_COURSE      => ParamsHelper::CONTEXT_COURSE,
-        CONTEXT_SYSTEM      => ParamsHelper::CONTEXT_SYSTEM,
-        CONTEXT_USER        => ParamsHelper::CONTEXT_USER,
-        CONTEXT_COURSECAT   => ParamsHelper::CONTEXT_COURSECAT
+        CONTEXT_COURSE => ParamsHelper::CONTEXT_COURSE,
+        CONTEXT_SYSTEM => ParamsHelper::CONTEXT_SYSTEM,
+        CONTEXT_USER => ParamsHelper::CONTEXT_USER,
+        CONTEXT_COURSECAT => ParamsHelper::CONTEXT_COURSECAT,
     ];
 
     /**

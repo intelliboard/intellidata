@@ -42,7 +42,7 @@ class MigrationHelper {
         '\local_intellidata\task\cleaner_task',
         '\local_intellidata\task\export_data_task',
         '\local_intellidata\task\export_files_task',
-        self::MIGRATIONS_TASK_CLASS
+        self::MIGRATIONS_TASK_CLASS,
     ];
 
     /**
@@ -127,7 +127,7 @@ class MigrationHelper {
             $client = new \curl();
 
             $client->post($migrationcallbackurl, [
-                'data' => $encryptionservice->encrypt(json_encode(['exporttime' => time()]))
+                'data' => $encryptionservice->encrypt(json_encode(['exporttime' => time()])),
             ]);
         }
     }
@@ -141,7 +141,7 @@ class MigrationHelper {
     private static function set_disabled_sheduled_task(string $classname, bool $status) {
         global $DB;
 
-        $taskrecord = $DB->get_record('task_scheduled', array('classname' => $classname));
+        $taskrecord = $DB->get_record('task_scheduled', ['classname' => $classname]);
         $task = \core\task\manager::scheduled_task_from_record($taskrecord);
         $task->set_disabled($status);
         return \core\task\manager::configure_scheduled_task($task);

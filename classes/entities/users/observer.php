@@ -25,12 +25,8 @@
 
 namespace local_intellidata\entities\users;
 
-
-
-use \local_intellidata\entities\users\user;
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\helpers\ParamsHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -48,7 +44,7 @@ class observer {
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
 
-            self::prepare_user_data_to_export($user);
+            $user = user::prepare_export_data($user);
 
             self::export_event($user, $eventdata);
         }
@@ -65,7 +61,7 @@ class observer {
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
 
-            self::prepare_user_data_to_export($user);
+            $user = user::prepare_export_data($user);
 
             self::export_event($user, $eventdata);
         }
@@ -82,7 +78,7 @@ class observer {
 
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
 
-            self::prepare_user_data_to_export($user);
+            $user = user::prepare_export_data($user);
 
             self::export_event($user, $eventdata);
         }
@@ -98,22 +94,10 @@ class observer {
             $eventdata = $event->get_data();
             $user = $event->get_record_snapshot('user', $eventdata['objectid']);
 
-            self::prepare_user_data_to_export($user);
+            $user = user::prepare_export_data($user);
 
             self::export_event($user, $eventdata);
         }
-    }
-
-    /**
-     * Format user data for export.
-     *
-     * @param \stdClass $user
-     */
-    public static function prepare_user_data_to_export(&$user) {
-        $user->fullname = fullname($user);
-        $user->state = ($user->confirmed && !$user->suspended) ?
-            ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
-        $user->lastlogin = max($user->lastlogin, $user->currentlogin);
     }
 
     /**
@@ -141,6 +125,5 @@ class observer {
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
     }
-
 }
 

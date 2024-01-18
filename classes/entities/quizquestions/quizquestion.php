@@ -23,9 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizquestions;
+
 use local_intellidata\helpers\ParamsHelper;
-
-
 
 /**
  * Class for preparing data for Activities.
@@ -73,7 +72,20 @@ class quizquestion extends \local_intellidata\entities\entity {
                 'type' => PARAM_FLOAT,
                 'description' => 'Possible score.',
                 'default' => 1,
-            ]
+            ],
         ];
+    }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        $object->questiontext = substr($object->questiontext, 0, 5000);
+        return $object;
     }
 }

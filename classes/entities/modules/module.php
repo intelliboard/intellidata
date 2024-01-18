@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\modules;
 
-
 /**
  * Class for preparing data for Modules.
  *
@@ -46,33 +45,33 @@ class module extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Module ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_RAW,
                 'description' => 'Module name.',
                 'default' => '',
-            ),
-            'title' => array(
+            ],
+            'title' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Module title.',
                 'default' => '',
-            ),
-            'titleplural' => array(
+            ],
+            'titleplural' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Module title plural.',
                 'default' => '',
-            ),
-            'visible' => array(
+            ],
+            'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Module status.',
                 'default' => 1,
-            ),
-        );
+            ],
+        ];
     }
 
     protected function before_export() {

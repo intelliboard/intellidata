@@ -37,7 +37,7 @@ class sql_reports_table extends \table_sql {
             get_string('sql_report_name', 'local_intellidata'),
             get_string('sql_report_status', 'local_intellidata'),
             get_string('sql_report_date', 'local_intellidata'),
-            get_string('sql_report_actions', 'local_intellidata')
+            get_string('sql_report_actions', 'local_intellidata'),
         ]);
         $this->define_columns(['name', 'status', 'timecreated', 'actions']);
 

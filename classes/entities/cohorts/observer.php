@@ -25,8 +25,8 @@
 
 namespace local_intellidata\entities\cohorts;
 
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.

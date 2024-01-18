@@ -38,63 +38,62 @@ class tracking extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Record ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'page' => array(
+            ],
+            'page' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Page identifier.',
                 'default' => '',
-            ),
-            'param' => array(
+            ],
+            'param' => [
                 'type' => PARAM_INT,
                 'description' => 'Additional Parameters.',
                 'default' => 0,
-            ),
-            'visits' => array(
+            ],
+            'visits' => [
                 'type' => PARAM_INT,
                 'description' => 'Users Visits.',
                 'default' => 0,
-            ),
-            'timespend' => array(
+            ],
+            'timespend' => [
                 'type' => PARAM_INT,
                 'description' => 'User timespend.',
                 'default' => 0,
-            ),
-            'firstaccess' => array(
+            ],
+            'firstaccess' => [
                 'type' => PARAM_INT,
                 'description' => 'User firstaccess.',
                 'default' => 0,
-            ),
-            'lastaccess' => array(
+            ],
+            'lastaccess' => [
                 'type' => PARAM_INT,
                 'description' => 'User lastaccess.',
                 'default' => 0,
-            ),
-            'useragent' => array(
+            ],
+            'useragent' => [
                 'type' => PARAM_TEXT,
                 'description' => 'User agent.',
                 'default' => '',
-            ),
-            'ip' => array(
+            ],
+            'ip' => [
                 'type' => PARAM_TEXT,
                 'description' => 'User IP.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
-
 }

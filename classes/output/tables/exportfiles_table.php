@@ -68,7 +68,7 @@ class exportfiles_table extends \table_sql {
         if (!empty($params['query'])) {
             $where .= " AND " . $DB->sql_like('f.filearea', ':searchquery', false, false, false);
             $sqlparams += [
-                'searchquery' => '%' . $params['query'] . '%'
+                'searchquery' => '%' . $params['query'] . '%',
             ];
         }
 
@@ -172,7 +172,7 @@ class exportfiles_table extends \table_sql {
     public function col_actions($values) {
         global $OUTPUT;
 
-        $buttons = array();
+        $buttons = [];
 
         $urlparams = ['id' => $values->id];
 
@@ -180,12 +180,12 @@ class exportfiles_table extends \table_sql {
         $aurl = StorageHelper::make_pluginfile_url($values)->out(false);
         $buttons[] = $OUTPUT->action_icon(
             $aurl,
-            new \pix_icon('t/download', get_string('download'), 'core', array('class' => 'iconsmall'))
+            new \pix_icon('t/download', get_string('download'), 'core', ['class' => 'iconsmall'])
         );
 
         $aurl = new \moodle_url('/local/intellidata/logs/index.php', $urlparams + ['action' => 'delete', 'sesskey' => sesskey()]);
         $buttons[] = $OUTPUT->action_icon($aurl, new \pix_icon('t/delete', get_string('delete'),
-            'core', array('class' => 'iconsmall')), null,
+            'core', ['class' => 'iconsmall']), null,
             ['onclick' => "if (!confirm('".get_string('deletefileconfirmation', 'local_intellidata')."')) return false;"]
         );
 
@@ -197,7 +197,7 @@ class exportfiles_table extends \table_sql {
      */
     public function start_html() {
 
-        echo html_writer::start_tag('div', array('class' => 'custom-filtering-table'));
+        echo html_writer::start_tag('div', ['class' => 'custom-filtering-table']);
 
         // Render button to allow user to reset table preferences.
         echo $this->render_reset_button();
@@ -212,7 +212,7 @@ class exportfiles_table extends \table_sql {
         $this->wrap_html_start();
         // Start of main data table.
 
-        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
+        echo html_writer::start_tag('div', ['class' => 'no-overflow']);
         echo html_writer::start_tag('table', $this->attributes);
 
     }
@@ -293,9 +293,8 @@ class exportfiles_table extends \table_sql {
             [
                 'action' => $PAGE->url,
                 'query' => $PAGE->url->get_param('query'),
-                'sesskey' => sesskey()
+                'sesskey' => sesskey(),
             ]
         );
     }
-
 }

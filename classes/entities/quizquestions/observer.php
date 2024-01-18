@@ -25,11 +25,8 @@
 
 namespace local_intellidata\entities\quizquestions;
 
-
-
-use local_intellidata\entities\quizquestions\quizquestion;
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -73,9 +70,9 @@ class observer {
         $eventdata = $event->get_data();
 
         $question = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
-        $question->crud = $eventdata['crud'];
+        $question = quizquestion::prepare_export_data($question);
 
-        $question->questiontext = substr($question->questiontext, 0, 5000);
+        $question->crud = $eventdata['crud'];
 
         $entity = new quizquestion($question, $fields);
         $data = $entity->export();

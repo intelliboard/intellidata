@@ -59,7 +59,7 @@ class datatypeconfig extends base {
      * @return array
      */
     protected static function define_properties() {
-        return array(
+        return [
             'tabletype' => [
                 'type' => PARAM_INT,
                 'description' => 'Table type.',
@@ -67,8 +67,8 @@ class datatypeconfig extends base {
                 'choices' => [
                     self::TABLETYPE_REQUIRED,
                     self::TABLETYPE_OPTIONAL,
-                    self::TABLETYPE_LOGS
-                ]
+                    self::TABLETYPE_LOGS,
+                ],
             ],
             'datatype' => [
                 'type' => PARAM_TEXT,
@@ -78,7 +78,7 @@ class datatypeconfig extends base {
                 'type' => PARAM_INT,
                 'description' => 'Status.',
                 'default' => self::STATUS_ENABLED,
-                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED]
+                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED],
             ],
             'timemodified_field' => [
                 'type' => PARAM_TEXT,
@@ -89,17 +89,17 @@ class datatypeconfig extends base {
             'rewritable' => [
                 'type' => PARAM_INT,
                 'default' => self::STATUS_DISABLED,
-                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED]
+                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED],
             ],
             'filterbyid' => [
                 'type' => PARAM_INT,
                 'default' => self::STATUS_DISABLED,
-                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED]
+                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED],
             ],
             'events_tracking' => [
                 'type' => PARAM_INT,
                 'default' => self::STATUS_ENABLED,
-                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED]
+                'choices' => [self::STATUS_ENABLED, self::STATUS_DISABLED],
             ],
             'usermodified' => [
                 'type' => PARAM_INT,
@@ -133,8 +133,8 @@ class datatypeconfig extends base {
                 'description' => 'Deleted record event.',
                 'null' => NULL_ALLOWED,
                 'default' => '',
-            ]
-        );
+            ],
+        ];
     }
 
     /**
@@ -163,7 +163,7 @@ class datatypeconfig extends base {
         return [
             self::TABLETYPE_REQUIRED => get_string('required', 'local_intellidata'),
             self::TABLETYPE_OPTIONAL => get_string('optional', 'local_intellidata'),
-            self::TABLETYPE_LOGS => get_string('logs', 'local_intellidata')
+            self::TABLETYPE_LOGS => get_string('logs', 'local_intellidata'),
         ];
     }
 

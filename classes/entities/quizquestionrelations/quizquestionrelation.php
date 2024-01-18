@@ -24,6 +24,7 @@
  */
 namespace local_intellidata\entities\quizquestionrelations;
 
+use local_intellidata\helpers\ParamsHelper;
 
 /**
  * Class for preparing data for Activities.
@@ -46,33 +47,61 @@ class quizquestionrelation extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Quiz Slot ID.',
                 'default' => 0,
-            ),
-            'quizid' => array(
+            ],
+            'quizid' => [
                 'type' => PARAM_INT,
                 'description' => 'Quiz ID.',
                 'default' => 0,
-            ),
-            'questionid' => array(
+            ],
+            'questionid' => [
                 'type' => PARAM_INT,
                 'description' => 'Question ID.',
                 'default' => 0,
-            ),
-            'slot' => array(
+            ],
+            'slot' => [
                 'type' => PARAM_INT,
                 'description' => 'Slot Number.',
                 'default' => 0,
-            ),
-            'type' => array(
+            ],
+            'type' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Question Type.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        $release4 = ParamsHelper::get_release() >= 4.0;
+
+        if (!$release4) {
+            $object->type = 'q';
+        } else {
+            $qrexist = $DB->record_exists_sql('SELECT 1
+                                     FROM {question_references} qre
+                                     JOIN {question_versions} qve ON qve.questionbankentryid = qre.questionbankentryid');
+            if ($qrexist) {
+                $object->type = 'q';
+            } else {
+                $object->type = 'c';
+            }
+        }
+
+        return $object;
+    }
 }

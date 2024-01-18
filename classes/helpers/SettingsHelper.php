@@ -26,10 +26,7 @@
 
 namespace local_intellidata\helpers;
 
-use local_intellidata\helpers\ParamsHelper;
-use local_intellidata\helpers\StorageHelper;
 use local_intellidata\repositories\tracking\tracking_repository;
-use local_intellidata\repositories\export_id_repository;
 
 class SettingsHelper {
 
@@ -82,6 +79,7 @@ class SettingsHelper {
         'dividemigrationtbydatatype' => 1,
         'enablescheduledsnapshot' => 0,
         'eventstracking' => 1,
+        'newtracking' => 0,
         'exportids' => 1,
         'exportdeletedrecords' => self::EXPORTDELETED_TRACKEVENTS,
         'debugenabled' => 0,
@@ -95,7 +93,7 @@ class SettingsHelper {
 
     const NOTUPDATABLE_SETTINGS = [
         'encryptionkey',
-        'clientidentifier'
+        'clientidentifier',
     ];
 
     /**
@@ -198,7 +196,7 @@ class SettingsHelper {
     public static function get_exportdeletedrecords_options() {
         return [
             self::EXPORTDELETED_DISABLED => get_string('disabled', ParamsHelper::PLUGIN),
-            self::EXPORTDELETED_TRACKEVENTS => get_string('trackevents', ParamsHelper::PLUGIN)
+            self::EXPORTDELETED_TRACKEVENTS => get_string('trackevents', ParamsHelper::PLUGIN),
         ];
     }
 
@@ -318,7 +316,7 @@ class SettingsHelper {
                         }
                         $group = [
                             'grouptitle' => $title,
-                            'items' => []
+                            'items' => [],
                         ];
                     } else {
                         if ($setting instanceof \admin_setting_configmultiselect) {

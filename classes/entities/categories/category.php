@@ -45,48 +45,48 @@ class category extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Category ID.',
                 'default' => 0,
-            ),
-            'idnumber' => array(
+            ],
+            'idnumber' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Category ID Number.',
                 'default' => '',
-            ),
-            'parent' => array(
+            ],
+            'parent' => [
                 'type' => PARAM_INT,
                 'description' => 'Parent Category ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_RAW,
                 'description' => 'Category name.',
                 'default' => '',
-            ),
-            'path' => array(
+            ],
+            'path' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Category path.',
                 'default' => '',
-            ),
-            'sortorder' => array(
+            ],
+            'sortorder' => [
                 'type' => PARAM_INT,
                 'description' => 'Category ordering.',
                 'default' => 0,
-            ),
-            'visible' => array(
+            ],
+            'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Category status.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when category was modified.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
 }

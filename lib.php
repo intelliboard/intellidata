@@ -17,6 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\api\apilib;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\SettingsHelper;
@@ -38,7 +39,7 @@ use local_intellidata\services\encryption_service;
  * @throws require_login_exception
  * @throws required_capability_exception
  */
-function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG, $PAGE;
     require_once($CFG->dirroot . '/repository/lib.php');
 
@@ -105,9 +106,9 @@ function local_intellidata_extend_navigation(global_navigation $nav) {
  * @return string[]
  */
 function local_intellidata_get_fontawesome_icon_map() {
-    return array(
+    return [
         'local_intellidata:i/area_chart' => 'fa-area-chart',
-    );
+    ];
 }
 
 /**
@@ -123,3 +124,16 @@ function local_intellidata_tracking_init() {
 }
 
 local_intellidata_tracking_init();
+
+function local_intellidata_after_config() {
+    global $DB;
+
+    if (!empty(SettingsHelper::get_setting('enablecustomdbdriver')) ||
+        defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+        $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
+    }
+}
+
+function local_intellidata_before_session_start() {
+    local_intellidata_after_config();
+}

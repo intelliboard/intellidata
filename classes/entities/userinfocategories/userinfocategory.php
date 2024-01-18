@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\userinfocategories;
 
-
 /**
  * Class for preparing data for UserInfoCategories.
  *
@@ -46,23 +45,23 @@ class userinfocategory extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Info Category ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Info Category Name.',
                 'default' => 0,
-            ),
-            'sortorder' => array(
+            ],
+            'sortorder' => [
                 'type' => PARAM_INT,
                 'description' => 'Sort Order.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

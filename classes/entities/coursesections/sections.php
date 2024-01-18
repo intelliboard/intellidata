@@ -24,6 +24,7 @@
  */
 namespace local_intellidata\entities\coursesections;
 
+use local_intellidata\helpers\DebugHelper;
 
 /**
  * Class for preparing data for Course Sections.
@@ -82,5 +83,27 @@ class sections extends \local_intellidata\entities\entity {
                 'default' => 0,
             ],
         ];
+    }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/course/lib.php');
+
+        try {
+            $object->name = $object->name ? : get_section_name($object->course, $object->section);
+        } catch (\Exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        return $object;
     }
 }

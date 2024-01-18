@@ -180,9 +180,11 @@ class migrations_table {
 
         $url = new \moodle_url('/local/intellidata/migrations/index.php', ['action' => 'enablemigration', 'sesskey' => sesskey()]);
         $output .= \html_writer::link($url, get_string('enablemigration', 'local_intellidata'),
-            ['class' => 'btn btn-primary', 'onclick' => "if (!confirm('" .
+            [
+                'class' => 'btn btn-primary', 'onclick' => "if (!confirm('" .
                 get_string('resetmigrationmsg', 'local_intellidata') .
-                "')) return false;"]);
+                "')) return false;",
+            ]);
         $output .= \html_writer::end_tag('div');
 
         $table = new \html_table();
@@ -203,11 +205,14 @@ class migrations_table {
 
         if (!SettingsHelper::get_setting('enableprogresscalculation')) {
             $url = new \moodle_url('/local/intellidata/migrations/index.php', [
-                'action' => 'calculateprogress', 'sesskey' => sesskey()]);
+                'action' => 'calculateprogress', 'sesskey' => sesskey(),
+            ]);
             $output .= \html_writer::link($url, get_string('calculateprogress', 'local_intellidata'),
-                ['class' => 'btn btn-primary mr-1', 'onclick' => "if (!confirm('" .
+                [
+                    'class' => 'btn btn-primary mr-1', 'onclick' => "if (!confirm('" .
                     get_string('calculateprogressmsg', 'local_intellidata') .
-                    "')) return false;"]);
+                    "')) return false;",
+                ]);
         }
 
         return $output;

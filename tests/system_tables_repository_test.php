@@ -59,13 +59,13 @@ class system_tables_repository_test extends \advanced_testcase {
             'assign_overrides',
             'users',
             'quiz',
-            'local_intellidata_config'
+            'local_intellidata_config',
         ];
 
         $expected = [
             'analytics_logs',
             'assign_overrides',
-            'local_intellidata_config'
+            'local_intellidata_config',
         ];
 
         $result = system_tables_repository::get_excluded_tables($dbtables);
@@ -86,13 +86,13 @@ class system_tables_repository_test extends \advanced_testcase {
             'assign_overrides' => 'assign_overrides',
             'users' => 'users',
             'quiz' => 'quiz',
-            'local_intellidata_config' => 'local_intellidata_config'
+            'local_intellidata_config' => 'local_intellidata_config',
         ];
 
         $expected = [
             'analytics',
             'users',
-            'quiz'
+            'quiz',
         ];
 
         $result = system_tables_repository::exclude_tables($dbtables);

@@ -49,7 +49,7 @@ class migration extends \local_intellidata\entities\migration {
 
         $select = ($count) ?
             "SELECT COUNT(cc.id) as recordscount" :
-            "SELECT cc.*";
+            "SELECT cc.*, course as courseid";
 
         $sql = "$select
                   FROM {".$this->table."} cc";
@@ -57,20 +57,5 @@ class migration extends \local_intellidata\entities\migration {
         list($sql, $params) = $this->set_condition($condition, $conditionparams, $sql, []);
 
         return [$sql, $params];
-    }
-
-    /**
-     * @param $records
-     * @return \Generator
-     */
-    public function prepare_records_iterable($records) {
-        foreach ($records as $record) {
-            $record->courseid = $record->course;
-
-            $entity = new $this->entity($record);
-            $recorddata = $entity->export();
-
-            yield $recorddata;
-        }
     }
 }

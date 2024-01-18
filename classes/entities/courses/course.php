@@ -46,58 +46,57 @@ class course extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'idnumber' => array(
+            ],
+            'idnumber' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Course External ID.',
                 'default' => '',
-            ),
-            'fullname' => array(
+            ],
+            'fullname' => [
                 'type' => PARAM_RAW,
                 'description' => 'Course name.',
                 'default' => '',
-            ),
-            'startdate' => array(
+            ],
+            'startdate' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when course will start.',
                 'default' => 0,
-            ),
-            'enddate' => array(
+            ],
+            'enddate' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when course will end.',
                 'default' => 0,
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when course was created.',
                 'default' => 0,
-            ),
-            'visible' => array(
+            ],
+            'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Course status.',
                 'default' => 0,
-            ),
-            'format' => array(
+            ],
+            'format' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Course format.',
                 'default' => '',
-            ),
-            'sortorder' => array(
+            ],
+            'sortorder' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ordering.',
                 'default' => 0,
-            ),
-            'category' => array(
+            ],
+            'category' => [
                 'type' => PARAM_INT,
                 'description' => 'Course category.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
-
 }

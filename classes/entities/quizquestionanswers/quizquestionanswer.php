@@ -46,38 +46,37 @@ class quizquestionanswer extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Record ID.',
                 'default' => 0,
-            ),
-            'attemptid' => array(
+            ],
+            'attemptid' => [
                 'type' => PARAM_INT,
                 'description' => 'Quiz Attempt ID.',
                 'default' => 0,
-            ),
-            'questionid' => array(
+            ],
+            'questionid' => [
                 'type' => PARAM_INT,
                 'description' => 'Question ID.',
                 'default' => 0,
-            ),
-            'state' => array(
+            ],
+            'state' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Question Attempt state ID.',
                 'default' => 0,
-            ),
-            'value' => array(
+            ],
+            'value' => [
                 'type' => PARAM_RAW,
                 'description' => 'User answer.',
                 'default' => '',
-            ),
-            'fraction' => array(
+            ],
+            'fraction' => [
                 'type' => PARAM_FLOAT,
                 'description' => 'Grade.',
                 'default' => 1,
-            )
-        );
+            ],
+        ];
     }
-
 }

@@ -38,11 +38,11 @@ class live_storage_repository extends storage_repository {
 
             $tracklogs = (bool)SettingsHelper::get_setting('tracklogs');
             $trackdetails = (bool)SettingsHelper::get_setting('trackdetails');
-            $trackparams = array(
+            $trackparams = [
                 'userid' => $trackdata->userid,
                 'page' => $trackdata->page,
-                'param' => $trackdata->param
-            );
+                'param' => $trackdata->param,
+            ];
             $trackfields = 'id, visits, timespend, lastaccess';
 
             if ($tracking = $DB->get_record('local_intellidata_tracking', $trackparams, $trackfields)) {
@@ -56,10 +56,10 @@ class live_storage_repository extends storage_repository {
 
             if ($tracklogs) {
                 $currentstamp = strtotime('today');
-                $trlogparams = array(
+                $trlogparams = [
                     'trackid' => $tracking->id,
-                    'timepoint' => $currentstamp
-                );
+                    'timepoint' => $currentstamp,
+                ];
                 if ($log = $DB->get_record('local_intellidata_trlogs', $trlogparams)) {
                     $this->fill_log($log, $trackdata);
                     $DB->update_record('local_intellidata_trlogs', $log);
@@ -70,10 +70,10 @@ class live_storage_repository extends storage_repository {
 
                 if ($trackdetails) {
                     $currenthour = date('G');
-                    $trdetparams = array(
+                    $trdetparams = [
                         'logid' => $log->id,
-                        'timepoint' => $currenthour
-                    );
+                        'timepoint' => $currenthour,
+                    ];
 
                     if ($detail = $DB->get_record('local_intellidata_trdetails', $trdetparams)) {
                         $this->fill_detail($detail, $trackdata);

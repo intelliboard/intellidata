@@ -32,12 +32,12 @@ use local_intellidata\helpers\DBManagerHelper;
 
 class dbschema_service {
 
-    protected $mdb              = null;
-    protected $tables           = [];
+    protected $mdb = null;
+    protected $tables  = [];
 
     const TABLE_UPDATED_FIELDS = [
         'timemodified',
-        'timeupdated'
+        'timeupdated',
     ];
 
     const TABLE_FIELDS_PARAMS = [
@@ -49,7 +49,7 @@ class dbschema_service {
         'auto_increment',
         'has_default',
         'default_value',
-        'unique'
+        'unique',
     ];
 
     public function __construct() {
@@ -80,7 +80,7 @@ class dbschema_service {
             $table = [
                 'name' => $tablename,
                 'fields' => $this->get_table_fields($tablename),
-                'config' => $datatypes[datatypes_service::generate_optional_datatype($tablename)] ?? []
+                'config' => $datatypes[datatypes_service::generate_optional_datatype($tablename)] ?? [],
             ];
 
             // Merge with install.xml keys and set plugintype/pluginname.

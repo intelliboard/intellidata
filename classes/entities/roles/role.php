@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\roles;
 
-
 /**
  * Class for preparing data for Roles.
  *
@@ -46,23 +45,23 @@ class role extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Role ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Role name.',
                 'default' => '',
-            ),
-            'shortname' => array(
+            ],
+            'shortname' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Role short name.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
     protected function before_export() {
@@ -75,5 +74,4 @@ class role extends \local_intellidata\entities\entity {
             $this->set('name', $name);
         }
     }
-
 }

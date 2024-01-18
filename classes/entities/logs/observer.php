@@ -25,12 +25,9 @@
 
 namespace local_intellidata\entities\logs;
 
-
-
-use \local_intellidata\entities\logs\log;
-use \local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\repositories\export_log_repository;
-use \local_intellidata\services\events_service;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for participations.

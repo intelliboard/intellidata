@@ -25,6 +25,9 @@
 namespace local_intellidata\entities\users;
 
 
+use core\invalid_persistent_exception;
+use local_intellidata\helpers\ParamsHelper;
+
 /**
  * Class for preparing data for Users.
  *
@@ -46,68 +49,86 @@ class user extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'username' => array(
+            ],
+            'username' => [
                 'type' => PARAM_RAW,
                 'description' => 'User username.',
                 'default' => '',
-            ),
-            'fullname' => array(
+            ],
+            'fullname' => [
                 'type' => PARAM_RAW,
                 'description' => 'User fullname.',
                 'default' => '',
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when user was created.',
                 'default' => 0,
-            ),
-            'email' => array(
+            ],
+            'email' => [
                 'type' => PARAM_RAW_TRIMMED,
                 'description' => 'User Email.',
                 'default' => '',
-            ),
-            'lang' => array(
+            ],
+            'lang' => [
                 'type' => PARAM_TEXT,
                 'description' => 'User locale.',
                 'default' => '',
-            ),
-            'country' => array(
+            ],
+            'country' => [
                 'type' => PARAM_TEXT,
                 'description' => 'User country.',
                 'default' => '',
-            ),
-            'firstaccess' => array(
+            ],
+            'firstaccess' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp users first access.',
                 'default' => 0,
-            ),
-            'lastaccess' => array(
+            ],
+            'lastaccess' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp users last access.',
                 'default' => 0,
-            ),
-            'lastlogin' => array(
+            ],
+            'lastlogin' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp users last login.',
                 'default' => 0,
-            ),
-            'state' => array(
+            ],
+            'state' => [
                 'type' => PARAM_INT,
                 'description' => 'User status.',
                 'default' => 1,
-            ),
-            'idnumber' => array(
+            ],
+            'idnumber' => [
                 'type' => PARAM_TEXT,
                 'description' => 'User ID number.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        $object->fullname = fullname($object);
+        $object->state = ($object->confirmed && !empty($object->suspended)) ?
+            ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
+        if (!empty($object->lastlogin) || !empty($object->currentlogin)) {
+            $object->lastlogin = max($object->lastlogin, $object->currentlogin);
+        }
+
+        return $object;
+    }
 }

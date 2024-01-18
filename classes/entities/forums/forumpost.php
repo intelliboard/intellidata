@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\forums;
 
-
 /**
  * Class for preparing data for Forum Posts.
  *
@@ -46,53 +45,70 @@ class forumpost extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Post ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'forum' => array(
+            ],
+            'forum' => [
                 'type' => PARAM_INT,
                 'description' => 'Forum ID.',
                 'default' => 0,
-            ),
-            'discussion' => array(
+            ],
+            'discussion' => [
                 'type' => PARAM_INT,
                 'description' => 'Discussion ID.',
                 'default' => 0,
-            ),
-            'parent' => array(
+            ],
+            'parent' => [
                 'type' => PARAM_INT,
                 'description' => 'Parent ID.',
                 'default' => 0,
-            ),
-            'message' => array(
+            ],
+            'message' => [
                 'type' => PARAM_RAW,
                 'description' => 'Forum Message.',
                 'default' => '',
-            ),
-            'deleted' => array(
+            ],
+            'deleted' => [
                 'type' => PARAM_INT,
                 'description' => 'Post deleted.',
                 'default' => 0,
-            ),
-            'created' => array(
+            ],
+            'created' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when post created.',
                 'default' => 0,
-            ),
-            'modified' => array(
+            ],
+            'modified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when post updated.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        if ($discussion = $DB->get_record('forum_discussions', ['id' => $object->discussion])) {
+            $object->forum = $discussion->forum;
+        }
+
+        return $object;
+    }
 }

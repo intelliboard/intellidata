@@ -25,7 +25,6 @@
 
 namespace local_intellidata\entities\activitycompletions;
 
-use local_intellidata\entities\activitycompletions\activitycompletion;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\events_service;
 
@@ -44,16 +43,10 @@ class observer {
             $eventdata = $event->get_data();
 
             $completion = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+            $completion->userid = $eventdata['relateduserid'];
+            $completion->crud = $eventdata['crud'];
 
-            $data = new \stdClass();
-            $data->id = $completion->id;
-            $data->userid = $eventdata['relateduserid'];
-            $data->coursemoduleid = $completion->coursemoduleid;
-            $data->completionstate = $completion->completionstate;
-            $data->timemodified = $completion->timemodified;
-            $data->crud = $eventdata['crud'];
-
-            self::export_event($data, $eventdata);
+            self::export_event($completion, $eventdata);
         }
     }
 

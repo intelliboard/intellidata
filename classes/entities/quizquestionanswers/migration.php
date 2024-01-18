@@ -25,8 +25,6 @@
 namespace local_intellidata\entities\quizquestionanswers;
 use local_intellidata\helpers\DBHelper;
 
-
-
 /**
  * Class for migration Users.
  *
@@ -80,7 +78,7 @@ class migration extends \local_intellidata\entities\migration {
                WHERE qas.fraction IS NOT NULL $sqlwhere2";
 
             $params = [
-                'name' => 'answer'
+                'name' => 'answer',
             ];
         }
 

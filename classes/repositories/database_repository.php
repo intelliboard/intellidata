@@ -202,7 +202,7 @@ class database_repository {
         // Export specific table to Moodledata.
         $exportparams = [
             'datatype' => $datatype['name'],
-            'rewritable' => (!$start) ? true : false
+            'rewritable' => (!$start) ? true : false,
         ];
         ExportHelper::process_file_export(self::$exportservice, $exportparams);
 
@@ -242,7 +242,7 @@ class database_repository {
         // Export specific table to Moodledata.
         $exportparams = [
             'datatype' => $datatype['name'],
-            'rewritable' => (!$start) ? true : false
+            'rewritable' => (!$start) ? true : false,
         ];
         ExportHelper::process_file_export(self::$exportservice, $exportparams);
 
@@ -258,7 +258,7 @@ class database_repository {
             if (!empty($params['callbackurl'])) {
                 $client = new \curl();
                 $client->post($params['callbackurl'], [
-                    'data' => self::$encriptionservice->encrypt(json_encode(['datatypes' => $datatype['name']]))
+                    'data' => self::$encriptionservice->encrypt(json_encode(['datatypes' => $datatype['name']])),
                 ]);
             }
         } else {
@@ -270,7 +270,7 @@ class database_repository {
             $exporttask->set_custom_data([
                 'datatypes' => [$datatype['name']],
                 'limit' => ($start + $limit),
-                'callbackurl' => !empty($params['callbackurl']) ? $params['callbackurl'] : ''
+                'callbackurl' => !empty($params['callbackurl']) ? $params['callbackurl'] : '',
             ]);
             $exporttask->set_next_run_time(time() + MINSECS);
             \core\task\manager::queue_adhoc_task($exporttask);
@@ -607,7 +607,7 @@ class database_repository {
                 $records[] = [
                     'datatype' => $datatype['name'],
                     'dataid' => $record->id,
-                    'timecreated' => time()
+                    'timecreated' => time(),
                 ];
 
                 if (!empty(SettingsHelper::get_setting('exportrecordslimit'))

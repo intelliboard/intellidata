@@ -25,11 +25,8 @@
 
 namespace local_intellidata\entities\quizzes;
 
-
-
-use \local_intellidata\entities\quizzes\attempt;
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -72,14 +69,8 @@ class observer {
     private static function export_event($event, $fields = []) {
         $eventdata = $event->get_data();
         $attempt = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
-        $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
+        $attempt = attempt::prepare_export_data($attempt);
         $attempt->crud = $eventdata['crud'];
-
-        $attempt->points = $quiz->score = 0;
-        if ($attempt->sumgrades && $quiz->sumgrades) {
-            $attempt->points = ($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade;
-            $attempt->score = ($attempt->sumgrades / $quiz->sumgrades) * 100;
-        }
 
         $entity = new attempt($attempt, $fields);
         $data = $entity->export();

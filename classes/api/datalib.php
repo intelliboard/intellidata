@@ -42,7 +42,7 @@ class local_intellidata_datalib extends external_api {
      */
     public static function get_data_parameters() {
         return new external_function_parameters([
-            'data' => new external_value(PARAM_RAW, 'Request params')
+            'data' => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
@@ -64,7 +64,7 @@ class local_intellidata_datalib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -82,20 +82,20 @@ class local_intellidata_datalib extends external_api {
             'sqlparams' => PARAM_TEXT,
             'debug' => PARAM_INT,
             'start' => PARAM_INT,
-            'length' => PARAM_INT
+            'length' => PARAM_INT,
         ]);
 
         if (!SettingsHelper::get_setting('datavalidationenabled')) {
             return [
                 'data' => 'directsqldisabled',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         if (empty($params->sqlcode)) {
             return [
                 'data' => 'emptysqlcode',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -124,7 +124,7 @@ class local_intellidata_datalib extends external_api {
             } catch (\Exception $e) {
                 return [
                     'data' => $e->getMessage(),
-                    'status' => apilib::STATUS_ERROR
+                    'status' => apilib::STATUS_ERROR,
                 ];
             }
         }
@@ -133,7 +133,7 @@ class local_intellidata_datalib extends external_api {
 
         return [
             'status' => apilib::STATUS_SUCCESS,
-            'data' => $encryptionservice->encrypt(json_encode($data))
+            'data' => $encryptionservice->encrypt(json_encode($data)),
         ];
     }
 
@@ -145,7 +145,7 @@ class local_intellidata_datalib extends external_api {
     public static function get_data_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Response status'),
-            'data' => new external_value(PARAM_RAW, 'Report data')
+            'data' => new external_value(PARAM_RAW, 'Report data'),
         ]);
     }
 }

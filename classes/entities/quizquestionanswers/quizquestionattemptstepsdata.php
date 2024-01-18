@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\quizquestionanswers;
 
-
 /**
  * Class for preparing data for Activities.
  *
@@ -46,23 +45,22 @@ class quizquestionattemptstepsdata extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Record ID.',
                 'default' => 0,
-            ),
-            'attemptstepid' => array(
+            ],
+            'attemptstepid' => [
                 'type' => PARAM_INT,
                 'description' => 'Quiz Attempt Step ID.',
                 'default' => 0,
-            ),
-            'value' => array(
+            ],
+            'value' => [
                 'type' => PARAM_RAW,
                 'description' => 'User answer.',
                 'default' => '',
-            )
-        );
+            ],
+        ];
     }
-
 }

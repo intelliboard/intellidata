@@ -54,8 +54,8 @@ class lti_launch implements renderable, templatable {
 
         $inpunts = [];
         foreach ($this->params as $key => $value) {
-            $key = htmlspecialchars($key);
-            $value = htmlspecialchars($value);
+            $key = htmlspecialchars($key, ENT_QUOTES);
+            $value = htmlspecialchars($value, ENT_QUOTES);
             $input = [];
 
             if ( $key == "ext_submit" ) {
@@ -72,7 +72,7 @@ class lti_launch implements renderable, templatable {
         return [
             'endpoint' => $this->endpoint,
             'inputs' => $inpunts,
-            'debug' => $this->debug
+            'debug' => $this->debug,
         ];
     }
 }

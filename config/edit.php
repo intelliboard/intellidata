@@ -74,7 +74,7 @@ if ($action == 'reset') {
 
     $createindextask = new create_index_adhoc_task();
     $createindextask->set_custom_data([
-        'datatype' => $record->get('datatype')
+        'datatype' => $record->get('datatype'),
     ]);
     \core\task\manager::queue_adhoc_task($createindextask);
 
@@ -85,7 +85,7 @@ if ($action == 'reset') {
     $deleteindextask = new delete_index_adhoc_task();
     $deleteindextask->set_custom_data([
         'datatype' => $record->get('datatype'),
-        'tableindex' => $record->get('tableindex')
+        'tableindex' => $record->get('tableindex'),
     ]);
     \core\task\manager::queue_adhoc_task($deleteindextask);
 
@@ -117,7 +117,7 @@ $editform = new local_intellidata_edit_config(null, [
     'data' => $record->to_record(),
     'config' => (object)$datatypeconfig,
     'exportlog' => $exportlog,
-    'is_required' => $isrequired
+    'is_required' => $isrequired,
 ]);
 
 if ($editform->is_cancelled()) {
@@ -130,6 +130,8 @@ if ($editform->is_cancelled()) {
     } else {
         $configservice->save_config($record, $data);
     }
+
+    \local_intellidata\services\datatypes_service::get_datatypes(true, true);
 
     redirect($returnurl, get_string('configurationsaved', 'local_intellidata'));
 }

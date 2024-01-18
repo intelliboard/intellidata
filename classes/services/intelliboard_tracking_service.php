@@ -363,7 +363,7 @@ class intelliboard_tracking_service {
         return [
             $querylimit,
             $processedlimit,
-            $processedlimit + $querylimit
+            $processedlimit + $querylimit,
         ];
     }
 

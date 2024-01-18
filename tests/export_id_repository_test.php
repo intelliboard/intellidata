@@ -72,12 +72,12 @@ class export_id_repository_test extends \advanced_testcase {
         $records[] = [
             'datatype' => 'tracking',
             'dataid' => 1,
-            'timecreated' => time()
+            'timecreated' => time(),
         ];
         $records[] = [
             'datatype' => 'tracking',
             'dataid' => 2,
-            'timecreated' => time()
+            'timecreated' => time(),
         ];
         $exportidrepository->save($records);
         $this->assertEquals(count($records), export_ids::count_records());
@@ -110,7 +110,7 @@ class export_id_repository_test extends \advanced_testcase {
             $records[] = [
                 'datatype' => $datatype,
                 'dataid' => $i,
-                'timecreated' => time()
+                'timecreated' => time(),
             ];
         }
 
@@ -164,7 +164,7 @@ class export_id_repository_test extends \advanced_testcase {
             $records[] = [
                 'datatype' => $datatype,
                 'dataid' => $i,
-                'timecreated' => time()
+                'timecreated' => time(),
             ];
         }
 

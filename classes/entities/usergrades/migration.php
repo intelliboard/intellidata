@@ -24,8 +24,6 @@
  */
 namespace local_intellidata\entities\usergrades;
 
-
-
 /**
  * Class for migration Users.
  *
@@ -77,7 +75,7 @@ class migration extends \local_intellidata\entities\migration {
                 continue;
             }
 
-            $grade = observer::prepare_data($gradeobject, $gradeitems[$gradeobject->itemid]);
+            $grade = usergrade::prepare_export_data($gradeobject);
             $entity = new $this->entity($grade);
             $gradedata = $entity->export();
 

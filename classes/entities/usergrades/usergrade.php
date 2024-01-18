@@ -46,57 +46,94 @@ class usergrade extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Grade ID.',
                 'default' => 0,
-            ),
-            'gradeitemid' => array(
+            ],
+            'gradeitemid' => [
                 'type' => PARAM_INT,
                 'description' => 'Grade Item ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'letter' => array(
+            ],
+            'letter' => [
                 'type' => PARAM_RAW_TRIMMED,
                 'description' => 'Letter Grade.',
                 'default' => 0,
-            ),
-            'score' => array(
+            ],
+            'score' => [
                 'type' => PARAM_RAW,
                 'description' => 'Percentage Grade.',
                 'default' => 0,
-            ),
-            'point' => array(
+            ],
+            'point' => [
                 'type' => PARAM_RAW,
                 'description' => 'Real Grade.',
                 'default' => 0,
-            ),
-            'feedback' => array(
+            ],
+            'feedback' => [
                 'type' => PARAM_RAW,
                 'description' => 'Grade Comment.',
                 'default' => '',
-            ),
-            'hidden' => array(
+            ],
+            'hidden' => [
                 'type' => PARAM_INT,
                 'description' => 'Grade Status.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Last Graded Time.',
                 'default' => 0,
-            ),
-            'usermodified' => array(
+            ],
+            'usermodified' => [
                 'type' => PARAM_INT,
                 'description' => 'User Grader ID.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
+    }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $gradeitem = \grade_item::fetch(['id' => $object->itemid]);
+
+        // Each user have own grade max and grade min.
+        $gradeitem->grademax = $object->rawgrademax;
+        $gradeitem->grademin = $object->rawgrademin;
+
+        $score = grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+        $data = new \stdClass();
+        $data->id = $object->id;
+        $data->gradeitemid = $object->itemid;
+        $data->userid = $object->userid;
+        $data->usermodified = $object->usermodified;
+        $data->letter = grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_LETTER);
+        $data->score = str_replace(' %', '', $score);
+        $data->point = ($gradeitem->gradetype == GRADE_TYPE_SCALE) ?
+            $gradeitem->bounded_grade($object->finalgrade) :
+            grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_REAL);
+        $data->feedback = !empty($object->feedback) ? $object->feedback : '';
+        $data->hidden = $object->hidden;
+        $data->timemodified = $object->timemodified;
+
+        return $data;
     }
 }

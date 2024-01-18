@@ -60,4 +60,17 @@ class userlogin extends \local_intellidata\entities\entity {
         ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        $object->logins = !empty($object->logins) ? $object->logins : 1;
+        $object->id = !empty($object->userid) ? $object->userid : $object->id;
+        return $object;
+    }
 }

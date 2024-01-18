@@ -34,6 +34,6 @@ namespace local_intellidata\entities\lti;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\lti\submission';
-    public $table       = 'lti_submission';
+    public $entity = '\local_intellidata\entities\lti\submission';
+    public $table = 'lti_submission';
 }

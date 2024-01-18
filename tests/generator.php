@@ -26,6 +26,7 @@
 
 namespace local_intellidata;
 
+use local_intellidata\helpers\ParamsHelper;
 use phpunit_util;
 
 class generator {
@@ -211,6 +212,25 @@ class generator {
      */
     public static function enrol_user(array $data) {
         return self::data_generator()->enrol_user($data['userid'], $data['courseid']);
+    }
+
+    /**
+     * Enrol user.
+     *
+     * @param array $data
+     * @param bool $withevent
+     * @return bool
+     */
+    public static function create_profile_field_category(array $data, bool $withevent = false) {
+        global $DB;
+
+        $categoryid = $DB->insert_record('user_info_category', $data);
+        $category = $DB->get_record('user_info_category', ['id' => $categoryid]);
+        if ($withevent) {
+            \core\event\user_info_category_created::create_from_category($category)->trigger();
+        }
+
+        return $category;
     }
 
     /**

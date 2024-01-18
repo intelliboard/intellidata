@@ -47,51 +47,51 @@ class surveyanswers extends \local_intellidata\entities\entity {
      */
     protected static function define_properties() {
         return [
-            'id' => array(
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Survey answer ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'survey' => array(
+            ],
+            'survey' => [
                 'type' => PARAM_INT,
                 'description' => 'Survey ID.',
                 'default' => 0,
-            ),
-            'questiontype' => array(
+            ],
+            'questiontype' => [
                 'type' => PARAM_INT,
                 'description' => 'Question type.',
                 'default' => 0,
-            ),
-            'questiontext' => array(
+            ],
+            'questiontext' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Question text.',
                 'default' => '',
-            ),
-            'question' => array(
+            ],
+            'question' => [
                 'type' => PARAM_INT,
                 'description' => 'Question ID.',
                 'default' => 0,
-            ),
-            'time' => array(
+            ],
+            'time' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when answer created.',
                 'default' => 0,
-            ),
-            'answer1' => array(
+            ],
+            'answer1' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Answer 1.',
                 'default' => '',
-            ),
-            'answer2' => array(
+            ],
+            'answer2' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Answer 2.',
                 'default' => '',
-            )
+            ],
         ];
     }
 }
