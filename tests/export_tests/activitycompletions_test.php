@@ -21,14 +21,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
 
 use completion_info;
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
@@ -42,12 +48,16 @@ require_once($CFG->dirroot . '/lib/completionlib.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class activitycompletion_tracking_test extends \advanced_testcase {
+class activitycompletions_test extends \advanced_testcase {
+
+    private $newexportavailable;
 
     public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
+
+        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
     }
 
     /**
@@ -57,12 +67,30 @@ class activitycompletion_tracking_test extends \advanced_testcase {
      */
     public function test_update() {
         if (test_helper::is_new_phpunit()) {
-            $this->resetAfterTest(true);
+            $this->resetAfterTest(false);
         }
 
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->update_activitycomplations_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->update_activitycomplations_test(0);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function update_activitycomplations_test($tracking) {
         $userdata = [
-            'firstname' => 'ibactivitycompletionuser1',
-            'username' => 'ibactivitycompletionuser1',
+            'firstname' => 'ibactivitycompletionuser1' . $tracking,
+            'username' => 'ibactivitycompletionuser1' . $tracking,
             'password' => 'Ibactivitycompletionuser1!',
         ];
 
@@ -81,7 +109,7 @@ class activitycompletion_tracking_test extends \advanced_testcase {
 
         $data = [
             "coursemoduleid" => $page->cmid,
-            "userid" => $user->id
+            "userid" => $user->id,
         ];
 
         $idata = (object)$data;
@@ -101,7 +129,8 @@ class activitycompletion_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'activitycompletions']);
-        $datarecord = $storage->get_log_entity_data('u', $data);
+        $datarecord = $storage->get_log_entity_data($tracking == 1 ? 'c' : 'u', $data);
+
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

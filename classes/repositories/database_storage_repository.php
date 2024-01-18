@@ -85,10 +85,10 @@ class database_storage_repository extends file_storage_repository {
 
         // Save file to filedir and database.
         $params = [
-            'datatype'  => $this->datatype['name'],
-            'filename'  => StorageHelper::generate_filename(),
-            'tempdir'   => $this->storagefolder,
-            'tempfile'  => $tempfile
+            'datatype' => $this->datatype['name'],
+            'filename' => StorageHelper::generate_filename(),
+            'tempdir' => $this->storagefolder,
+            'tempfile' => $tempfile,
         ];
 
         if ($this->datatype['rewritable']) {
@@ -206,7 +206,7 @@ class database_storage_repository extends file_storage_repository {
                    ",
             [
                 'datatype' => $this->datatype['name'],
-                'lastrecordid' => $lastrecordid
+                'lastrecordid' => $lastrecordid,
             ]
         );
     }

@@ -21,13 +21,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
 
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
@@ -40,12 +46,16 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class activity_tracking_test extends \advanced_testcase {
+class activities_test extends \advanced_testcase {
+
+    private $newexportavailable;
 
     public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
+
+        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
     }
 
     /**
@@ -58,31 +68,13 @@ class activity_tracking_test extends \advanced_testcase {
             $this->resetAfterTest(false);
         }
 
-        $coursedata = [
-            'fullname' => 'ibcourseactivity1',
-            'idnumber' => '1111111',
-        ];
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->create_activity_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
 
-        $course = generator::create_course($coursedata);
-
-        $page = generator::create_module('page', ['course' => $course->id]);
-
-        $data = [
-            'courseid' => $course->id,
-            'id' => $page->cmid,
-        ];
-
-        $entity = new \local_intellidata\entities\activities\activity((object)$data);
-        $entitydata = $entity->export();
-        $entitydata = test_helper::filter_fields($entitydata, $data);
-
-        $storage = StorageHelper::get_storage_service(['name' => 'activities']);
-        $datarecord = $storage->get_log_entity_data('c', $data);
-
-        $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
-
-        $this->assertNotEmpty($datarecord);
-        $this->assertEquals($entitydata, $datarecorddata);
+        $this->create_activity_test(0);
     }
 
     /**
@@ -91,17 +83,56 @@ class activity_tracking_test extends \advanced_testcase {
      * @covers \local_intellidata\entities\activities\observer::course_module_updated
      */
     public function test_update() {
-        global $DB;
-
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(false);
         } else {
             $this->test_create();
         }
 
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->update_activity_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->update_activity_test(0);
+    }
+
+    /**
+     * @covers \local_intellidata\entities\activities\activity
+     * @covers \local_intellidata\entities\activities\migration
+     * @covers \local_intellidata\entities\activities\observer::course_module_deleted
+     */
+    public function test_delete() {
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(false);
+        } else {
+            $this->test_create();
+        }
+
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->delete_activity_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->delete_activity_test(0);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function update_activity_test($tracking) {
+        global $DB;
+
         $coursedata = [
-            'fullname' => 'ibcourseactivity1',
-            'idnumber' => '1111111',
+            'fullname' => 'ibcourseactivity1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
         ];
 
         $course = $DB->get_record('course', $coursedata);
@@ -128,22 +159,55 @@ class activity_tracking_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \local_intellidata\entities\activities\activity
-     * @covers \local_intellidata\entities\activities\migration
-     * @covers \local_intellidata\entities\activities\observer::course_module_deleted
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    public function test_delete() {
+    private function create_activity_test($tracking) {
+        $coursedata = [
+            'fullname' => 'ibcourseactivity1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
+        ];
+
+        $course = generator::create_course($coursedata);
+
+        $page = generator::create_module('page', ['course' => $course->id]);
+
+        $data = [
+            'courseid' => $course->id,
+            'id' => $page->cmid,
+        ];
+
+        $entity = new \local_intellidata\entities\activities\activity((object)$data);
+        $entitydata = $entity->export();
+        $entitydata = test_helper::filter_fields($entitydata, $data);
+
+        $storage = StorageHelper::get_storage_service(['name' => 'activities']);
+        $datarecord = $storage->get_log_entity_data('c', $data);
+
+        $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
+
+        $this->assertNotEmpty($datarecord);
+        $this->assertEquals($entitydata, $datarecorddata);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function delete_activity_test($tracking) {
         global $DB;
 
-        if (test_helper::is_new_phpunit()) {
-            $this->resetAfterTest(false);
-        } else {
-            $this->test_create();
-        }
-
         $coursedata = [
-            'fullname' => 'ibcourseactivity1',
-            'idnumber' => '1111111',
+            'fullname' => 'ibcourseactivity1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
         ];
 
         $course = $DB->get_record('course', $coursedata);
@@ -161,7 +225,7 @@ class activity_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'activities']);
-        $datarecord = $storage->get_log_entity_data('d');
+        $datarecord = $storage->get_log_entity_data('d', ['id' => $data['id']]);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

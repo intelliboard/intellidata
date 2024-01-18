@@ -107,7 +107,7 @@ class adhoctasks_table extends \table_sql {
                 ],
                 'pid' => [
                     'label' => get_string('pid', ParamsHelper::PLUGIN),
-                ]
+                ],
             ]);
         }
 
@@ -120,7 +120,7 @@ class adhoctasks_table extends \table_sql {
             ],
             'actions' => [
                 'label' => get_string('actions', ParamsHelper::PLUGIN),
-            ]
+            ],
         ]);
     }
 
@@ -224,10 +224,11 @@ class adhoctasks_table extends \table_sql {
         }
 
         $buttons = [];
-        $urlparams = ['id' => $values->id];
-
-        $aurl = new \moodle_url('/local/intellidata/logs/adhoctasks.php', $urlparams + [
-            'action' => 'delete', 'sesskey' => sesskey()]);
+        $aurl = new \moodle_url('/local/intellidata/logs/adhoctasks.php', [
+            'id' => $values->id,
+            'action' => 'delete',
+            'sesskey' => sesskey(),
+        ]);
         $buttons[] = $OUTPUT->action_icon(
             $aurl,
             new \pix_icon('t/delete', get_string('deletetask', ParamsHelper::PLUGIN),
@@ -235,8 +236,10 @@ class adhoctasks_table extends \table_sql {
                 ['class' => 'iconsmall']
             ),
             null,
-            ['onclick' => "if (!confirm('" . get_string('deletetaskconfirmation', ParamsHelper::PLUGIN) .
-                "')) return false;"]
+            [
+                'onclick' => "if (!confirm('" . get_string('deletetaskconfirmation', ParamsHelper::PLUGIN) .
+                "')) return false;",
+            ]
         );
 
         return implode(' ', $buttons);

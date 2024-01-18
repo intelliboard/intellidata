@@ -131,7 +131,7 @@ class tasks_helper_test extends \advanced_testcase {
 
         $this->assertTrue(
             $DB->record_exists('task_adhoc', [
-                'classname' => '\local_intellidata\task\refresh_export_progress_adhoc_task'
+                'classname' => '\local_intellidata\task\refresh_export_progress_adhoc_task',
             ])
         );
     }

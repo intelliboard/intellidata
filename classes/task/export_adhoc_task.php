@@ -85,7 +85,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
         $services = [
             'encryptionservice' => $encryptionservice,
             'exportservice' => $exportservice,
-            'exportlogrepository' => new $exportlogrepository
+            'exportlogrepository' => new $exportlogrepository,
         ];
 
         $databaseservice = new database_service(true, $services);
@@ -97,17 +97,17 @@ class export_adhoc_task extends \core\task\adhoc_task {
             // Delete old files.
             $exportservice->delete_files([
                 'datatype' => $datatype,
-                'timemodified' => time()
+                'timemodified' => time(),
             ]);
 
             // Export table.
             $databaseservice->export_tables([
-                'table' => $datatype
+                'table' => $datatype,
             ]);
 
             // Export files to storage.
             $exportservice->save_files([
-                'datatype' => $datatype
+                'datatype' => $datatype,
             ]);
 
             // Set datatype migrated.
@@ -118,7 +118,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
         if (!empty($data->callbackurl)) {
             $client = new \curl();
             $client->post($data->callbackurl, [
-                'data' => $encryptionservice->encrypt(json_encode(['datatypes' => $data->datatypes]))
+                'data' => $encryptionservice->encrypt(json_encode(['datatypes' => $data->datatypes])),
             ]);
         }
 
@@ -149,7 +149,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
         $services = [
             'encryptionservice' => $encryptionservice,
             'exportservice' => $exportservice,
-            'exportlogrepository' => new $exportlogrepository
+            'exportlogrepository' => new $exportlogrepository,
         ];
 
         $databaseservice = new database_service(true, $services);
@@ -162,7 +162,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
             if (empty($data->limit)) {
                 $exportservice->delete_files([
                     'datatype' => $datatype,
-                    'timemodified' => time()
+                    'timemodified' => time(),
                 ]);
             }
 
@@ -172,7 +172,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
                 'cronprocessing' => true,
                 'adhoctask' => true,
                 'limit' => (!empty($data->limit)) ? $data->limit : 0,
-                'callback' => !empty($data->callbackurl) ? $data->callbackurl : null
+                'callback' => !empty($data->callbackurl) ? $data->callbackurl : null,
             ]);
         }
 
@@ -190,7 +190,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
         foreach ($data->datatypes as $datatype) {
 
             $customdata = [
-                'datatypes' => [$datatype]
+                'datatypes' => [$datatype],
             ];
             if (!empty($data->callbackurl)) {
                 $customdata['callbackurl'] = $data->callbackurl;

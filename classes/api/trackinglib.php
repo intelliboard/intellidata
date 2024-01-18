@@ -36,7 +36,7 @@ class local_intellidata_trackinglib extends external_api {
         return new external_function_parameters(
             [
                 'page'   => new external_value(PARAM_TEXT, 'page identifier'),
-                'param' => new external_value(PARAM_INT, 'page param')
+                'param' => new external_value(PARAM_INT, 'page param'),
             ]
         );
     }
@@ -59,7 +59,7 @@ class local_intellidata_trackinglib extends external_api {
             self::save_tracking_parameters(),
             [
                 'page' => $page,
-                'param' => $param
+                'param' => $param,
             ]
         );
 
@@ -95,9 +95,9 @@ class local_intellidata_trackinglib extends external_api {
      */
     public static function save_tracking_returns() {
         return new external_single_structure(
-            array(
-                'time' => new external_value(PARAM_INT, 'time')
-            )
+            [
+                'time' => new external_value(PARAM_INT, 'time'),
+            ]
         );
     }
 

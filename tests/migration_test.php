@@ -59,7 +59,7 @@ class migration_test extends \advanced_testcase {
         'users' => 100,
         'categories' => 10,
         'courses' => 45,
-        'cohorts' => 22
+        'cohorts' => 22,
     ];
 
     /**
@@ -362,7 +362,7 @@ class migration_test extends \advanced_testcase {
             'email' => 'email',
             'timecreated' => 'timecreated',
             'lang' => 'lang',
-            'country' => 'country'
+            'country' => 'country',
         ];
 
         foreach ($data as $datarow) {
@@ -397,7 +397,7 @@ class migration_test extends \advanced_testcase {
             'name' => 'name',
             'path' => 'path',
             'visible' => 'visible',
-            'timecreated' => 'timecreated'
+            'timecreated' => 'timecreated',
         ];
 
         foreach ($data as $datarow) {
@@ -431,7 +431,7 @@ class migration_test extends \advanced_testcase {
             'startdate' => 'startdate',
             'enddate' => 'enddate',
             'timecreated' => 'timecreated',
-            'visible' => 'visible'
+            'visible' => 'visible',
         ];
 
         foreach ($data as $datarow) {
@@ -465,7 +465,7 @@ class migration_test extends \advanced_testcase {
             'name' => 'name',
             'visible' => 'visible',
             'timecreated' => 'timecreated',
-            'timemodified' => 'timemodified'
+            'timemodified' => 'timemodified',
         ];
 
         foreach ($data as $datarow) {

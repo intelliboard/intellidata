@@ -23,16 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\custom;
+
+use stdClass;
+use lang_string;
 use core\invalid_persistent_exception;
 use local_intellidata\helpers\DBManagerHelper;
 use local_intellidata\helpers\EventsHelper;
-use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\dbschema_service;
-use stdClass;
-use lang_string;
-
-
 
 /**
  * Class for preparing data for Users.
@@ -48,15 +46,16 @@ class entity {
     public static $datatype = null;
 
     /** @var array The model data. */
-    private $data = array();
+    private $data = [];
 
     /** @var array The fields to return. */
     protected $returnfields = [];
 
     /** @var array The list of validation errors. */
-    private $errors = array();
+    private $errors = [];
+
     /** @var array The list of fields. */
-    private $fields = array();
+    private $fields = [];
 
     public function __construct($datatype, $record = null, $returnfields = []) {
 
@@ -177,7 +176,7 @@ class entity {
 
         // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
         // Think about backwards compability before adding new ones here!
-        $reserved = array('errors', 'formatted_properties', 'property_default_value', 'property_error_message');
+        $reserved = ['errors', 'formatted_properties', 'property_default_value', 'property_error_message'];
 
         foreach ($def as $property => $definition) {
 
@@ -204,21 +203,21 @@ class entity {
             }
         }
 
-        $def['recordtimecreated'] = array(
+        $def['recordtimecreated'] = [
             'default' => 0,
             'type' => PARAM_INT,
-            'null' => NULL_NOT_ALLOWED
-        );
-        $def['recordusermodified'] = array(
+            'null' => NULL_NOT_ALLOWED,
+        ];
+        $def['recordusermodified'] = [
             'default' => 0,
             'type' => PARAM_INT,
-            'null' => NULL_NOT_ALLOWED
-        );
+            'null' => NULL_NOT_ALLOWED,
+        ];
         $def['crud'] = [
             'default' => EventsHelper::CRUD_CREATED,
             'type' => PARAM_TEXT,
             'description' => 'Record CRUD.',
-            'null' => NULL_ALLOWED
+            'null' => NULL_ALLOWED,
         ];
 
         return $def;
@@ -346,7 +345,7 @@ class entity {
                 'type' => PARAM_RAW,
                 'description' => $column->name,
                 'default' => DBManagerHelper::get_field_default_value($column),
-                'null' => NULL_ALLOWED
+                'null' => NULL_ALLOWED,
             ];
         }
 

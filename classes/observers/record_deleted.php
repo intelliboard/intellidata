@@ -51,12 +51,13 @@ class record_deleted {
         }
 
         // Process only deleted events which includes objecttable and objectid.
-        if ($event->crud != EventsHelper::CRUD_DELETED || empty($event->objecttable) || (!$frameworkid && empty($event->objectid))) {
+        if ($event->crud != EventsHelper::CRUD_DELETED || empty($event->objecttable) ||
+            (!$frameworkid && empty($event->objectid))) {
             return;
         }
 
-        if (TrackingHelper::enabled() &&
-            (int)SettingsHelper::get_setting('exportdeletedrecords') == SettingsHelper::EXPORTDELETED_TRACKEVENTS) {
+        $exportdeletedrecords = (int)SettingsHelper::get_setting('exportdeletedrecords');
+        if (TrackingHelper::enabled() && $exportdeletedrecords == SettingsHelper::EXPORTDELETED_TRACKEVENTS) {
 
             $eventdata = $event->get_data();
             if ($frameworkid && empty($event->objectid)) {

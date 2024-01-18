@@ -80,10 +80,10 @@ class DBManagerHelper {
      */
     private static function extract_xml_key($key) {
         return [
-            'name'      => $key->getName(),
-            'fields'    => $key->getFields(),
-            'reftable'  => $key->getReftable(),
-            'reffields' => $key->getReffields()
+            'name' => $key->getName(),
+            'fields' => $key->getFields(),
+            'reftable' => $key->getReftable(),
+            'reffields' => $key->getReffields(),
         ];
     }
 

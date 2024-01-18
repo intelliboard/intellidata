@@ -46,48 +46,48 @@ class gradeitem extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Grade Item ID.',
                 'default' => 0,
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'iteminstance' => array(
+            ],
+            'iteminstance' => [
                 'type' => PARAM_INT,
                 'description' => 'Activity ID.',
                 'default' => 0,
-            ),
-            'itemtype' => array(
+            ],
+            'itemtype' => [
                 'type' => PARAM_ALPHANUMEXT,
                 'description' => 'Grade Item Type.',
                 'default' => 0,
-            ),
-            'itemmodule' => array(
+            ],
+            'itemmodule' => [
                 'type' => PARAM_ALPHANUMEXT,
                 'description' => 'Activity Type.',
                 'default' => '',
-            ),
-            'itemname' => array(
+            ],
+            'itemname' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Grade Item Name.',
                 'default' => '',
-            ),
-            'hidden' => array(
+            ],
+            'hidden' => [
                 'type' => PARAM_INT,
                 'description' => 'Grade Item State.',
                 'default' => 0,
-            ),
-            'grademax' => array(
+            ],
+            'grademax' => [
                 'type' => PARAM_FLOAT,
                 'description' => 'Max Grade.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

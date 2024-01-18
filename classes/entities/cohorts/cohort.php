@@ -45,48 +45,48 @@ class cohort extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Cohort ID.',
                 'default' => 0,
-            ),
-            'contextid' => array(
+            ],
+            'contextid' => [
                 'type' => PARAM_INT,
                 'description' => 'Cohort Context ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Cohort Name.',
                 'default' => '',
-            ),
-            'idnumber' => array(
+            ],
+            'idnumber' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Cohort ID Number.',
                 'default' => '',
-            ),
-            'visible' => array(
+            ],
+            'visible' => [
                 'type' => PARAM_BOOL,
                 'description' => 'Cohort Visible State.',
                 'default' => 1,
-            ),
-            'component' => array(
+            ],
+            'component' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Cohort Component.',
                 'default' => '',
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when cohort was created.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when cohort was modefied.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
 }

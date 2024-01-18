@@ -72,7 +72,7 @@ class local_intellidata_exportlib extends external_api {
         if (!$encryptionservice->validate_credentials()) {
             return [
                 'data' => 'emptycredentials',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -85,7 +85,7 @@ class local_intellidata_exportlib extends external_api {
         if (empty($params['code'])) {
             return [
                 'data' => 'cannotdecode',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -93,13 +93,13 @@ class local_intellidata_exportlib extends external_api {
         if ($params['code'] != $encryptionservice->clientidentifier) {
             return [
                 'data' => 'wrongclientid',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         return [
             'data' => 'ok',
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -108,10 +108,10 @@ class local_intellidata_exportlib extends external_api {
      */
     public static function validate_credentials_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Validation message'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -135,7 +135,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -159,12 +159,12 @@ class local_intellidata_exportlib extends external_api {
 
         $context = [
             'files' => $exportservice->get_files(),
-            'metadata' => ParamsHelper::get_exportfiles_metadata()
+            'metadata' => ParamsHelper::get_exportfiles_metadata(),
         ];
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($context)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -173,10 +173,10 @@ class local_intellidata_exportlib extends external_api {
      */
     public static function export_data_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted datafiles (files list) and metadata'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -204,7 +204,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -241,18 +241,18 @@ class local_intellidata_exportlib extends external_api {
         if ($notmigrateddatatypes) {
             return [
                 'data' => 'Migrations not ready: ' . implode(', ', $notmigrateddatatypes),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         $context = [
             'files' => $exportservice->get_files($params),
-            'metadata' => ParamsHelper::get_exportfiles_metadata()
+            'metadata' => ParamsHelper::get_exportfiles_metadata(),
         ];
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($context)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -261,10 +261,10 @@ class local_intellidata_exportlib extends external_api {
      */
     public static function get_data_files_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted datafiles (files list) and metadata'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -292,7 +292,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -314,7 +314,7 @@ class local_intellidata_exportlib extends external_api {
         if (!in_array($params['datatype'], ['roles', 'categories', 'courses'])) {
             return [
                 'data' => 'Unsupported datatype for real time',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
         $encryptionservice = new encryption_service();
@@ -328,7 +328,7 @@ class local_intellidata_exportlib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($data)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -337,10 +337,10 @@ class local_intellidata_exportlib extends external_api {
      */
     public static function get_live_data_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted data'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -369,7 +369,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -387,7 +387,7 @@ class local_intellidata_exportlib extends external_api {
         $params = apilib::validate_parameters($params['data'], [
             'datatypes' => PARAM_RAW,
             'exportfiles' => PARAM_INT,
-            'callbackurl' => PARAM_URL
+            'callbackurl' => PARAM_URL,
         ]);
         $params['datatypes'] = json_decode($params['datatypes']);
 
@@ -403,7 +403,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -412,14 +412,14 @@ class local_intellidata_exportlib extends external_api {
             $exporttask = new export_adhoc_task();
             $exporttask->set_custom_data([
                 'datatypes' => $exportdatatypes,
-                'callbackurl' => $params['callbackurl']
+                'callbackurl' => $params['callbackurl'],
             ]);
             \core\task\manager::queue_adhoc_task($exporttask);
         }
 
         return [
             'data' => 'Datatype successfully added.',
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -428,10 +428,10 @@ class local_intellidata_exportlib extends external_api {
      */
     public static function set_datatype_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -460,7 +460,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -477,7 +477,7 @@ class local_intellidata_exportlib extends external_api {
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
             'status' => PARAM_INT,
-            'callbackurl' => PARAM_URL
+            'callbackurl' => PARAM_URL,
         ]);
 
         // Set plugin settings.
@@ -486,7 +486,7 @@ class local_intellidata_exportlib extends external_api {
 
         return [
             'data' => 'ok',
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -529,7 +529,7 @@ class local_intellidata_exportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -555,33 +555,34 @@ class local_intellidata_exportlib extends external_api {
         if (empty($sessionslist)) {
             return [
                 'data' => 'Empty list of sessions',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         if ($params['limit'] > 1000 || $params['limit'] < 1) {
             return [
                 'data' => 'Limit is required',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         if (!get_component_version('mod_collaborate')) {
             return [
                 'data' => 'Blackboard Collaborate not installed',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         list($in, $params) = $DB->get_in_or_equal($sessionslist);
         $data = $DB->get_records_select(
-            'collaborate', "sessionuid $in", $params, '', 'id,course,sessionuid', $params['limit'], $params['offset']
+            'collaborate', "sessionuid $in", $params, '',
+            'id,course,sessionuid', $params['limit'], $params['offset']
         );
 
         $encryptionservice = new encryption_service();
         return [
             'data' => $encryptionservice->encrypt(json_encode($data)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 

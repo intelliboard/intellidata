@@ -69,7 +69,7 @@ class trackingdetails extends base {
                 'type' => PARAM_INT,
                 'default' => 0,
                 'description' => 'Timemodified timestamp.',
-            ]
+            ],
         ];
     }
 

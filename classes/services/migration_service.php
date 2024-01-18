@@ -101,7 +101,7 @@ class migration_service {
         $migration->init_services([
             'migrationservice' => $this,
             'encryptionservice' => $this->encryptionservice,
-            'exportservice' => $this->exportservice
+            'exportservice' => $this->exportservice,
         ]);
         $params['limit'] = $this->recordslimits;
 

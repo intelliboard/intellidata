@@ -35,11 +35,21 @@ class DBHelper {
     const MSSQL_TYPE = 'mssql';
     const SQLSRV_TYPE = 'sqlsrv';
 
+    const PENETRATION_TYPE_INTERNAL = 'internal';
+    const PENETRATION_TYPE_EXTERNAL = 'external';
+
     public static $customdbclient = null;
 
     public static $supporteddbclients = [
-        self::MYSQL_TYPE,
-        self::MARIADB_TYPE
+        'internal' => [
+            self::MYSQL_TYPE,
+            self::MARIADB_TYPE,
+        ],
+        'external' => [
+            self::MYSQL_TYPE,
+            self::MARIADB_TYPE,
+            self::POSTGRES_TYPE,
+        ],
     ];
 
     /**
@@ -49,21 +59,22 @@ class DBHelper {
      * @param null $dbtype
      * @return string|null
      */
-    public static function get_operator($id, $value, $params = array(), $dbtype = null) {
+    public static function get_operator($id, $value, $params = [], $dbtype = null) {
         global $CFG;
 
         $operators = [
-            'TIME_TO_SEC' => array(
+            'TIME_TO_SEC' => [
                 self::MYSQL_TYPE => 'TIME_TO_SEC',
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "extract ('epoch' from TO_TIMESTAMP($value, 'HH24:MI:SS')::TIME)";
-                }),
-            'SEC_TO_TIME' => array(
+                },
+            ],
+            'SEC_TO_TIME' => [
                 self::MYSQL_TYPE => 'SEC_TO_TIME',
-                self::POSTGRES_TYPE => ''
-            ),
-            'GROUP_CONCAT' => array(
-                self::MYSQL_TYPE => function($value, $params = array('separator' => ', ')) {
+                self::POSTGRES_TYPE => '',
+            ],
+            'GROUP_CONCAT' => [
+                self::MYSQL_TYPE => function($value, $params = ['separator' => ', ']) {
 
                     if (empty($params['order'])) {
                         $params['order'] = '';
@@ -71,60 +82,60 @@ class DBHelper {
 
                     return "GROUP_CONCAT($value SEPARATOR '" . $params['separator'] . "')";
                 },
-                self::POSTGRES_TYPE => function($value, $params = array('separator' => ', ')) {
+                self::POSTGRES_TYPE => function($value, $params = ['separator' => ', ']) {
 
                     if (empty($params['order'])) {
                         $params['order'] = '';
                     }
 
                     return "string_agg($value::character varying, '" . $params['separator'] . "')";
-                }
-            ),
-            'WEEKDAY' => array(
+                },
+            ],
+            'WEEKDAY' => [
                 self::MYSQL_TYPE => 'WEEKDAY',
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "extract(dow from $value::timestamp)";
-                }
-            ),
-            'DAYOFWEEK' => array(
+                },
+            ],
+            'DAYOFWEEK' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     return "(DAYOFWEEK($value) - 1)";
                 },
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "EXTRACT(DOW FROM $value)";
-                }
-            ),
-            'DATE_FORMAT_A' => array(
+                },
+            ],
+            'DATE_FORMAT_A' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     return "DATE_FORMAT($value, '%a')";
                 },
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "to_char($value, 'Day')";
-                }
-            ),
-            'FROM_UNIXTIME' => array(
-                self::MYSQL_TYPE => function($value, $params = array()) {
+                },
+            ],
+            'FROM_UNIXTIME' => [
+                self::MYSQL_TYPE => function($value, $params = []) {
 
                     $format = isset($params['format']) ? $params['format'] : '%Y-%m-%d %T';
                     $pureparam = isset($params['pureparam']) ? $params['pureparam'] : false;
 
                     return "FROM_UNIXTIME($value, " . (!$pureparam ? "'{$format}'" : "{$format}") . ")";
                 },
-                self::POSTGRES_TYPE => function($value, $params = array()) {
+                self::POSTGRES_TYPE => function($value, $params = []) {
                     $format = isset($params['format']) ? $params['format'] : 'YYYY-mm-dd HH24:MI:SS';
                     $pureparam = isset($params['pureparam']) ? $params['pureparam'] : false;
                     return "to_char(to_timestamp({$value}), " . (!$pureparam ? "'{$format}'" : "{$format}") . ")";
-                }
-            ),
-            'MONTH' => array(
+                },
+            ],
+            'MONTH' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     return "MONTH(FROM_UNIXTIME({$value}))";
                 },
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "EXTRACT(MONTH FROM to_timestamp({$value}))";
-                }
-            ),
-            'INSERT' => array(
+                },
+            ],
+            'INSERT' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     $sentence = $params['sentence'];
                     $position = isset($params['position']) ? $params['position'] : 1;
@@ -138,22 +149,22 @@ class DBHelper {
                     $length   = isset($params['length']) ? $params['length'] : "CHAR_LENGTH($value)";
 
                     return "OVERLAY($sentence placing $value from $position for $length)";
-                }
-            ),
-            'DAY' => array(
+                },
+            ],
+            'DAY' => [
                 self::MYSQL_TYPE => 'DAY',
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "date_part('day', $value)";
-                }
-            ),
-            'YEAR' => array(
+                },
+            ],
+            'YEAR' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     return "YEAR(FROM_UNIXTIME({$value}))";
                 },
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "EXTRACT(YEAR FROM to_timestamp({$value}))";
-                }
-            ),
+                },
+            ],
             'FIND_IN_SET' => [
                 self::MYSQL_TYPE => function($value, $params) {
                     if (!isset($params['field'])) {
@@ -168,7 +179,7 @@ class DBHelper {
                     }
 
                     return "{$params['field']} = ANY (string_to_array({$value},','))";
-                }
+                },
             ],
             'CAST_FLOAT' => [
                 self::MYSQL_TYPE => function($value, $params) {
@@ -184,7 +195,7 @@ class DBHelper {
                     }
 
                     return "CAST({$params['field']} AS FLOAT)";
-                }
+                },
             ],
             'JSON_UNQUOTE' => [
                 self::MYSQL_TYPE => function($value, $params) {
@@ -466,32 +477,31 @@ class DBHelper {
         return false;
     }
 
-    public static function get_driver_instance($type) {
+    public static function get_driver_instance($type, $penetrationtype) {
         $classname = $type.'_custom_moodle_database';
-        $libfile   = __DIR__ . "/custom_db_drivers/$classname.php";
+        $libfile   = __DIR__ . "/custom_db_drivers/$penetrationtype/$classname.php";
 
         if (!file_exists($libfile)) {
             return null;
         }
 
         require_once($libfile);
-        return new $classname(true);
+        return new $classname();
     }
 
-    public static function get_db_client() {
+    public static function get_db_client($penetrationtype = self::PENETRATION_TYPE_INTERNAL) {
         global $CFG, $DB;
 
-        if (!empty(SettingsHelper::get_setting('enablecustomdbdriver')) &&
-            in_array($CFG->dbtype, self::$supporteddbclients)) {
+        if (in_array($CFG->dbtype, self::$supporteddbclients[$penetrationtype])) {
 
             if (self::$customdbclient == null) {
-                $db = self::get_driver_instance($CFG->dbtype);
+                $db = self::get_driver_instance($CFG->dbtype, $penetrationtype);
                 $dbconfig = $DB->export_dbconfig();
-                $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass, $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
+                $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass,
+                             $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
 
                 self::$customdbclient = $db;
             }
-
             return self::$customdbclient;
         }
 

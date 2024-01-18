@@ -60,7 +60,7 @@ class config_service_test extends \advanced_testcase {
             'status' => datatypeconfig::STATUS_ENABLED,
             'timemodified_field' => 'timemodified',
             'rewritable' => 0,
-            'events_tracking' => 0
+            'events_tracking' => 0,
         ];
 
         $DB->execute("DELETE FROM {" . datatypeconfig::TABLE . "}");
@@ -86,7 +86,7 @@ class config_service_test extends \advanced_testcase {
             'timemodified_field' => 'timemodified',
             'rewritable' => 0,
             'filterbyid' => 0,
-            'events_tracking' => 1
+            'events_tracking' => 1,
         ];
         // Validate record from DB.
         $this->assertTrue($DB->record_exists(datatypeconfig::TABLE, $requiredconfigwithevent));
@@ -101,7 +101,7 @@ class config_service_test extends \advanced_testcase {
             'status' => datatypeconfig::STATUS_ENABLED,
             'rewritable' => 1,
             'filterbyid' => 0,
-            'events_tracking' => 0
+            'events_tracking' => 0,
         ];
         // Validate record from DB.
         $this->assertTrue($DB->record_exists(datatypeconfig::TABLE, $requiredconfigrewritable));

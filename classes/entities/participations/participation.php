@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\participations;
 
-
 class participation extends \local_intellidata\entities\entity {
 
     /**
@@ -38,37 +37,53 @@ class participation extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Log ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
-            ),
-            'type' => array(
+            ],
+            'type' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Object type.',
                 'default' => '',
-            ),
-            'objectid' => array(
+            ],
+            'objectid' => [
                 'type' => PARAM_INT,
                 'description' => 'Object ID.',
                 'default' => '',
-            ),
-            'participations' => array(
+            ],
+            'participations' => [
                 'type' => PARAM_INT,
                 'description' => 'Count of participations.',
                 'default' => 1,
-            ),
-            'last_participation' => array(
+            ],
+            'last_participation' => [
                 'type' => PARAM_INT,
                 'description' => 'Date of last participation.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        $object->userid = $object->userid;
+        $object->type = ($object->contextlevel == CONTEXT_MODULE) ? 'activity' : 'course';
+        $object->objectid = $object->contextinstanceid;
+        $object->participations = 1;
+        $object->last_participation = time();
+        return $object;
+    }
 }

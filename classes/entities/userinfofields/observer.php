@@ -25,10 +25,8 @@
 
 namespace local_intellidata\entities\userinfofields;
 
-
-
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -98,5 +96,4 @@ class observer {
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
     }
-
 }

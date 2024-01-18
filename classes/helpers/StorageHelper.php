@@ -26,6 +26,7 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\persistent\export_logs;
 use local_intellidata\persistent\logs;
 use local_intellidata\repositories\database_storage_repository;
 use local_intellidata\repositories\file_storage_repository;
@@ -65,7 +66,7 @@ class StorageHelper {
         return [
             self::FILE_STORAGE => 'file_storage_repository',
             self::DATABASE_STORAGE => 'database_storage_repository',
-            self::CACHE_STORAGE => 'cache_storage_repository'
+            self::CACHE_STORAGE => 'cache_storage_repository',
         ];
     }
 
@@ -103,20 +104,32 @@ class StorageHelper {
         $fs = get_file_storage();
         $context = \context_system::instance();
 
-        $filename   = $params['filename'];
-        $tempdir    = $params['tempdir'];
-        $tempfile   = $params['tempfile'];
+        $filename = $params['filename'];
+        $tempdir = $params['tempdir'];
+        $tempfile = $params['tempfile'];
 
         if (!file_exists($tempfile)) {
             DebugHelper::error_log('File is not exists or empty ' . $tempfile);
             return null;
         }
 
+        $countcreated = 0;
+        exec('grep ",c$" ' . $tempfile . ' | wc -l', $res);
+        if (is_array($res) && isset($res[0])) {
+            $countcreated = $res[0];
+        }
+
+        $countexported = 0;
+        exec('cat ' . $tempfile . ' | wc -l', $res);
+        if (is_array($res) && isset($res[0])) {
+            $countexported = $res[0] + 1;
+        }
+
         // Firstly zip temp file.
         $zipfilename = $filename.'.zip';
         $tempzipfilepath = $tempdir . '/dec_'.$zipfilename;
         $zipfilepath = $tempdir . '/'.$zipfilename;
-        $zippacker   = get_file_packer('application/zip');
+        $zippacker = get_file_packer('application/zip');
 
         // Zip file.
         $result = $zippacker->archive_to_pathname(
@@ -142,13 +155,13 @@ class StorageHelper {
         $filearea = $params['datatype'];
 
         // Save file.
-        $filerecord = array(
+        $filerecord = [
             'component' => $component,
             'filearea' => $filearea,
             'contextid' => $context->id,
             'filepath' => '/',
-            'filename' => $zipfilename
-        );
+            'filename' => $zipfilename,
+        ];
         $filerecord['itemid'] = self::get_new_itemid($filerecord);
 
         $file = $fs->create_file_from_pathname($filerecord, $zipfilepath);
@@ -171,12 +184,18 @@ class StorageHelper {
 
         // Save log when file exported.
         $logs = new logs(0, [
-            'datatype'  => $params['datatype'],
-            'type'      => logs::TYPE_FILE_EXPORT,
-            'action'    => logs::ACTION_CREATED,
-            'details'   => json_encode($filerecord)
+            'datatype' => $params['datatype'],
+            'type' => logs::TYPE_FILE_EXPORT,
+            'action' => logs::ACTION_CREATED,
+            'details' => json_encode($filerecord),
+            'count_in_file' => $countexported,
         ]);
         $logs->save();
+
+        if ($record = export_logs::get_record(['datatype' => $params['datatype']])) {
+            $record->set('count_in_files', (int)$record->get('count_in_files') + (int)$countcreated);
+            $record->save();
+        }
 
         return $file;
     }
@@ -292,7 +311,7 @@ class StorageHelper {
      */
     public static function convert_filesize($bytes) {
         $i = floor(log($bytes) / log(1024));
-        $sizes = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+        $sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
         return sprintf('%.02F', $bytes / pow(1024, $i)) * 1 . ' ' . $sizes[$i];
     }

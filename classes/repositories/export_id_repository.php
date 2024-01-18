@@ -85,7 +85,7 @@ class export_id_repository {
 
         $inparams = [
             'lastid' => $lastid,
-            'datatype' => $datatype
+            'datatype' => $datatype,
         ];
         $records = $DB->get_recordset_sql("SELECT dataid AS id
                                                  FROM {" . export_ids::TABLE . "}
@@ -232,7 +232,7 @@ class export_id_repository {
         global $DB;
 
         $inparams = [
-            'datatype' => $datatype
+            'datatype' => $datatype,
         ];
 
         $DB->delete_records(export_ids::TABLE, $inparams);

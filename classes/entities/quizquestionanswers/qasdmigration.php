@@ -24,8 +24,6 @@
  */
 namespace local_intellidata\entities\quizquestionanswers;
 
-
-
 /**
  * Class for migration Users.
  *
@@ -58,7 +56,7 @@ class qasdmigration extends \local_intellidata\entities\migration {
                WHERE qasd.name = :name";
 
         $params = [
-            'name' => 'answer'
+            'name' => 'answer',
         ];
 
         return $this->set_condition($condition, $conditionparams, $sql, $params);

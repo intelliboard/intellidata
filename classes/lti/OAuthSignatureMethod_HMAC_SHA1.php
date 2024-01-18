@@ -45,17 +45,17 @@ class OAuthSignatureMethod_HMAC_SHA1 extends OAuthSignatureMethod {
         $basestring = $request->get_signature_base_string();
         $request->base_string = $basestring;
 
-        $keyparts = array(
+        $keyparts = [
             $consumer->secret,
-            ($token) ? $token->secret : ""
-        );
+            ($token) ? $token->secret : "",
+        ];
 
         $keyparts = OAuthUtil::urlencode_rfc3986($keyparts);
         $key = implode('&', $keyparts);
 
         $computedsignature = base64_encode(hash_hmac('sha1', $basestring, $key, true));
         $oauthlastcomputedsignature = $computedsignature;
+
         return $computedsignature;
     }
-
 }

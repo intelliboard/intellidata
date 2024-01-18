@@ -50,7 +50,7 @@ class export_logs extends base {
      * @return array
      */
     protected static function define_properties() {
-        return array(
+        return [
             'datatype' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Datatype.',
@@ -85,11 +85,16 @@ class export_logs extends base {
                 'default' => 0,
                 'description' => 'Count of migration records.',
             ],
+            'count_in_files' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'description' => 'Count of created records in files.',
+            ],
             'tabletype' => [
                 'type' => PARAM_INT,
                 'default' => self::TABLE_TYPE_UNIFIED,
                 'description' => 'Table type.',
             ],
-        );
+        ];
     }
 }

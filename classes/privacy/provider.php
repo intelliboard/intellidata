@@ -66,7 +66,7 @@ class provider implements
             'rel' => 'privacy:metadata:local_intellidata_tracking:rel',
             'type' => 'privacy:metadata:local_intellidata_tracking:type',
             'instance' => 'privacy:metadata:local_intellidata_tracking:instance',
-            'timecreated' => 'privacy:metadata:local_intellidata_tracking:timecreated'
+            'timecreated' => 'privacy:metadata:local_intellidata_tracking:timecreated',
         ], 'privacy:metadata:local_intellidata_tracking');
 
         // The 'local_intellidata_details' table stores the metadata about timespent per-hour.
@@ -74,7 +74,7 @@ class provider implements
             'logid' => 'privacy:metadata:local_intellidata_details:logid',
             'visits' => 'privacy:metadata:local_intellidata_details:visits',
             'timespend' => 'privacy:metadata:local_intellidata_details:timespend',
-            'timepoint' => 'privacy:metadata:local_intellidata_details:timepoint'
+            'timepoint' => 'privacy:metadata:local_intellidata_details:timepoint',
         ], 'privacy:metadata:local_intellidata_details');
 
         // The 'local_intellidata_logs' table stores information about timespent per-day.
@@ -82,7 +82,7 @@ class provider implements
             'trackid' => 'privacy:metadata:local_intellidata_logs:trackid',
             'visits' => 'privacy:metadata:local_intellidata_logs:visits',
             'timespend' => 'privacy:metadata:local_intellidata_logs:timespend',
-            'timepoint' => 'privacy:metadata:local_intellidata_logs:timepoint'
+            'timepoint' => 'privacy:metadata:local_intellidata_logs:timepoint',
         ], 'privacy:metadata:local_intellidata_logs');
 
         // The 'local_intellidata_config' table stores information about plugin configuration.
@@ -96,7 +96,7 @@ class provider implements
             'events_tracking' => 'privacy:metadata:local_intellidata_config:events_tracking',
             'usermodified' => 'privacy:metadata:local_intellidata_config:usermodified',
             'timecreated' => 'privacy:metadata:local_intellidata_config:timecreated',
-            'timemodified' => 'privacy:metadata:local_intellidata_config:timemodified'
+            'timemodified' => 'privacy:metadata:local_intellidata_config:timemodified',
         ], 'privacy:metadata:local_intellidata_config');
 
         return $items;
@@ -160,7 +160,7 @@ class provider implements
 
         if ($context->contextlevel == CONTEXT_COURSE) {
             $params = [
-            'courseid' => $context->instanceid
+                'courseid' => $context->instanceid,
             ];
             $items = $DB->get_records("local_intellidata_tracking", $params);
 
@@ -180,7 +180,7 @@ class provider implements
         } else if ($context->contextlevel == CONTEXT_MODULE) {
             $params = [
                 'page' => 'module',
-                'param' => $context->instanceid
+                'param' => $context->instanceid,
             ];
 
             $items = $DB->get_records("local_intellidata_tracking", $params);
@@ -241,13 +241,13 @@ class provider implements
         $context = $userlist->get_context();
         if ($context->contextlevel == CONTEXT_COURSE) {
             $params = [
-                'courseid' => $context->instanceid
+                'courseid' => $context->instanceid,
             ];
             $sql = "SELECT userid FROM {local_intellidata_tracking} WHERE courseid = :courseid";
             $userlist->add_from_sql('userid', $sql, $params);
         } else if ($context->contextlevel == CONTEXT_MODULE) {
             $params = [
-                'cmid' => $context->instanceid
+                'cmid' => $context->instanceid,
             ];
             $sql = "SELECT userid FROM {local_intellidata_tracking} WHERE page = 'module' AND param = :cmid";
             $userlist->add_from_sql('userid', $sql, $params);

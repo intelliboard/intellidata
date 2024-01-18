@@ -25,7 +25,6 @@
 
 namespace local_intellidata\entities\assignments;
 
-use local_intellidata\entities\assignments\submission;
 use local_intellidata\helpers\DBManagerHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\events_service;
@@ -83,7 +82,7 @@ class observer {
             $condition = [
                 'userid' => $eventdata['userid'],
                 'assignid' => $eventdata['other']['assignid'],
-                'timecreated' => $eventdata['timecreated']
+                'timecreated' => $eventdata['timecreated'],
             ];
 
             $submissionssql = "SELECT *
@@ -147,7 +146,7 @@ class observer {
             $submission = $DB->get_record('assign_submission', [
                 'assignment' => $gradedata->assignment,
                 'userid' => $gradedata->userid,
-                'attemptnumber' => $gradedata->attemptnumber
+                'attemptnumber' => $gradedata->attemptnumber,
             ]);
 
             if ($submission) {
@@ -158,7 +157,7 @@ class observer {
 
                 $feedback = $DB->get_record('assignfeedback_comments', [
                     'assignment' => $gradedata->assignment,
-                    'grade' => $gradedata->id
+                    'grade' => $gradedata->id,
                 ]);
                 if (!empty($feedback->commenttext)) {
                     $submission->feedback = $feedback->commenttext;
@@ -181,26 +180,7 @@ class observer {
 
             $eventdata = $event->get_data();
             $submission = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
-            $submission->submission_type = self::get_submission_type($submission->id);
-            $gradedata = $DB->get_record('assign_grades', [
-                'assignment' => $submission->assignment,
-                'userid' => $submission->userid,
-                'attemptnumber' => $submission->attemptnumber
-            ]);
-
-            if (!empty($gradedata->grade)) {
-                $submission->grade = $gradedata->grade;
-                $submission->feedback_at = $gradedata->timemodified;
-                $submission->feedback_by = $gradedata->grader;
-
-                $feedback = $DB->get_record('assignfeedback_comments', [
-                    'assignment' => $gradedata->assignment,
-                    'grade' => $gradedata->id
-                ]);
-                if (!empty($feedback->commenttext)) {
-                    $submission->feedback = $feedback->commenttext;
-                }
-            }
+            $submission = submission::prepare_export_data($submission);
 
             self::export_event($eventdata, $submission);
         }
@@ -226,7 +206,7 @@ class observer {
      * @return string
      * @throws \dml_exception
      */
-    private static function get_submission_type($submissionid) {
+    public static function get_submission_type($submissionid) {
         global $DB;
 
         $xmltables = DBManagerHelper::get_install_xml_tables();

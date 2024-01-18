@@ -104,12 +104,12 @@ class required_tables_repository extends base_tables_repository {
                 'type' => PARAM_TEXT,
                 'description' => 'Event crud.',
                 'default' => 'с',
-                'null' => false
+                'null' => false,
             ];
 
             $entities[$datatype['name']] = [
                 'name' => $datatype['name'],
-                'fields' => $entityfields
+                'fields' => $entityfields,
             ];
         }
 
@@ -126,7 +126,7 @@ class required_tables_repository extends base_tables_repository {
             'competency', 'competency_usercomp', 'competency_coursecomp',
             'competency_usercompcourse', 'competency_modulecomp', 'competency_plan',
             'competency_usercompplan', 'tenant', 'tool_tenant', 'tool_tenant_user',
-            'roleassignments', 'question_categories'
+            'roleassignments', 'question_categories',
         ];
     }
 }

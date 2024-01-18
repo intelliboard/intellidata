@@ -46,7 +46,7 @@ class log extends \local_intellidata\entities\entity {
             'eventname' => [
                 'type' => PARAM_RAW,
                 'description' => 'Event name.',
-                'default' => ''
+                'default' => '',
             ],
             'component' => [
                 'type' => PARAM_TEXT,
@@ -77,7 +77,7 @@ class log extends \local_intellidata\entities\entity {
                 'type' => PARAM_TEXT,
                 'description' => 'Event crud.',
                 'default' => 'с',
-                'null' => false
+                'null' => false,
             ],
             'contextinstanceid' => [
                 'type' => PARAM_INT,
@@ -108,8 +108,7 @@ class log extends \local_intellidata\entities\entity {
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when record created.',
                 'default' => 0,
-            ]
+            ],
         ];
     }
-
 }

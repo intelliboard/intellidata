@@ -183,9 +183,9 @@ class export_log_repository {
      * @return array
      * @throws \coding_exception
      */
-    public function get_assoc_datatypes($key, $params = array()) {
+    public function get_assoc_datatypes($key, $params = []) {
         $records = export_logs::get_records($params);
-        $result = array();
+        $result = [];
 
         foreach ($records as $record) {
             $recordkey = $record->get($key);
@@ -214,7 +214,7 @@ class export_log_repository {
                 [
                     'migrated' => 1,
                     'tabletypeunified' => export_logs::TABLE_TYPE_UNIFIED,
-                    'tabletypelogs' => export_logs::TABLE_TYPE_LOGS
+                    'tabletypelogs' => export_logs::TABLE_TYPE_LOGS,
                 ]
             )
         );
@@ -235,7 +235,8 @@ class export_log_repository {
                                         recordsmigrated = 0,
                                         recordscount = 0,
                                         last_exported_id = 0,
-                                        last_exported_time = 0');
+                                        last_exported_time = 0,
+                                        count_in_files = 0');
     }
 
     /**
@@ -370,6 +371,7 @@ class export_log_repository {
         $record->set('recordsmigrated', 0);
         $record->set('recordscount', 0);
         $record->set('last_exported_id', 0);
+        $record->set('count_in_files', 0);
 
         // Force reset all data.
         if ($record && $forcereset) {
@@ -447,7 +449,7 @@ class export_log_repository {
                   WHERE dc.deletedevent = :eventname
                     AND dc.status = :status", [
                 'eventname' => $eventname,
-                'status' => datatypeconfig::STATUS_ENABLED
+                'status' => datatypeconfig::STATUS_ENABLED,
             ]
         );
 

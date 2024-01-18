@@ -24,9 +24,12 @@
  * @website    http://intelliboard.net/
  */
 
+use local_intellidata\helpers\DebugHelper;
+use local_intellidata\services\new_export_service;
+
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/../../../../../lib/dml/mysqli_native_moodle_database.php');
+require_once(__DIR__.'/../../../../../../lib/dml/mysqli_native_moodle_database.php');
 
 /**
  * Custom mysqli class representing moodle database interface.
@@ -38,6 +41,23 @@ require_once(__DIR__.'/../../../../../lib/dml/mysqli_native_moodle_database.php'
  */
 class mysqli_custom_moodle_database extends \mysqli_native_moodle_database {
 
+    /**
+     * Get a number of records as a moodle_recordset using a SQL statement.
+     *
+     * Since this method is a little less readable, use of it should be restricted to
+     * code where it's possible there might be large datasets being returned.  For known
+     * small datasets use get_records_sql - it leads to simpler code.
+     *
+     * The return type is like:
+     * @see function get_recordset.
+     *
+     * @param string $sql the SQL select query to execute.
+     * @param array $params array of sql parameters
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+     * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+     * @return moodle_recordset instance
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
     public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 

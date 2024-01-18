@@ -48,7 +48,7 @@ class logs extends base {
      * @return array
      */
     protected static function define_properties() {
-        return array(
+        return [
             'type' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Log type.',
@@ -65,6 +65,11 @@ class logs extends base {
                 'type' => PARAM_RAW,
                 'description' => 'Details.',
             ],
-        );
+            'count_in_file' => [
+                'type' => PARAM_INT,
+                'default' => 0,
+                'description' => 'Count of exported records in file',
+            ],
+        ];
     }
 }

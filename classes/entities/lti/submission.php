@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\lti;
 
-
 /**
  * Class for preparing data for Assignments Submissions.
  *
@@ -46,53 +45,52 @@ class submission extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Submission ID.',
                 'default' => 0,
-            ),
-            'ltiid' => array(
+            ],
+            'ltiid' => [
                 'type' => PARAM_INT,
                 'description' => 'Lti ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'datesubmitted' => array(
+            ],
+            'datesubmitted' => [
                 'type' => PARAM_INT,
                 'description' => 'Date submitted',
                 'default' => 0,
-            ),
-            'dateupdated' => array(
+            ],
+            'dateupdated' => [
                 'type' => PARAM_INT,
                 'description' => 'Date updated',
                 'default' => 0,
-            ),
-            'gradepercent' => array(
+            ],
+            'gradepercent' => [
                 'type' => PARAM_FLOAT,
                 'description' => 'Final Grade',
                 'default' => 0,
-            ),
-            'originalgrade' => array(
+            ],
+            'originalgrade' => [
                 'type' => PARAM_FLOAT,
                 'description' => 'Original Grade',
                 'default' => 0,
-            ),
-            'launchid' => array(
+            ],
+            'launchid' => [
                 'type' => PARAM_INT,
                 'description' => 'Launch ID',
                 'default' => 0,
-            ),
-            'state' => array(
+            ],
+            'state' => [
                 'type' => PARAM_INT,
                 'description' => 'State',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
-
 }

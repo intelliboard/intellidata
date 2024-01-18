@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\groups;
 
-
 /**
  * Class for preparing data for Course Groups.
  *
@@ -46,32 +45,32 @@ class group extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Group ID.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Group ID Number.',
                 'default' => '',
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when group was created.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when group was modefied.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 }

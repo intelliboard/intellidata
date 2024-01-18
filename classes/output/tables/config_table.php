@@ -42,7 +42,7 @@ class config_table extends \table_sql {
     protected $context = null;
     protected $datatypes = [];
     protected $datatypestoignoreindex = [
-        'tracking', 'trackinglog', 'trackinglogdetail'
+        'tracking', 'trackinglog', 'trackinglogdetail',
     ];
 
     public function __construct($uniqueid, $searchquery = '') {
@@ -72,7 +72,7 @@ class config_table extends \table_sql {
         if (!empty($searchquery)) {
             $where .= " AND " . $DB->sql_like('c.datatype', ':searchquery', false, false, false);
             $sqlparams += [
-                'searchquery' => '%' . $searchquery . '%'
+                'searchquery' => '%' . $searchquery . '%',
             ];
         }
 
@@ -240,15 +240,18 @@ class config_table extends \table_sql {
             $urlparams = ['id' => $values->id];
             if ($values->exportenabled) {
                 $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + [
-                    'action' => 'reset', 'sesskey' => sesskey()]);
+                        'action' => 'reset', 'sesskey' => sesskey(),
+                    ]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
                         'core',
                         ['class' => 'iconsmall']),
                     null,
-                    ['onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
-                        "')) return false;"]
+                    [
+                        'onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
+                        "')) return false;",
+                    ]
                 );
             }
 
@@ -258,29 +261,35 @@ class config_table extends \table_sql {
             );
 
             $aurl = new \moodle_url('/local/intellidata/config/editlogsentity.php', $urlparams + [
-                'action' => 'delete', 'sesskey' => sesskey()]);
+                    'action' => 'delete', 'sesskey' => sesskey(),
+                ]);
             $buttons[] = $OUTPUT->action_icon(
                 $aurl,
                 new \pix_icon('t/delete', get_string('delete'),
                     'core',
                     ['class' => 'iconsmall']),
                 null,
-                ['onclick' => "if (!confirm('" . get_string('deletecordconfirmation', 'local_intellidata') .
-                    "')) return false;"]
+                [
+                    'onclick' => "if (!confirm('" . get_string('deletecordconfirmation', 'local_intellidata') .
+                    "')) return false;",
+                ]
             );
         } else {
             $urlparams = ['datatype' => $values->datatype];
             if ($values->exportenabled) {
                 $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + [
-                    'action' => 'reset', 'sesskey' => sesskey()]);
+                        'action' => 'reset', 'sesskey' => sesskey(),
+                    ]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/reset', get_string('resetexport', 'local_intellidata'),
                         'core',
                         ['class' => 'iconsmall']),
                     null,
-                    ['onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
-                        "')) return false;"]
+                    [
+                        'onclick' => "if (!confirm('" . get_string('resetcordconfirmation', 'local_intellidata') .
+                        "')) return false;",
+                    ]
                 );
             }
 
@@ -312,29 +321,37 @@ class config_table extends \table_sql {
 
             if (!empty($values->tableindex)) {
                 $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + [
-                    'action' => 'deleteindex', 'sesskey' => sesskey()]);
+                        'action' => 'deleteindex',
+                        'sesskey' => sesskey(),
+                    ]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/switch_minus', get_string('deleteindex', 'local_intellidata'),
                         'core',
                         ['class' => 'iconsmall']),
                     null,
-                    ['onclick' => "if (!confirm('" .
+                    [
+                        'onclick' => "if (!confirm('" .
                         get_string('deleteindexcordconfirmation', 'local_intellidata', $values->datatype) .
-                        "')) return false;"]
+                        "')) return false;",
+                    ]
                 );
             } else if (!empty($values->timemodified_field)) {
                 $aurl = new \moodle_url('/local/intellidata/config/edit.php', $urlparams + [
-                    'action' => 'createindex', 'sesskey' => sesskey()]);
+                    'action' => 'createindex',
+                    'sesskey' => sesskey(),
+                 ]);
                 $buttons[] = $OUTPUT->action_icon(
                     $aurl,
                     new \pix_icon('t/switch_plus', get_string('createindex', 'local_intellidata'),
                         'core',
                         ['class' => 'iconsmall']),
                     null,
-                    ['onclick' => "if (!confirm('" .
+                    [
+                        'onclick' => "if (!confirm('" .
                         get_string('createindexcordconfirmation', 'local_intellidata', $values->datatype) .
-                        "')) return false;"]
+                        "')) return false;",
+                    ]
                 );
             }
         }
@@ -424,7 +441,9 @@ class config_table extends \table_sql {
     public function reset_button() {
 
         $reseturl = new \moodle_url('/local/intellidata/config/index.php', [
-            'action' => 'reset', 'sesskey' => sesskey()]);
+            'action' => 'reset',
+            'sesskey' => sesskey(),
+        ]);
         $output = \html_writer::link($reseturl, get_string('resettodefault', 'local_intellidata'),
             ['class' => 'btn btn-primary mr-1']);
 
@@ -439,7 +458,9 @@ class config_table extends \table_sql {
     public function import_button() {
 
         $reseturl = new \moodle_url('/local/intellidata/config/index.php', [
-            'action' => 'import', 'sesskey' => sesskey()]);
+            'action' => 'import',
+            'sesskey' => sesskey(),
+        ]);
         $output = \html_writer::link($reseturl, get_string('refreshconfig', 'local_intellidata'),
             ['class' => 'btn btn-primary mr-1']);
 
@@ -475,7 +496,7 @@ class config_table extends \table_sql {
             [
                 'action' => $PAGE->url,
                 'query' => $PAGE->url->get_param('query'),
-                'sesskey' => sesskey()
+                'sesskey' => sesskey(),
             ]
         );
     }

@@ -24,6 +24,7 @@
  */
 namespace local_intellidata\entities\roles;
 
+use local_intellidata\helpers\RolesHelper;
 
 /**
  * Class for preparing data for Role Assignment.
@@ -46,43 +47,62 @@ class roleassignment extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Role assignment ID.',
                 'default' => 0,
-            ),
-            'roleid' => array(
+            ],
+            'roleid' => [
                 'type' => PARAM_INT,
                 'description' => 'Role ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'contexttype' => array(
+            ],
+            'contexttype' => [
                 'type' => PARAM_INT,
                 'description' => 'Assignment context type.',
                 'default' => 0,
-            ),
-            'component' => array(
+            ],
+            'component' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Assignment component.',
                 'default' => '',
-            ),
-            'itemid' => array(
+            ],
+            'itemid' => [
                 'type' => PARAM_INT,
                 'description' => 'Assignment item ID.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        $context = $DB->get_record('context', ['id' => $object->contextid]);
+        if ($context) {
+            $object->courseid = $context->instanceid;
+            $object->contexttype = RolesHelper::get_contexttype($context->contextlevel);;
+        }
+
+        return $object;
+    }
 }

@@ -44,19 +44,19 @@ abstract class entity {
     const TYPE = null;
 
     /** @var array The model data. */
-    private $data = array();
+    private $data = [];
 
     /** @var array The fields to return. */
     protected $returnfields = [];
 
     /** @var array The list of validation errors. */
-    private $errors = array();
+    private $errors = [];
 
     /** @var boolean If the data was already validated. */
     private $validated = false;
 
     /** @var array The list of fields. */
-    private $fields = array();
+    private $fields = [];
 
     public function __construct($record = null, $returnfields = []) {
         if (count($returnfields)) {
@@ -199,7 +199,7 @@ abstract class entity {
      * @return array Where keys are the property names.
      */
     protected static function define_properties() {
-        return array();
+        return [];
     }
 
     /**
@@ -214,7 +214,7 @@ abstract class entity {
 
         // List of reserved property names. Mostly because we have methods (getters/setters) which would confict with them.
         // Think about backwards compability before adding new ones here!
-        $reserved = array('errors', 'formatted_properties', 'property_default_value', 'property_error_message');
+        $reserved = ['errors', 'formatted_properties', 'property_default_value', 'property_error_message'];
 
         foreach ($def as $property => $definition) {
 
@@ -245,19 +245,19 @@ abstract class entity {
             'default' => 0,
             'type' => PARAM_INT,
             'description' => 'Timestamp when record created.',
-            'null' => NULL_NOT_ALLOWED
+            'null' => NULL_NOT_ALLOWED,
         ];
         $def['recordusermodified'] = [
             'default' => 0,
             'type' => PARAM_INT,
             'description' => 'User ID who is related to the record.',
-            'null' => NULL_NOT_ALLOWED
+            'null' => NULL_NOT_ALLOWED,
         ];
         $def['crud'] = [
             'default' => EventsHelper::CRUD_CREATED,
             'type' => PARAM_TEXT,
             'description' => 'Record CRUD.',
-            'null' => NULL_ALLOWED
+            'null' => NULL_ALLOWED,
         ];
 
         return $def;
@@ -366,6 +366,19 @@ abstract class entity {
      */
     final public function export_data() {
         return $this->after_export($this->export());
+    }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     *
+     * @return \stdClass
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        return $object;
     }
 
     /**

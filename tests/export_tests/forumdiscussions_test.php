@@ -21,7 +21,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
+
+use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,8 +37,6 @@ require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/forum/externallib.php');
 
-use local_intellidata\helpers\StorageHelper;
-
 /**
  * User migration test case.
  *
@@ -42,7 +45,7 @@ use local_intellidata\helpers\StorageHelper;
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class forumdiscussion_tracking_test extends \advanced_testcase {
+class forumdiscussions_test extends \advanced_testcase {
 
     public function setUp():void {
         $this->setAdminUser();
@@ -74,12 +77,12 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $course = generator::create_course($coursedata);
 
         $forumdata = [
-            'course' => $course->id
+            'course' => $course->id,
         ];
         $forum = generator::create_module('forum', $forumdata);
 
         // Add a discussion.
-        $record = array();
+        $record = [];
         $record['course'] = $course->id;
         $record['forum'] = $forum->id;
         $record['userid'] = $user->id;
@@ -87,11 +90,11 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
 
         $context = forum_get_context($forum->id);
 
-        $params = array(
+        $params = [
             'context' => $context,
             'objectid' => $discussion->id,
             'other' => ['forumid' => $forum->id],
-        );
+        ];
 
         // Create the event.
         $event = \mod_forum\event\discussion_created::create($params);
@@ -140,12 +143,12 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $course = $DB->get_record('course', $coursedata);
 
         $forumdata = [
-            'course' => $course->id
+            'course' => $course->id,
         ];
         $forum = $DB->get_record('forum', $forumdata);
 
         // Add a discussion.
-        $record = array();
+        $record = [];
         $record['course'] = $course->id;
         $record['forum'] = $forum->id;
         $record['userid'] = $user->id;
@@ -153,11 +156,11 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
 
         $context = forum_get_context($forum->id);
 
-        $params = array(
+        $params = [
             'context' => $context,
             'objectid' => $discussion->id,
             'other' => ['forumid' => $forum->id],
-        );
+        ];
 
         // Create the event.
         $event = \mod_forum\event\discussion_updated::create($params);
@@ -206,19 +209,19 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $fromcourse = $DB->get_record('course', $fromcoursedata);
 
         $fromforumdata = [
-            'course' => $fromcourse->id
+            'course' => $fromcourse->id,
         ];
         $fromforum = $DB->get_record('forum', $fromforumdata);
 
         $tocourse = generator::create_course();
 
         $toforumdata = [
-            'course' => $tocourse->id
+            'course' => $tocourse->id,
         ];
         $toforum = generator::create_module('forum', $toforumdata);
 
         // Add a discussion.
-        $record = array();
+        $record = [];
         $record['course'] = $fromcourse->id;
         $record['forum'] = $fromforum->id;
         $record['userid'] = $user->id;
@@ -226,11 +229,11 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
 
         $context = forum_get_context($toforum->id);
 
-        $params = array(
+        $params = [
             'context' => $context,
             'objectid' => $discussion->id,
-            'other' => array('fromforumid' => $fromforum->id, 'toforumid' => $toforum->id)
-        );
+            'other' => ['fromforumid' => $fromforum->id, 'toforumid' => $toforum->id],
+        ];
 
         // Create the event.
         $event = \mod_forum\event\discussion_moved::create($params);
@@ -279,12 +282,12 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
         $course = $DB->get_record('course', $coursedata);
 
         $forumdata = [
-            'course' => $course->id
+            'course' => $course->id,
         ];
         $forum = $DB->get_record('forum', $forumdata);
 
         // Add a discussion.
-        $record = array();
+        $record = [];
         $record['course'] = $course->id;
         $record['forum'] = $forum->id;
         $record['userid'] = $user->id;
@@ -292,11 +295,11 @@ class forumdiscussion_tracking_test extends \advanced_testcase {
 
         $context = forum_get_context($forum->id);
 
-        $params = array(
+        $params = [
             'context' => $context,
             'objectid' => $discussion->id,
             'other' => ['forumid' => $forum->id],
-        );
+        ];
 
         // Create the event.
         $event = \mod_forum\event\discussion_deleted::create($params);

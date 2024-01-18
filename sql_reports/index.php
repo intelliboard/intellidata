@@ -42,7 +42,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
 $table = new sql_reports_table('reports_table');
-$table->show_download_buttons_at(array());
+$table->show_download_buttons_at([]);
 $table->is_downloading(false);
 $table->is_collapsible = false;
 

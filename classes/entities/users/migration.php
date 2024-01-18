@@ -37,10 +37,10 @@ use local_intellidata\helpers\ParamsHelper;
  */
 class migration extends \local_intellidata\entities\migration {
 
-    public $entity      = '\local_intellidata\entities\users\user';
-    public $eventname   = '\core\event\user_created';
-    public $table       = 'user';
-    public $tablealias  = 'u';
+    public $entity = '\local_intellidata\entities\users\user';
+    public $eventname = '\core\event\user_created';
+    public $table = 'user';
+    public $tablealias = 'u';
 
     /**
      * @param false $count
@@ -57,7 +57,7 @@ class migration extends \local_intellidata\entities\migration {
                  WHERE $where";
 
         $params = [
-            'deleted' => 0
+            'deleted' => 0,
         ];
 
         return $this->set_condition($condition, $conditionparams, $sql, $params);

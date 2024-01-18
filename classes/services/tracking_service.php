@@ -59,7 +59,7 @@ class tracking_service {
         $this->ajaxfrequency    = (int) SettingsHelper::get_setting('ajaxfrequency');
         $this->inactivity       = (int) SettingsHelper::get_setting('inactivity');
         $this->trackadmin       = SettingsHelper::get_setting('trackadmin');
-        $this->mediaTrack       = SettingsHelper::get_setting('trackmedia');
+        $this->mediatrack       = SettingsHelper::get_setting('trackmedia');
         $this->path             = isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '';
 
         $this->ajaxrequest      = $ajaxrequest;

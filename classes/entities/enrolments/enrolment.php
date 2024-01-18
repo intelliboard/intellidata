@@ -46,53 +46,71 @@ class enrolment extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Enrolment ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'enroltype' => array(
+            ],
+            'enroltype' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Enrolment type.',
                 'default' => '',
-            ),
-            'status' => array(
+            ],
+            'status' => [
                 'type' => PARAM_INT,
                 'description' => 'Enrolment status.',
                 'default' => 1,
-            ),
-            'timestart' => array(
+            ],
+            'timestart' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when enrollment should start.',
                 'default' => 0,
-            ),
-            'timeend' => array(
+            ],
+            'timeend' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when enrollment should end.',
                 'default' => 0,
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when enrollment record created.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when enrollment record modified.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        if ($enrol = $DB->get_record('enrol', ['id' => $object->enrolid])) {
+            $object->courseid = $enrol->courseid;
+            $object->enroltype = $enrol->enrol;
+        }
+
+        return $object;
+    }
 }

@@ -42,8 +42,8 @@ raise_memory_limit(MEMORY_HUGE);
 
 $longoptions = [
     'datatype'  => '',
-    'noreset'     => '',
-    'help'      => false
+    'noreset' => '',
+    'help' => false,
 ];
 list($options, $unrecognized) = cli_get_params($longoptions, ['h' => 'help']);
 

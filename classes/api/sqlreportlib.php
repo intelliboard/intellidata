@@ -41,7 +41,7 @@ class local_intellidata_sqlreportlib extends external_api {
      */
     public static function run_report_parameters() {
         return new external_function_parameters([
-            'data' => new external_value(PARAM_RAW, 'Request params')
+            'data' => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
@@ -63,7 +63,7 @@ class local_intellidata_sqlreportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -78,7 +78,7 @@ class local_intellidata_sqlreportlib extends external_api {
         if (!$encryptionservice->validate_credentials()) {
             return [
                 'data' => 'emptycredentials',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -167,7 +167,7 @@ class local_intellidata_sqlreportlib extends external_api {
                     $key = 'build_by_sql_search';
                     $query = "SELECT t.*
                                     FROM ({$query}) t
-                                   WHERE t." . $DB->sql_like('`' . $params->search_column . '`',
+                                   WHERE t." . $DB->sql_like($params->search_column,
                                        ':' . $key, false, false
                                     );
                     $sqlparams[$key] = '%' . $params->search_value . '%';
@@ -196,7 +196,7 @@ class local_intellidata_sqlreportlib extends external_api {
     public static function run_report_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Response status'),
-            'data' => new external_value(PARAM_RAW, 'Report data')
+            'data' => new external_value(PARAM_RAW, 'Report data'),
         ]);
     }
 
@@ -222,7 +222,7 @@ class local_intellidata_sqlreportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -237,7 +237,7 @@ class local_intellidata_sqlreportlib extends external_api {
         if (!$encryptionservice->validate_credentials()) {
             return [
                 'data' => 'emptycredentials',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -246,7 +246,7 @@ class local_intellidata_sqlreportlib extends external_api {
             'external_identifier' => PARAM_TEXT,
             'service' => PARAM_URL,
             'name' => PARAM_TEXT,
-            'sqlcode' => PARAM_TEXT
+            'sqlcode' => PARAM_TEXT,
         ]);
         $report = (object) $params;
         // Deactivate report every time.
@@ -255,7 +255,7 @@ class local_intellidata_sqlreportlib extends external_api {
 
         return [
             'status' => apilib::STATUS_SUCCESS,
-            'data' => $data
+            'data' => $data,
         ];
     }
 
@@ -273,9 +273,9 @@ class local_intellidata_sqlreportlib extends external_api {
                     'sqlcode' => new external_value(PARAM_TEXT, 'Report SQL'),
                     'external_identifier' => new external_value(PARAM_TEXT, 'External identifier'),
                     'service' => new external_value(PARAM_URL, 'Service'),
-                    'timecreated' => new external_value(PARAM_INT, 'Report time created')
+                    'timecreated' => new external_value(PARAM_INT, 'Report time created'),
                 ]
-            )
+            ),
         ]);
     }
 
@@ -284,7 +284,7 @@ class local_intellidata_sqlreportlib extends external_api {
      */
     public static function delete_report_parameters() {
         return new external_function_parameters([
-            'data' => new external_value(PARAM_RAW, 'Request params')
+            'data' => new external_value(PARAM_RAW, 'Request params'),
         ]);
     }
 
@@ -301,7 +301,7 @@ class local_intellidata_sqlreportlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -316,20 +316,20 @@ class local_intellidata_sqlreportlib extends external_api {
         if (!$encryptionservice->validate_credentials()) {
             return [
                 'data' => 'emptycredentials',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
-            'external_identifier' => PARAM_TEXT
+            'external_identifier' => PARAM_TEXT,
         ]);
 
         reports_repository::delete_by_external_identifier($params['external_identifier']);
 
         return [
             'status' => apilib::STATUS_SUCCESS,
-            'data' => ''
+            'data' => '',
         ];
     }
 
@@ -339,7 +339,7 @@ class local_intellidata_sqlreportlib extends external_api {
     public static function delete_report_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_TEXT, 'Response status'),
-            'data' => new external_value(PARAM_TEXT, '')
+            'data' => new external_value(PARAM_TEXT, ''),
         ]);
     }
 }

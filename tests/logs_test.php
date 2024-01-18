@@ -56,14 +56,14 @@ class logs_test extends \advanced_testcase {
             'contextid' => $context->id,
             'filepath' => '/',
             'filename' => 'logs_create.zip',
-            'itemid' => 0
+            'itemid' => 0,
         ];
 
         $logdata = [
-            'datatype'  => $datatype,
-            'type'      => logs::TYPE_FILE_EXPORT,
-            'action'    => logs::ACTION_CREATED,
-            'details'   => json_encode($filerecord)
+            'datatype' => $datatype,
+            'type' => logs::TYPE_FILE_EXPORT,
+            'action' => logs::ACTION_CREATED,
+            'details' => json_encode($filerecord),
         ];
 
         // Create log.

@@ -25,9 +25,7 @@
 
 namespace local_intellidata\entities\usertrackings;
 
-
-
-use \local_intellidata\helpers\TrackingHelper;
+use local_intellidata\helpers\TrackingHelper;
 
 /**
  * Event observer for transcripts.
@@ -76,7 +74,7 @@ class observer {
         if (TrackingHelper::enabled()) {
             $eventdata = $event->get_data();
             $params = [
-                'courseid' => $eventdata['objectid']
+                'courseid' => $eventdata['objectid'],
             ];
             $items = $DB->get_records("local_intellidata_tracking", $params);
 
@@ -109,7 +107,7 @@ class observer {
 
             $params = [
                 'page' => 'module',
-                'param' => $cm->id
+                'param' => $cm->id,
             ];
 
             $items = $DB->get_records("local_intellidata_tracking", $params);
