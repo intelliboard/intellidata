@@ -38,7 +38,7 @@ require_once($CFG->libdir . '/clilib.php');
 
 $longoptions = [
     'datatype' => '',
-    'help'  => false
+    'help'  => false,
 ];
 list($options, $unrecognized) = cli_get_params($longoptions, ['h' => 'help']);
 

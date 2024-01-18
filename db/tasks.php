@@ -30,7 +30,7 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 0
+        'disabled' => 0,
     ],
     [
         'classname' => 'local_intellidata\task\export_data_task',
@@ -40,7 +40,7 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 0
+        'disabled' => 0,
     ],
     [
         'classname' => 'local_intellidata\task\cleaner_task',
@@ -49,7 +49,7 @@ $tasks = [
         'hour' => 0,
         'day' => '*',
         'month' => '*',
-        'dayofweek' => '*'
+        'dayofweek' => '*',
     ],
     [
         'classname' => 'local_intellidata\task\migration_task',
@@ -59,7 +59,7 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 1
+        'disabled' => 1,
     ],
     [
         'classname' => 'local_intellidata\task\copy_intelliboard_tracking',
@@ -69,7 +69,7 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 1
+        'disabled' => 1,
     ],
     [
         'classname' => 'local_intellidata\task\daily_snapshot_task',
@@ -79,6 +79,6 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*',
-        'disabled' => 1
+        'disabled' => 1,
     ],
 ];

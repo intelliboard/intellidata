@@ -25,10 +25,8 @@
 
 namespace local_intellidata\entities\groupmembers;
 
-
-
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -72,7 +70,7 @@ class observer {
 
         $groupdata = $DB->get_record('groups_members', [
             'groupid' => $eventdata['objectid'],
-            'userid' => $eventdata['relateduserid']
+            'userid' => $eventdata['relateduserid'],
         ]);
 
         if (!$groupdata) {

@@ -25,9 +25,6 @@
 
 namespace local_intellidata\entities\roles;
 
-
-
-use local_intellidata\entities\roles\roleassignment;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\RolesHelper;
 use local_intellidata\services\events_service;
@@ -62,7 +59,7 @@ class observer {
             if (!$DB->record_exists('role_assignments', [
                 'contextid' => $eventdata['contextid'],
                 'userid' => $eventdata['relateduserid'],
-                'roleid' => $eventdata['objectid']
+                'roleid' => $eventdata['objectid'],
             ])) {
                 self::export_event($event);
             }
@@ -87,10 +84,12 @@ class observer {
         $ra->roleid = $eventdata['objectid'];
         $ra->component = $roleassignments->component;
         $ra->itemid = $roleassignments->itemid;
-        $ra->crud = $eventdata['crud'];
+
         $ra->contexttype = RolesHelper::get_contexttype($context->contextlevel);
 
-        $entity = new roleassignment($ra, []);
+        $ra->crud = $eventdata['crud'];
+
+        $entity = new roleassignment($ra);
         $data = $entity->export();
 
         $tracking = new events_service($entity::TYPE);

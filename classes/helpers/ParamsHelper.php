@@ -50,7 +50,7 @@ class ParamsHelper {
         return [
             'lastmigrationdate' => (int)SettingsHelper::get_setting('lastmigrationdate'),
             'lastexportdate' => (int)SettingsHelper::get_setting('lastexportdate'),
-            'pluginversion' => self::get_plugin_version()
+            'pluginversion' => self::get_plugin_version(),
         ];
     }
 
@@ -79,7 +79,7 @@ class ParamsHelper {
             'dbtype' => $CFG->dbtype,
             'cronenabled' => $CFG->cron_enabled,
             'moodleworkplace' => (int)class_exists('\tool_tenant\tenancy'),
-            'totaraversion' => !empty($CFG->totara_version) ? $CFG->totara_version : ''
+            'totaraversion' => !empty($CFG->totara_version) ? $CFG->totara_version : '',
         ];
     }
 

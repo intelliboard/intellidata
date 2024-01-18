@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\userinfofields;
 
-
 /**
  * Class for preparing data for UserInfoFields.
  *
@@ -46,43 +45,43 @@ class userinfofield extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Info Field ID.',
                 'default' => 0,
-            ),
-            'shortname' => array(
+            ],
+            'shortname' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Info Field Short Name.',
                 'default' => '',
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Info Field Name.',
                 'default' => '',
-            ),
-            'categoryid' => array(
+            ],
+            'categoryid' => [
                 'type' => PARAM_INT,
                 'description' => 'Category ID.',
                 'default' => 0,
-            ),
-            'sortorder' => array(
+            ],
+            'sortorder' => [
                 'type' => PARAM_INT,
                 'description' => 'Sort Order.',
                 'default' => 0,
-            ),
-            'visible' => array(
+            ],
+            'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Visible Status.',
                 'default' => 0,
-            ),
-            'datatype' => array(
+            ],
+            'datatype' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Field Type.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -93,5 +92,4 @@ class userinfofield extends \local_intellidata\entities\entity {
         $record->event = '\core\event\user_info_field_created';
         return $record;
     }
-
 }

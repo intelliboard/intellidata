@@ -82,21 +82,36 @@ class datatypes_service {
     }
 
     /**
+     * @param bool $applyconfig
+     * @param bool $rebuildcache
+     *
      * @return array|array[]
      */
-    public static function get_datatypes($applyconfig = true) {
+    public static function get_datatypes($applyconfig = true, $rebuildcache = false) {
+        $cache = \cache::make('local_intellidata', 'datatypes');
 
         // Get datatypes with default configuration.
-        $defaultdatatypes = array_merge(
-            self::get_required_datatypes(),
-            self::get_optional_datatypes_for_export(),
-            self::get_logs_datatypes()
-        );
+        $defaultdatatypes = $cache->get('defaultdatatypes');
+        if ($rebuildcache || !$defaultdatatypes) {
+            $defaultdatatypes = array_merge(
+                self::get_required_datatypes(),
+                self::get_optional_datatypes_for_export(),
+                self::get_logs_datatypes()
+            );
+
+            $cache->set('defaultdatatypes', $defaultdatatypes);
+        }
 
         // Apply configuration from database.
         if ($applyconfig) {
-            $configservice = new config_service($defaultdatatypes);
-            return $configservice->get_datatypes();
+            $servicedatatypes = $cache->get('servicedatatypes');
+            if (!$servicedatatypes || $rebuildcache) {
+                $configservice = new config_service($defaultdatatypes);
+                $servicedatatypes = $configservice->get_datatypes();
+                $cache->set('servicedatatypes', $defaultdatatypes);
+            }
+
+            return $servicedatatypes;
         } else {
             return $defaultdatatypes;
         }
@@ -193,7 +208,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'categories' => [
                 'name' => 'categories',
@@ -205,7 +220,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'courses' => [
                 'name' => 'courses',
@@ -217,7 +232,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'enrolments' => [
                 'name' => 'enrolments',
@@ -229,7 +244,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'roleassignments' => [
                 'name' => 'roleassignments',
@@ -241,7 +256,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'cohorts' => [
                 'name' => 'cohorts',
@@ -253,7 +268,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'coursegroups' => [
                 'name' => 'coursegroups',
@@ -265,7 +280,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'coursegroupmembers' => [
                 'name' => 'coursegroupmembers',
@@ -277,7 +292,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timeadded',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'cohortmembers' => [
                 'name' => 'cohortmembers',
@@ -289,7 +304,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timeadded',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'coursecompletions' => [
                 'name' => 'coursecompletions',
@@ -300,10 +315,11 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => false,
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'activities' => [
                 'name' => 'activities',
+                'table' => 'course_modules',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
                 'migration' => 'activities\migration',
                 'entity' => 'activities\activity',
@@ -311,7 +327,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => false,
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'activitycompletions' => [
                 'name' => 'activitycompletions',
@@ -323,7 +339,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'usergrades' => [
                 'name' => 'usergrades',
@@ -335,7 +351,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'gradeitems' => [
                 'name' => 'gradeitems',
@@ -348,7 +364,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => ParamsHelper::get_release() < 3.8,
-                'exportids' => ParamsHelper::get_release() < 3.8
+                'exportids' => ParamsHelper::get_release() < 3.8,
             ],
             'roles' => [
                 'name' => 'roles',
@@ -361,7 +377,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'modules' => [
                 'name' => 'modules',
@@ -374,7 +390,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'forumdiscussions' => [
                 'name' => 'forumdiscussions',
@@ -386,7 +402,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'forumposts' => [
                 'name' => 'forumposts',
@@ -398,7 +414,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'modified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'quizattempts' => [
                 'name' => 'quizattempts',
@@ -410,7 +426,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'quizquestions' => [
                 'name' => 'quizquestions',
@@ -423,7 +439,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => ParamsHelper::get_release() < 3.7,
-                'exportids' => ParamsHelper::get_release() < 3.7
+                'exportids' => ParamsHelper::get_release() < 3.7,
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',
@@ -436,7 +452,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => ParamsHelper::get_release() < 4.0
+                'exportids' => ParamsHelper::get_release() < 4.0,
             ],
             'quizquestionattempts' => [
                 'name' => 'quizquestionattempts',
@@ -449,7 +465,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'quizquestionattemptsteps' => [
                 'name' => 'quizquestionattemptsteps',
@@ -462,7 +478,7 @@ class datatypes_service {
                 'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'quizquestionattemptstepsdata' => [
                 'name' => 'quizquestionattemptstepsdata',
@@ -475,7 +491,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'assignmentsubmissions' => [
                 'name' => 'assignmentsubmissions',
@@ -487,7 +503,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'ltisubmittion' => [
                 'name' => 'ltisubmittion',
@@ -499,7 +515,7 @@ class datatypes_service {
                 'timemodified_field' => 'dateupdated',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => true,
             ],
             'coursesections' => [
                 'name' => 'coursesections',
@@ -511,7 +527,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'ltitypes' => [
                 'name' => 'ltitypes',
@@ -523,7 +539,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => true,
             ],
             'survey' => [
                 'name' => 'survey',
@@ -535,7 +551,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => true,
             ],
             'surveyanswers' => [
                 'name' => 'surveyanswers',
@@ -547,7 +563,7 @@ class datatypes_service {
                 'timemodified_field' => 'time',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => true,
             ],
             'tracking' => [
                 'name' => 'tracking',
@@ -560,7 +576,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'trackinglog' => [
                 'name' => 'trackinglog',
@@ -573,7 +589,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'trackinglogdetail' => [
                 'name' => 'trackinglogdetail',
@@ -586,7 +602,7 @@ class datatypes_service {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'userinfocategories' => [
                 'name' => 'userinfocategories',
@@ -594,10 +610,11 @@ class datatypes_service {
                 'migration' => 'userinfocategories\migration',
                 'entity' => 'userinfocategories\userinfocategory',
                 'observer' => 'userinfocategories\observer',
+                'table' => 'user_info_category',
                 'rewritable' => SettingsHelper::get_setting('eventstracking') ? false : true,
                 'timemodified_field' => false,
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'userinfofields' => [
                 'name' => 'userinfofields',
@@ -605,10 +622,11 @@ class datatypes_service {
                 'migration' => 'userinfofields\migration',
                 'entity' => 'userinfofields\userinfofield',
                 'observer' => 'userinfofields\observer',
+                'table' => 'user_info_field',
                 'rewritable' => SettingsHelper::get_setting('eventstracking') ? false : true,
                 'timemodified_field' => false,
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'userinfodatas' => [
                 'name' => 'userinfodatas',
@@ -620,11 +638,12 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'u.timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'participation' => [
                 'name' => 'participation',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'logstore_standard_log',
                 'migration' => 'participations\migration',
                 'entity' => 'participations\participation',
                 'observer' => 'participations\observer',
@@ -632,10 +651,11 @@ class datatypes_service {
                 'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
                 'databaseexport' => false,
-                'exportids' => false
+                'exportids' => false,
             ],
             'userlogins' => [
                 'name' => 'userlogins',
+                'table' => 'logstore_standard_log',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
                 'migration' => 'userlogins\migration',
                 'entity' => 'userlogins\userlogin',
@@ -643,7 +663,7 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
         ];
 
@@ -763,7 +783,7 @@ class datatypes_service {
 
         if (count($datatypes)) {
             $params = [
-                'eventstracking' => SettingsHelper::get_setting('eventstracking')
+                'eventstracking' => SettingsHelper::get_setting('eventstracking'),
             ];
 
             foreach ($datatypes as $table => $datatype) {
@@ -838,7 +858,7 @@ class datatypes_service {
             'filterbyid' => $datatype->filterbyid,
             'rewritable' => $datatype->rewritable,
             'databaseexport' => true,
-            'exportids' => config_service::get_exportids_config_optional($datatype)
+            'exportids' => config_service::get_exportids_config_optional($datatype),
         ];
 
         return $data;
@@ -882,7 +902,7 @@ class datatypes_service {
             'timemodified_field' => logs_tables_repository::TIMEMODIFIED_FIELD,
             'filterbyid' => false,
             'rewritable' => false,
-            'databaseexport' => false
+            'databaseexport' => false,
         ];
 
         return $data;

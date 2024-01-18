@@ -21,33 +21,43 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
 
 use completion_completion;
 use context_course;
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 
 /**
- * Cohort migration test case.
+ * Course complations migration test case.
  *
  * @package    local
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class coursecompletion_tracking_test extends \advanced_testcase {
+class coursecompletions_test extends \advanced_testcase {
+
+    private $newexportavailable;
 
     public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
+
+        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
     }
 
     /**
@@ -60,18 +70,61 @@ class coursecompletion_tracking_test extends \advanced_testcase {
             $this->resetAfterTest(false);
         }
 
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->create_course_completions_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->create_course_completions_test(0);
+    }
+
+    /**
+     * @covers \local_intellidata\entities\coursecompletions\coursecompletion
+     * @covers \local_intellidata\entities\coursecompletions\migration
+     * @covers \local_intellidata\entities\coursecompletions\observer::course_completion_updated
+     */
+    public function test_update() {
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(false);
+        } else {
+            $this->test_create();
+        }
+
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->update_course_completions_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->update_course_completions_test(0);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    public function create_course_completions_test($tracking) {
+        if (test_helper::is_new_phpunit()) {
+            $this->resetAfterTest(false);
+        }
+
         $userdata = [
-            'firstname' => 'ibuser1',
-            'username' => 'ibuser1',
+            'firstname' => 'ibuser1' . $tracking,
+            'username' => 'ibuser1' . $tracking,
             'password' => 'Ibuser1!',
         ];
 
         $user = generator::create_user($userdata);
 
         $coursedata = [
-            'fullname' => 'ibcoursecompletion1',
-            'idnumber' => '1111111',
-            'enablecompletion' => true
+            'fullname' => 'ibcoursecompletion1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
+            'enablecompletion' => true,
         ];
 
         $course = generator::create_course($coursedata);
@@ -101,11 +154,13 @@ class coursecompletion_tracking_test extends \advanced_testcase {
     }
 
     /**
-     * @covers \local_intellidata\entities\coursecompletions\coursecompletion
-     * @covers \local_intellidata\entities\coursecompletions\migration
-     * @covers \local_intellidata\entities\coursecompletions\observer::course_completion_updated
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \moodle_exception
      */
-    public function test_update() {
+    public function update_course_completions_test($tracking) {
         global $DB;
 
         if (test_helper::is_new_phpunit()) {
@@ -115,8 +170,8 @@ class coursecompletion_tracking_test extends \advanced_testcase {
         }
 
         $coursedata = [
-            'fullname' => 'ibcoursecompletion1',
-            'idnumber' => '1111111',
+            'fullname' => 'ibcoursecompletion1' . $tracking,
+            'idnumber' => '1111111' . $tracking,
         ];
 
         $course = $DB->get_record('course', $coursedata);

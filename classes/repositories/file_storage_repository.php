@@ -104,10 +104,10 @@ class file_storage_repository {
 
         // Save file to filedir and database.
         $params = [
-            'datatype'  => $this->datatype['name'],
-            'filename'  => StorageHelper::generate_filename(),
-            'tempdir'   => $this->storagefolder,
-            'tempfile'  => $tempfile
+            'datatype' => $this->datatype['name'],
+            'filename' => StorageHelper::generate_filename(),
+            'tempdir' => $this->storagefolder,
+            'tempfile' => $tempfile,
         ];
 
         if ($this->datatype['rewritable']) {
@@ -249,14 +249,18 @@ class file_storage_repository {
      * @return string the sql to go after a SELECT
      */
     private static function instance_sql_fields($filesprefix, $filesreferenceprefix) {
-        $filefields = array('contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
+        $filefields = [
+            'contenthash', 'pathnamehash', 'contextid', 'component', 'filearea',
             'itemid', 'filepath', 'filename', 'userid', 'filesize', 'mimetype', 'status', 'source',
-            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid');
+            'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid',
+        ];
 
-        $referencefields = array('repositoryid' => 'repositoryid',
+        $referencefields = [
+            'repositoryid' => 'repositoryid',
             'reference' => 'reference',
-            'lastsync' => 'referencelastsync');
-        $fields = array();
+            'lastsync' => 'referencelastsync',
+        ];
+        $fields = [];
         $fields[] = $filesprefix.'.id AS id';
         foreach ($filefields as $field) {
             $fields[] = "{$filesprefix}.{$field}";
@@ -284,7 +288,7 @@ class file_storage_repository {
         $conditions = [
             'contextid = :contextid',
             'component = :component',
-            'filearea = :filearea'
+            'filearea = :filearea',
         ];
         $sqlparams = [
             'contextid' => $context->id,
@@ -326,7 +330,7 @@ class file_storage_repository {
         $conditions = [
             'contextid = :contextid',
             'component = :component',
-            'filearea = :filearea'
+            'filearea = :filearea',
         ];
         $sqlparams = [
             'contextid' => $context->id,

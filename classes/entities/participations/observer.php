@@ -25,10 +25,8 @@
 
 namespace local_intellidata\entities\participations;
 
-
-
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for participations.
@@ -44,8 +42,8 @@ class observer {
         if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
-            if (in_array($eventdata['crud'], array('c', 'u')) && $eventdata['userid'] &&
-                in_array($eventdata['contextlevel'], array(CONTEXT_COURSE, CONTEXT_MODULE))) {
+            if (in_array($eventdata['crud'], ['c', 'u']) && $eventdata['userid'] &&
+                in_array($eventdata['contextlevel'], [CONTEXT_COURSE, CONTEXT_MODULE])) {
                 $record = new \stdClass();
                 $record->userid = $eventdata['userid'];
                 $record->type = ($eventdata['contextlevel'] == CONTEXT_MODULE) ? 'activity' : 'course';
@@ -73,6 +71,5 @@ class observer {
         $tracking = new events_service($entity::TYPE);
         $tracking->track($data);
     }
-
 }
 

@@ -64,7 +64,7 @@ class local_intellidata_edit_config extends \moodleform {
 
         $options = [
             datatypeconfig::TABLETYPE_REQUIRED => get_string('required', 'local_intellidata'),
-            datatypeconfig::TABLETYPE_OPTIONAL => get_string('optional', 'local_intellidata')
+            datatypeconfig::TABLETYPE_OPTIONAL => get_string('optional', 'local_intellidata'),
         ];
         $mform->addElement('select', 'tabletype', get_string('tabletype', 'local_intellidata'), $options);
         $mform->setType('tabletype', PARAM_INT);

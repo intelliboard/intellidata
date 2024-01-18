@@ -39,7 +39,7 @@ class local_intellidata_sql_report extends \moodleform {
         $mform->setType('name', PARAM_RAW);
 
         $mform->addElement('textarea', 'sqlcode', get_string('sql_report_code', 'local_intellidata'), [
-            'readonly' => true, 'rows' => 16, 'cols' => 80
+            'readonly' => true, 'rows' => 16, 'cols' => 80,
         ]);
         $mform->setType('sqlcode', PARAM_RAW);
 

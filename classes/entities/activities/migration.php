@@ -35,10 +35,10 @@ use local_intellidata\helpers\DBHelper;
  */
 class migration extends \local_intellidata\entities\migration {
 
-    public $entity      = '\local_intellidata\entities\activities\activity';
-    public $eventname   = '\core\event\course_module_created';
-    public $table       = 'course_modules';
-    public $tablealias  = 'cm';
+    public $entity = '\local_intellidata\entities\activities\activity';
+    public $eventname = '\core\event\course_module_created';
+    public $table = 'course_modules';
+    public $tablealias = 'cm';
 
     /**
      * @param false $count
@@ -59,7 +59,7 @@ class migration extends \local_intellidata\entities\migration {
                WHERE $where";
 
         $params = [
-            'deletioninprogress' => 0
+            'deletioninprogress' => 0,
         ];
 
         return $this->set_condition($condition, $conditionparams, $sql, $params);
@@ -75,10 +75,10 @@ class migration extends \local_intellidata\entities\migration {
         global $DB;
         $data = [];
 
-        $moduletypeinstances = array();
+        $moduletypeinstances = [];
         foreach ($records as $cm) {
             if (!isset($moduletypeinstances[$cm->module])) {
-                $moduletypeinstances[$cm->module] = array();
+                $moduletypeinstances[$cm->module] = [];
             }
             $moduletypeinstances[$cm->module][] = $cm->instance;
             $data[$cm->id] = $cm;
@@ -106,7 +106,7 @@ class migration extends \local_intellidata\entities\migration {
                 foreach ($instances as $instance) {
                     $moduleinstances[$modulename][$instance->id] = [
                         'name' => $instance->name,
-                        'params' => observer::set_additional_params($modulename, $instance)
+                        'params' => observer::set_additional_params($modulename, $instance),
                     ];
                 }
             }

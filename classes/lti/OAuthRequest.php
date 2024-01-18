@@ -87,12 +87,12 @@ class OAuthRequest {
      */
     public static function from_consumer_and_token($consumer, $token, $httpmethod, $httpurl, $parameters = null) {
         @$parameters || $parameters = [];
-        $defaults = array(
+        $defaults = [
             "oauth_version" => self::$version,
             "oauth_nonce" => self::generate_nonce(),
             "oauth_timestamp" => self::generate_timestamp(),
-            "oauth_consumer_key" => $consumer->key
-        );
+            "oauth_consumer_key" => $consumer->key,
+        ];
         if ($token) {
             $defaults['oauth_token'] = $token->key;
         }
@@ -120,7 +120,7 @@ class OAuthRequest {
             if (is_scalar($this->parameters[$name])) {
                 // This is the first duplicate, so transform scalar (string)
                 // into an array so we can add the duplicates.
-                $this->parameters[$name] = array($this->parameters[$name]);
+                $this->parameters[$name] = [$this->parameters[$name]];
             }
 
             $this->parameters[$name][] = $value;
@@ -176,11 +176,11 @@ class OAuthRequest {
      * and the concated with &.
      */
     public function get_signature_base_string() {
-        $parts = array(
+        $parts = [
             $this->get_normalized_http_method(),
             $this->get_normalized_http_url(),
-            $this->get_signable_parameters()
-        );
+            $this->get_signable_parameters(),
+        ];
 
         $parts = OAuthUtil::urlencode_rfc3986($parts);
 
@@ -238,7 +238,6 @@ class OAuthRequest {
      */
     public function to_header() {
         $out = 'Authorization: OAuth realm=""';
-        $total = array();
         foreach ($this->parameters as $k => $v) {
             if (substr($k, 0, 5) != "oauth") {
                 continue;

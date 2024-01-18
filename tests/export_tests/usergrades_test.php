@@ -21,15 +21,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_intellidata;
+namespace local_intellidata\export_tests;
 
 use grade_category;
 use grade_grade;
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\generator;
+use local_intellidata\setup_helper;
+use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
@@ -43,12 +49,16 @@ require_once($CFG->libdir . '/gradelib.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class usergrade_tracking_test extends \advanced_testcase {
+class usergrades_test extends \advanced_testcase {
+
+    private $newexportavailable;
 
     public function setUp():void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
+
+        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
     }
 
     /**
@@ -61,9 +71,27 @@ class usergrade_tracking_test extends \advanced_testcase {
             $this->resetAfterTest(true);
         }
 
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->graded_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
+
+        $this->graded_test(0);
+    }
+
+    /**
+     * @param int $tracking
+     *
+     * @return void
+     * @throws \invalid_parameter_exception
+     * @throws \coding_exception
+     * @throws \moodle_exception
+     */
+    private function graded_test($tracking) {
         $userdata = [
             'firstname' => 'unit test grade user',
-            'username' => 'unittest_grade_user',
+            'username' => 'unittest_grade_user' . $tracking,
             'password' => 'Unittest_GradeUser1!',
         ];
 
@@ -99,7 +127,8 @@ class usergrade_tracking_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'usergrades']);
-        $datarecord = $storage->get_log_entity_data('u', $data);
+        $datarecord = $storage->get_log_entity_data($tracking == 1 ? 'c' : 'u', $data);
+
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

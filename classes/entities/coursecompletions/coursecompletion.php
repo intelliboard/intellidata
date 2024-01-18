@@ -45,28 +45,41 @@ class coursecompletion extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Course completion internal ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'timecompleted' => array(
+            ],
+            'timecompleted' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when course was completed.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        $object->courseid = $object->course;
+
+        return $object;
+    }
 }

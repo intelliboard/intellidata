@@ -59,7 +59,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -77,14 +77,14 @@ class local_intellidata_configlib extends external_api {
             'moodleconfig' => ParamsHelper::get_moodle_config(),
             'pluginversion' => ParamsHelper::get_plugin_version(),
             'pluginconfig' => SettingsHelper::get_plugin_settings(),
-            'cronconfig' => TasksHelper::get_tasks_config()
+            'cronconfig' => TasksHelper::get_tasks_config(),
         ];
 
         $encryptionservice = new encryption_service();
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($config)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -93,10 +93,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function get_plugin_config_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -125,7 +125,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -135,14 +135,14 @@ class local_intellidata_configlib extends external_api {
 
         $params = self::validate_parameters(
             self::set_plugin_config_parameters(), [
-                'data' => $data
+                'data' => $data,
             ]
         );
 
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
             'name' => PARAM_TEXT,
-            'value' => PARAM_TEXT
+            'value' => PARAM_TEXT,
         ]);
 
         if (SettingsHelper::is_setting_updatable($params['name'])) {
@@ -156,7 +156,7 @@ class local_intellidata_configlib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt($message),
-            'status' => $status
+            'status' => $status,
         ];
     }
 
@@ -165,10 +165,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function set_plugin_config_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -200,7 +200,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -216,7 +216,7 @@ class local_intellidata_configlib extends external_api {
 
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
-            'datatype' => PARAM_TEXT
+            'datatype' => PARAM_TEXT,
         ]);
 
         $exportlogrepository = new export_log_repository();
@@ -232,13 +232,13 @@ class local_intellidata_configlib extends external_api {
 
             return [
                 'data' => $encryptionservice->encrypt('Datatype successfully resetted'),
-                'status' => apilib::STATUS_SUCCESS
+                'status' => apilib::STATUS_SUCCESS,
             ];
         }
 
         return [
             'data' => 'Datatype not enabled for export.',
-            'status' => apilib::STATUS_ERROR
+            'status' => apilib::STATUS_ERROR,
         ];
     }
 
@@ -249,10 +249,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function reset_datatype_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -280,7 +280,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -298,7 +298,7 @@ class local_intellidata_configlib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt('Migration successfully restarted'),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -309,10 +309,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function reset_migration_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -340,7 +340,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -356,7 +356,7 @@ class local_intellidata_configlib extends external_api {
 
             return [
                 'data' => "Tasks manager outdated",
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -365,21 +365,21 @@ class local_intellidata_configlib extends external_api {
         if (!$task) {
             return [
                 'data' => "Task '$taskname' not found",
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         if (!\core\task\manager::is_runnable()) {
             return [
                 'data' => get_string('cannotfindthepathtothecli', 'tool_task'),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         if (!$task->can_run()) {
             return [
                 'data' => get_string('nopermissions', 'error'),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -387,7 +387,7 @@ class local_intellidata_configlib extends external_api {
         if (TasksHelper::is_task_running($task)) {
             return [
                 'data' => 'Task already running',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -400,7 +400,7 @@ class local_intellidata_configlib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt($output),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -411,10 +411,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function run_migration_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -446,7 +446,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -462,19 +462,19 @@ class local_intellidata_configlib extends external_api {
 
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
-            'id' => PARAM_INT
+            'id' => PARAM_INT,
         ]);
 
         if (TasksHelper::delete_adhoc_task($params['id'])) {
             return [
                 'data' => get_string('taskdeleted', ParamsHelper::PLUGIN),
-                'status' => apilib::STATUS_SUCCESS
+                'status' => apilib::STATUS_SUCCESS,
             ];
         }
 
         return [
             'data' => get_string('tasknotdeleted', ParamsHelper::PLUGIN),
-            'status' => apilib::STATUS_ERROR
+            'status' => apilib::STATUS_ERROR,
         ];
     }
 
@@ -485,10 +485,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function delete_adhoc_task_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -520,7 +520,7 @@ class local_intellidata_configlib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -542,7 +542,7 @@ class local_intellidata_configlib extends external_api {
             'hour' => PARAM_TEXT,
             'day' => PARAM_TEXT,
             'month' => PARAM_TEXT,
-            'dayofweek' => PARAM_TEXT
+            'dayofweek' => PARAM_TEXT,
         ]);
 
         $classname = 'local_intellidata\task\\' . $params['taskname'];
@@ -551,19 +551,19 @@ class local_intellidata_configlib extends external_api {
             if (TasksHelper::save_scheduled_task($classname, $params)) {
                 return [
                     'data' => get_string('scheduledtaskupdated', ParamsHelper::PLUGIN),
-                    'status' => apilib::STATUS_SUCCESS
+                    'status' => apilib::STATUS_SUCCESS,
                 ];
             }
         } catch (Exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
         return [
             'data' => get_string('scheduledtasknotupdated', ParamsHelper::PLUGIN),
-            'status' => apilib::STATUS_ERROR
+            'status' => apilib::STATUS_ERROR,
         ];
     }
 
@@ -574,10 +574,10 @@ class local_intellidata_configlib extends external_api {
      */
     public static function save_task_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 

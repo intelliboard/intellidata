@@ -46,33 +46,32 @@ class quizquestionattemptsteps extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Record ID.',
                 'default' => 0,
-            ),
-            'questionattemptid' => array(
+            ],
+            'questionattemptid' => [
                 'type' => PARAM_INT,
                 'description' => 'Question Attempt ID.',
                 'default' => 0,
-            ),
-            'state' => array(
+            ],
+            'state' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Question Attempt state ID.',
                 'default' => 0,
-            ),
-            'fraction' => array(
+            ],
+            'fraction' => [
                 'type' => PARAM_FLOAT,
                 'description' => 'Grade.',
                 'default' => 1,
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when record created.',
                 'default' => 0,
-            )
-        );
+            ],
+        ];
     }
-
 }

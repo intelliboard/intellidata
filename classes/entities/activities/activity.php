@@ -24,6 +24,8 @@
  */
 namespace local_intellidata\entities\activities;
 
+use core\invalid_persistent_exception;
+
 /**
  * Class for preparing data for Activities.
  *
@@ -45,63 +47,104 @@ class activity extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Course Module ID.',
                 'default' => 0,
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'section' => array(
+            ],
+            'section' => [
                 'type' => PARAM_INT,
                 'description' => 'Course sections ID.',
                 'default' => 0,
-            ),
-            'module' => array(
+            ],
+            'module' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Module type.',
                 'default' => '',
-            ),
-            'instance' => array(
+            ],
+            'instance' => [
                 'type' => PARAM_INT,
                 'description' => 'Course module instance ID.',
                 'default' => 0,
-            ),
-            'instancename' => array(
+            ],
+            'instancename' => [
                 'type' => PARAM_RAW,
                 'description' => 'Course module instance title.',
                 'default' => '',
-            ),
-            'visible' => array(
+            ],
+            'visible' => [
                 'type' => PARAM_INT,
                 'description' => 'Course module status',
                 'default' => 1,
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when course module created.',
                 'default' => 0,
-            ),
-            'completion' => array(
+            ],
+            'completion' => [
                 'type' => PARAM_INT,
                 'description' => 'Completion tracking.',
                 'default' => 0,
-            ),
-            'completionexpected' => array(
+            ],
+            'completionexpected' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when course module created.',
                 'default' => 0,
-            ),
-            'params' => array(
+            ],
+            'params' => [
                 'type' => PARAM_RAW,
                 'description' => 'Additional instance parameters.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        $activitdata = new \stdClass();
+        $activitdata->id = $object->id;
+        $activitdata->courseid = $object->course;
+
+        if (!count($fields)) {
+            if (empty($object->instance)) {
+                $object = $DB->get_record('course_modules', ['id' => $object->id]);
+            }
+
+            if (!isset($object->modulename) && $object->module) {
+                $module = $DB->get_record('modules', ['id' => $object->module]);
+                $object->modulename = $module->name;
+            }
+
+            if ($instance = $DB->get_record($object->modulename, ['id' => $object->instance])) {
+                $activitdata->instance = $instance->id;
+                $activitdata->instancename = $instance->name;
+                $activitdata->params = observer::set_additional_params($object->modulename, $instance);
+            }
+
+            $activitdata->module = $object->modulename;
+            $activitdata->section = $object->section;
+            $activitdata->visible = isset($object->visible) ? $object->visible : 1;
+            $activitdata->timecreated = $object->added;
+            $activitdata->completionexpected = isset($object->completionexpected) ? $object->completionexpected : 0;
+            $activitdata->completion = isset($object->completion) ? $object->completion : 0;
+        }
+
+        return $activitdata;
+    }
 }

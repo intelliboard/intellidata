@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\quizquestionanswers;
 
-
 /**
  * Class for preparing data for Activities.
  *
@@ -46,43 +45,62 @@ class quizquestionattempts extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Record ID.',
                 'default' => 0,
-            ),
-            'attemptid' => array(
+            ],
+            'attemptid' => [
                 'type' => PARAM_INT,
                 'description' => 'Quiz Attempt ID.',
                 'default' => 0,
-            ),
-            'questionid' => array(
+            ],
+            'questionid' => [
                 'type' => PARAM_INT,
                 'description' => 'Question ID.',
                 'default' => 0,
-            ),
-            'uniqueid' => array(
+            ],
+            'uniqueid' => [
                 'type' => PARAM_INT,
                 'description' => 'Question attempt Unique ID.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when record modified.',
                 'default' => 0,
-            ),
-            'maxmark' => array(
+            ],
+            'maxmark' => [
                 'type' => PARAM_TEXT,
                 'description' => 'The grade for this question,.',
                 'default' => '',
-            ),
-            'slot' => array(
+            ],
+            'slot' => [
                 'type' => PARAM_INT,
                 'description' => 'Slot number.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        if ($quizattempts = $DB->get_record('quiz_attempts', ['uniqueid' => $object->questionusageid])) {
+            $object->attemptid = $quizattempts->id;
+            $object->uniqueid = $quizattempts->uniqueid;
+            $object->timemodified = $quizattempts->timemodified;
+        }
+
+        return $object;
+    }
 }

@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\survey;
 
-
 /**
  * Class for preparing data for survey.
  *
@@ -46,63 +45,62 @@ class survey extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Survey ID.',
                 'default' => 0,
-            ),
-            'course' => array(
+            ],
+            'course' => [
                 'type' => PARAM_INT,
                 'description' => 'Course ID.',
                 'default' => 0,
-            ),
-            'template' => array(
+            ],
+            'template' => [
                 'type' => PARAM_INT,
                 'description' => 'Template ID.',
                 'default' => 0,
-            ),
-            'days' => array(
+            ],
+            'days' => [
                 'type' => PARAM_INT,
                 'description' => 'Days.',
                 'default' => 0,
-            ),
-            'timecreated' => array(
+            ],
+            'timecreated' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when survey created.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when survey updated.',
                 'default' => 0,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Name.',
                 'default' => '',
-            ),
-            'intro' => array(
+            ],
+            'intro' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Intro text.',
                 'default' => '',
-            ),
-            'infoformat' => array(
+            ],
+            'infoformat' => [
                 'type' => PARAM_INT,
                 'description' => 'Info format.',
                 'default' => 0,
-            ),
-            'questions' => array(
+            ],
+            'questions' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Questions.',
                 'default' => '',
-            ),
-            'completionsubmit' => array(
+            ],
+            'completionsubmit' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Completion submit.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
-
 }

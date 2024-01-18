@@ -96,7 +96,7 @@ class config_test extends \advanced_testcase {
         if ($record = datatypeconfig::get_record(['datatype' => $reqdatatype])) {
             $data = [
                 'timemodified_field' => 'test_field',
-                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
             ];
             $configservice->save_config($record, (object)$data);
 
@@ -139,7 +139,7 @@ class config_test extends \advanced_testcase {
                 'rewritable' => false,
                 'status' => $record->get('status'),
                 'tableindex' => $record->get('tableindex'),
-                'enableexport' => false
+                'enableexport' => false,
             ];
             $configservice->save_config($record, (object)$data);
 
@@ -176,7 +176,7 @@ class config_test extends \advanced_testcase {
         $reqdatatype = key(datatypes_service::get_required_datatypes());
         if ($record = datatypeconfig::get_record(['datatype' => $reqdatatype])) {
             $data = [
-                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
             ];
             // Change datatype paramert - tabletype.
             $configservice->save_config($record, (object)$data);
@@ -216,7 +216,7 @@ class config_test extends \advanced_testcase {
         $reqdatatype = key(datatypes_service::get_required_datatypes());
         if ($record = datatypeconfig::get_record(['datatype' => $reqdatatype])) {
             $data = [
-                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
             ];
             // Change datatype paramert - tabletype.
             $configservice->save_config($record, (object)$data);

@@ -49,7 +49,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('last_exported_id', XMLDB_TYPE_INTEGER, '11', null, null, null);
 
         // Adding keys to table local_intellidata_export_log.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_intellidata_export_log.
         if (!$dbman->table_exists($table)) {
@@ -71,7 +71,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
 
         // Adding keys to table local_intellidata_logs.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_intellidata_logs.
         if (!$dbman->table_exists($table)) {
@@ -101,7 +101,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
 
         // Adding keys to table local_intellidata_storage.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_intellidata_storage.
         if (!$dbman->table_exists($table)) {
@@ -154,7 +154,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
 
         // Adding keys to table local_intellidata_export_ids.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_intellidata_export_ids.
         if (!$dbman->table_exists($table)) {
@@ -196,7 +196,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('useragent', XMLDB_TYPE_CHAR, '255', null, null, null, null);
         $table->add_field('ip', XMLDB_TYPE_CHAR, '100', null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
 
         // Conditionally launch create table for local_intelliboard_tracking.
@@ -206,7 +206,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
 
         // Add index to local_intellidata_tracking.
         $table = new xmldb_table('local_intellidata_tracking');
-        $index = new xmldb_index('userid_page_param_idx', XMLDB_INDEX_NOTUNIQUE, array('userid', 'page', 'param'));
+        $index = new xmldb_index('userid_page_param_idx', XMLDB_INDEX_NOTUNIQUE, ['userid', 'page', 'param']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -218,7 +218,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timespend', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timepoint', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('trackid', XMLDB_KEY_FOREIGN, ['trackid'], 'local_intellidata_tracking', ['id']);
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
@@ -226,7 +226,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
 
         // Add index to local_intellidata_trlogs.
         $table = new xmldb_table('local_intellidata_trlogs');
-        $index = new xmldb_index('trackid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, array('trackid', 'timepoint'));
+        $index = new xmldb_index('trackid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, ['trackid', 'timepoint']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -238,7 +238,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timespend', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timepoint', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $table->add_key('logid', XMLDB_KEY_FOREIGN, ['logid'], 'local_intellidata_trlogs', ['id']);
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
@@ -246,7 +246,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
 
         // Add index to local_intelliboard_details.
         $table = new xmldb_table('local_intellidata_trdetails');
-        $index = new xmldb_index('logid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, array('logid', 'timepoint'));
+        $index = new xmldb_index('logid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, ['logid', 'timepoint']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
@@ -360,7 +360,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
 
         // Adding keys to table local_intellidata_config.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
         // Conditionally launch create table for local_intellidata_config.
         if (!$dbman->table_exists($table)) {
@@ -429,7 +429,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to export ad-hoc task..
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => ['userinfocategories', 'userinfofields', 'userinfodatas']
+            'datatypes' => ['userinfocategories', 'userinfofields', 'userinfodatas'],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
 
@@ -587,7 +587,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $dbman->drop_key($table, $key);
 
         // Remove index from local_intellidata_trlogs table.
-        $index = new xmldb_index('trackid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, array('trackid', 'timepoint'));
+        $index = new xmldb_index('trackid_timepoint_idx', XMLDB_INDEX_NOTUNIQUE, ['trackid', 'timepoint']);
         if ($dbman->index_exists($table, $index)) {
             $dbman->drop_index($table, $index);
         }
@@ -735,7 +735,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $datatypestodelete = [
             'user_info_category',
             'user_info_data',
-            'user_info_field'
+            'user_info_field',
         ];
 
         foreach ($datatypestodelete as $datatype) {
@@ -743,7 +743,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             // Delete old export files.
             $exportservice->delete_files([
                 'datatype' => $datatype,
-                'timemodified' => time()
+                'timemodified' => time(),
             ]);
 
             // Delete export logs.
@@ -771,7 +771,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Delete old export files.
         $exportservice->delete_files([
             'datatype' => $datatype,
-            'timemodified' => time()
+            'timemodified' => time(),
         ]);
 
         // Delete export logs.
@@ -805,13 +805,13 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             'quizquestionattempt',
             'quizquestionattemptstep',
             'quizquestionattemptstepdata',
-            'ltisubmissions'
+            'ltisubmissions',
         ];
 
         foreach ($datatypestodelete as $datatype) {
             $exportservice->delete_files([
                 'datatype' => $datatype,
-                'timemodified' => time()
+                'timemodified' => time(),
             ]);
 
             // Delete export logs.
@@ -835,7 +835,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to export ad-hoc task.
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => [$datatype]
+            'datatypes' => [$datatype],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
 
@@ -851,7 +851,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $datatypes = [
             'quizquestionattempts',
             'quizquestionattemptsteps',
-            'quizquestionattemptstepsdata'
+            'quizquestionattemptstepsdata',
         ];
 
         foreach ($datatypes as $datatype) {
@@ -862,7 +862,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             // Add new datatypes to export ad-hoc task.
             $exporttask = new export_adhoc_task();
             $exporttask->set_custom_data([
-                'datatypes' => [$datatype]
+                'datatypes' => [$datatype],
             ]);
             \core\task\manager::queue_adhoc_task($exporttask);
         }
@@ -883,7 +883,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to export ad-hoc task.
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => [$datatype]
+            'datatypes' => [$datatype],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
 
@@ -908,7 +908,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             // Add new datatypes to export ad-hoc task.
             $exporttask = new export_adhoc_task();
             $exporttask->set_custom_data([
-                'datatypes' => [$datatype]
+                'datatypes' => [$datatype],
             ]);
             \core\task\manager::queue_adhoc_task($exporttask);
         }
@@ -948,7 +948,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         $tables = [
             'local_intellidata_tracking',
             'local_intellidata_trdetails',
-            'local_intellidata_trlogs'
+            'local_intellidata_trlogs',
         ];
 
         // Add index to tables.
@@ -987,7 +987,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to export ad-hoc task.
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => [$datatype]
+            'datatypes' => [$datatype],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
 
@@ -1015,7 +1015,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to the plugin config and export.
         $datatypes = [
             'coursegroups',
-            'coursegroupmembers'
+            'coursegroupmembers',
         ];
 
         foreach ($datatypes as $datatype) {
@@ -1025,7 +1025,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             // Add new datatypes to export ad-hoc task.
             $exporttask = new export_adhoc_task();
             $exporttask->set_custom_data([
-                'datatypes' => [$datatype]
+                'datatypes' => [$datatype],
             ]);
             \core\task\manager::queue_adhoc_task($exporttask);
         }
@@ -1047,7 +1047,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
     if ($oldversion < 2023042000) {
 
         $datatypes = [
-            'users', 'quizattempts', 'quizquestionattempts'
+            'users', 'quizattempts', 'quizquestionattempts',
         ];
 
         $exportlogrepository = new export_log_repository();
@@ -1061,14 +1061,14 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             $exportservice = new export_service();
             $exportservice->delete_files([
                 'datatype' => $datatype,
-                'timemodified' => time()
+                'timemodified' => time(),
             ]);
 
             // Add task to migrate records.
             if ($record->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) {
                 $exporttask = new export_adhoc_task();
                 $exporttask->set_custom_data([
-                    'datatypes' => [$record->get('datatype')]
+                    'datatypes' => [$record->get('datatype')],
                 ]);
 
                 \core\task\manager::queue_adhoc_task($exporttask);
@@ -1084,7 +1084,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             'competency', 'competency_usercomp', 'competency_coursecomp',
             'competency_usercompcourse', 'competency_modulecomp', 'competency_plan',
             'competency_usercompplan', 'tenant', 'tool_tenant', 'tool_tenant_user',
-            'roleassignments'
+            'roleassignments',
         ];
 
         $exportlogrepository = new export_log_repository();
@@ -1158,7 +1158,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
             [
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'tabletype2' => datatypeconfig::TABLETYPE_LOGS
+                'tabletype2' => datatypeconfig::TABLETYPE_LOGS,
             ]);
 
         // Delete old datatype logs.
@@ -1166,7 +1166,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         (SELECT datatype FROM {local_intellidata_config} WHERE tabletype=:tabletype OR tabletype=:tabletype2)",
             [
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'tabletype2' => datatypeconfig::TABLETYPE_LOGS
+                'tabletype2' => datatypeconfig::TABLETYPE_LOGS,
             ]);
 
         $prefix = datatypeconfig::OPTIONAL_TABLE_PREFIX;
@@ -1175,7 +1175,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
             SET datatype = CONCAT('{$prefix}', datatype)
             WHERE tabletype = :tabletype AND  datatype NOT LIKE '" . $prefix . "%'",
             [
-                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
             ]
         );
 
@@ -1190,7 +1190,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
                 recordscount=0
             WHERE tabletype = :tabletype AND  datatype NOT LIKE '" . $prefix . "%'",
             [
-                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL
+                'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
             ]
         );
 
@@ -1237,7 +1237,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
     if ($oldversion < 2023070503) {
 
         $datatypes = [
-            'question_categories'
+            'question_categories',
         ];
 
         $exportlogrepository = new export_log_repository();
@@ -1270,7 +1270,7 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to export ad-hoc task.
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => [$datatype]
+            'datatypes' => [$datatype],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
 
@@ -1288,11 +1288,27 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         // Add new datatypes to export ad-hoc task.
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => [$datatype]
+            'datatypes' => [$datatype],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
 
         upgrade_plugin_savepoint(true, 2023101200, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2024011800) {
+        $table = new xmldb_table('local_intellidata_export_log');
+        $field = new xmldb_field('count_in_files', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('local_intellidata_logs');
+        $field = new xmldb_field('count_in_file', XMLDB_TYPE_INTEGER, '11', null, null, null, 0);
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_plugin_savepoint(true, 2024011800, 'local', 'intellidata');
     }
 
     return true;

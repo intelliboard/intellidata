@@ -24,6 +24,7 @@
  */
 namespace local_intellidata\entities\userinfodatas;
 
+use core\invalid_persistent_exception;
 
 /**
  * Class for preparing data for UserInfoDatas.
@@ -46,35 +47,53 @@ class userinfodata extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Info Data ID.',
-                'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'fieldid' => array(
+            ],
+            'fieldid' => [
                 'type' => PARAM_INT,
                 'description' => 'Field ID.',
                 'default' => 0,
-            ),
-            'data' => array(
+            ],
+            'data' => [
                 'type' => PARAM_RAW,
                 'description' => 'Data Body.',
                 'default' => '',
-            ),
-            'dataformat' => array(
+            ],
+            'dataformat' => [
                 'type' => PARAM_INT,
                 'description' => 'Data Format.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     *
+     * @return \stdClass
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+
+        foreach (self::define_properties() as $property => $propertydata) {
+            if (empty($object->{$property})) {
+                $object->{$property} = isset($propertydata['default']) ? $propertydata['default'] : null;
+            }
+        }
+
+        return $object;
+    }
 
     /**
      * @param $record
@@ -84,5 +103,4 @@ class userinfodata extends \local_intellidata\entities\entity {
         $record->event = '\core\event\user_created';
         return $record;
     }
-
 }

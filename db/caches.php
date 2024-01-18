@@ -29,16 +29,20 @@ $definitions = [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'overrideclass' => 'local_intellidata\tools\cache_application',
-        'overrideclassfile' => 'local/intellidata/classes/tools/cache_application.php'
+        'overrideclassfile' => 'local/intellidata/classes/tools/cache_application.php',
     ],
     'events' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'overrideclass' => 'local_intellidata\tools\cache_application',
-        'overrideclassfile' => 'local/intellidata/classes/tools/cache_application.php'
+        'overrideclassfile' => 'local/intellidata/classes/tools/cache_application.php',
     ],
     'config' => [
         'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true
-    ]
+        'simplekeys' => true,
+    ],
+    'datatypes' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+    ],
 ];

@@ -87,7 +87,7 @@ class encryption_service {
     public function build_auth_header() {
         return $this->encrypt(json_encode([
             'clientidentifier' => $this->clientidentifier,
-            'exp' => time() + self::AUTH_LIFE_TIME
+            'exp' => time() + self::AUTH_LIFE_TIME,
         ], JSON_UNESCAPED_UNICODE));
     }
 

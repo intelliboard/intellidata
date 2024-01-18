@@ -130,7 +130,7 @@ class ltitypes extends \local_intellidata\entities\entity {
                 'type' => PARAM_TEXT,
                 'description' => 'Description',
                 'default' => '',
-            ]
+            ],
         ];
     }
 }

@@ -56,7 +56,7 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
 
     $options = [
         StorageHelper::FILE_STORAGE => get_string('file', $pluginname),
-        StorageHelper::DATABASE_STORAGE => get_string('database', $pluginname)
+        StorageHelper::DATABASE_STORAGE => get_string('database', $pluginname),
     ];
 
     if (method_exists($eventscache, 'store_supports_get_all_keys') && $eventscache->store_supports_get_all_keys()) {
@@ -216,7 +216,7 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
         local_intellidata\repositories\tracking\tracking_repository::TYPE_LIVE =>
             new lang_string('do_not_use_compresstracking', $pluginname),
         local_intellidata\repositories\tracking\tracking_repository::TYPE_FILE =>
-            new lang_string('file_compresstracking', $pluginname)
+            new lang_string('file_compresstracking', $pluginname),
     ];
     if (method_exists($trackingcache, 'store_supports_get_all_keys') && $trackingcache->store_supports_get_all_keys()) {
         $options[local_intellidata\repositories\tracking\tracking_repository::TYPE_CACHE] = new lang_string(
@@ -377,6 +377,17 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     $settings->add($setting);
 
     $name = 'eventstracking';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
+    $name = 'newtracking';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
         get_string($name, $pluginname),

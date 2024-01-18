@@ -82,13 +82,13 @@ if ($action == 'reset' && $record->get('datatype')) {
     $exportservice = new export_service();
     $exportservice->delete_files([
         'datatype' => $record->get('datatype'),
-        'timemodified' => time()
+        'timemodified' => time(),
     ]);
 
     // Add task to migrate records.
     $exporttask = new export_adhoc_task();
     $exporttask->set_custom_data([
-        'datatypes' => [$record->get('datatype')]
+        'datatypes' => [$record->get('datatype')],
     ]);
     \core\task\manager::queue_adhoc_task($exporttask);
 
@@ -100,7 +100,7 @@ if ($action == 'reset' && $record->get('datatype')) {
     $exportservice = new export_service();
     $exportservice->delete_files([
         'datatype' => $record->get('datatype'),
-        'timemodified' => time()
+        'timemodified' => time(),
     ]);
 
     if (!empty($exportlog)) {
@@ -118,7 +118,7 @@ if ($action == 'reset' && $record->get('datatype')) {
 
 $editform = new local_intellidata_editlogsentity_config(null, [
     'data' => $recorddata,
-    'exportlog' => $exportlog
+    'exportlog' => $exportlog,
 ]);
 
 if ($editform->is_cancelled()) {
@@ -157,7 +157,7 @@ if ($editform->is_cancelled()) {
         // Add task to migrate records.
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
-            'datatypes' => [$record->get('datatype')]
+            'datatypes' => [$record->get('datatype')],
         ]);
         \core\task\manager::queue_adhoc_task($exporttask);
     }

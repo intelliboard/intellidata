@@ -31,10 +31,10 @@ class OAuthUtil {
      */
     public static function urlencode_rfc3986($input) {
         if (is_array($input)) {
-            return array_map(array(
+            return array_map([
                 'local_intellidata\lti\OAuthUtil',
-                'urlencode_rfc3986'
-            ), $input);
+                'urlencode_rfc3986',
+            ], $input);
         } else {
             if (is_scalar($input)) {
                 return str_replace('+', ' ', str_replace('%7E', '~', rawurlencode($input)));
@@ -62,7 +62,7 @@ class OAuthUtil {
         // Ref Spec 9.1.1.
         uksort($params, 'strcmp');
 
-        $pairs = array();
+        $pairs = [];
         foreach ($params as $parameter => $value) {
             if (is_array($value)) {
                 // If two or more parameters share the same name, they are sorted by their value.

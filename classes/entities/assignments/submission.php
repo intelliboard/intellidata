@@ -45,63 +45,98 @@ class submission extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Submission ID.',
                 'default' => 0,
-            ),
-            'assignment' => array(
+            ],
+            'assignment' => [
                 'type' => PARAM_INT,
                 'description' => 'Assignment ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when submission created or modified.',
                 'default' => 0,
-            ),
-            'status' => array(
+            ],
+            'status' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Submission status.',
                 'default' => '',
-            ),
-            'attemptnumber' => array(
+            ],
+            'attemptnumber' => [
                 'type' => PARAM_INT,
                 'description' => 'Submission attempt.',
                 'default' => '',
-            ),
-            'grade' => array(
+            ],
+            'grade' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Submission grade.',
                 'default' => '',
-            ),
-            'feedback' => array(
+            ],
+            'feedback' => [
                 'type' => PARAM_RAW,
                 'description' => 'Submission feedback.',
                 'default' => '',
-            ),
-            'feedback_at' => array(
+            ],
+            'feedback_at' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when submission greaded.',
                 'default' => 0,
-            ),
-            'feedback_by' => array(
+            ],
+            'feedback_by' => [
                 'type' => PARAM_INT,
                 'description' => 'Grader User Id.',
                 'default' => 0,
-            ),
-            'submission_type' => array(
+            ],
+            'submission_type' => [
                 'type' => PARAM_TEXT,
                 'description' => 'Submission Type.',
                 'default' => '',
-            ),
-        );
+            ],
+        ];
     }
 
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = []) {
+        global $DB;
+
+        $object->submission_type = observer::get_submission_type($object->id);
+        $gradedata = $DB->get_record('assign_grades', [
+            'assignment' => $object->assignment,
+            'userid' => $object->userid,
+            'attemptnumber' => $object->attemptnumber,
+        ]);
+
+        if (!empty($gradedata->grade)) {
+            $object->grade = $gradedata->grade;
+            $object->feedback_at = $gradedata->timemodified;
+            $object->feedback_by = $gradedata->grader;
+
+            $feedback = $DB->get_record('assignfeedback_comments', [
+                'assignment' => $gradedata->assignment,
+                'grade' => $gradedata->id,
+            ]);
+
+            if (!empty($feedback->commenttext)) {
+                $object->feedback = $feedback->commenttext;
+            }
+        }
+
+        return $object;
+    }
 }

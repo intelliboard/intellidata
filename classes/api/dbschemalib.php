@@ -53,7 +53,7 @@ class local_intellidata_dbschemalib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -74,7 +74,7 @@ class local_intellidata_dbschemalib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($dbschemaservice->export())),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -83,10 +83,10 @@ class local_intellidata_dbschemalib extends external_api {
      */
     public static function get_dbschema_custom_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted DB Schema'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -110,7 +110,7 @@ class local_intellidata_dbschemalib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -128,7 +128,7 @@ class local_intellidata_dbschemalib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($tables)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -137,10 +137,10 @@ class local_intellidata_dbschemalib extends external_api {
      */
     public static function get_dbschema_unified_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted DB Schema'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -164,7 +164,7 @@ class local_intellidata_dbschemalib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -183,7 +183,7 @@ class local_intellidata_dbschemalib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($tables)),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -192,10 +192,10 @@ class local_intellidata_dbschemalib extends external_api {
      */
     public static function get_dbschema_logs_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted DB Schema'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 

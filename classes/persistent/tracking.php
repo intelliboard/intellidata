@@ -96,7 +96,7 @@ class tracking extends base {
             'ip' => [
                 'type' => PARAM_TEXT,
                 'description' => 'IP adress.',
-            ]
+            ],
         ];
     }
 

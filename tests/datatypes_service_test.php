@@ -167,7 +167,7 @@ class datatypes_service_test extends \advanced_testcase {
             'quizquestionattemptsteps', 'quizquestionattemptstepsdata', 'assignmentsubmissions',
             'ltisubmittion', 'coursesections', 'ltitypes', 'survey', 'surveyanswers', 'tracking',
             'trackinglog', 'trackinglogdetail', 'userinfocategories', 'userinfofields',
-            'userinfodatas', 'participation', 'userlogins'
+            'userinfodatas', 'participation', 'userlogins',
         ];
         $this->assertEquals($defaultdatatypes, array_keys($datatypes));
 
@@ -225,7 +225,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'coursecompletions' => [
                 'name' => 'coursecompletions',
@@ -236,7 +236,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'rewritable' => false,
                 'timemodified_field' => false,
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'roles' => [
                 'name' => 'roles',
@@ -249,7 +249,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',
@@ -262,7 +262,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'timemodified_field' => false,
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => true,
             ],
             'quizquestionattempts' => [
                 'name' => 'quizquestionattempts',
@@ -275,7 +275,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'userinfofields' => [
                 'name' => 'userinfofields',
@@ -286,8 +286,8 @@ class datatypes_service_test extends \advanced_testcase {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
-            ]
+                'databaseexport' => false,
+            ],
         ];
         $datatype = datatypes_service::format_required_datatypes($datatypes);
 
@@ -334,7 +334,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'coursecompletions' => [
                 'name' => 'coursecompletions',
@@ -345,7 +345,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'rewritable' => false,
                 'timemodified_field' => false,
                 'filterbyid' => false,
-                'databaseexport' => false
+                'databaseexport' => false,
             ],
             'roles' => [
                 'name' => 'roles',
@@ -358,7 +358,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'timemodified_field' => false,
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',
@@ -371,7 +371,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'timemodified_field' => false,
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => true
+                'exportids' => true,
             ],
             'quizquestionattempts' => [
                 'name' => 'quizquestionattempts',
@@ -384,7 +384,7 @@ class datatypes_service_test extends \advanced_testcase {
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
                 'databaseexport' => true,
-                'exportids' => false
+                'exportids' => false,
             ],
             'userinfofields' => [
                 'name' => 'userinfofields',
@@ -395,8 +395,8 @@ class datatypes_service_test extends \advanced_testcase {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => false
-            ]
+                'databaseexport' => false,
+            ],
         ];
         $datatype = datatypes_service::format_required_datatypes($datatypes);
 

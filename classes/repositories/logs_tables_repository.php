@@ -95,7 +95,7 @@ class logs_tables_repository extends base_tables_repository {
             'action',
             'target',
             'objecttable',
-            'objectid'
+            'objectid',
         ];
     }
 
@@ -109,7 +109,7 @@ class logs_tables_repository extends base_tables_repository {
 
             $entities[$datatype['name']] = [
                 'name' => $datatype['name'],
-                'fields' => $entityfields
+                'fields' => $entityfields,
             ];
         }
 

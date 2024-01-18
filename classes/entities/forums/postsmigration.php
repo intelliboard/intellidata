@@ -37,10 +37,10 @@ use local_intellidata\services\dbschema_service;
  */
 class postsmigration extends \local_intellidata\entities\migration {
 
-    public $entity      = '\local_intellidata\entities\forums\forumpost';
-    public $eventname   = '\mod_forum\event\post_created';
-    public $table       = 'forum_posts';
-    public $tablealias  = 'p';
+    public $entity = '\local_intellidata\entities\forums\forumpost';
+    public $eventname = '\mod_forum\event\post_created';
+    public $table = 'forum_posts';
+    public $tablealias = 'p';
 
     /**
      * @param false $count
@@ -65,7 +65,7 @@ class postsmigration extends \local_intellidata\entities\migration {
             }
             $where .= ' AND p.deleted = :deleted';
             $params += [
-                'deleted' => 0
+                'deleted' => 0,
             ];
         } else {
             if (!$count) {

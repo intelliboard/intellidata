@@ -61,7 +61,7 @@ class ExportHelper {
         $services = [
             'encryptionservice' => new encryption_service(),
             'exportservice' => $exportservice,
-            'exportlogrepository' => new export_log_repository()
+            'exportlogrepository' => new export_log_repository(),
         ];
 
         // Export static tables.

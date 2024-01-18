@@ -221,7 +221,7 @@ class system_tables_repository extends base_tables_repository {
             'user_preferences',
             'user_private_key',
             'search_index_requests',
-            'search_simpledb_index'
+            'search_simpledb_index',
         ];
     }
 }

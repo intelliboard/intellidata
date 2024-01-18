@@ -137,6 +137,6 @@ class lti_service {
             echo 'Invalid LTI credentials';exit;
         }
 
-        return array($this->endpoint, $parms, $this->debug);
+        return [$this->endpoint, $parms, $this->debug];
     }
 }

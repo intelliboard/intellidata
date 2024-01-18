@@ -160,6 +160,10 @@ class record_deleted_observer_test extends \advanced_testcase {
 
         $this->trigger_enrol_instance_deleted();
 
+        // Rebuild datatypes cache data.
+        \local_intellidata\services\datatypes_service::get_datatypes(false, true);
+
+        // Get datatypes with default configuration.
         $exportservice = new export_service();
         $datatypes = $exportservice->get_datatypes(false);
 
@@ -220,7 +224,7 @@ class record_deleted_observer_test extends \advanced_testcase {
         $data = [
             'fullname' => 'ibcourse1' . $ccount,
             'idnumber' => '1111111' . $ccount,
-            'shortname' => 'ibscourse1' . $ccount
+            'shortname' => 'ibscourse1' . $ccount,
         ];
 
         $course = generator::create_course($data);
@@ -230,11 +234,11 @@ class record_deleted_observer_test extends \advanced_testcase {
             'status' => ENROL_INSTANCE_ENABLED,
             'name' => 'Test instance 1',
             'customint6' => 1,
-            'roleid' => $studentrole->id
+            'roleid' => $studentrole->id,
         ]);
 
         // Deleting enrol instance.
-        $instance = $DB->get_record('enrol', array('id' => $instanceid));
+        $instance = $DB->get_record('enrol', ['id' => $instanceid]);
         $selfplugin->delete_instance($instance);
 
         return $instance;

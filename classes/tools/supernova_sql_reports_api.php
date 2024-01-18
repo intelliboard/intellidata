@@ -54,7 +54,7 @@ class supernova_sql_reports_api {
         $response = json_decode($client->post($url, $data, [
             'CURLOPT_SSL_VERIFYPEER' => false,
             'CURLOPT_SSL_VERIFYHOST' => false,
-            'CURLOPT_HTTPHEADER' => ['Accept: application/json']
+            'CURLOPT_HTTPHEADER' => ['Accept: application/json'],
         ]), true);
 
         if (empty($response['message']) || $response['message'] !== 'ok') {
@@ -78,7 +78,7 @@ class supernova_sql_reports_api {
         $response = json_decode($client->delete($url, [], [
             'CURLOPT_SSL_VERIFYPEER' => false,
             'CURLOPT_SSL_VERIFYHOST' => false,
-            'CURLOPT_HTTPHEADER' => ['Accept: application/json']
+            'CURLOPT_HTTPHEADER' => ['Accept: application/json'],
         ]), true);
 
         if (empty($response['message']) || $response['message'] !== 'ok') {

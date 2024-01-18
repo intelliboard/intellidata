@@ -38,33 +38,32 @@ class trackinglogdetail extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Record ID.',
                 'default' => 0,
-            ),
-            'logid' => array(
+            ],
+            'logid' => [
                 'type' => PARAM_INT,
                 'description' => 'Log Id.',
                 'default' => 0,
-            ),
-            'visits' => array(
+            ],
+            'visits' => [
                 'type' => PARAM_INT,
                 'description' => 'Visits.',
                 'default' => 0,
-            ),
-            'timespend' => array(
+            ],
+            'timespend' => [
                 'type' => PARAM_INT,
                 'description' => 'Timespend.',
                 'default' => 0,
-            ),
-            'timepoint' => array(
+            ],
+            'timepoint' => [
                 'type' => PARAM_INT,
                 'description' => 'Timepoint.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
-
 }

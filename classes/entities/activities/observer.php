@@ -25,9 +25,8 @@
 
 namespace local_intellidata\entities\activities;
 
-use local_intellidata\entities\activities\activity;
-use \local_intellidata\helpers\TrackingHelper;
-use \local_intellidata\services\events_service;
+use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\services\events_service;
 
 /**
  * Event observer for transcripts.
@@ -72,25 +71,10 @@ class observer {
         $eventdata = $event->get_data();
 
         $cm = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);
+        $cm->modulename = $eventdata['other']['modulename'];
 
-        $activitdata = new \stdClass();
-        $activitdata->id = $cm->id;
-        $activitdata->courseid = $cm->course;
+        $activitdata = activity::prepare_export_data($cm, $fields);
         $activitdata->crud = $eventdata['crud'];
-
-        if (!count($fields)) {
-            $instance = $event->get_record_snapshot($eventdata['other']['modulename'], $eventdata['other']['instanceid']);
-
-            $activitdata->module = $eventdata['other']['modulename'];
-            $activitdata->instance = $instance->id;
-            $activitdata->section = $cm->section;
-            $activitdata->instancename = $instance->name;
-            $activitdata->visible = $cm->visible;
-            $activitdata->timecreated = $cm->added;
-            $activitdata->completionexpected = $cm->completionexpected;
-            $activitdata->completion = $cm->completion;
-            $activitdata->params = self::set_additional_params($eventdata['other']['modulename'], $instance);
-        }
 
         $entity = new activity($activitdata);
         $data = $entity->export();
@@ -104,14 +88,14 @@ class observer {
         switch ($modulename) {
             case 'forum':
                 $params = [
-                    'isannouncement' => ($instance->type == 'news') ? 1 : 0
+                    'isannouncement' => ($instance->type == 'news') ? 1 : 0,
                 ];
                 break;
             case 'quiz':
                 $params = [
                     'timeopen' => $instance->timeopen,
                     'timeclose' => $instance->timeclose + $instance->graceperiod,
-                    'duedate' => $instance->timeclose
+                    'duedate' => $instance->timeclose,
                 ];
                 break;
             case 'assign':
@@ -119,7 +103,7 @@ class observer {
                     'submissiontypes' => self::get_assignment_submissiontypes($instance),
                     'startdate' => $instance->allowsubmissionsfromdate,
                     'enddate' => $instance->cutoffdate,
-                    'duedate' => ($instance->duedate) ? $instance->duedate : $instance->gradingduedate
+                    'duedate' => ($instance->duedate) ? $instance->duedate : $instance->gradingduedate,
                 ];
                 break;
             case 'certificate':
@@ -138,7 +122,7 @@ class observer {
                     'completionstatusrequired' => $instance->completionstatusrequired,
                     'completionscorerequired' => $instance->completionscorerequired,
                     'completionstatusallscos' => $instance->completionstatusallscos,
-                    'duedate' => $instance->timeclose
+                    'duedate' => $instance->timeclose,
                 ];
                 break;
             case 'lti':
@@ -223,6 +207,4 @@ class observer {
 
         return (count($plugins)) ? implode(',', $plugins) : '';
     }
-
 }
-

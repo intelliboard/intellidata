@@ -38,37 +38,37 @@ $capabilities = [
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'coursecreator' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
+            'manager' => CAP_ALLOW,
+        ],
     ],
     'local/intellidata:viewlogs' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'local/intellidata:viewconfig' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'local/intellidata:editconfig' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'local/intellidata:viewlti' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'local/intellidata:viewadhoctasks' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => []
+        'archetypes' => [],
     ],
     'local/intellidata:deleteadhoctasks' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => []
-    ]
+        'archetypes' => [],
+    ],
 ];

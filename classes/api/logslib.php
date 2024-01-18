@@ -54,7 +54,7 @@ class local_intellidata_logslib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -82,7 +82,7 @@ class local_intellidata_logslib extends external_api {
             'data' => $encryptionservice->encrypt(
                 json_encode($logs)
             ),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -91,10 +91,10 @@ class local_intellidata_logslib extends external_api {
      */
     public static function get_tasks_logs_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -118,7 +118,7 @@ class local_intellidata_logslib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -131,7 +131,7 @@ class local_intellidata_logslib extends external_api {
 
         return [
             'data' => $encryptionservice->encrypt(json_encode($exportlogrepository->get_export_logs())),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -140,10 +140,10 @@ class local_intellidata_logslib extends external_api {
      */
     public static function get_export_logs_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -171,7 +171,7 @@ class local_intellidata_logslib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -186,7 +186,7 @@ class local_intellidata_logslib extends external_api {
             'data' => $encryptionservice->encrypt(
                 json_encode($tasks)
             ),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -197,10 +197,10 @@ class local_intellidata_logslib extends external_api {
      */
     public static function get_adhoc_tasks_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -228,7 +228,7 @@ class local_intellidata_logslib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -242,7 +242,7 @@ class local_intellidata_logslib extends external_api {
         if (!method_exists($tasksmanager, 'get_running_tasks')) {
             return [
                 'data' => 'get_running_tasks method not found',
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -252,7 +252,7 @@ class local_intellidata_logslib extends external_api {
             'data' => $encryptionservice->encrypt(
                 json_encode($tasks)
             ),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -263,10 +263,10 @@ class local_intellidata_logslib extends external_api {
      */
     public static function get_running_tasks_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 
@@ -295,7 +295,7 @@ class local_intellidata_logslib extends external_api {
         } catch (\moodle_exception $e) {
             return [
                 'data' => $e->getMessage(),
-                'status' => apilib::STATUS_ERROR
+                'status' => apilib::STATUS_ERROR,
             ];
         }
 
@@ -309,7 +309,7 @@ class local_intellidata_logslib extends external_api {
 
         return [
             'data' => get_string('calculateprogresssuccessmsg', ParamsHelper::PLUGIN),
-            'status' => apilib::STATUS_SUCCESS
+            'status' => apilib::STATUS_SUCCESS,
         ];
     }
 
@@ -320,10 +320,10 @@ class local_intellidata_logslib extends external_api {
      */
     public static function calculate_migration_progress_returns() {
         return new external_single_structure(
-            array(
+            [
                 'data' => new external_value(PARAM_TEXT, 'Response message'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
-            )
+            ]
         );
     }
 

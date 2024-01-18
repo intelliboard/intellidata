@@ -46,27 +46,27 @@ class groupmember extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Member ID.',
                 'default' => 0,
-            ),
-            'groupid' => array(
+            ],
+            'groupid' => [
                 'type' => PARAM_INT,
                 'description' => 'Group ID.',
-                'default' => 0
-            ),
-            'userid' => array(
+                'default' => 0,
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
-                'default' => 0
-            ),
-            'timeadded' => array(
+                'default' => 0,
+            ],
+            'timeadded' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when user adding to group.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
 }

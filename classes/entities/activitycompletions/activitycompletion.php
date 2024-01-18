@@ -45,33 +45,32 @@ class activitycompletion extends \local_intellidata\entities\entity {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'id' => array(
+        return [
+            'id' => [
                 'type' => PARAM_INT,
                 'description' => 'Activity completion internal ID.',
                 'default' => 0,
-            ),
-            'userid' => array(
+            ],
+            'userid' => [
                 'type' => PARAM_INT,
                 'description' => 'User ID.',
                 'default' => 0,
-            ),
-            'coursemoduleid' => array(
+            ],
+            'coursemoduleid' => [
                 'type' => PARAM_INT,
                 'description' => 'Course module ID.',
                 'default' => 0,
-            ),
-            'completionstate' => array(
+            ],
+            'completionstate' => [
                 'type' => PARAM_INT,
                 'description' => 'Completion status.',
                 'default' => 0,
-            ),
-            'timemodified' => array(
+            ],
+            'timemodified' => [
                 'type' => PARAM_INT,
                 'description' => 'Timestamp when module completion was modified.',
                 'default' => 0,
-            ),
-        );
+            ],
+        ];
     }
-
 }
