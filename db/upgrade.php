@@ -1311,5 +1311,23 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024011800, 'local', 'intellidata');
     }
 
+    if ($oldversion < 2024011801) {
+
+        $exportlogrepository = new export_log_repository();
+        $datatype = 'activities';
+
+        // Insert or update log record for datatype.
+        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+        // Add new datatypes to export ad-hoc task.
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$datatype],
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2024011801, 'local', 'intellidata');
+    }
+
     return true;
 }

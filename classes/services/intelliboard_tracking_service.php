@@ -163,21 +163,23 @@ class intelliboard_tracking_service {
         if ($offset < $allcount) {
             $DB->execute("
                         INSERT INTO {local_intellidata_tracking}
-                        SELECT
-                             MAX(id) AS id,
-                             userid,
-                             0 AS courseid,
-                             'site' AS page,
-                             1 AS param,
-                             SUM(visits) AS visits,
-                             SUM(timespend) AS timespend,
-                             MIN(firstaccess) AS firstaccess,
-                             MAX(lastaccess) AS lastaccess,
-                             0 AS timemodified,
-                             CONCAT('{\"browser\":\"', MAX(useragent), '\",\"os\":\"', MAX(useros), '\"}') AS useragent,
-                             MAX(userip) AS ip
-                        FROM {$querytrack}
-                    GROUP BY userid
+                            SELECT
+                                 MAX(lit.id) AS id,
+                                 lit.userid,
+                                 0 AS courseid,
+                                 'site' AS page,
+                                 1 AS param,
+                                 SUM(lit.visits) AS visits,
+                                 SUM(lit.timespend) AS timespend,
+                                 MIN(lit.firstaccess) AS firstaccess,
+                                 MAX(lit.lastaccess) AS lastaccess,
+                                 0 AS timemodified,
+                                 CONCAT('{\"browser\":\"', MAX(lit.useragent), '\",\"os\":\"', MAX(lit.useros), '\"}') AS useragent,
+                                 MAX(lit.userip) AS ip
+                             FROM {local_intelliboard_tracking} lit
+                        LEFT JOIN {local_intellidata_tracking} lidt ON lidt.id = lit.id
+                            WHERE lit.page {$sql} AND lidt.id IS NULL
+                         GROUP BY lit.userid
                     ORDER BY id ASC LIMIT {$limit} OFFSET {$offset}", $conditions);
         } else {
             // All data copied.

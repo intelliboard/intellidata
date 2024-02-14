@@ -103,6 +103,11 @@ class activity extends \local_intellidata\entities\entity {
                 'description' => 'Additional instance parameters.',
                 'default' => '',
             ],
+            'availability' => [
+                'type' => PARAM_RAW,
+                'description' => 'Course module availability.',
+                'default' => '',
+            ],
         ];
     }
 
@@ -141,6 +146,7 @@ class activity extends \local_intellidata\entities\entity {
             $activitdata->section = $object->section;
             $activitdata->visible = isset($object->visible) ? $object->visible : 1;
             $activitdata->timecreated = $object->added;
+            $activitdata->availability = isset($object->availability) ? $object->availability : '';
             $activitdata->completionexpected = isset($object->completionexpected) ? $object->completionexpected : 0;
             $activitdata->completion = isset($object->completion) ? $object->completion : 0;
         }
