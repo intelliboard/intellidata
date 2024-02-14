@@ -116,7 +116,7 @@ class local_intellidata_datalib extends external_api {
         } else {
 
             // Log the web service request.
-            $event = local_intellidata_sql_request::create(['other' => $params]);
+            $event = local_intellidata_sql_request::create(['other' => (array)$params]);
             $event->trigger();
 
             try {
