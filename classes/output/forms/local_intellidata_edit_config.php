@@ -91,7 +91,7 @@ class local_intellidata_edit_config extends \moodleform {
 
         $mform->addElement('select', 'timemodified_field',
             get_string('timemodified_field', 'local_intellidata'), ['' => ''] + $config->timemodifiedfields);
-        $mform->setType('timemodified_field', PARAM_ALPHA);
+        $mform->setType('timemodified_field', PARAM_ALPHANUMEXT);
 
         if (!empty($config->observer)) {
             $mform->addElement('advcheckbox', 'events_tracking', get_string('events_tracking', 'local_intellidata'));
