@@ -34,11 +34,12 @@ class DBHelper {
     const MARIADB_TYPE = 'mariadb';
     const MSSQL_TYPE = 'mssql';
     const SQLSRV_TYPE = 'sqlsrv';
+    const OCI_TYPE = 'oci';
 
     const PENETRATION_TYPE_INTERNAL = 'internal';
     const PENETRATION_TYPE_EXTERNAL = 'external';
 
-    public static $customdbclient = null;
+    public static $customdbclient = [];
 
     public static $supporteddbclients = [
         'internal' => [
@@ -49,6 +50,7 @@ class DBHelper {
             self::MYSQL_TYPE,
             self::MARIADB_TYPE,
             self::POSTGRES_TYPE,
+            self::OCI_TYPE,
         ],
     ];
 
@@ -72,6 +74,22 @@ class DBHelper {
             'SEC_TO_TIME' => [
                 self::MYSQL_TYPE => 'SEC_TO_TIME',
                 self::POSTGRES_TYPE => '',
+            ],
+            'CONCAT' => [
+                self::MYSQL_TYPE => function($value, $params) {
+                    $res = "CONCAT(";
+                    foreach ($params as $key => $param) {
+                        $res .= ($key > 0 ? ", " . $value . ", " : "") . $param;
+                    }
+                    return $res . ")";
+                },
+                self::OCI_TYPE => function($value, $params) {
+                    $res = "";
+                    foreach ($params as $key => $param) {
+                        $res .= ($key > 0 ? " || " . $value . " || " : "") . $param;
+                    }
+                    return $res;
+                },
             ],
             'GROUP_CONCAT' => [
                 self::MYSQL_TYPE => function($value, $params = ['separator' => ', ']) {
@@ -212,11 +230,34 @@ class DBHelper {
                 self::MSSQL_TYPE => function($value, $params) {
                     return "JSON_VALUE($value, '$.{$params['path']}')";
                 },
+                self::OCI_TYPE => function($value, $params) {
+                    return "JSON_VALUE($value, '$.{$params['path']}')";
+                },
                 self::SQLSRV_TYPE => function($value, $params) {
                     return "JSON_VALUE($value, '$.{$params['path']}')";
                 },
                 self::POSTGRES_TYPE => function($value, $params) {
                     return "$value::json->>'{$params['path']}'";
+                },
+            ],
+            'SUBSTRING' => [
+                self::OCI_TYPE => function($value, $params) {
+                    return "SUBSTR($value, " . $params['from'] . ", " . $params['to'] . ")";
+                },
+                self::POSTGRES_TYPE => function($value, $params) {
+                    return "SUBSTRING($value, " . $params['from'] . ", " . $params['to'] . ")";
+                },
+                self::MYSQL_TYPE => function($value, $params) {
+                    return "SUBSTRING($value, " . $params['from'] . ", " . $params['to'] . ")";
+                },
+                self::MARIADB_TYPE => function($value, $params) {
+                    return "SUBSTRING($value, " . $params['from'] . ", " . $params['to'] . ")";
+                },
+                self::MSSQL_TYPE => function($value, $params) {
+                    return "SUBSTRING($value, " . $params['from'] . ", " . $params['to'] . ")";
+                },
+                self::SQLSRV_TYPE => function($value, $params) {
+                    return "SUBSTRING($value, " . $params['from'] . ", " . $params['to'] . ")";
                 },
             ],
         ];
@@ -478,8 +519,8 @@ class DBHelper {
     }
 
     public static function get_driver_instance($type, $penetrationtype) {
-        $classname = $type.'_custom_moodle_database';
-        $libfile   = __DIR__ . "/custom_db_drivers/$penetrationtype/$classname.php";
+        $classname = $type . '_custom_moodle_database_' . $penetrationtype;
+        $libfile   = __DIR__ . "/custom_db_drivers/{$penetrationtype}/{$classname}.php";
 
         if (!file_exists($libfile)) {
             return null;
@@ -494,15 +535,15 @@ class DBHelper {
 
         if (in_array($CFG->dbtype, self::$supporteddbclients[$penetrationtype])) {
 
-            if (self::$customdbclient == null) {
+            if (!isset(self::$customdbclient[$penetrationtype])) {
                 $db = self::get_driver_instance($CFG->dbtype, $penetrationtype);
                 $dbconfig = $DB->export_dbconfig();
                 $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass,
                              $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
 
-                self::$customdbclient = $db;
+                self::$customdbclient[$penetrationtype] = $db;
             }
-            return self::$customdbclient;
+            return self::$customdbclient[$penetrationtype];
         }
 
         return $DB;

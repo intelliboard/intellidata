@@ -56,7 +56,7 @@ class export_data_task extends \core\task\scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        if (TrackingHelper::enabled()) {
+        if (TrackingHelper::enabled() && TrackingHelper::eventstracking_enabled()) {
             raise_memory_limit(MEMORY_HUGE);
 
             DebugHelper::enable_moodle_debug();

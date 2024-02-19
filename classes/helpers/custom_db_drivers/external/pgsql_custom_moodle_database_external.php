@@ -29,18 +29,17 @@ use local_intellidata\services\new_export_service;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/../../../../../../lib/dml/mariadb_native_moodle_database.php');
+require_once(__DIR__.'/../../../../../../lib/dml/mysqli_native_moodle_database.php');
 
 /**
- * Custom MariaDB class representing moodle database interface.
+ * Custom mysqli class representing moodle database interface.
  *
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
-class mariadb_custom_moodle_database extends \mariadb_native_moodle_database {
-
+class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_database {
     /**
      * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
@@ -130,6 +129,39 @@ class mariadb_custom_moodle_database extends \mariadb_native_moodle_database {
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_record_event($table, $conditions);
+        } catch (Exception $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        return $status;
+    }
+
+    /**
+     * Set a single field in every table record which match a particular WHERE clause.
+     *
+     * @param string $table The database table to be checked against.
+     * @param string $newfield the field to set.
+     * @param string $newvalue the value to set the field to.
+     * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+     * @param array $params array of sql parameters
+     * @return bool true
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {
+        $status = parent::set_field_select($table, $newfield, $newvalue, $select, $params);
+
+        if ($select) {
+            $select = "WHERE $select";
+        }
+
+        if (is_null($params)) {
+            $params = [];
+        }
+
+        list($select, $params, $type) = $this->fix_sql_params($select, $params);
+
+        try {
+            (new new_export_service())->set_field_select_event($table, $select, $params);
         } catch (Exception $e) {
             DebugHelper::error_log($e->getMessage());
         }

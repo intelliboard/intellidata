@@ -29,7 +29,7 @@ use local_intellidata\services\new_export_service;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/../../../../../../lib/dml/mysqli_native_moodle_database.php');
+require_once(__DIR__.'/../../../../../../lib/dml/oci_native_moodle_database.php');
 
 /**
  * Custom mysqli class representing moodle database interface.
@@ -39,7 +39,8 @@ require_once(__DIR__.'/../../../../../../lib/dml/mysqli_native_moodle_database.p
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
-class pgsql_custom_moodle_database extends \pgsql_native_moodle_database {
+class oci_custom_moodle_database_external extends \oci_native_moodle_database {
+
     /**
      * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
@@ -104,6 +105,7 @@ class pgsql_custom_moodle_database extends \pgsql_native_moodle_database {
      */
     public function update_record_raw($table, $params, $bulk = false) {
         $status = parent::update_record_raw($table, $params, $bulk);
+
         try {
             $exportservice = new new_export_service();
             $data = (object)$params;

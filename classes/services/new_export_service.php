@@ -30,7 +30,11 @@ use local_intellidata\helpers\TrackingHelper;
 
 class new_export_service {
 
-    public $entityclass = null;
+    public $entityclases = null;
+
+    public static $selecteventtables = [
+        'course_modules',
+    ];
 
     /**
      * @param string $table
@@ -39,26 +43,40 @@ class new_export_service {
      * @return void
      */
     public function insert_record_event($table, $params) {
+        global $DB;
+
         if (!TrackingHelper::new_tracking_enabled()) {
             return;
         }
 
-        $this->get_datatype_observer($table);
-        if (!$this->entityclass || !TrackingHelper::enabled()) {
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
 
-        if (!$this->filter($table, $params)) {
-            return;
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
+            // Check if not optional date type and passed filters.
+            if ($requiredatatype && !$this->filter($entity::TYPE, $params)) {
+                continue;
+            }
+
+            $record = null;
+            if ($requiredatatype) {
+                $record = $entity::prepare_export_data($params);
+            } else if (isset($params->id)) {
+                $record = $DB->get_record($table, ['id' => $params->id]);
+            }
+
+            if (!$record) {
+                continue;
+            }
+
+            $record->crud = 'c';
+            $entity->set_values($record);
+
+            $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
         }
-
-        $params = $this->entityclass::prepare_export_data($params);
-        $params->crud = 'c';
-        $entity = new $this->entityclass($params);
-        $data = $entity->export();
-
-        $tracking = new events_service($entity::TYPE);
-        $tracking->track($data);
     }
 
     /**
@@ -74,23 +92,93 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatype_observer($table);
-        if (!$this->entityclass || !TrackingHelper::enabled()) {
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
 
-        foreach ($dataobjects as $dataobject) {
-            $record = $DB->get_record($table, $dataobject);
-            if (!$this->filter($table, $record)) {
-                continue;
-            }
-            $record = $this->entityclass::prepare_export_data($record);
-            $record->crud = 'c';
-            $entity = new $this->entityclass($record);
-            $data = $entity->export();
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
 
-            $tracking = new events_service($entity::TYPE);
-            $tracking->track($data);
+            foreach ($dataobjects as $dataobject) {
+                $record = $DB->get_record($table, $this->prepare_data_for_query($table, (array)$dataobject));
+
+                if ($requiredatatype && !$this->filter($entity::TYPE, $record)) {
+                    continue;
+                }
+
+                if ($requiredatatype) {
+                    $record = $entity::prepare_export_data($record);
+                }
+
+                $record->crud = 'c';
+                $entity->set_values($record);
+
+                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     *
+     * @return array
+     */
+    private function prepare_data_for_query($table, $data) {
+        global $DB;
+
+        $columns = $DB->get_columns($table);
+        foreach ($data as $key=>$value) {
+            $column = $columns[$key];
+            if ($column->meta_type == 'X') {
+                unset($data[$key]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string $table
+     * @param string $select
+     * @param array $params
+     *
+     * @return void
+     */
+    public function set_field_select_event($table, $select, $params) {
+        global $DB;
+
+        if (!TrackingHelper::new_tracking_enabled()) {
+            return;
+        }
+
+        if (!in_array($table, self::$selecteventtables)) {
+            return;
+        }
+
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
+            return;
+        }
+
+        $records = $DB->get_records_sql("SELECT * FROM {" . $table . "} " . $select, $params);
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
+
+            foreach ($records as $record) {
+                if ($requiredatatype && !$this->filter($entity::TYPE, $record)) {
+                    continue;
+                }
+
+                if ($requiredatatype) {
+                    $record = $entity::prepare_export_data($record);
+                }
+
+                $record->crud = 'u';
+                $entity->set_values($record);
+
+                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+            }
         }
     }
 
@@ -107,8 +195,8 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatype_observer($table);
-        if (!$this->entityclass || !TrackingHelper::enabled()) {
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
 
@@ -120,17 +208,22 @@ class new_export_service {
             return;
         }
 
-        if (!$this->filter($table, $record)) {
-            return;
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
+            // Check if not optional date type and passed filters.
+            if ($requiredatatype && !$this->filter($entity::TYPE, $record)) {
+                return;
+            }
+
+            if ($requiredatatype) {
+                $record = $entity::prepare_export_data($record);
+            }
+
+            $record->crud = 'u';
+            $entity->set_values($record);
+
+            $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
         }
-
-        $record = $this->entityclass::prepare_export_data($record);
-        $record->crud = 'u';
-        $entity = new $this->entityclass($record);
-        $data = $entity->export();
-
-        $tracking = new events_service($entity::TYPE);
-        $tracking->track($data);
     }
 
     /**
@@ -144,17 +237,20 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatype_observer($table);
-        if (!$this->entityclass || !TrackingHelper::enabled()) {
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
-        $data = (object)$params;
-        $data->crud = 'd';
-        $entity = new $this->entityclass($data);
-        $data = $entity->export();
 
-        $tracking = new events_service($entity::TYPE);
-        $tracking->track($data);
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
+
+            $data = (object)$params;
+            $data->crud = 'd';
+            $entity->set_values($data);
+
+            $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+        }
     }
 
     /**
@@ -171,30 +267,33 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatype_observer($table);
-        if (!$this->entityclass || !TrackingHelper::enabled()) {
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
 
-        foreach ($values as $value) {
-            if (!$field == 'id') {
-                if (!$record = $DB->get_record($table, [$field => $value])) {
-                    return;
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
+
+            foreach ($values as $value) {
+                if (!$field == 'id') {
+                    if (!$record = $DB->get_record($table, [$field => $value])) {
+                        return;
+                    }
+
+                    $value = $record->id;
+                    if (!$this->filter($entity::TYPE, $record)) {
+                        return;
+                    }
                 }
-                $value = $record->id;
-                if (!$this->filter($table, $record)) {
-                    return;
-                }
+
+                $params = new \stdClass;
+                $params->id = $value;
+                $params->crud = 'd';
+                $entity->set_values($params);
+
+                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
             }
-
-            $params = new \stdClass;
-            $params->id = $value;
-            $params->crud = 'd';
-            $entity = new $this->entityclass($params);
-            $data = $entity->export();
-
-            $tracking = new events_service($entity::TYPE);
-            $tracking->track($data);
         }
     }
 
@@ -212,23 +311,24 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatype_observer($table);
-        if (!$this->entityclass || !TrackingHelper::enabled()) {
+        $this->get_datatypes_observer($table);
+        if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
 
         $sql = "SELECT id FROM {" . $table . "} WHERE $select";
         $ids = array_keys($DB->get_records_sql($sql, $params));
 
-        foreach ($ids as $id) {
-            $params = new \stdClass;
-            $params->id = $id;
-            $params->crud = 'd';
-            $entity = new $this->entityclass($params);
-            $data = $entity->export();
+        foreach ($this->entityclases as $entity) {
+            $requiredatatype = !isset($entity::$datatype);
+            foreach ($ids as $id) {
+                $record = new \stdClass;
+                $record->id = $id;
+                $record->crud = 'd';
+                $entity->set_values($record);
 
-            $tracking = new events_service($entity::TYPE);
-            $tracking->track($data);
+                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+            }
         }
     }
 
@@ -236,29 +336,20 @@ class new_export_service {
      * @param string $table
      * @return string
      */
-    public function get_datatype_observer($table) {
-        $datatypes = datatypes_service::get_required_datatypes();
-        $rdatatype = null;
+    public function get_datatypes_observer($table) {
+        $datatypes = datatypes_service::get_datatypes();
+        $entities = [];
         foreach ($datatypes as $data) {
             if (!isset($data['table'])) {
                 continue;
             }
+
             if ($data['table'] == $table) {
-                $rdatatype = $data;
-                break;
+                $entities[] = datatypes_service::init_entity($data, []);
             }
         }
 
-        if (!$rdatatype) {
-            return null;
-        }
-
-        $entityclass = $this->get_entity_by_datatype($rdatatype);
-        if (!class_exists($entityclass)) {
-            return null;
-        }
-
-        $this->entityclass = $entityclass;
+        $this->entityclases = !empty($entities) ? $entities : null;
     }
 
     private function get_entity_by_datatype($rdatatype) {
@@ -273,32 +364,29 @@ class new_export_service {
      * @param \stdClass $data
      * @return bool
      */
-    private function filter($table, $data) {
+    private function filter($datatype, $data) {
         global $DB;
 
         $access = true;
-        switch ($table) {
-            case 'logstore_standard_log':
-                $this->entityclass = $this->get_entity_by_datatype('participation');
+        switch ($datatype) {
+            case 'participation':
                 if (!in_array($data->crud, ['c', 'u']) || !$data->userid ||
                     !in_array($data->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE])) {
                     $access = false;
                 }
-
-                if (isset($data->eventname) && ($data->eventname == '\core\event\user_loggedin') && $data->contextid == 1) {
-                    $access = true;
-                    $this->entityclass = $this->get_entity_by_datatype('userlogins');
-                }
-
                 break;
-            case 'role_assignments':
+            case 'userlogins':
+                $access = isset($data->eventname) && ($data->eventname == '\core\event\user_loggedin') &&
+                            $data->contextid == 1;
+                break;
+            case 'roleassignments':
                 list($insql, $params) = $DB->get_in_or_equal(array_keys(RolesHelper::CONTEXTLIST), SQL_PARAMS_NAMED);
                 if (!$DB->record_exists_sql("SELECT id FROM {context} WHERE contextlevel " . $insql, $params)) {
                     $access = false;
                 }
 
                 break;
-            case 'question_attempt_step_data':
+            case 'quizquestionattemptstepsdata':
                 if ($data->name != 'answer') {
                     $access = false;
                 }
@@ -307,5 +395,15 @@ class new_export_service {
         }
 
         return $access;
+    }
+
+    /**
+     * @param string $datatype
+     * @param \stdClass $data
+     * @return bool
+     */
+    private function export($datatype, $data) {
+        $tracking = new events_service($datatype);
+        $tracking->track($data);
     }
 }
