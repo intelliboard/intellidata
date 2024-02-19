@@ -23,6 +23,7 @@
 
 namespace local_intellidata\output\forms;
 
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\datatypes_service;
 
@@ -89,23 +90,34 @@ class local_intellidata_edit_config extends \moodleform {
         $mform->setType('enableexport', PARAM_INT);
         $mform->disabledIf('enableexport', 'status', 'neq', datatypeconfig::STATUS_ENABLED);
 
-        $mform->addElement('select', 'timemodified_field',
-            get_string('timemodified_field', 'local_intellidata'), ['' => ''] + $config->timemodifiedfields);
-        $mform->setType('timemodified_field', PARAM_ALPHA);
+        if (!TrackingHelper::new_tracking_enabled()) {
+            $mform->addElement('select', 'timemodified_field',
+                get_string('timemodified_field', 'local_intellidata'), ['' => ''] + $config->timemodifiedfields);
+            $mform->setType('timemodified_field', PARAM_ALPHANUMEXT);
 
-        if (!empty($config->observer)) {
-            $mform->addElement('advcheckbox', 'events_tracking', get_string('events_tracking', 'local_intellidata'));
-            $mform->setType('events_tracking', PARAM_INT);
+            if (!empty($config->observer)) {
+                $mform->addElement('advcheckbox', 'events_tracking', get_string('events_tracking', 'local_intellidata'));
+                $mform->setType('events_tracking', PARAM_INT);
+            }
+
+            $mform->addElement('advcheckbox', 'filterbyid', get_string('filterbyid', 'local_intellidata'));
+            $mform->setType('filterbyid', PARAM_INT);
+            $mform->disabledIf('filterbyid', 'timemodified_field', 'neq', '');
+
+            $mform->addElement('advcheckbox', 'rewritable', get_string('rewritable', 'local_intellidata'));
+            $mform->setType('rewritable', PARAM_INT);
+            $mform->disabledIf('rewritable', 'timemodified_field', 'neq', '');
+            $mform->disabledIf('rewritable', 'filterbyid', 'checked');
+        } else {
+            $mform->addElement('hidden', 'filterbyid');
+            $mform->setType('filterbyid', PARAM_INT);
+
+            $mform->addElement('hidden', 'rewritable');
+            $mform->setType('rewritable', PARAM_INT);
+
+            $mform->addElement('hidden', 'timemodified_field');
+            $mform->setType('timemodified_field', PARAM_ALPHANUMEXT);
         }
-
-        $mform->addElement('advcheckbox', 'filterbyid', get_string('filterbyid', 'local_intellidata'));
-        $mform->setType('filterbyid', PARAM_INT);
-        $mform->disabledIf('filterbyid', 'timemodified_field', 'neq', '');
-
-        $mform->addElement('advcheckbox', 'rewritable', get_string('rewritable', 'local_intellidata'));
-        $mform->setType('rewritable', PARAM_INT);
-        $mform->disabledIf('rewritable', 'timemodified_field', 'neq', '');
-        $mform->disabledIf('rewritable', 'filterbyid', 'checked');
     }
 
     /**

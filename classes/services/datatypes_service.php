@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\logs_tables_repository;
@@ -857,7 +858,7 @@ class datatypes_service {
             'timemodified_field' => $datatype->timemodified_field,
             'filterbyid' => $datatype->filterbyid,
             'rewritable' => $datatype->rewritable,
-            'databaseexport' => true,
+            'databaseexport' => TrackingHelper::new_tracking_enabled() ? false : true,
             'exportids' => config_service::get_exportids_config_optional($datatype),
         ];
 

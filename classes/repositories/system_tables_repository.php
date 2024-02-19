@@ -105,7 +105,7 @@ class system_tables_repository extends base_tables_repository {
             'analytics_*',
             'assign_overrides',
             'assign_plugin_config',
-            'assign_user*',
+            'assign_user_mapping',
             'assignment*',
             'assignfeedback*',
             'assignsubmission*',

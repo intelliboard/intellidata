@@ -39,7 +39,7 @@ if (!empty($action) || !empty($query)) {
 
 $context = context_system::instance();
 require_capability('local/intellidata:viewconfig', $context);
-$pageurl = new \moodle_url('/local/intellidata/config/index.php', ['query' => $query]);
+$pageurl = new \moodle_url('/local/intellidata/config/index.php', ['query' => $query, 'sesskey' => sesskey()]);
 
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);

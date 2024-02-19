@@ -26,6 +26,8 @@ namespace local_intellidata\entities\participations;
 
 
 
+use local_intellidata\helpers\DBHelper;
+
 class migration extends \local_intellidata\entities\migration {
 
     public $entity      = '\local_intellidata\entities\participations\participation';
@@ -33,7 +35,7 @@ class migration extends \local_intellidata\entities\migration {
     public $table       = 'logstore_standard_log';
 
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        global $DB;
+        global $DB, $CFG;
 
         list($insql, $params) = $DB->get_in_or_equal([CONTEXT_COURSE, CONTEXT_MODULE], SQL_PARAMS_NAMED);
         $where = "AND contextlevel $insql";
@@ -44,8 +46,10 @@ class migration extends \local_intellidata\entities\migration {
         }
 
         if ($count) {
+            $dbtype = $CFG->dbtype == DBHelper::OCI_TYPE ? DBHelper::OCI_TYPE : DBHelper::MYSQL_TYPE;
+            $concat = DBHelper::get_operator('CONCAT', "'_'", ['userid', 'contextinstanceid', 'contextlevel'], $dbtype);
             $sql = "SELECT
-                        COUNT(DISTINCT concat(userid, '_', contextinstanceid, '_', contextlevel)) as recordscount
+                        COUNT(DISTINCT $concat) as recordscount
                     FROM {logstore_standard_log}
                    WHERE crud IN('c', 'u') AND userid > 0 AND contextinstanceid > 0 $where";
         } else {

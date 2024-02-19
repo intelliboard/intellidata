@@ -25,6 +25,8 @@
 namespace local_intellidata\entities\quizquestions;
 
 
+use local_intellidata\helpers\DBHelper;
+
 /**
  * Class for migration Users.
  *
@@ -47,9 +49,11 @@ class migration extends \local_intellidata\entities\migration {
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
 
+        $substringsql = DBHelper::get_operator('SUBSTRING', 'questiontext', ['from' => '1', 'to' => '5000']);
+
         $select = ($count) ?
             "SELECT COUNT(id) as recordscount" :
-            "SELECT id, name, qtype, defaultmark, SUBSTRING(questiontext, 1, 5000) as questiontext";
+            "SELECT id, name, qtype, defaultmark, $substringsql as questiontext";
 
         $sql = "$select FROM {" . $this->table . "} ";
 

@@ -194,7 +194,8 @@ class dbschema_service {
                 }
 
                 // Allow only specific field types.
-                if (!in_array($column->type, $allowedfieldtypes)) {
+                if (!in_array($column->type, $allowedfieldtypes) &&
+                    !(($column->max_length == 10) && $column->type == 'NUMBER')) {
                     continue;
                 }
 

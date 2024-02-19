@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 
 use html_writer;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\persistent\export_logs;
 use local_intellidata\services\datatypes_service;
@@ -92,30 +93,38 @@ class config_table extends \table_sql {
             'tabletype' => [
                 'label' => get_string('tabletype', 'local_intellidata'),
             ],
-            'events_tracking' => [
-                'label' => get_string('events_tracking', 'local_intellidata'),
-            ],
-            'timemodified_field' => [
-                'label' => get_string('timemodified_field', 'local_intellidata'),
-            ],
-            'filterbyid' => [
-                'label' => get_string('filterbyid', 'local_intellidata'),
-            ],
-            'rewritable' => [
-                'label' => get_string('rewritable', 'local_intellidata'),
-            ],
-            'status' => [
-                'label' => get_string('status', 'local_intellidata'),
-            ],
-            'exportenabled' => [
-                'label' => get_string('export', 'local_intellidata'),
-            ],
-            'actions' => [
-                'label' => get_string('actions', 'local_intellidata'),
-            ],
         ];
 
-        return $fields;
+        // Event tracking fields.
+        if (!TrackingHelper::new_tracking_enabled()) {
+            $fields = array_merge($fields, [
+                'events_tracking' => [
+                    'label' => get_string('events_tracking', 'local_intellidata'),
+                ],
+                'timemodified_field' => [
+                    'label' => get_string('timemodified_field', 'local_intellidata'),
+                ],
+                'filterbyid' => [
+                    'label' => get_string('filterbyid', 'local_intellidata'),
+                ],
+                'rewritable' => [
+                    'label' => get_string('rewritable', 'local_intellidata'),
+                ],
+            ]);
+        }
+
+        return array_merge($fields, [
+                'status' => [
+                    'label' => get_string('status', 'local_intellidata'),
+                ],
+                'exportenabled' => [
+                    'label' => get_string('export', 'local_intellidata'),
+                ],
+                'actions' => [
+                    'label' => get_string('actions', 'local_intellidata'),
+                ],
+            ]
+        );
     }
 
     /**

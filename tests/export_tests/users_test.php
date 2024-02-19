@@ -175,7 +175,7 @@ class users_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'users']);
-        $datarecord = $storage->get_log_entity_data('u', ['id' => $user->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $user->id, 'firstname' => $user->firstname]);
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
 
         $this->assertNotEmpty($datarecord);

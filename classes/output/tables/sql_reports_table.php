@@ -41,10 +41,10 @@ class sql_reports_table extends \table_sql {
         ]);
         $this->define_columns(['name', 'status', 'timecreated', 'actions']);
 
-        $fields = "*, '' AS actions";
-        $from = "{local_intellidata_reports}";
+        $fields = "lir.*, '' AS actions";
+        $from = "{local_intellidata_reports} lir";
 
-        $this->set_sql($fields, $from, 'id > 0', []);
+        $this->set_sql($fields, $from, 'lir.id > 0', []);
         $this->define_baseurl($PAGE->url);
     }
 

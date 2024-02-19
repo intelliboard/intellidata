@@ -37,7 +37,7 @@ class migration extends \local_intellidata\entities\migration {
     public $entity      = '\local_intellidata\entities\userinfodatas\userinfodata';
     public $eventname   = '\core\event\user_created';
     public $table       = 'user_info_data';
-    public $tablealias  = 'uid';
+    public $tablealias  = 'ud';
 
     /**
      * @param false $count
@@ -52,7 +52,7 @@ class migration extends \local_intellidata\entities\migration {
             "SELECT " .$this->tablealias . ".*";
 
         $sql = "$select
-                  FROM {" . $this->table . "} " .$this->tablealias . "
+                  FROM {" . $this->table . "} " . $this->tablealias . "
              LEFT JOIN {user} u ON u.id = " . $this->tablealias . ".userid";
 
         if ($condition) {

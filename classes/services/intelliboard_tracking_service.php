@@ -63,6 +63,10 @@ class intelliboard_tracking_service {
         }
 
         $copymethod = $this->get_copy_method();
+
+        // Disable IntelliBoard tracking.
+        $this->config_intelliboard_tracking(false);
+
         // True if last element copied.
         if ($this->{$copymethod}()) {
             mtrace($copymethod . " table imported!");
@@ -292,7 +296,7 @@ class intelliboard_tracking_service {
             mtrace("Start import 'user trackings log details' from IntelliBoard plugin!");
         }
 
-        mtrace("Import 'user trackings log details'  records: from - " . $offset . ', to - ' . $willprocessed);
+        mtrace("Import 'user trackings log details' records: from - " . $offset . ', to - ' . $willprocessed);
 
         $lastidentifier = 0;
         if ($lasttracking = $DB->get_record_sql("SELECT MAX(id) as id FROM {local_intellidata_trdetails}")) {
@@ -420,6 +424,9 @@ class intelliboard_tracking_service {
 
         TrackingHelper::enable_tracking();
 
+        // Enable IntelliBoard tracking.
+        $this->config_intelliboard_tracking();
+
         self::change_task_status();
     }
 
@@ -436,6 +443,14 @@ class intelliboard_tracking_service {
         $DB->delete_records('local_intellidata_trlogs');
 
         $DB->delete_records('local_intellidata_trdetails');
+    }
+
+    /**
+     * @params bool $enabled
+     * @return void
+     */
+    public function config_intelliboard_tracking($enabled = true) {
+        set_config('local_intelliboard', $enabled, 'enabled');
     }
 
     /**

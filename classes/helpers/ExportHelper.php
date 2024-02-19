@@ -42,8 +42,10 @@ class ExportHelper {
      */
     public static function process_export(export_service $exportservice, $params = []) {
 
-        // Export data to files.
-        self::process_data_export($exportservice, $params);
+        if (TrackingHelper::eventstracking_enabled()) {
+            // Export data to files.
+            self::process_data_export($exportservice, $params);
+        }
 
         // Export files to moodledata.
         return self::process_files_export($exportservice);

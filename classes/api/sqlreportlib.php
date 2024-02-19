@@ -25,6 +25,7 @@
  */
 
 use local_intellidata\api\apilib;
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\repositories\reports_repository;
 use local_intellidata\services\encryption_service;
 
@@ -162,6 +163,11 @@ class local_intellidata_sqlreportlib extends external_api {
 
                 $params->search_value = isset($params->search_value) ? addslashes($params->search_value) : false;
                 $params->search_column = isset($params->search_column) ? $params->search_column : false;
+
+                // Enclose the column name in backticks for MySQL Type.
+                if (DBHelper::is_mysql_type() && $params->search_column) {
+                    $params->search_column = "`" . $params->search_column . "`";
+                }
 
                 if (($params->search_value || $params->search_value === '0') && $params->search_column) {
                     $key = 'build_by_sql_search';
