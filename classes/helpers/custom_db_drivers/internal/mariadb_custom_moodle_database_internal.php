@@ -39,7 +39,7 @@ require_once(__DIR__.'/../../../../../../lib/dml/mariadb_native_moodle_database.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
  */
-class mariadb_custom_moodle_database extends \mariadb_native_moodle_database {
+class mariadb_custom_moodle_database_internal extends \mariadb_native_moodle_database {
 
     /**
      * Get a number of records as a moodle_recordset using a SQL statement.

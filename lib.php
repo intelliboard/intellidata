@@ -18,7 +18,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\api\apilib;
 use local_intellidata\helpers\DBHelper;
-use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\services\encryption_service;
@@ -123,7 +123,9 @@ function local_intellidata_tracking_init() {
     }
 }
 
-local_intellidata_tracking_init();
+if (ParamsHelper::get_release() < 3.8) {
+    local_intellidata_tracking_init();
+}
 
 function local_intellidata_after_config() {
     global $DB;
@@ -131,6 +133,10 @@ function local_intellidata_after_config() {
     if (!empty(SettingsHelper::get_setting('enablecustomdbdriver')) ||
         defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
         $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
+    }
+
+    if (ParamsHelper::get_release() >= 3.8) {
+        local_intellidata_tracking_init();
     }
 }
 
