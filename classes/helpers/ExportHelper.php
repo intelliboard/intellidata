@@ -27,6 +27,7 @@
 namespace local_intellidata\helpers;
 
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\repositories\tracking\tracking_repository;
 use local_intellidata\services\database_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
@@ -78,6 +79,10 @@ class ExportHelper {
      * @return array
      */
     public static function process_files_export(export_service $exportservice, $params = []) {
+
+        if (TrackingHelper::new_tracking_enabled()) {
+            (new tracking_repository())->export_records();
+        }
 
         // Export files to Moodledata.
         $exportservice->save_files($params);

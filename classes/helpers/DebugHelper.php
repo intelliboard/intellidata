@@ -51,7 +51,7 @@ class DebugHelper {
     /**
      * @throws \dml_exception
      */
-    public static function enable_moodle_debug () {
+    public static function enable_moodle_debug() {
         global $CFG;
 
         if (self::debugenabled()) {
@@ -64,7 +64,7 @@ class DebugHelper {
     /**
      * @throws \dml_exception
      */
-    public static function disable_moodle_debug () {
+    public static function disable_moodle_debug() {
         global $CFG;
 
         if (self::debugenabled()) {
