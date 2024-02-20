@@ -85,10 +85,11 @@ class datatypes_service {
     /**
      * @param bool $applyconfig
      * @param bool $rebuildcache
+     * @param array $params
      *
      * @return array|array[]
      */
-    public static function get_datatypes($applyconfig = true, $rebuildcache = false) {
+    public static function get_datatypes($applyconfig = true, $rebuildcache = false, $params = []) {
         $cache = \cache::make('local_intellidata', 'datatypes');
 
         // Get datatypes with default configuration.
@@ -96,7 +97,7 @@ class datatypes_service {
         if ($rebuildcache || !$defaultdatatypes) {
             $defaultdatatypes = array_merge(
                 self::get_required_datatypes(),
-                self::get_optional_datatypes_for_export(),
+                self::get_optional_datatypes_for_export($params),
                 self::get_logs_datatypes()
             );
 
@@ -121,12 +122,20 @@ class datatypes_service {
     /**
      * Get static datatypes.
      *
+     * @params array $datatypes
+     * @params array $params
+     *
      * @return array|array[]
      */
-    public static function get_static_datatypes($datatypes = []) {
+    public static function get_static_datatypes($datatypes = [], $params = []) {
+
 
         if (!count($datatypes)) {
-            $datatypes = self::get_datatypes();
+            $datatypes = self::get_datatypes(
+                true,
+                !empty($params['forceexport']),
+                $params
+            );
         }
 
         foreach ($datatypes as $key => $item) {
@@ -756,9 +765,11 @@ class datatypes_service {
     }
 
     /**
+     * @$params array $params
+     *
      * @return array
      */
-    public static function get_optional_datatypes_for_export() {
+    public static function get_optional_datatypes_for_export($params = []) {
         $exportlogrepository = new export_log_repository();
         $customdatatypes = $exportlogrepository->get_optional_datatypes();
 
@@ -767,7 +778,7 @@ class datatypes_service {
         if (count($customdatatypes)) {
             foreach ($customdatatypes as $datatypename => $datatype) {
                 $datatypes[self::generate_optional_datatype($datatypename)] = self::format_optional_datatypes(
-                    $datatypename, $datatype
+                    $datatypename, $datatype, $params
                 );
             }
         }
@@ -834,9 +845,13 @@ class datatypes_service {
     /**
      * Format optional datatype.
      *
+     * @param string $datatypename;
+     * @param null|\stdClass $datatype;
+     * @param array $params;
+     *
      * @return array
      */
-    private static function format_optional_datatypes($datatypename, $datatype = null) {
+    private static function format_optional_datatypes($datatypename, $datatype = null, $params = []) {
         $datatype = $datatype ?? new \stdClass();
 
         $datatypename = self::generate_optional_datatype($datatypename);
@@ -858,7 +873,7 @@ class datatypes_service {
             'timemodified_field' => $datatype->timemodified_field,
             'filterbyid' => $datatype->filterbyid,
             'rewritable' => $datatype->rewritable,
-            'databaseexport' => TrackingHelper::new_tracking_enabled() ? false : true,
+            'databaseexport' => empty($params['forceexport']) && TrackingHelper::new_tracking_enabled() ? false : true,
             'exportids' => config_service::get_exportids_config_optional($datatype),
         ];
 

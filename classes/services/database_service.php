@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 
 use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\repositories\database_repository;
 use local_intellidata\repositories\tracking\tracking_repository;
 use local_intellidata\services\datatypes_service;
@@ -51,10 +52,12 @@ class database_service {
     }
 
     /**
+     * @return array $params
+     *
      * @return array|array[]
      */
-    public function get_tables() {
-        return $this->tables ?? datatypes_service::get_static_datatypes();
+    public function get_tables($params = []) {
+        return $this->tables ?? datatypes_service::get_static_datatypes($params);
     }
 
     /**
@@ -66,7 +69,7 @@ class database_service {
     }
 
     /**
-     * @param null $params
+     * @param null|array $params
      */
     public function export_tables($params = null) {
 
@@ -125,8 +128,10 @@ class database_service {
         // Export table records.
         $recordsexported = $this->repo->export($datatype, $params, $this->showlogs, $this->services);
 
-        // Sync deleted items.
-        $this->repo->export_ids($datatype, $this->showlogs);
+        if (!TrackingHelper::new_tracking_enabled()) {
+            // Sync deleted items.
+            $this->repo->export_ids($datatype, $this->showlogs);
+        }
 
         if ($this->showlogs) {
             mtrace("Datatype '" . $datatype['name'] . "' export completed at " .
@@ -168,6 +173,10 @@ class database_service {
         $tables = (!empty($params['table']) && isset($this->tables[$params['table']]))
             ? [$params['table'] => $this->tables[$params['table']]]
             : $this->tables;
+
+        if (!empty($params['forceexport'])) {
+            $tables = datatypes_service::get_static_datatypes([], $params);
+        }
 
         return $tables;
     }

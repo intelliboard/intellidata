@@ -39,11 +39,12 @@ class ExportHelper {
      *
      * @param export_service $exportservice
      * @param array $params
+     * @param bool $forceexport
+     *
      * @return array
      */
     public static function process_export(export_service $exportservice, $params = []) {
-
-        if (TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::eventstracking_enabled() || !empty($params['forceexport'])) {
             // Export data to files.
             self::process_data_export($exportservice, $params);
         }

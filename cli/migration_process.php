@@ -117,7 +117,12 @@ try {
 
     if (empty($params['datatype'])) {
         // Export files.
-        ExportHelper::process_export($exportservice);
+        $params = [];
+        if (TrackingHelper::new_tracking_enabled()) {
+            $params['forceexport'] = true;
+        }
+
+        ExportHelper::process_export($exportservice, $params);
 
         // Send callback to IBN.
         MigrationHelper::send_callback();
