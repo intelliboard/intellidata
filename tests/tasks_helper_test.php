@@ -50,7 +50,7 @@ class tasks_helper_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function setUp():void {
+    public function setUp(): void {
         self::setAdminUser();
 
         setup_helper::setup_tests_config();

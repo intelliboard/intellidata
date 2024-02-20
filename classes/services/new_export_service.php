@@ -128,7 +128,7 @@ class new_export_service {
         global $DB;
 
         $columns = $DB->get_columns($table);
-        foreach ($data as $key=>$value) {
+        foreach ($data as $key => $value) {
             $column = $columns[$key];
             if ($column->meta_type == 'X') {
                 unset($data[$key]);

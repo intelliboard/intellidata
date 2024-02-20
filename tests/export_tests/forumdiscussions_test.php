@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/mod/forum/externallib.php');
  */
 class forumdiscussions_test extends \advanced_testcase {
 
-    public function setUp():void {
+    public function setUp(): void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
