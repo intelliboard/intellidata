@@ -47,7 +47,7 @@ class datatypes_service_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function setUp():void {
+    public function setUp(): void {
         $this->setAdminUser();
         $this->resetAfterTest();
 
@@ -541,7 +541,7 @@ class datatypes_service_test extends \advanced_testcase {
      * @throws \coding_exception
      * @covers \local_intellidata\services\datatypes_service::enable_required_native_datatypes
      */
-    public function test_enable_required_native_datatypes () {
+    public function test_enable_required_native_datatypes() {
 
         $exportlogrepository = new export_log_repository();
         $requirednativetables = required_tables_repository::get_required_native_tables();

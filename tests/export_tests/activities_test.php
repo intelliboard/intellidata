@@ -50,7 +50,7 @@ class activities_test extends \advanced_testcase {
 
     private $newexportavailable;
 
-    public function setUp():void {
+    public function setUp(): void {
         $this->setAdminUser();
 
         setup_helper::setup_tests_config();
