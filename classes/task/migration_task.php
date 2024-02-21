@@ -201,7 +201,7 @@ class migration_task extends \core\task\scheduled_task {
             mtrace("IntelliData Cleaner CRON started!");
 
             // Delete all IntelliData files.
-            $filesrecords = (new export_service())->delete_files(['timemodified' => time()]);
+            $filesrecords = (new export_service())->delete_all_files(['timemodified' => time()]);
 
             mtrace("IntelliData Cleaner: $filesrecords deleted.");
         }

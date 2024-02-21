@@ -128,8 +128,6 @@ class datatypes_service {
      * @return array|array[]
      */
     public static function get_static_datatypes($datatypes = [], $params = []) {
-
-
         if (!count($datatypes)) {
             $datatypes = self::get_datatypes(
                 true,

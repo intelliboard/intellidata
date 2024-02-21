@@ -38,10 +38,10 @@ class file_storage_repository {
     public $storagefile     = null;
     public $datatype        = null;
 
-    public function __construct($datatype) {
+    public function __construct($datatype = null) {
         $this->datatype = $datatype;
         $this->storagefolder = self::get_storage_folder();
-        $this->storagefile = self::get_storage_file();
+        $this->storagefile = $datatype ? self::get_storage_file() : null;
     }
 
     /**
@@ -318,7 +318,7 @@ class file_storage_repository {
      * Delete files from storage.
      *
      * @param null $params
-     * @return int|void
+     * @return int
      * @throws \dml_exception
      */
     public function delete_files($params = null) {
@@ -330,13 +330,17 @@ class file_storage_repository {
         $conditions = [
             'contextid = :contextid',
             'component = :component',
-            'filearea = :filearea',
         ];
+
         $sqlparams = [
             'contextid' => $context->id,
             'component' => self::STORAGE_FILES_COMPONENT,
-            'filearea' => $this->datatype['name'],
         ];
+
+        if (!empty($this->datatype['name'])) {
+            $conditions[] = 'filearea = :filearea';
+            $sqlparams['filearea'] = $this->datatype['name'];
+        }
 
         if (!empty($params['timemodified'])) {
             $conditions[] = 'timemodified < :timemodified';

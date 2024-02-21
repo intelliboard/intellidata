@@ -96,7 +96,7 @@ if (empty($options['noreset'])) {
     MigrationHelper::reset_migration_details();
 
     // Delete all IntelliData files.
-    $filesrecords = $exportservice->delete_files(['timemodified' => time()]);
+    $filesrecords = $exportservice->delete_all_files(['timemodified' => time()]);
 }
 
 $params = [];
