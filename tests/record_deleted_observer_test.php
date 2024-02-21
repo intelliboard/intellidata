@@ -86,6 +86,8 @@ class record_deleted_observer_test extends \advanced_testcase {
         $configrepository = new config_repository();
         $configrepository->enable($datatype);
 
+        SettingsHelper::set_setting('trackingstorage', StorageHelper::FILE_STORAGE);
+
         // Enable enrol datatype in export.
         $exportlogrepository = new export_log_repository();
         $exportlogrepository->insert_datatype($datatype);

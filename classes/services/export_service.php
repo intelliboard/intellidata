@@ -26,8 +26,10 @@
 namespace local_intellidata\services;
 
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\database_storage_repository;
 use local_intellidata\repositories\export_id_repository;
 use local_intellidata\repositories\export_log_repository;
+use local_intellidata\repositories\file_storage_repository;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\helpers\ParamsHelper;
 
@@ -124,8 +126,7 @@ class export_service {
             $datatype['name'] = $this->get_migration_name($datatype);
         }
 
-        $datatype['migrationmode'] = (!empty($datatype['databaseexport']))
-             ? ParamsHelper::MIGRATION_MODE_ENABLED : $this->migrationmode;
+        $datatype['migrationmode'] = $this->migrationmode;
 
         if (!empty($datatype['rewritable']) && isset($params['rewritable']) && !$params['rewritable']) {
             $datatype['rewritable'] = false;
@@ -181,12 +182,27 @@ class export_service {
     }
 
     /**
+     * Clear all records and storage.
+     *
+     * @params array $params
+     *
+     * @return int
+     * @throws \dml_exception
+     */
+    public function delete_all_files($params = []) {
+        // Clear all storage records.
+        database_storage_repository::delete_records();
+
+        // Clear file storage.
+        return (new file_storage_repository())->delete_files($params);
+    }
+
+    /**
      * @param array $params
      * @param array $exclude
-     * @return int|void
+     * @return int
      */
     public function delete_files($params = [], $exclude = []) {
-
         $filesdeleted = 0;
         $alldatatypes = $this->datatypes;
 

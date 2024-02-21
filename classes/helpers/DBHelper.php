@@ -34,6 +34,7 @@ class DBHelper {
     const MARIADB_TYPE = 'mariadb';
     const MSSQL_TYPE = 'mssql';
     const SQLSRV_TYPE = 'sqlsrv';
+    const AURORAMYSQL_TYPE = 'auroramysql';
     const OCI_TYPE = 'oci';
 
     const PENETRATION_TYPE_INTERNAL = 'internal';
@@ -45,12 +46,14 @@ class DBHelper {
         'internal' => [
             self::MYSQL_TYPE,
             self::MARIADB_TYPE,
+            self::AURORAMYSQL_TYPE,
         ],
         'external' => [
             self::MYSQL_TYPE,
             self::MARIADB_TYPE,
             self::POSTGRES_TYPE,
             self::OCI_TYPE,
+            self::AURORAMYSQL_TYPE,
         ],
     ];
 
@@ -263,7 +266,7 @@ class DBHelper {
         ];
 
         if ($dbtype === null) {
-            if ($CFG->dbtype == self::MARIADB_TYPE) {
+            if ($CFG->dbtype == self::MARIADB_TYPE || $CFG->dbtype == self::AURORAMYSQL_TYPE) {
                 $dbtype = self::MYSQL_TYPE;
             } else {
                 $dbtype = $CFG->dbtype;
@@ -511,7 +514,7 @@ class DBHelper {
     public static function is_mysql_type() {
         global $CFG;
 
-        if ($CFG->dbtype == self::MYSQL_TYPE || $CFG->dbtype == self::MARIADB_TYPE) {
+        if ($CFG->dbtype == self::MYSQL_TYPE || $CFG->dbtype == self::MARIADB_TYPE || $CFG->dbtype == self::AURORAMYSQL_TYPE) {
             return true;
         }
 

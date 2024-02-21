@@ -104,9 +104,7 @@ class database_storage_repository extends file_storage_repository {
      * @throws \dml_exception
      */
     public function delete_files($params = null) {
-        global $DB;
-        $DB->delete_records(self::STORAGE_TABLE, ['datatype' => $this->datatype['name']]);
-
+        self::delete_records(['datatype' => $this->datatype['name']]);
         return parent::delete_files($params);
     }
 
@@ -241,5 +239,17 @@ class database_storage_repository extends file_storage_repository {
         $records = $DB->get_records_sql($sql, $data, 0, 1);
 
         return count($records) ? reset($records) : null;
+    }
+
+    /**
+     * @param array $params
+     *
+     * @return void
+     * @throws \dml_exception A DML specific exception is thrown for any errors.
+     */
+    public static function delete_records($params = []) {
+        global $DB;
+
+        $DB->delete_records(self::STORAGE_TABLE, $params);
     }
 }
