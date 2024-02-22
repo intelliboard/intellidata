@@ -540,9 +540,7 @@ class DBHelper {
 
             if (!isset(self::$customdbclient[$penetrationtype])) {
                 $db = self::get_driver_instance($CFG->dbtype, $penetrationtype);
-                $dbconfig = $DB->export_dbconfig();
-                $db->connect($dbconfig->dbhost, $dbconfig->dbuser, $dbconfig->dbpass,
-                             $dbconfig->dbname, $dbconfig->prefix, $dbconfig->dboptions);
+                $db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
 
                 self::$customdbclient[$penetrationtype] = $db;
             }
