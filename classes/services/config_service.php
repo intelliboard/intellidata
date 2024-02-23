@@ -28,6 +28,7 @@ namespace local_intellidata\services;
 use local_intellidata\helpers\EventsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\DBHelper;
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\repositories\export_log_repository;
@@ -193,8 +194,8 @@ class config_service {
 
         // Set table rewritable.
         if ($isoptional) {
-            $this->datatypes[$datatypename]['rewritable'] = !$config->filterbyid &&
-                (!empty($config->rewritable) || empty($this->datatypes[$datatypename]['timemodified_field']));
+            $this->datatypes[$datatypename]['rewritable'] = TrackingHelper::new_tracking_enabled() ? false :
+                (!$config->filterbyid && (!empty($config->rewritable) || empty($this->datatypes[$datatypename]['timemodified_field'])));
         }
 
         // Set deleted event param.
