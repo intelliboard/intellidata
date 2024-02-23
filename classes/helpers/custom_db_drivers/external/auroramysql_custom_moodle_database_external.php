@@ -24,8 +24,6 @@
  * @website    http://intelliboard.net/
  */
 
-use coding_exception;
-use dml_exception;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\services\new_export_service;
 
