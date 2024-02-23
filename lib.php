@@ -98,6 +98,7 @@ function local_intellidata_pluginfile($course, $cm, $context, $filearea, $args, 
  */
 function local_intellidata_extend_navigation(global_navigation $nav) {
     (new \local_intellidata\helpers\CustomMenuHelper())->setup($nav);
+    local_intellidata_tracking_init();
 }
 
 /**
@@ -123,10 +124,6 @@ function local_intellidata_tracking_init() {
     }
 }
 
-if (ParamsHelper::get_release() < 3.8) {
-    local_intellidata_tracking_init();
-}
-
 function local_intellidata_after_config() {
     global $DB;
 
@@ -134,12 +131,9 @@ function local_intellidata_after_config() {
         defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
         $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
     }
-
-    if (ParamsHelper::get_release() >= 3.8) {
-        local_intellidata_tracking_init();
-    }
 }
 
 function local_intellidata_before_session_start() {
     local_intellidata_after_config();
 }
+
