@@ -870,7 +870,7 @@ class datatypes_service {
             'observer' => false,
             'timemodified_field' => $datatype->timemodified_field,
             'filterbyid' => $datatype->filterbyid,
-            'rewritable' => $datatype->rewritable,
+            'rewritable' => TrackingHelper::new_tracking_enabled() ? false : $datatype->rewritable,
             'databaseexport' => empty($params['forceexport']) && TrackingHelper::new_tracking_enabled() ? false : true,
             'exportids' => config_service::get_exportids_config_optional($datatype),
         ];
