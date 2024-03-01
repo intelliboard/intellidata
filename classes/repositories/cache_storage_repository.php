@@ -87,8 +87,9 @@ class cache_storage_repository extends file_storage_repository {
 
         $datatypekeys = [];
         foreach ($cachekeys as $key) {
+            $keyprefix = $this->datatype['name'] . self::CACHE_USER_IDENTIFIER;
             if ($key == $this->datatype['name'] ||
-                stripos($key, $this->datatype['name'] . self::CACHE_USER_IDENTIFIER) !== false) {
+                substr($key, 0, strlen($keyprefix)) === $keyprefix) {
                 $datatypekeys[] = $key;
             }
         }
