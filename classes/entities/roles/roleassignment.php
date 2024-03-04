@@ -94,7 +94,7 @@ class roleassignment extends \local_intellidata\entities\entity {
      * @return null
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         global $DB;
 
         $context = $DB->get_record('context', ['id' => $object->contextid]);

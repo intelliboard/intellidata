@@ -34,6 +34,7 @@ class new_export_service {
 
     public static $selecteventtables = [
         'course_modules',
+        'forum_posts',
     ];
 
     /**
@@ -49,7 +50,7 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatypes_observer($table);
+        $this->get_datatypes_observer($table, true);
         if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
@@ -63,7 +64,7 @@ class new_export_service {
 
             $record = null;
             if ($requiredatatype) {
-                $record = $entity::prepare_export_data($params);
+                $record = $entity::prepare_export_data($params, [], $table);
             } else if (isset($params->id)) {
                 $record = $DB->get_record($table, ['id' => $params->id]);
             }
@@ -334,17 +335,19 @@ class new_export_service {
 
     /**
      * @param string $table
-     * @return string
+     * @param bool $useadditional
+     * @return void
      */
-    public function get_datatypes_observer($table) {
-        $datatypes = datatypes_service::get_datatypes();
+    public function get_datatypes_observer($table, $useadditional = false) {
+        $datatypes = datatypes_service::get_datatypes(true, true);
         $entities = [];
         foreach ($datatypes as $data) {
-            if (!isset($data['table'])) {
+            $issetatable = isset($data['additional_tables']);
+            if (!isset($data['table']) && !$issetatable) {
                 continue;
             }
 
-            if ($data['table'] == $table) {
+            if (($data['table'] == $table) || ($useadditional && $issetatable && in_array($table, $data['additional_tables']))) {
                 $entities[] = datatypes_service::init_entity($data, []);
             }
         }

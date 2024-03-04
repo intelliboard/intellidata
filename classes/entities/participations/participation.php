@@ -78,7 +78,7 @@ class participation extends \local_intellidata\entities\entity {
      * @return null
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         $object->userid = $object->userid;
         $object->type = ($object->contextlevel == CONTEXT_MODULE) ? 'activity' : 'course';
         $object->objectid = $object->contextinstanceid;

@@ -131,7 +131,7 @@ class user extends \local_intellidata\entities\entity {
      * @return null
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         $object->fullname = fullname($object);
         $object->state = ($object->confirmed && (isset($object->suspended) && !$object->suspended)) ?
             ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
