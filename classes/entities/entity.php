@@ -373,11 +373,12 @@ abstract class entity {
      *
      * @param \stdClass $object
      * @param array $fields
+     * @param string $table
      *
      * @return \stdClass
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         return $object;
     }
 

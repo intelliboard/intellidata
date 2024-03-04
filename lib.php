@@ -127,11 +127,9 @@ function local_intellidata_tracking_init() {
 function local_intellidata_after_config() {
     global $DB;
 
-    if (TrackingHelper::tracking_enabled()) {
-        if (!empty(SettingsHelper::get_setting('enablecustomdbdriver')) ||
-            defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
-            $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
-        }
+    $runtest = defined('PHPUNIT_TEST') && PHPUNIT_TEST;
+    if (TrackingHelper::tracking_enabled() && !empty(SettingsHelper::get_setting('enablecustomdbdriver')) || $runtest) {
+        $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
     }
 }
 

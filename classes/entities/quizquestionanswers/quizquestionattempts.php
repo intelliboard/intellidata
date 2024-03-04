@@ -81,6 +81,11 @@ class quizquestionattempts extends \local_intellidata\entities\entity {
                 'description' => 'Slot number.',
                 'default' => 0,
             ],
+            'responsesummary' => [
+                'type' => PARAM_TEXT,
+                'description' => 'The grade for this question,.',
+                'default' => '',
+            ],
         ];
     }
 
@@ -92,7 +97,7 @@ class quizquestionattempts extends \local_intellidata\entities\entity {
      * @return null
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         global $DB;
 
         if ($quizattempts = $DB->get_record('quiz_attempts', ['uniqueid' => $object->questionusageid])) {

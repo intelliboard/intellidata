@@ -453,6 +453,7 @@ class datatypes_service {
                 'name' => 'quizquestionrelations',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
                 'table' => 'quiz_slots',
+                'additional_tables' => ['question_references', 'question_set_references'],
                 'migration' => 'quizquestionrelations\migration',
                 'entity' => 'quizquestionrelations\quizquestionrelation',
                 'observer' => false,
