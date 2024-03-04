@@ -103,7 +103,7 @@ class enrolment extends \local_intellidata\entities\entity {
      * @return null
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         global $DB;
 
         if ($enrol = $DB->get_record('enrol', ['id' => $object->enrolid])) {

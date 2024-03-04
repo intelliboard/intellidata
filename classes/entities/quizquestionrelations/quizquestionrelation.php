@@ -24,7 +24,9 @@
  */
 namespace local_intellidata\entities\quizquestionrelations;
 
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\services\datatypes_service;
 
 /**
  * Class for preparing data for Activities.
@@ -81,10 +83,11 @@ class quizquestionrelation extends \local_intellidata\entities\entity {
      *
      * @param \stdClass $object
      * @param array $fields
+     * @param string $table
      * @return null
      * @throws invalid_persistent_exception
      */
-    public static function prepare_export_data($object, $fields = []) {
+    public static function prepare_export_data($object, $fields = [], $table = '') {
         global $DB;
 
         $release4 = ParamsHelper::get_release() >= 4.0;
@@ -92,13 +95,26 @@ class quizquestionrelation extends \local_intellidata\entities\entity {
         if (!$release4) {
             $object->type = 'q';
         } else {
-            $qrexist = $DB->record_exists_sql('SELECT 1
+            $datatype = datatypes_service::get_datatype('quizquestionrelations');
+            if (isset($datatype['additional_tables']) && (in_array($table, $datatype['additional_tables']))) {
+
+                $migration = datatypes_service::init_migration($datatype, null, false);
+                $reffield = $table == 'question_set_references' ? 'refsid' : 'refid';
+                list($sql, $params) = $migration->get_sql(false, $reffield . '=' . $object->id);
+                $record = $DB->get_record_sql($sql, $params);
+
+                if (isset($record)) {
+                    $object = $record;
+                }
+            } else {
+                $qrexist = $DB->record_exists_sql('SELECT 1
                                      FROM {question_references} qre
                                      JOIN {question_versions} qve ON qve.questionbankentryid = qre.questionbankentryid');
-            if ($qrexist) {
-                $object->type = 'q';
-            } else {
-                $object->type = 'c';
+                if ($qrexist) {
+                    $object->type = 'q';
+                } else {
+                    $object->type = 'c';
+                }
             }
         }
 

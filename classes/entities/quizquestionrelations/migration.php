@@ -65,7 +65,9 @@ class migration extends \local_intellidata\entities\migration {
                             qs.quizid,
                             MAX(qve.questionid) AS questionid,
                             qs.slot,
-                            'q' AS type
+                            'q' AS type,
+                            MAX(qre.id) as refid,
+                            null as refsid
                         FROM {quiz_slots} qs
                           JOIN {question_references} qre ON qre.itemid = qs.id
                           JOIN {question_versions} qve ON qve.questionbankentryid = qre.questionbankentryid
@@ -78,7 +80,9 @@ class migration extends \local_intellidata\entities\migration {
                             qs.quizid,
                             qc.id AS questionid,
                             qs.slot,
-                            'c' AS type
+                            'c' AS type,
+                            null as refid,
+                            qsr.id as refsid
                         FROM {quiz_slots} qs
                           JOIN {question_set_references} qsr ON qsr.questionarea = 'slot' AND qsr.itemid = qs.id
                           JOIN {question_categories} qc ON qc.contextid = qsr.questionscontextid
