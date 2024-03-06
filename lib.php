@@ -127,7 +127,7 @@ function local_intellidata_tracking_init() {
 function local_intellidata_after_config() {
     global $DB;
 
-    if (TrackingHelper::tracking_enabled() && !empty(SettingsHelper::get_setting('enablecustomdbdriver'))) {
+    if (TrackingHelper::new_tracking_enabled()) {
         $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
     }
 }
