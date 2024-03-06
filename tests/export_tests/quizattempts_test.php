@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\entities\quizzes\attempt;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
@@ -40,6 +41,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Activity migration test case.
@@ -49,19 +51,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class quizattempts_test extends \advanced_testcase {
-
-    private $newexportavailable;
-    private $release;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->release = ParamsHelper::get_release();
-        $this->newexportavailable = $this->release >= 3.8;
-    }
+class quizattempts_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\quizzes\attempt

@@ -352,6 +352,7 @@ $string['support_column3_text'] = "Get recommendations on how IntelliBoard can b
 $string['support_text3'] = "To proceed with your setup, please <a href='https://intelliboard.net/scheduledemo' target='_blank'><u>schedule a demo</u></a> with us.";
 $string['support_text4'] = "If you have <b><i>already purchased</i></b> a license and see this screen, please contact your Account Manager for assistance.";
 $string['cachedef_config'] = 'IntelliData Datatypes Configuration';
+$string['cachedef_datatypes'] = 'IntelliData List of enabled Datatypes';
 $string['cacheconfig'] = 'Cache datatypes configuration';
 $string['forcedisablemigration'] = 'Force disable migration';
 $string['migrationdisabled'] = 'Migration Disabled';

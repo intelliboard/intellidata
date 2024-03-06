@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\SettingsHelper;
 use stdClass;
 use core_table\local\filter\filter;
@@ -40,6 +41,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Quiz questions test case.
@@ -49,17 +51,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class quizquestions_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class quizquestions_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\quizquestions\quizquestion

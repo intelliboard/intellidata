@@ -127,8 +127,7 @@ function local_intellidata_tracking_init() {
 function local_intellidata_after_config() {
     global $DB;
 
-    $runtest = defined('PHPUNIT_TEST') && PHPUNIT_TEST;
-    if (TrackingHelper::tracking_enabled() && !empty(SettingsHelper::get_setting('enablecustomdbdriver')) || $runtest) {
+    if (TrackingHelper::tracking_enabled() && !empty(SettingsHelper::get_setting('enablecustomdbdriver'))) {
         $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
     }
 }

@@ -25,6 +25,7 @@ namespace local_intellidata\export_tests;
 
 use grade_category;
 use grade_grade;
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
@@ -40,6 +41,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->libdir . '/gradelib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * User Grade migration test case.
@@ -49,17 +51,7 @@ require_once($CFG->libdir . '/gradelib.php');
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class usergrades_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class usergrades_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\usergrades\usergrade

@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\entities\participations\participation;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
@@ -39,6 +40,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/user/profile/definelib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Cohort migration test case.
@@ -48,17 +50,7 @@ require_once($CFG->dirroot . '/user/profile/definelib.php');
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class participation_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class participation_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\participations\participation
