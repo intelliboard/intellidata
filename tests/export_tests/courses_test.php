@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,11 +23,10 @@
 
 namespace local_intellidata\export_tests;
 
-use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\generator;
-use local_intellidata\setup_helper;
 use local_intellidata\test_helper;
 
 defined('MOODLE_INTERNAL') || die();
@@ -37,26 +36,17 @@ global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Course migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class courses_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class courses_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\courses\course
@@ -129,7 +119,7 @@ class courses_test extends \advanced_testcase {
         global $DB;
 
         $data = [
-            'fullname' => 'ibcourse1' . $tracking,
+            'fullname' => 'cibcourse1' . $tracking,
         ];
 
         $course = $DB->get_record('course', $data);
@@ -145,6 +135,7 @@ class courses_test extends \advanced_testcase {
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = json_decode($datarecord->data);
+
         $this->assertEquals($entitydata->id, $datarecorddata->id);
     }
 
@@ -160,7 +151,7 @@ class courses_test extends \advanced_testcase {
         global $DB;
 
         $data = [
-            'fullname' => 'ibcourse1' . $tracking,
+            'fullname' => 'cibcourse1' . $tracking,
         ];
 
         $course = $DB->get_record('course', $data);
@@ -175,7 +166,7 @@ class courses_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'courses']);
 
-        $datarecord = $storage->get_log_entity_data('u', ['id' => $course->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $course->id, 'idnumber' => $course->idnumber]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -189,13 +180,17 @@ class courses_test extends \advanced_testcase {
      * @throws \moodle_exception
      */
     private function create_course_test($tracking) {
+        global $DB;
         $data = [
-            'fullname' => 'ibcourse1' . $tracking,
-            'idnumber' => '1111111' . $tracking,
+            'fullname' => 'cibcourse1' . $tracking,
+            'idnumber' => 'c1111111' . $tracking,
+            'shortname' => 'cibcourse1' . $tracking,
         ];
 
         // Create course.
-        $course = generator::create_course($data);
+        if (!$course = $DB->get_record('course', $data)) {
+            $course = generator::create_course($data);
+        }
 
         $entity = new \local_intellidata\entities\courses\course($course);
         $entitydata = $entity->export();
@@ -203,7 +198,7 @@ class courses_test extends \advanced_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'courses']);
 
-        $datarecord = $storage->get_log_entity_data('c', ['id' => $course->id]);
+        $datarecord = $storage->get_log_entity_data('c', ['id' => $course->id, 'idnumber' => $data['idnumber']]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);

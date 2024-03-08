@@ -19,9 +19,16 @@
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @codingStandardsIgnoreFile
  */
 
 namespace local_intellidata;
+
+use local_intellidata\helpers\DBHelper;
+use local_intellidata\helpers\ParamsHelper;
+use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\StorageHelper;
+use local_intellidata\helpers\TrackingHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,44 +38,42 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 
-use local_intellidata\helpers\MigrationHelper;
-use local_intellidata\helpers\SettingsHelper;
-
 /**
- * Tasks helper test case.
+ * Activity migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class migration_helper_test extends \advanced_testcase {
+class custom_db_client_testcase extends \advanced_testcase {
+    protected $newexportavailable;
+    protected $olddbclient;
+    protected $oldstorage;
+    protected $release;
 
-    /**
-     * Test migration_disabled method when setting enabled.
-     *
-     * @return void
-     * @throws \dml_exception
-     * @covers \local_intellidata\helpers\MigrationHelper::migration_disabled
-     */
-    public function test_migration_disabled_when_enabled() {
-        $this->resetAfterTest();
+    public function setRegisterMockObjectsFromTestArgumentsRecursively(bool $flag): void {
+        global $DB;
 
-        SettingsHelper::set_setting('forcedisablemigration', 1);
-        $this->assertTrue(MigrationHelper::migration_disabled());
+        $DB->force_transaction_rollback();
+        $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
+
+        parent::setRegisterMockObjectsFromTestArgumentsRecursively($flag);
     }
 
-    /**
-     * Test migration_disabled method when setting disabled.
-     *
-     * @return void
-     * @throws \dml_exception
-     * @covers \local_intellidata\helpers\MigrationHelper::migration_disabled
-     */
-    public function test_migration_disabled_when_disabled() {
-        $this->resetAfterTest();
+    public function setUp(): void {
+        $this->setAdminUser();
 
-        SettingsHelper::set_setting('forcedisablemigration', 0);
-        $this->assertFalse(MigrationHelper::migration_disabled());
+        setup_helper::setup_tests_config();
+
+        $this->oldstorage = SettingsHelper::get_setting('trackingstorage');
+        SettingsHelper::set_setting('trackingstorage', StorageHelper::DATABASE_STORAGE);
+
+        $this->release = ParamsHelper::get_release();
+        $this->newexportavailable = $this->release >= 3.8;
+    }
+
+    public function tearDown(): void {
+        SettingsHelper::set_setting('trackingstorage', $this->oldstorage);
     }
 }

@@ -159,7 +159,6 @@ class system_tables_repository extends base_tables_repository {
             'local_intelliboard*',
             'local_intellidata*',
             'lock_db',
-            'logstore_standard_log',
             'log*',
             'lti_types_config',
             'lti_tool*',

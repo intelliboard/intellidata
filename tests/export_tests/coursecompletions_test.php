@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -25,6 +25,7 @@ namespace local_intellidata\export_tests;
 
 use completion_completion;
 use context_course;
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
@@ -39,26 +40,17 @@ global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Course complations migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class coursecompletions_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class coursecompletions_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\coursecompletions\coursecompletion
@@ -109,25 +101,34 @@ class coursecompletions_test extends \advanced_testcase {
      * @throws \moodle_exception
      */
     public function create_course_completions_test($tracking) {
+        global $DB;
+
         if (test_helper::is_new_phpunit()) {
             $this->resetAfterTest(false);
         }
 
-        $userdata = [
-            'firstname' => 'ibuser1' . $tracking,
-            'username' => 'ibuser1' . $tracking,
-            'password' => 'Ibuser1!',
+        $data = [
+            'firstname' => 'aibuser1' . $tracking,
+            'username' => 'aibuser1' . $tracking,
         ];
 
-        $user = generator::create_user($userdata);
+        $userdata = $data;
+        $userdata['password'] = 'Ibuser1!';
+
+        if (!$user = $DB->get_record('user', $data)) {
+            $user = generator::create_user($userdata);
+        }
 
         $coursedata = [
             'fullname' => 'ibcoursecompletion1' . $tracking,
-            'idnumber' => '1111111' . $tracking,
+            'idnumber' => 'a1111111' . $tracking,
+            'shortname' => 'ibcoursecompletion1' . $tracking,
             'enablecompletion' => true,
         ];
 
-        $course = generator::create_course($coursedata);
+        if (!$course = $DB->get_record('course', $coursedata)) {
+            $course = generator::create_course($coursedata);
+        }
 
         $data = [
             'userid' => $user->id,
@@ -171,7 +172,7 @@ class coursecompletions_test extends \advanced_testcase {
 
         $coursedata = [
             'fullname' => 'ibcoursecompletion1' . $tracking,
-            'idnumber' => '1111111' . $tracking,
+            'idnumber' => 'a1111111' . $tracking,
         ];
 
         $course = $DB->get_record('course', $coursedata);

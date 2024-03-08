@@ -339,7 +339,7 @@ class new_export_service {
      * @return void
      */
     public function get_datatypes_observer($table, $useadditional = false) {
-        $datatypes = datatypes_service::get_datatypes(true, true);
+        $datatypes = datatypes_service::get_datatypes();
         $entities = [];
         foreach ($datatypes as $data) {
             $issetatable = isset($data['additional_tables']);

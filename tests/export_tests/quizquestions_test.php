@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\SettingsHelper;
 use stdClass;
 use core_table\local\filter\filter;
@@ -40,26 +41,17 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Quiz questions test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class quizquestions_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class quizquestions_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\quizquestions\quizquestion
@@ -96,7 +88,8 @@ class quizquestions_test extends \advanced_testcase {
     public function create_quiz_questions_test($tracking) {
         $coursedata = [
             'fullname' => 'ibcoursequizquestion1' . $tracking,
-            'idnumber' => '3333333' . $tracking,
+            'idnumber' => 'qa3333333' . $tracking,
+            'shortname' => 'ibcoursequizquestion1' . $tracking,
         ];
         $course = generator::create_course($coursedata);
 
@@ -149,6 +142,7 @@ class quizquestions_test extends \advanced_testcase {
         $coursedata = [
             'fullname' => 'ibcoursequizquestion2',
             'idnumber' => '33333335',
+            'shortname' => 'ibcoursequizquestion2',
         ];
         $course = generator::create_course($coursedata);
 
