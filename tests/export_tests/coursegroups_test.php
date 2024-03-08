@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * Course groups migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -168,8 +168,8 @@ class coursegroups_test extends custom_db_client_testcase {
         $group = $DB->get_record('groups', $gdata);
 
         $userdata = [
-            'firstname' => 'ibuser1',
-            'username' => 'ibuser1' . $tracking,
+            'firstname' => 'cgibuser1',
+            'username' => 'cgibuser1' . $tracking,
             'password' => 'Ibuser1!',
         ];
 
@@ -283,8 +283,8 @@ class coursegroups_test extends custom_db_client_testcase {
         $group = $DB->get_record('groups', $gdata);
 
         $userdata = [
-            'firstname' => 'ibuser1',
-            'username' => 'ibuser1' . $tracking,
+            'firstname' => 'cgibuser1',
+            'username' => 'cgibuser1' . $tracking,
         ];
         $user = $DB->get_record('user', $userdata);
 
@@ -318,7 +318,8 @@ class coursegroups_test extends custom_db_client_testcase {
     private function create_group_test($tracking) {
         $data = [
             'fullname' => 'ibcourse1' . $tracking,
-            'idnumber' => '1111111' . $tracking,
+            'idnumber' => 'cg1111111' . $tracking,
+            'shortname' => 'ibcourse1' . $tracking,
         ];
 
         // Create course.

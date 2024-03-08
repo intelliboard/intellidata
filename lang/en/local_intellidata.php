@@ -20,7 +20,7 @@
  * it has a settings page that allow you to configure the messages
  * send.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2020
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

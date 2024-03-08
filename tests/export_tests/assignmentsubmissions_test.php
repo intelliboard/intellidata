@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * Assignment Submissions migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -64,10 +64,12 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
             return;
         }
 
-        SettingsHelper::set_setting('newtracking', 1);
-        $this->create_submission_test(1);
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->create_submission_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
 
-        SettingsHelper::set_setting('newtracking', 0);
         $this->create_submission_test(0);
     }
 
@@ -87,10 +89,12 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
             return;
         }
 
-        SettingsHelper::set_setting('newtracking', 1);
-        $this->update_submission_test(1);
+        if ($this->newexportavailable) {
+            SettingsHelper::set_setting('newtracking', 1);
+            $this->update_submission_test(1);
+            SettingsHelper::set_setting('newtracking', 0);
+        }
 
-        SettingsHelper::set_setting('newtracking', 0);
         $this->update_submission_test(0);
     }
 

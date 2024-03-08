@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -43,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * Role migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -164,6 +164,7 @@ class roleassignments_test extends custom_db_client_testcase {
         $coursedata = [
             'fullname' => 'ibcoursecompletion1' . $tracking,
             'idnumber' => '1111111' . $tracking,
+            'shortname' => 'ibcoursecompletion1' . $tracking,
         ];
 
         $course = generator::create_course($coursedata);

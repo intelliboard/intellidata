@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -46,7 +46,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * Activity migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -106,6 +106,7 @@ class quizattempts_test extends custom_db_client_testcase {
         $coursedata = [
             'fullname' => 'ibcoursequizquestion1a' . $tracking,
             'idnumber' => '3333333a' . $tracking,
+            'shortname' => 'ibcoursequizquestion1a' . $tracking,
         ];
         $course = generator::create_course($coursedata);
         $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -160,6 +161,7 @@ class quizattempts_test extends custom_db_client_testcase {
         $coursedata = [
             'fullname' => 'ibcoursequizquestion1ad' . $tracking,
             'idnumber' => '3333333ad' . $tracking,
+            'shortname' => 'ibcoursequizquestion1ad' . $tracking,
         ];
         $course = generator::create_course($coursedata);
         $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');

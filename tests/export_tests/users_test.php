@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * User migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -122,7 +122,7 @@ class users_test extends custom_db_client_testcase {
         global $DB;
 
         $data = [
-            'username' => 'unittest_create_user' . $tracking,
+            'username' => 'aunittest_create_user' . $tracking,
         ];
 
         $user = $DB->get_record('user', $data);
@@ -153,7 +153,7 @@ class users_test extends custom_db_client_testcase {
         global $DB;
 
         $data = [
-            'username' => 'unittest_create_user' . $tracking,
+            'username' => 'aunittest_create_user' . $tracking,
         ];
 
         $user = $DB->get_record('user', $data);
@@ -185,7 +185,7 @@ class users_test extends custom_db_client_testcase {
     private function create_user_test($tracking) {
         $data = [
             'firstname' => 'unit test create user',
-            'username' => 'unittest_create_user' . $tracking,
+            'username' => 'aunittest_create_user' . $tracking,
             'password' => 'Unittest_User1!',
         ];
 

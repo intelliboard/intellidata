@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -45,7 +45,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * Cohort migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -90,6 +90,7 @@ class participation_test extends custom_db_client_testcase {
             $coursedata = [
                 'fullname' => 'testnp' . $tracking,
                 'idnumber' => '111111np' . $tracking,
+                'shortname' => 'testnp' . $tracking,
             ];
 
             $course = generator::create_course($coursedata);
@@ -120,7 +121,7 @@ class participation_test extends custom_db_client_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'participation']);
-        $datarecord = $storage->get_log_entity_data('c', ['id' => 2, 'type' => 'activity']);
+        $datarecord = $storage->get_log_entity_data('c', ['userid' => 2, 'type' => 'activity']);
 
         $this->assertNotEmpty($datarecord);
 

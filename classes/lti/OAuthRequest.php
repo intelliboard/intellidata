@@ -15,10 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * @package    local_intellidata
+ * @subpackage intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
+ * @codingStandardsIgnoreFile
  */
 
 namespace local_intellidata\lti;
@@ -32,6 +34,7 @@ class OAuthRequest {
     public $basestring;
     public static $version = '1.0';
     public static $postinput = 'php://input';
+    public $base_string;
 
     public function __construct($httpmethod, $httpurl, $parameters = null) {
         @$parameters || $parameters = [];

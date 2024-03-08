@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 /**
  * Course migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -119,7 +119,7 @@ class courses_test extends custom_db_client_testcase {
         global $DB;
 
         $data = [
-            'fullname' => 'ibcourse1' . $tracking,
+            'fullname' => 'cibcourse1' . $tracking,
         ];
 
         $course = $DB->get_record('course', $data);
@@ -135,6 +135,7 @@ class courses_test extends custom_db_client_testcase {
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = json_decode($datarecord->data);
+
         $this->assertEquals($entitydata->id, $datarecorddata->id);
     }
 
@@ -150,7 +151,7 @@ class courses_test extends custom_db_client_testcase {
         global $DB;
 
         $data = [
-            'fullname' => 'ibcourse1' . $tracking,
+            'fullname' => 'cibcourse1' . $tracking,
         ];
 
         $course = $DB->get_record('course', $data);
@@ -165,7 +166,7 @@ class courses_test extends custom_db_client_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'courses']);
 
-        $datarecord = $storage->get_log_entity_data('u', ['id' => $course->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $course->id, 'idnumber' => $course->idnumber]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);
@@ -179,13 +180,17 @@ class courses_test extends custom_db_client_testcase {
      * @throws \moodle_exception
      */
     private function create_course_test($tracking) {
+        global $DB;
         $data = [
-            'fullname' => 'ibcourse1' . $tracking,
-            'idnumber' => '1111111' . $tracking,
+            'fullname' => 'cibcourse1' . $tracking,
+            'idnumber' => 'c1111111' . $tracking,
+            'shortname' => 'cibcourse1' . $tracking,
         ];
 
         // Create course.
-        $course = generator::create_course($data);
+        if (!$course = $DB->get_record('course', $data)) {
+            $course = generator::create_course($data);
+        }
 
         $entity = new \local_intellidata\entities\courses\course($course);
         $entitydata = $entity->export();
@@ -193,7 +198,7 @@ class courses_test extends custom_db_client_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'courses']);
 
-        $datarecord = $storage->get_log_entity_data('c', ['id' => $course->id]);
+        $datarecord = $storage->get_log_entity_data('c', ['id' => $course->id, 'idnumber' => $data['idnumber']]);
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);

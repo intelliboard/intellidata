@@ -228,12 +228,16 @@ class database_storage_repository extends file_storage_repository {
 
         // Search by event name.
         $sql .= " AND " . $DB->sql_like('data', ':searcheventcrud');
-        $data['searcheventcrud'] = '%"crud":%"' . $crud . '"%';
+        $data['searcheventcrud'] = '%"crud":"' . $crud . '"%';
 
         // Search by other fields (if exist).
         foreach ($params as $key => $value) {
-            $sql .= " AND " . $DB->sql_like('data', ':' . $key);
-            $data[$key] = '%"' . $key . '":%' . $value . '%';
+            $paramkey1 = 'paramkey1' . $key;
+            $paramkey2 = 'paramkey2' . $key;
+            $sql .= " AND (" . $DB->sql_like('data', ':' . $paramkey1) .
+                    " OR " . $DB->sql_like('data', ':' . $paramkey2) . ")";
+            $data[$paramkey1] = '%"' . $key . '":"' . $value . '%';
+            $data[$paramkey2] = '%"' . $key . '":' . $value . '%';
         }
 
         $records = $DB->get_records_sql($sql, $data, 0, 1);
