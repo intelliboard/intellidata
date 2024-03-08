@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\entities\participations\participation;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
@@ -39,26 +40,17 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/user/profile/definelib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Cohort migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class participation_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class participation_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\participations\participation
@@ -98,6 +90,7 @@ class participation_test extends \advanced_testcase {
             $coursedata = [
                 'fullname' => 'testnp' . $tracking,
                 'idnumber' => '111111np' . $tracking,
+                'shortname' => 'testnp' . $tracking,
             ];
 
             $course = generator::create_course($coursedata);
@@ -128,7 +121,7 @@ class participation_test extends \advanced_testcase {
         $entitydata = test_helper::filter_fields($entitydata, $data);
 
         $storage = StorageHelper::get_storage_service(['name' => 'participation']);
-        $datarecord = $storage->get_log_entity_data('c', ['id' => 2, 'type' => 'activity']);
+        $datarecord = $storage->get_log_entity_data('c', ['userid' => 2, 'type' => 'activity']);
 
         $this->assertNotEmpty($datarecord);
 

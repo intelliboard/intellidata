@@ -15,10 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
+ * @package    local_intellidata
+ * @subpackage intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/
+ * @codingStandardsIgnoreFile
  */
 
 namespace local_intellidata\lti;
@@ -26,6 +28,7 @@ namespace local_intellidata\lti;
 class OAuthConsumer {
     public $key;
     public $secret;
+    public $callback_url;
 
     public function __construct($key, $secret, $callbackurl = null) {
         $this->key = $key;

@@ -29,7 +29,7 @@ use local_intellidata\services\new_export_service;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(__DIR__.'/../../../../../../lib/dml/mysqli_native_moodle_database.php');
+require_once(__DIR__.'/../../../../../../lib/dml/pgsql_native_moodle_database.php');
 
 /**
  * Custom mysqli class representing moodle database interface.

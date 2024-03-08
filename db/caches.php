@@ -40,9 +40,11 @@ $definitions = [
     'config' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
+        'staticacceleration' => true,
     ],
     'datatypes' => [
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
+        'staticacceleration' => true,
     ],
 ];

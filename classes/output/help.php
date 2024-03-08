@@ -17,6 +17,8 @@
 /**
  * Class containing data of "Help" page.
  *
+ * @package    local_intellidata
+ * @subpackage intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @website    http://intelliboard.net/

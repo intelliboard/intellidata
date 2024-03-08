@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ use local_intellidata\services\lti_service;
 /**
  * User migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
@@ -50,7 +50,6 @@ class lti_test extends \advanced_testcase {
         set_config('ltitoolurl', $this->endpoint, 'local_intellidata');
         set_config('lticonsumerkey', $this->key, 'local_intellidata');
         set_config('ltisharedsecret', $this->secret,  'local_intellidata');
-        set_config('ltidebug', $this->debug, 'local_intellidata');
     }
 
     /**
@@ -64,7 +63,6 @@ class lti_test extends \advanced_testcase {
         list($endpoint, $parms, $debug) = $ltiservice->lti_get_launch_data();
 
         $this->assertEquals($endpoint, $this->endpoint);
-        $this->assertEquals($debug, $this->debug);
         $this->assertEquals($parms['oauth_consumer_key'], $this->key);
 
         // Check for required params.

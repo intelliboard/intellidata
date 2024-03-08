@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
@@ -37,26 +38,17 @@ global $CFG;
 require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * Cohort migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class cohorts_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class cohorts_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\cohorts\cohort
@@ -186,13 +178,16 @@ class cohorts_test extends \advanced_testcase {
      * @throws \moodle_exception
      */
     private function create_cohort_test($tracking) {
+        global $DB;
         $data = [
             'name' => 'ibcohort1' . $tracking,
             'contextid' => '1',
         ];
 
         // Create cohort.
-        $cohort = generator::create_cohort($data);
+        if (!$cohort = $DB->get_record('cohort', $data)) {
+            $cohort = generator::create_cohort($data);
+        }
 
         $entity = new \local_intellidata\entities\cohorts\cohort($cohort);
         $entitydata = $entity->export();

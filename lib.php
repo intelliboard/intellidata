@@ -14,6 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2023
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\api\apilib;
@@ -127,8 +134,7 @@ function local_intellidata_tracking_init() {
 function local_intellidata_after_config() {
     global $DB;
 
-    $runtest = defined('PHPUNIT_TEST') && PHPUNIT_TEST;
-    if (TrackingHelper::tracking_enabled() && !empty(SettingsHelper::get_setting('enablecustomdbdriver')) || $runtest) {
+    if (TrackingHelper::new_tracking_enabled()) {
         $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
     }
 }

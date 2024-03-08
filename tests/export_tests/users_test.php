@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -23,6 +23,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\custom_db_client_testcase;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
@@ -38,26 +39,17 @@ require_once($CFG->dirroot . '/local/intellidata/tests/setup_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/generator.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/user/lib.php');
+require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
  * User migration test case.
  *
- * @package    local
+ * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
  */
-class users_test extends \advanced_testcase {
-
-    private $newexportavailable;
-
-    public function setUp(): void {
-        $this->setAdminUser();
-
-        setup_helper::setup_tests_config();
-
-        $this->newexportavailable = ParamsHelper::get_release() >= 3.8;
-    }
+class users_test extends custom_db_client_testcase {
 
     /**
      * @covers \local_intellidata\entities\users\user
@@ -130,7 +122,7 @@ class users_test extends \advanced_testcase {
         global $DB;
 
         $data = [
-            'username' => 'unittest_create_user' . $tracking,
+            'username' => 'aunittest_create_user' . $tracking,
         ];
 
         $user = $DB->get_record('user', $data);
@@ -161,7 +153,7 @@ class users_test extends \advanced_testcase {
         global $DB;
 
         $data = [
-            'username' => 'unittest_create_user' . $tracking,
+            'username' => 'aunittest_create_user' . $tracking,
         ];
 
         $user = $DB->get_record('user', $data);
@@ -193,7 +185,7 @@ class users_test extends \advanced_testcase {
     private function create_user_test($tracking) {
         $data = [
             'firstname' => 'unit test create user',
-            'username' => 'unittest_create_user' . $tracking,
+            'username' => 'aunittest_create_user' . $tracking,
             'password' => 'Unittest_User1!',
         ];
 
