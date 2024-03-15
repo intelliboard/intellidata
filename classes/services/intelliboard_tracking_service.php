@@ -146,8 +146,8 @@ class intelliboard_tracking_service {
                                     param,
                                     visits,
                                     timespend,
-                                    firstaccess,
-                                    lastaccess,
+                                    COALESCE(firstaccess, 0) AS firstaccess,
+                                    COALESCE(lastaccess, 0) AS lastaccess,
                                     0 AS timemodified,
                                     CONCAT('{\"browser\":\"', useragent, '\",\"os\":\"', useros, '\"}') AS useragent,
                                     userip AS ip
@@ -175,8 +175,8 @@ class intelliboard_tracking_service {
                                  1 AS param,
                                  SUM(lit.visits) AS visits,
                                  SUM(lit.timespend) AS timespend,
-                                 MIN(lit.firstaccess) AS firstaccess,
-                                 MAX(lit.lastaccess) AS lastaccess,
+                                 COALESCE(MIN(lit.firstaccess), 0) AS firstaccess,
+                                 COALESCE(MAX(lit.lastaccess), 0) AS lastaccess,
                                  0 AS timemodified,
                                  CONCAT('{\"browser\":\"', MAX(lit.useragent), '\",\"os\":\"', MAX(lit.useros), '\"}') AS useragent,
                                  MAX(lit.userip) AS ip
