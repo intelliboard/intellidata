@@ -56,6 +56,11 @@ class custom_db_client_testcase extends \advanced_testcase {
         global $DB;
 
         $DB->force_transaction_rollback();
+
+        if (ParamsHelper::get_release() >= 3.8) {
+            setup_helper::enable_custom_driver();
+        }
+
         $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
 
         parent::setRegisterMockObjectsFromTestArgumentsRecursively($flag);

@@ -57,6 +57,14 @@ class setup_helper {
     }
 
     /**
+     * Enable Custom DB Driver.
+     */
+    public static function enable_custom_driver() {
+        SettingsHelper::set_setting('enablecustomdbdriver', 1);
+        SettingsHelper::set_setting('newtracking', 1);
+    }
+
+    /**
      * Enable data cleaning.
      */
     public static function enable_datacleaning() {
