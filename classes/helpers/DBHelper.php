@@ -536,6 +536,13 @@ class DBHelper {
     public static function get_db_client($penetrationtype = self::PENETRATION_TYPE_INTERNAL) {
         global $CFG, $DB;
 
+        if (
+            ($penetrationtype == self::PENETRATION_TYPE_INTERNAL && (int)SettingsHelper::get_setting('enablecustomdbdriver') == 0) ||
+            ($penetrationtype == self::PENETRATION_TYPE_EXTERNAL && !TrackingHelper::new_tracking_enabled())
+        ) {
+            return $DB;
+        }
+
         if (in_array($CFG->dbtype, self::$supporteddbclients[$penetrationtype])) {
 
             if (!isset(self::$customdbclient[$penetrationtype])) {
