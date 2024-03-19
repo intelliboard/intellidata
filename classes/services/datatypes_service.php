@@ -110,7 +110,7 @@ class datatypes_service {
             if (!$servicedatatypes || $rebuildcache) {
                 $configservice = new config_service($defaultdatatypes);
                 $servicedatatypes = $configservice->get_datatypes();
-                $cache->set('servicedatatypes', $defaultdatatypes);
+                $cache->set('servicedatatypes', $servicedatatypes);
             }
 
             return $servicedatatypes;
