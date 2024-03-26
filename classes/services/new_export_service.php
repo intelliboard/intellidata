@@ -102,9 +102,17 @@ class new_export_service {
             $requiredatatype = !isset($entity::$datatype);
 
             foreach ($dataobjects as $dataobject) {
-                $record = $DB->get_record($table, $this->prepare_data_for_query($table, (array)$dataobject));
+                if ($requiredatatype && !$this->filter_id($entity::TYPE, (object)$dataobject)) {
+                    $params = $this->prepare_data_for_query($table, (array)$dataobject);
+                    $records = $DB->get_records($table, $params, 'id DESC', '*', 0, 1);
+                    if (!$record = array_shift($records)) {
+                        continue;
+                    }
+                } else {
+                    $record = (object)$dataobject;
+                }
 
-                if ($requiredatatype && !$this->filter($entity::TYPE, $record)) {
+                if (!isset($record) || ($requiredatatype && !$this->filter($entity::TYPE, $record))) {
                     continue;
                 }
 
@@ -398,6 +406,29 @@ class new_export_service {
         }
 
         return $access;
+    }
+
+    /**
+     * @param string $table
+     * @param \stdClass $data
+     * @return bool
+     */
+    private function filter_id($datatype, $data) {
+        $needid = true;
+        switch ($datatype) {
+            case 'participation':
+                if (!in_array($data->crud, ['c', 'u']) || !$data->userid ||
+                    !in_array($data->contextlevel, [CONTEXT_COURSE, CONTEXT_MODULE])) {
+                    $needid = false;
+                }
+                break;
+            case 'userlogins':
+                $needid = isset($data->eventname) && ($data->eventname == '\core\event\user_loggedin') &&
+                            $data->contextid == 1;
+                break;
+        }
+
+        return $needid;
     }
 
     /**

@@ -545,6 +545,18 @@ class DBHelper {
 
         if (in_array($CFG->dbtype, self::$supporteddbclients[$penetrationtype])) {
 
+            if (isset(self::$customdbclient[$penetrationtype]) && !self::is_database_connected(self::$customdbclient[$penetrationtype])) {
+                try {
+                    self::$customdbclient[$penetrationtype]->dispose();
+                } catch (\Throwable $e) {
+                    // Ignore if connection already disposed.
+
+                    $e->getMessage();
+                }
+
+                unset(self::$customdbclient[$penetrationtype]);
+            }
+
             if (!isset(self::$customdbclient[$penetrationtype])) {
                 $db = self::get_driver_instance($CFG->dbtype, $penetrationtype);
                 $db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
@@ -555,5 +567,14 @@ class DBHelper {
         }
 
         return $DB;
+    }
+
+    public static function is_database_connected($db) {
+        try {
+            $db->get_records_sql("SELECT 1");
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
