@@ -142,4 +142,3 @@ function local_intellidata_after_config() {
 function local_intellidata_before_session_start() {
     local_intellidata_after_config();
 }
-

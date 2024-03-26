@@ -25,6 +25,7 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\ParamsHelper;
@@ -64,6 +65,7 @@ class migration_service {
      * @param false $cronprocessing
      */
     public function process($params = null, $cronprocessing = false) {
+        global $DB, $CFG;
 
         $alltables = $this->tables;
         $tables = (!empty($params['datatype']) && isset($alltables[$params['datatype']])) ?
@@ -71,7 +73,28 @@ class migration_service {
 
         if (count($tables)) {
             foreach ($tables as $table) {
-                $this->export_table($table, $params, $cronprocessing);
+                $retries = 1;
+                do {
+                    try {
+                        $this->export_table($table, $params, $cronprocessing);
+                        $continue = false;
+                    } catch (\dml_exception $e) {
+                        if (!isset($CFG->intellidata_db_reconnects) || $CFG->intellidata_db_reconnects == 0) {
+                            throw $e;
+                        }
+
+                        sleep($retries);
+                        $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
+                        $continue = true;
+                        $reconnectsremaining = $CFG->intellidata_db_reconnects - $retries;
+                        mtrace($e->getMessage());
+                        mtrace("Database connection lost: Reconnected: {$reconnectsremaining} reconnection attempts remaining. ");
+
+                        if (++$retries > $CFG->intellidata_db_reconnects) {
+                            throw $e;
+                        }
+                    }
+                } while ($continue);
 
                 // If it is processing by cron, we need to allow only one table processing.
                 if ($cronprocessing) {
