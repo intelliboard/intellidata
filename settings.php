@@ -28,6 +28,7 @@
 
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\helpers\ParamsHelper;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -387,16 +388,18 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    $name = 'newtracking';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
+    if (ParamsHelper::get_release() >= 3.8) {
+        $name = 'newtracking';
+        $setting = new admin_setting_configcheckbox(
+            $pluginname . '/' . $name,
+            get_string($name, $pluginname),
+            '',
+            SettingsHelper::get_defaut_config_value($name),
+            true,
+            false
+        );
+        $settings->add($setting);
+    }
 
     $name = 'divideexportbydatatype';
     $setting = new admin_setting_configcheckbox(
