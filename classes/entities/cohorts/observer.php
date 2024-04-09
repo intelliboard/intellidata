@@ -80,7 +80,7 @@ class observer {
     }
 
     /**
-     * Export event.
+     * Export data event.
      *
      * @param $cohortdata
      * @param $eventdata

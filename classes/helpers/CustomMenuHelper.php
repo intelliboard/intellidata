@@ -21,14 +21,24 @@
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2023 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class CustomMenuHelper {
 
     /**
+     * Setup menu.
+     *
      * @param \global_navigation $nav
      *
      * @return void
@@ -62,6 +72,8 @@ class CustomMenuHelper {
     }
 
     /**
+     * Add item.
+     *
      * @param string $name
      * @param \moodle_url $url
      *
@@ -80,6 +92,8 @@ class CustomMenuHelper {
     }
 
     /**
+     * Item exists.
+     *
      * @param string $url
      *
      * @return void

@@ -66,6 +66,13 @@ class observer {
         }
     }
 
+    /**
+     * Export event.
+     *
+     * @param $event
+     * @param $fields
+     * @return void
+     */
     private static function export_event($event, $fields = []) {
         $eventdata = $event->get_data();
         $attempt = $event->get_record_snapshot($eventdata['objecttable'], $eventdata['objectid']);

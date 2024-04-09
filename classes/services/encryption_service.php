@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -28,9 +28,21 @@ namespace local_intellidata\services;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\SettingsHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class encryption_service {
 
+    /**
+     * Auth lifetime.
+     */
     const AUTH_LIFE_TIME = 60;
+
     /**
      * Define the number of blocks that should be read from the source file for each chunk.
      * For 'AES-256-CBC' each block consist of 16 bytes.
@@ -39,17 +51,28 @@ class encryption_service {
      */
     const FILE_ENCRYPTION_BLOCKS = 10000;
 
+    /**
+     * Encryption algorithm.
+     */
     const ENCRYPTION_ALG = 'AES-256-CBC';
 
+    /** @var string */
     public $encryptionkey;
+    /** @var string */
     public $clientidentifier;
 
+    /**
+     * Encryption service construct.
+     * @throws \dml_exception
+     */
     public function __construct() {
         $this->encryptionkey    = SettingsHelper::get_setting('encryptionkey');
         $this->clientidentifier = SettingsHelper::get_setting('clientidentifier');
     }
 
     /**
+     * Validate credentials method.
+     *
      * @return bool
      */
     public function validate_credentials() {
@@ -84,6 +107,11 @@ class encryption_service {
         return openssl_decrypt($data, self::ENCRYPTION_ALG, $this->encryptionkey, 0, $iv);
     }
 
+    /**
+     * Build auth header.
+     *
+     * @return string
+     */
     public function build_auth_header() {
         return $this->encrypt(json_encode([
             'clientidentifier' => $this->clientidentifier,

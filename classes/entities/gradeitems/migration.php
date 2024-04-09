@@ -24,8 +24,6 @@
  */
 namespace local_intellidata\entities\gradeitems;
 
-
-
 /**
  * Class for migration Grade Items.
  *
@@ -35,7 +33,44 @@ namespace local_intellidata\entities\gradeitems;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\gradeitems\gradeitem';
-    public $eventname   = '\core\event\grade_item_created';
-    public $table       = 'grade_items';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\gradeitems\gradeitem';
+    /** @var string */
+    public $eventname = '\core\event\grade_item_created';
+    /** @var string */
+    public $table = 'grade_items';
+    /** @var string */
+    public $tablealias = 'gi';
+
+    /**
+     * Prepare SQL query to get data from DB.
+     *
+     * @param false $count
+     * @param null $condition
+     * @param array $conditionparams
+     * @return array
+     */
+    public function get_sql($count = false, $condition = null, $conditionparams = []) {
+
+        $select = $count ?
+            "SELECT COUNT(" . $this->tablealias . ".id) as recordscount" :
+            "SELECT " . $this->tablealias . ".*,
+                    CASE WHEN " . $this->tablealias . ".itemtype = 'category' THEN ge.fullname
+                    	 WHEN " . $this->tablealias . ".itemtype = 'course' THEN c.fullname
+                         ELSE " . $this->tablealias . ".itemname
+                    END AS itemname ";
+
+        $sql = "$select
+                  FROM {" . $this->table . "} " . $this->tablealias;
+
+        if (!$count) {
+            $sql .= "
+                LEFT JOIN {grade_categories} ge
+                        ON ge.id = " . $this->tablealias . ".iteminstance AND " . $this->tablealias . ".itemtype = 'category'
+                LEFT JOIN {course} c
+                        ON c.id = " . $this->tablealias . ".courseid AND " . $this->tablealias . ".itemtype = 'course' ";
+        }
+
+        return $this->set_condition($condition, $conditionparams, $sql);
+    }
 }

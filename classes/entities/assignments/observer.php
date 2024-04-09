@@ -187,6 +187,8 @@ class observer {
     }
 
     /**
+     * Export data event.
+     *
      * @param $eventdata
      * @param $submission
      * @param array $fields
@@ -202,6 +204,8 @@ class observer {
     }
 
     /**
+     * Get submission type.
+     *
      * @param $submissionid
      * @return string
      * @throws \dml_exception

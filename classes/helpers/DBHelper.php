@@ -21,27 +21,65 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
-use local_intellidata\persistent\export_ids;
-
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class DBHelper {
+    /**
+     * Mysql type.
+     */
     const MYSQL_TYPE = 'mysqli';
+    /**
+     * Postgres type.
+     */
     const POSTGRES_TYPE = 'pgsql';
+    /**
+     * MariaDB type.
+     */
     const MARIADB_TYPE = 'mariadb';
+    /**
+     * Mssql type.
+     */
     const MSSQL_TYPE = 'mssql';
+    /**
+     * Sqlsrv type.
+     */
     const SQLSRV_TYPE = 'sqlsrv';
+    /**
+     * Aurora mysql type.
+     */
     const AURORAMYSQL_TYPE = 'auroramysql';
+    /**
+     * OCI type.
+     */
     const OCI_TYPE = 'oci';
-
+    /**
+     * Penetration type Internal.
+     */
     const PENETRATION_TYPE_INTERNAL = 'internal';
+    /**
+     * Penetration type External.
+     */
     const PENETRATION_TYPE_EXTERNAL = 'external';
 
+    /**
+     * @var array
+     */
     public static $customdbclient = [];
 
+    /**
+     * @var array[]
+     */
     public static $supporteddbclients = [
         'internal' => [
             self::MYSQL_TYPE,
@@ -58,6 +96,8 @@ class DBHelper {
     ];
 
     /**
+     * Get operator.
+     *
      * @param $id
      * @param $value
      * @param array $params
@@ -297,6 +337,8 @@ class DBHelper {
     }
 
     /**
+     * Group by date val.
+     *
      * @param string $groupperiod daytime|week|monthyearday|month|monthyear|quarter|year
      * @param $sqlfield
      * @return string
@@ -394,6 +436,8 @@ class DBHelper {
     }
 
     /**
+     * Get type cast.
+     *
      * @param $type
      * @return string
      * @throws \Exception
@@ -416,6 +460,8 @@ class DBHelper {
     }
 
     /**
+     * Debug build sql.
+     *
      * @param $sql
      * @param $params
      * @return array|string|string[]
@@ -431,6 +477,8 @@ class DBHelper {
     }
 
     /**
+     * Get row number.
+     *
      * @return string[]
      */
     public static function get_row_number() {
@@ -448,6 +496,8 @@ class DBHelper {
     }
 
     /**
+     * Get condition user status.
+     *
      * @param $letters
      * @return string
      */
@@ -521,6 +571,13 @@ class DBHelper {
         return false;
     }
 
+    /**
+     * Get driver instance.
+     *
+     * @param $type
+     * @param $penetrationtype
+     * @return mixed|null
+     */
     public static function get_driver_instance($type, $penetrationtype) {
         $classname = $type . '_custom_moodle_database_' . $penetrationtype;
         $libfile   = __DIR__ . "/custom_db_drivers/{$penetrationtype}/{$classname}.php";
@@ -533,11 +590,19 @@ class DBHelper {
         return new $classname();
     }
 
+    /**
+     * Get DB client.
+     *
+     * @param $penetrationtype
+     * @return mixed|\moodle_database|null
+     * @throws \dml_exception
+     */
     public static function get_db_client($penetrationtype = self::PENETRATION_TYPE_INTERNAL) {
         global $CFG, $DB;
 
+        $enablecustomdbdriver = (int)SettingsHelper::get_setting('enablecustomdbdriver');
         if (
-            ($penetrationtype == self::PENETRATION_TYPE_INTERNAL && (int)SettingsHelper::get_setting('enablecustomdbdriver') == 0) ||
+            ($penetrationtype == self::PENETRATION_TYPE_INTERNAL && $enablecustomdbdriver == 0) ||
             ($penetrationtype == self::PENETRATION_TYPE_EXTERNAL && !TrackingHelper::new_tracking_enabled())
         ) {
             return $DB;
@@ -545,7 +610,8 @@ class DBHelper {
 
         if (in_array($CFG->dbtype, self::$supporteddbclients[$penetrationtype])) {
 
-            if (isset(self::$customdbclient[$penetrationtype]) && !self::is_database_connected(self::$customdbclient[$penetrationtype])) {
+            if (isset(self::$customdbclient[$penetrationtype]) &&
+                !self::is_database_connected(self::$customdbclient[$penetrationtype])) {
                 try {
                     self::$customdbclient[$penetrationtype]->dispose();
                 } catch (\Throwable $e) {
@@ -569,6 +635,12 @@ class DBHelper {
         return $DB;
     }
 
+    /**
+     * Is database connected.
+     *
+     * @param $db
+     * @return bool
+     */
     public static function is_database_connected($db) {
         try {
             $db->get_records_sql("SELECT 1");

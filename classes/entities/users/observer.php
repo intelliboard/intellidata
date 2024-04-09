@@ -116,6 +116,14 @@ class observer {
         }
     }
 
+    /**
+     * Export data event.
+     *
+     * @param $userdata
+     * @param $eventdata
+     * @param array $fields
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($userdata, $eventdata, $fields = []) {
         $userdata->crud = $eventdata['crud'];
 

@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Forum discussion migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -38,7 +40,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/mod/forum/externallib.php');
 
 /**
- * User migration test case.
+ * Forum discussion migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -54,6 +56,8 @@ class forumdiscussions_test extends \advanced_testcase {
     }
 
     /**
+     * Test forum discussion create.
+     *
      * @covers \local_intellidata\entities\forums\forumdiscussion
      * @covers \local_intellidata\entities\forums\discussionsmigration
      * @covers \local_intellidata\entities\forums\observer::discussion_created
@@ -119,6 +123,8 @@ class forumdiscussions_test extends \advanced_testcase {
     }
 
     /**
+     * Test forum discussion update.
+     *
      * @covers \local_intellidata\entities\forums\forumdiscussion
      * @covers \local_intellidata\entities\forums\discussionsmigration
      * @covers \local_intellidata\entities\forums\observer::discussion_updated
@@ -185,6 +191,8 @@ class forumdiscussions_test extends \advanced_testcase {
     }
 
     /**
+     * Test forum discussion move.
+     *
      * @covers \local_intellidata\entities\forums\forumdiscussion
      * @covers \local_intellidata\entities\forums\discussionsmigration
      * @covers \local_intellidata\entities\forums\observer::discussion_moved
@@ -260,6 +268,8 @@ class forumdiscussions_test extends \advanced_testcase {
     }
 
     /**
+     * Test forum discussion delete.
+     *
      * @covers \local_intellidata\entities\forums\forumdiscussion
      * @covers \local_intellidata\entities\forums\discussionsmigration
      * @covers \local_intellidata\entities\forums\observer::discussion_deleted

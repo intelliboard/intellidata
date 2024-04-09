@@ -17,20 +17,44 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 abstract class base_tables_repository {
 
+    /**
+     * Exclude tables.
+     *
+     * @param $dbtables
+     * @return mixed
+     */
     abstract public static function exclude_tables($dbtables);
 
+    /**
+     * Get excluded tables.
+     *
+     * @param $dbtables
+     * @return mixed
+     */
     abstract public static function get_excluded_tables($dbtables);
 
+    /**
+     * Get defined tables.
+     *
+     * @return mixed
+     */
     abstract protected static function get_defined_tables();
 }

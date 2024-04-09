@@ -15,18 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * OAuth Signature Method HMAC SHA.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\lti;
 
+/**
+ * OAuth Signature Method HMAC SHA.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class OAuthSignatureMethod_HMAC_SHA1 extends OAuthSignatureMethod {
 
     /**
+     * Get name.
+     *
      * @return string
      */
     public function get_name() {
@@ -34,6 +47,8 @@ class OAuthSignatureMethod_HMAC_SHA1 extends OAuthSignatureMethod {
     }
 
     /**
+     * Build signature.
+     *
      * @param $request
      * @param $consumer
      * @param $token

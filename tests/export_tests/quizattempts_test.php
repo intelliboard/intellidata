@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Quiz attempt migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -44,7 +46,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
- * Activity migration test case.
+ * Quiz attempt migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -54,6 +56,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class quizattempts_test extends custom_db_client_testcase {
 
     /**
+     * Test quiz attempt create.
+     *
      * @covers \local_intellidata\entities\quizzes\attempt
      * @covers \local_intellidata\entities\quizzes\migration
      * @covers \local_intellidata\entities\quizzes\observer::course_module_created
@@ -73,6 +77,8 @@ class quizattempts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test quiz attempt delete.
+     *
      * @covers \local_intellidata\entities\quizzes\activity
      * @covers \local_intellidata\entities\quizzes\migration
      * @covers \local_intellidata\entities\quizzes\observer::course_module_deleted
@@ -94,6 +100,8 @@ class quizattempts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create quiz attempt test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -150,6 +158,8 @@ class quizattempts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete quiz attempt test.
+     *
      * @param int $tracking
      *
      * @return void

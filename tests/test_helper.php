@@ -17,15 +17,22 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata;
 
+/**
+ * Test case helper.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ */
 class test_helper {
 
     /**

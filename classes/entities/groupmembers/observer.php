@@ -60,7 +60,6 @@ class observer {
     /**
      * Export event.
      *
-     * @param $groupdata
      * @param $eventdata
      * @param array $fields
      * @throws \core\invalid_persistent_exception

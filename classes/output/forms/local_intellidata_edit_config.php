@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Edit config form.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2022
@@ -25,19 +27,26 @@ namespace local_intellidata\output\forms;
 
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\persistent\datatypeconfig;
-use local_intellidata\services\datatypes_service;
 
 defined('MOODLE_INTERNAL') || die;
 
-
 require_once($CFG->dirroot . '/lib/formslib.php');
+
 
 /**
  * Edit config form.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_intellidata_edit_config extends \moodleform {
 
     /**
+     * Form definition.
+     *
+     * @return void
      * @throws \coding_exception
      */
     public function definition() {
@@ -60,6 +69,12 @@ class local_intellidata_edit_config extends \moodleform {
         $this->set_data($data);
     }
 
+    /**
+     * Form for required datatype.
+     *
+     * @return void
+     * @throws \coding_exception
+     */
     protected function required_form() {
         $mform = $this->_form;
 
@@ -71,6 +86,13 @@ class local_intellidata_edit_config extends \moodleform {
         $mform->setType('tabletype', PARAM_INT);
     }
 
+    /**
+     * Form for optional datatype.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     protected function optional_form() {
         $mform = $this->_form;
         $data = $this->_customdata['data'];
@@ -121,6 +143,8 @@ class local_intellidata_edit_config extends \moodleform {
     }
 
     /**
+     * Add action buttons.
+     *
      * @param bool $cancel
      * @param null $submitlabel
      * @throws \coding_exception

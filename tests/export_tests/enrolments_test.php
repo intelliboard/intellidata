@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Enrol migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -51,6 +53,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class enrolments_test extends custom_db_client_testcase {
 
     /**
+     * Test enrol create.
+     *
      * @covers \local_intellidata\entities\enrolments\enrolment
      * @covers \local_intellidata\entities\enrolments\migration
      * @covers \local_intellidata\entities\enrolments\observer::user_enrolment_created
@@ -70,6 +74,8 @@ class enrolments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test enrol update.
+     *
      * @covers \local_intellidata\entities\enrolments\enrolment
      * @covers \local_intellidata\entities\enrolments\migration
      * @covers \local_intellidata\entities\enrolments\observer::user_enrolment_updated
@@ -91,6 +97,8 @@ class enrolments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test enrol delete.
+     *
      * @covers \local_intellidata\entities\enrolments\enrolment
      * @covers \local_intellidata\entities\enrolments\migration
      * @covers \local_intellidata\entities\enrolments\observer::user_enrolment_deleted
@@ -112,6 +120,8 @@ class enrolments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Enrol delete test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -164,6 +174,8 @@ class enrolments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Enrol update test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -222,6 +234,8 @@ class enrolments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Enrol create test.
+     *
      * @param int $tracking
      *
      * @return void

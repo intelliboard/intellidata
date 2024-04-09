@@ -21,23 +21,48 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
 
 use local_intellidata\helpers\StorageHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class file_storage_repository {
 
-    const STORAGE_FOLDER_NAME       = 'ibdata';
-    const STORAGE_FILE_TYPE         = 'csv';
-    const STORAGE_FILES_COMPONENT   = 'local_intellidata';
+    /**
+     * Storage folder name.
+     */
+    const STORAGE_FOLDER_NAME = 'ibdata';
+    /**
+     * Storage file type.
+     */
+    const STORAGE_FILE_TYPE = 'csv';
+    /**
+     * Storage files component.
+     */
+    const STORAGE_FILES_COMPONENT = 'local_intellidata';
 
-    public $storagefolder   = null;
-    public $storagefile     = null;
-    public $datatype        = null;
+    /** @var string|null */
+    public $storagefolder = null;
+    /** @var string|null */
+    public $storagefile = null;
+    /** @var string|null */
+    public $datatype = null;
 
+    /**
+     * File storage repository construct.
+     *
+     * @param $datatype
+     */
     public function __construct($datatype = null) {
         $this->datatype = $datatype;
         $this->storagefolder = self::get_storage_folder();
@@ -275,6 +300,8 @@ class file_storage_repository {
 
 
     /**
+     * Update time modified files.
+     *
      * @param int $timemodified
      *
      * @return void

@@ -20,21 +20,42 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
+
 use local_intellidata\helpers\StorageHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class storage_service {
 
-    protected $repo    = null;
+    /**
+     * @var \local_intellidata\repositories\database_storage_repository|
+     * \local_intellidata\repositories\file_storage_repository|null
+     */
+    protected $repo = null;
 
+    /**
+     * Storage service construct.
+     *
+     * @param $datatype
+     * @throws \dml_exception
+     */
     public function __construct($datatype) {
         $this->repo = StorageHelper::get_storage_service($datatype);
     }
 
     /**
+     * Save data.
+     *
      * @param $data
      */
     public function save_data($data) {
@@ -42,6 +63,8 @@ class storage_service {
     }
 
     /**
+     * Save file.
+     *
      * @return \stored_file|null
      */
     public function save_file() {
@@ -49,6 +72,8 @@ class storage_service {
     }
 
     /**
+     * Update timemodified files.
+     *
      * @param int $timemodified
      * @return void
      */
@@ -57,6 +82,8 @@ class storage_service {
     }
 
     /**
+     * Get files.
+     *
      * @param array $params
      * @return array
      */
@@ -65,6 +92,8 @@ class storage_service {
     }
 
     /**
+     * Delete files.
+     *
      * @param array $params
      * @return int|void
      */
@@ -73,6 +102,8 @@ class storage_service {
     }
 
     /**
+     * Delete temp files.
+     *
      * @return bool
      */
     public function delete_temp_files() {

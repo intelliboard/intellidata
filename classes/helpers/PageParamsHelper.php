@@ -17,25 +17,48 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class PageParamsHelper {
 
+    /**
+     * Page type module.
+     */
     const PAGETYPE_MODULE = 'module';
+    /**
+     * Page type course.
+     */
     const PAGETYPE_COURSE = 'course';
+    /**
+     * Page type user.
+     */
     const PAGETYPE_USER   = 'user';
+    /**
+     * Page type site.
+     */
     const PAGETYPE_SITE   = 'site';
-
+    /**
+     * Page type system.
+     */
     const PAGEPARAM_SYSTEM = 1;
 
     /**
+     * Get params.
+     *
      * @param $pageparams
      * @return mixed
      */
@@ -59,6 +82,8 @@ class PageParamsHelper {
     }
 
     /**
+     * Get course ID.
+     *
      * @param $pageparams
      * @return false|int|mixed
      */
@@ -79,6 +104,8 @@ class PageParamsHelper {
     }
 
     /**
+     * Get course ID by module.
+     *
      * @param $cmid
      * @return false|mixed
      * @throws \dml_exception

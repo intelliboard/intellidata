@@ -33,13 +33,18 @@ namespace local_intellidata\entities\coursecompletions;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\coursecompletions\coursecompletion';
-    public $eventname   = '\core\event\course_completed';
-    public $table       = 'course_completions';
-    public $tablealias  = 'cc';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\coursecompletions\coursecompletion';
+    /** @var string */
+    public $eventname = '\core\event\course_completed';
+    /** @var string */
+    public $table = 'course_completions';
+    /** @var string */
+    public $tablealias = 'cc';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

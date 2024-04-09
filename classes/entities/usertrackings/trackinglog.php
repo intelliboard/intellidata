@@ -24,7 +24,14 @@
  */
 namespace local_intellidata\entities\usertrackings;
 
-
+/**
+ * Class for preparing data for User Tracking Log.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2021 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class trackinglog extends \local_intellidata\entities\entity {
 
     /**

@@ -21,22 +21,36 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
 
 use local_intellidata\persistent\datatypeconfig;
-use local_intellidata\repositories\config_repository;
 use local_intellidata\services\datatypes_service;
-use local_intellidata\services\export_service;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class logs_tables_repository extends base_tables_repository {
 
+    /**
+     * Time modified field.
+     */
     const TIMEMODIFIED_FIELD = 'timecreated';
+    /**
+     * Table.
+     */
     const TABLE = 'logstore_standard_log';
 
     /**
+     * Exclude tables.
+     *
      * @param $dbtables
      * @return mixed
      */
@@ -54,6 +68,8 @@ class logs_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Get excluded tables.
+     *
      * @param $dbtables
      * @return array
      */
@@ -68,6 +84,8 @@ class logs_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Validate table.
+     *
      * @param $dbtables
      * @param $table
      * @param $keystodelete
@@ -79,6 +97,8 @@ class logs_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Get defined tables.
+     *
      * @return string[]
      */
     protected static function get_defined_tables() {
@@ -86,6 +106,8 @@ class logs_tables_repository extends base_tables_repository {
     }
 
     /**
+     * Get log table fields.
+     *
      * @return string[]
      */
     public static function get_logtable_fields() {
@@ -99,6 +121,11 @@ class logs_tables_repository extends base_tables_repository {
         ];
     }
 
+    /**
+     * Get tables fields.
+     *
+     * @return array
+     */
     public static function get_tables_fields() {
         $entities = [];
 

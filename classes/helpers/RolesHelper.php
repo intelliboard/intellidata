@@ -17,17 +17,27 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class RolesHelper {
 
+    /**
+     * Context list.
+     */
     const CONTEXTLIST = [
         CONTEXT_COURSE => ParamsHelper::CONTEXT_COURSE,
         CONTEXT_SYSTEM => ParamsHelper::CONTEXT_SYSTEM,
@@ -36,6 +46,8 @@ class RolesHelper {
     ];
 
     /**
+     * Get context type.
+     *
      * @param $contextlevel
      * @return int
      */

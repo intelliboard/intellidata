@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Assignment Submissions migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -51,6 +53,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class assignmentsubmissions_test extends custom_db_client_testcase {
 
     /**
+     * Test assignment submission create.
+     *
      * @covers \local_intellidata\entities\assignments\submission
      * @covers \local_intellidata\entities\assignments\migration
      * @covers \local_intellidata\entities\assignments\observer::submission_created
@@ -74,6 +78,8 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test assignment submission update.
+     *
      * @covers \local_intellidata\entities\assignments\submission
      * @covers \local_intellidata\entities\assignments\migration
      * @covers \local_intellidata\entities\assignments\observer::submission_updated
@@ -99,6 +105,8 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update assignment submission test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -189,6 +197,8 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create assignment submission test.
+     *
      * @param int $tracking
      *
      * @return void

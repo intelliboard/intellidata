@@ -66,6 +66,12 @@ class observer {
         }
     }
 
+    /**
+     * Export data event.
+     *
+     * @param $event
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($event) {
         $eventdata = $event->get_data();
         $context = $event->get_context();

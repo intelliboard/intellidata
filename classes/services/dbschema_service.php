@@ -20,26 +20,41 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
 
 use local_intellidata\repositories\optional_tables_repository;
 use local_intellidata\repositories\system_tables_repository;
-use local_intellidata\repositories\required_tables_repository;
 use local_intellidata\helpers\DBManagerHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class dbschema_service {
 
+    /**  @var \moodle_database|null */
     protected $mdb = null;
+    /** @var array */
     protected $tables  = [];
 
+    /**
+     * Table updated fields.
+     */
     const TABLE_UPDATED_FIELDS = [
         'timemodified',
         'timeupdated',
     ];
 
+    /**
+     * Table fields params.
+     */
     const TABLE_FIELDS_PARAMS = [
         'name',
         'type',
@@ -52,6 +67,9 @@ class dbschema_service {
         'unique',
     ];
 
+    /**
+     * DB schema service construct.
+     */
     public function __construct() {
         global $DB;
 
@@ -59,8 +77,9 @@ class dbschema_service {
     }
 
     /**
-     * @param bool $export
+     * Get tables.
      *
+     * @param bool $export
      * @return array
      */
     public function get_tables($export = false) {
@@ -97,6 +116,8 @@ class dbschema_service {
     }
 
     /**
+     * Get tables list.
+     *
      * @return array
      */
     public function get_tableslist() {
@@ -112,6 +133,8 @@ class dbschema_service {
     }
 
     /**
+     * Get all tables list.
+     *
      * @return array
      */
     public function get_all_tableslist() {
@@ -119,6 +142,8 @@ class dbschema_service {
     }
 
     /**
+     * Get table columns.
+     *
      * @return array
      */
     public function get_table_columns($table) {
@@ -126,6 +151,8 @@ class dbschema_service {
     }
 
     /**
+     * Column exists.
+     *
      * @param $table
      * @param $column
      * @return bool
@@ -142,6 +169,8 @@ class dbschema_service {
     }
 
     /**
+     * Table exists.
+     *
      * @return array
      */
     public function table_exists($table) {
@@ -149,6 +178,8 @@ class dbschema_service {
     }
 
     /**
+     * Get updated field name.
+     *
      * @return array
      */
     public function get_updated_fieldname($table) {
@@ -178,6 +209,8 @@ class dbschema_service {
     }
 
     /**
+     * Get available updates field names.
+     *
      * @return array
      */
     public function get_available_updates_fieldnames($table) {
@@ -207,6 +240,8 @@ class dbschema_service {
     }
 
     /**
+     * Get table fields.
+     *
      * @param $tablename
      * @return array
      */
@@ -229,6 +264,8 @@ class dbschema_service {
     }
 
     /**
+     * Get table field.
+     *
      * @param $column
      * @return array
      */
@@ -245,6 +282,8 @@ class dbschema_service {
     }
 
     /**
+     * Apply default fields.
+     *
      * @param $fields
      * @return mixed
      */
@@ -287,6 +326,8 @@ class dbschema_service {
     }
 
     /**
+     * Export tables.
+     *
      * @return array
      */
     public function export() {

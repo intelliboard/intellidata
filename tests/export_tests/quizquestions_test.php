@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Quiz questions test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -54,6 +56,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class quizquestions_test extends custom_db_client_testcase {
 
     /**
+     * Test quiz question create.
+     *
      * @covers \local_intellidata\entities\quizquestions\quizquestion
      * @covers \local_intellidata\entities\quizquestions\migration
      * @covers \local_intellidata\entities\quizquestions\observer::question_created
@@ -78,6 +82,8 @@ class quizquestions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create quiz question test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -125,6 +131,8 @@ class quizquestions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test question text limiter.
+     *
      * @covers \local_intellidata\entities\quizquestions\quizquestion
      * @covers \local_intellidata\entities\quizquestions\migration
      * @covers \local_intellidata\entities\quizquestions\observer::question_created

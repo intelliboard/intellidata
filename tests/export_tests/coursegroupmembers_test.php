@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Course group members migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -51,6 +53,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class coursegroupmembers_test extends custom_db_client_testcase {
 
     /**
+     * Test course group create.
+     *
      * @covers \local_intellidata\entities\groups\group
      * @covers \local_intellidata\entities\groups\migration
      * @covers \local_intellidata\entities\groups\observer::group_created
@@ -70,6 +74,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course group member create.
+     *
      * @covers \local_intellidata\entities\groupmembers\groupmember
      * @covers \local_intellidata\entities\groupmembers\migration
      * @covers \local_intellidata\entities\groupmembers\observer::group_member_added
@@ -89,6 +95,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course group update.
+     *
      * @covers \local_intellidata\entities\groups\group
      * @covers \local_intellidata\entities\groups\migration
      * @covers \local_intellidata\entities\groups\observer::group_updated
@@ -110,6 +118,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course group member delete.
+     *
      * @covers \local_intellidata\entities\groupmembers\groupmember
      * @covers \local_intellidata\entities\groupmembers\migration
      * @covers \local_intellidata\entities\groupmembers\observer::group_member_removed
@@ -131,6 +141,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course group delete.
+     *
      * @covers \local_intellidata\entities\groups\group
      * @covers \local_intellidata\entities\groups\migration
      * @covers \local_intellidata\entities\groups\observer::group_deleted
@@ -152,6 +164,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create course group member test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -208,6 +222,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete course group test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -236,6 +252,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update course group test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -269,6 +287,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete course group member test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -309,6 +329,8 @@ class coursegroupmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create course group test.
+     *
      * @param int $tracking
      *
      * @return void

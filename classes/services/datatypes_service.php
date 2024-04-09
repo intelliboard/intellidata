@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -32,13 +32,21 @@ use local_intellidata\repositories\config_repository;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\repositories\logs_tables_repository;
 use local_intellidata\repositories\required_tables_repository;
-use local_intellidata\services\config_service;
-use local_intellidata\services\dbschema_service;
 use local_intellidata\persistent\datatypeconfig;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class datatypes_service {
 
     /**
+     * Init migration.
+     *
      * @param $datatype
      * @return mixed|null
      */
@@ -53,6 +61,8 @@ class datatypes_service {
     }
 
     /**
+     * Init entity.
+     *
      * @param $entityname
      * @param $data
      * @return \local_intellidata\entities\custom\entity|mixed
@@ -67,6 +77,8 @@ class datatypes_service {
     }
 
     /**
+     * Get datatype entity class.
+     *
      * @param $entity
      * @return string
      */
@@ -75,6 +87,8 @@ class datatypes_service {
     }
 
     /**
+     * Get datatype entity path.
+     *
      * @param $datatype
      * @return mixed|string
      */
@@ -83,6 +97,8 @@ class datatypes_service {
     }
 
     /**
+     * Get datatypes.
+     *
      * @param bool $applyconfig
      * @param bool $rebuildcache
      * @param array $params
@@ -122,8 +138,8 @@ class datatypes_service {
     /**
      * Get static datatypes.
      *
-     * @params array $datatypes
-     * @params array $params
+     * @param array $datatypes
+     * @param array $params
      *
      * @return array|array[]
      */
@@ -701,6 +717,8 @@ class datatypes_service {
     }
 
     /**
+     * Get datatype.
+     *
      * @param $datatypename
      * @return array|array[]
      */
@@ -719,8 +737,9 @@ class datatypes_service {
     }
 
     /**
-     * @param string $datatype
+     * Generate optional datatype.
      *
+     * @param string $datatype
      * @return string
      */
     public static function generate_optional_datatype($datatype) {
@@ -732,8 +751,9 @@ class datatypes_service {
     }
 
     /**
-     * @param string $configdatatype
+     * Get optional table.
      *
+     * @param string $configdatatype
      * @return string
      */
     public static function get_optional_table($configdatatype) {
@@ -746,6 +766,8 @@ class datatypes_service {
     }
 
     /**
+     * Get all optional datatypes.
+     *
      * @return array
      */
     public static function get_all_optional_datatypes() {
@@ -764,8 +786,9 @@ class datatypes_service {
     }
 
     /**
-     * @$params array $params
+     * Get optional datatypes for export.
      *
+     * @param array $params
      * @return array
      */
     public static function get_optional_datatypes_for_export($params = []) {
@@ -808,6 +831,7 @@ class datatypes_service {
 
     /**
      * Data type parameters changed by version.
+     *
      * @param array $datatype
      * @return array
      */

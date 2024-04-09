@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\quizquestions;
 
-
 use local_intellidata\helpers\DBHelper;
 
 /**
@@ -36,12 +35,16 @@ use local_intellidata\helpers\DBHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\quizquestions\quizquestion';
-    public $eventname   = '\core\event\question_created';
-    public $table       = 'question';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\quizquestions\quizquestion';
+    /** @var string */
+    public $eventname = '\core\event\question_created';
+    /** @var string */
+    public $table = 'question';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

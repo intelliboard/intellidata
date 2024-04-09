@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 use local_intellidata\services\config_service;
@@ -28,6 +28,13 @@ use local_intellidata\services\datatypes_service;
 use local_intellidata\services\intelliboard_service;
 use local_intellidata\helpers\DebugHelper;
 
+/**
+ * Local IntelliData plugin installation script.
+ *
+ * @return void
+ * @throws coding_exception
+ * @throws dml_exception
+ */
 function xmldb_local_intellidata_install() {
 
     // Set exportformat for csv.

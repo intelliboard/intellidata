@@ -17,19 +17,29 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
 use local_intellidata\repositories\tracking\tracking_repository;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class SettingsHelper {
 
+    /**
+     * Default Values.
+     */
     const DEFAULT_VALUES = [
         // General settings.
         'enabled' => 1,
@@ -91,6 +101,9 @@ class SettingsHelper {
         'enablecustomdbdriver' => 0,
     ];
 
+    /**
+     * Not updatable settings.
+     */
     const NOTUPDATABLE_SETTINGS = [
         'encryptionkey',
         'clientidentifier',
@@ -158,6 +171,8 @@ class SettingsHelper {
     }
 
     /**
+     * Get lti title.
+     *
      * @return false|\lang_string|mixed|object|string
      * @throws \coding_exception
      * @throws \dml_exception
@@ -171,6 +186,8 @@ class SettingsHelper {
     }
 
     /**
+     * Get layouts options.
+     *
      * @return string[]
      */
     public static function get_layouts_options() {
@@ -201,6 +218,8 @@ class SettingsHelper {
     }
 
     /**
+     * Get page layout.
+     *
      * @return string
      * @throws \dml_exception
      */

@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\roles;
 
-
 use local_intellidata\helpers\RolesHelper;
 
 /**
@@ -36,13 +35,18 @@ use local_intellidata\helpers\RolesHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ramigration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\roles\roleassignment';
-    public $eventname   = '\core\event\role_assigned';
-    public $table       = 'role_assignments';
-    public $tablealias  = 'ra';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\roles\roleassignment';
+    /** @var string */
+    public $eventname = '\core\event\role_assigned';
+    /** @var string */
+    public $table = 'role_assignments';
+    /** @var string */
+    public $tablealias = 'ra';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @return array
      * @throws \coding_exception
@@ -68,8 +72,11 @@ class ramigration extends \local_intellidata\entities\migration {
     }
 
     /**
+     * Prepare records for export.
+     *
      * @param $records
      * @return \Generator
+     * @throws \coding_exception
      */
     public function prepare_records_iterable($records) {
         foreach ($records as $record) {

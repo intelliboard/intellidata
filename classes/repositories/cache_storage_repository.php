@@ -17,27 +17,42 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
 
-use core_message\helper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class cache_storage_repository extends file_storage_repository {
 
+    /**
+     * Storage component.
+     */
     const STORAGE_COMPONENT = 'local_intellidata';
+    /**
+     * Cache area.
+     */
     const CACHE_AREA = 'events';
-
+    /**
+     * Cache user identifier.
+     */
     const CACHE_USER_IDENTIFIER = '_idcacheuserid_';
 
+    /** @var null|string */
     public $datatype = null;
 
     /**
@@ -132,35 +147,33 @@ class cache_storage_repository extends file_storage_repository {
      * @throws \moodle_exception
      * @throws \stored_file_creation_exception
      */
-    public function save_file() {
+    public function save_file($savetempfile = true) {
         $cache = $this->get_cache_storage();
 
         // Get records from cache storage.
         $keys = $this->get_datatype_keys($cache);
-        if (!count($keys)) {
-            return null;
-        }
-
         $tempfile = $this->get_temp_file();
+        if (count($keys)) {
+            $this->export_keys($cache, $keys, $tempfile);
+        }
 
-        $exportedrecords = $this->export_keys($cache, $keys, $tempfile);
-        if (!$exportedrecords) {
+        if ($savetempfile == true) {
+            // Save file to filedir and database.
+            $params = [
+                'datatype' => $this->datatype['name'],
+                'filename' => StorageHelper::generate_filename(),
+                'tempdir' => $this->storagefolder,
+                'tempfile' => $tempfile,
+            ];
+
+            if ($this->datatype['rewritable']) {
+                parent::delete_files();
+            }
+
+            return StorageHelper::save_file($params);
+        } else {
             return null;
         }
-
-        // Save file to filedir and database.
-        $params = [
-            'datatype' => $this->datatype['name'],
-            'filename' => StorageHelper::generate_filename(),
-            'tempdir' => $this->storagefolder,
-            'tempfile' => $tempfile,
-        ];
-
-        if ($this->datatype['rewritable']) {
-            parent::delete_files();
-        }
-
-        return StorageHelper::save_file($params);
     }
 
     /**
@@ -193,6 +206,14 @@ class cache_storage_repository extends file_storage_repository {
      */
     public function export_key($cache, $key, $tempfile) {
         $records = $this->get_record($cache, $key);
+        if (!is_array($records)) {
+            // Something wrong.
+            DebugHelper::error_log("IntelliData events tracking: error read event from cache,
+            key:{$key}");
+
+            return 0;
+        }
+
         if (!count($records)) {
             return 0;
         }

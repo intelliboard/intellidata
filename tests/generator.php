@@ -21,14 +21,21 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata;
 
-use local_intellidata\helpers\ParamsHelper;
 use phpunit_util;
 
+/**
+ * PHPUnit data generator testcase.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class generator {
 
     /**

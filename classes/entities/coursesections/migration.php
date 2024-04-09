@@ -33,11 +33,16 @@ namespace local_intellidata\entities\coursesections;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\coursesections\sections';
-    public $eventname   = '\core\event\course_section_created';
-    public $table       = 'course_sections';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\coursesections\sections';
+    /** @var string */
+    public $eventname = '\core\event\course_section_created';
+    /** @var string */
+    public $table = 'course_sections';
 
     /**
+     * Prepare records for export.
+     *
      * @param $records
      * @return \Generator
      * @throws \coding_exception

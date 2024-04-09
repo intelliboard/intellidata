@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Lti test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -26,7 +28,7 @@ namespace local_intellidata;
 use local_intellidata\services\lti_service;
 
 /**
- * User migration test case.
+ * Lti test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -35,9 +37,16 @@ use local_intellidata\services\lti_service;
  */
 class lti_test extends \advanced_testcase {
 
+    /** @var string */
     private $endpoint;
+
+    /** @var string */
     private $key;
+
+    /** @var string */
     private $secret;
+
+    /** @var bool */
     private $debug;
 
     public function setUp(): void {
@@ -53,6 +62,8 @@ class lti_test extends \advanced_testcase {
     }
 
     /**
+     * Test Save last processed data.
+     *
      * @covers \local_intellidata\services\lti_service
      */
     public function test_save_last_processed_data() {

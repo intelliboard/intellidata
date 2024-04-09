@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_intellidata
+ * IntelliData config table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
@@ -24,8 +24,8 @@
  */
 
 namespace local_intellidata\output\tables;
-defined('MOODLE_INTERNAL') || die;
 
+defined('MOODLE_INTERNAL') || die;
 
 use html_writer;
 use local_intellidata\helpers\TrackingHelper;
@@ -35,17 +35,39 @@ use local_intellidata\services\datatypes_service;
 
 require_once($CFG->libdir.'/tablelib.php');
 
+/**
+ * IntelliData config table.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2022 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
 class config_table extends \table_sql {
 
-    public $fields     = [];
+    /** @var array */
+    public $fields = [];
+    /** @var null|array */
     public $tabletypes = null;
-    protected $prefs   = [];
+    /** @var array */
+    protected $prefs = [];
+    /** @var context_system */
     protected $context = null;
+    /** @var array */
     protected $datatypes = [];
+    /** @var array */
     protected $datatypestoignoreindex = [
         'tracking', 'trackinglog', 'trackinglogdetail',
     ];
 
+    /**
+     * Config table construct.
+     *
+     * @param $uniqueid
+     * @param $searchquery
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function __construct($uniqueid, $searchquery = '') {
         global $PAGE, $DB;
 
@@ -82,6 +104,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Get fields.
+     *
      * @return array[]
      * @throws \coding_exception
      */
@@ -128,6 +152,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Get headers.
+     *
      * @return array
      * @throws \coding_exception
      */
@@ -147,6 +173,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column datatype.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -160,6 +188,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column tabletype.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -171,6 +201,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column event tracking.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -180,6 +212,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column filter ID.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -189,6 +223,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column rewritable.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -198,6 +234,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column status.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -209,6 +247,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column export enable.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -220,6 +260,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column time modified field.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -231,6 +273,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column Actions.
+     *
      * @param $values
      * @return string
      * @throws \coding_exception
@@ -511,6 +555,8 @@ class config_table extends \table_sql {
     }
 
     /**
+     * Column show.
+     *
      * @param $value
      * @return \lang_string|string
      * @throws \coding_exception

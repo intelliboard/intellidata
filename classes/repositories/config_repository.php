@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
@@ -31,14 +31,34 @@ use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\repositories\config\database_config_repository;
 use local_intellidata\repositories\config\cache_config_repository;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class config_repository {
 
+    /**
+     * @var cache_config_repository|database_config_repository|null
+     */
     public $repo = null;
 
+    /**
+     * Config repository construct.
+     */
     public function __construct() {
         $this->repo = self::get_repository();
     }
 
+    /**
+     * Get repository.
+     *
+     * @return cache_config_repository|database_config_repository
+     * @throws \dml_exception
+     */
     public static function get_repository() {
         return (SettingsHelper::get_setting('cacheconfig'))
             ? new cache_config_repository()

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration Users.
+ * Class for migration Quiz question answers.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -26,7 +26,7 @@ namespace local_intellidata\entities\quizquestionanswers;
 use local_intellidata\helpers\DBHelper;
 
 /**
- * Class for migration Users.
+ * Class for migration Quiz question answers.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -34,9 +34,11 @@ use local_intellidata\helpers\DBHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\quizquestionanswers\quizquestionanswer';
-    public $table       = 'quiz_attempts';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\quizquestionanswers\quizquestionanswer';
+    /** @var string */
+    public $table = 'quiz_attempts';
+    /** @var string */
     public $tablealias  = 'qa';
 
     /**

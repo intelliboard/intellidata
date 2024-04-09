@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Activity Completion migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -53,6 +55,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class activitycompletions_test extends custom_db_client_testcase {
 
     /**
+     * Test update activity completion.
+     *
      * @covers \local_intellidata\entities\activitycompletions\activitycompletion
      * @covers \local_intellidata\entities\activitycompletions\migration
      * @covers \local_intellidata\entities\activitycompletions\observer::course_module_completion_updated
@@ -72,6 +76,8 @@ class activitycompletions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update activity completion test.
+     *
      * @param int $tracking
      *
      * @return void

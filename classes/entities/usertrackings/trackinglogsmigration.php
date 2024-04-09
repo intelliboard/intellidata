@@ -24,8 +24,17 @@
  */
 namespace local_intellidata\entities\usertrackings;
 
-
+/**
+ * Class for migration User Tracking logs.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2021 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class trackinglogsmigration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\usertrackings\trackinglog';
-    public $table       = 'local_intellidata_trlogs';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\usertrackings\trackinglog';
+    /** @var string */
+    public $table = 'local_intellidata_trlogs';
 }

@@ -35,13 +35,18 @@ use local_intellidata\helpers\DBManagerHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\assignments\submission';
-    public $eventname   = '\mod_assign\event\submission_created';
-    public $table       = 'assign_submission';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\assignments\submission';
+    /** @var string */
+    public $eventname = '\mod_assign\event\submission_created';
+    /** @var string */
+    public $table = 'assign_submission';
+    /** @var string */
     public $tablealias  = 's';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

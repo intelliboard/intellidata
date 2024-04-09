@@ -27,6 +27,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 /**
+ * IntelliData DB schema lib.
+ *
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,6 +36,8 @@ require_once("$CFG->libdir/externallib.php");
 class local_intellidata_dbschemalib extends external_api {
 
     /**
+     * Get DB schema custom parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_dbschema_custom_parameters() {
@@ -41,6 +45,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema custom.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -79,6 +85,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema custom returns.
+     *
      * @return external_single_structure
      */
     public static function get_dbschema_custom_returns() {
@@ -91,6 +99,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB chema unified parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_dbschema_unified_parameters() {
@@ -98,6 +108,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema unified.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -133,6 +145,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema unified returns.
+     *
      * @return external_single_structure
      */
     public static function get_dbschema_unified_returns() {
@@ -145,6 +159,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema logs parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_dbschema_logs_parameters() {
@@ -152,6 +168,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema logs.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -188,6 +206,8 @@ class local_intellidata_dbschemalib extends external_api {
     }
 
     /**
+     * Get DB schema logs returns.
+     *
      * @return external_single_structure
      */
     public static function get_dbschema_logs_returns() {

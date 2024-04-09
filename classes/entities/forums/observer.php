@@ -149,6 +149,14 @@ class observer {
         }
     }
 
+    /**
+     * Export discussion event.
+     *
+     * @param $eventdata
+     * @param $discussion
+     * @param $fields
+     * @return void
+     */
     private static function export_discussion_event($eventdata, $discussion, $fields = []) {
         $discussion->crud = $eventdata['crud'];
 
@@ -159,6 +167,14 @@ class observer {
         $tracking->track($data);
     }
 
+    /**
+     * Export post event.
+     *
+     * @param $eventdata
+     * @param $post
+     * @param $fields
+     * @return void
+     */
     private static function export_post_event($eventdata, $post, $fields = []) {
         $post->crud = $eventdata['crud'];
 

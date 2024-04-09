@@ -33,7 +33,10 @@ namespace local_intellidata\entities\cohortmembers;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\cohortmembers\cohortmember';
-    public $eventname   = '\core\event\cohort_member_added';
-    public $table       = 'cohort_members';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\cohortmembers\cohortmember';
+    /** @var string */
+    public $eventname = '\core\event\cohort_member_added';
+    /** @var string */
+    public $table = 'cohort_members';
 }

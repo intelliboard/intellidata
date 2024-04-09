@@ -21,28 +21,58 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories\tracking;
 
-
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 abstract class storage_repository {
 
+    /** @var bool */
     public $ajaxrequest;
 
+    /**
+     * Storage repository construct.
+     *
+     * @param $ajaxrequest
+     */
     public function __construct($ajaxrequest) {
         $this->ajaxrequest = $ajaxrequest;
     }
 
+    /**
+     * Save data.
+     *
+     * @param $trackdata
+     * @return void
+     */
     public function save_data($trackdata) {
 
     }
 
+    /**
+     * Export data.
+     *
+     * @return void
+     */
     public function export_data() {
 
     }
 
+    /**
+     * Get default tracking.
+     *
+     * @param $trackdata
+     * @return \stdClass
+     */
     protected function get_default_tracking($trackdata) {
         $data = new \stdClass();
         $data->userid = $trackdata->userid;
@@ -63,6 +93,13 @@ abstract class storage_repository {
         return $data;
     }
 
+    /**
+     * Fill tracking.
+     *
+     * @param $tracking
+     * @param $trackdata
+     * @return void
+     */
     protected function fill_tracking(&$tracking, $trackdata) {
         if (!$this->ajaxrequest) {
             $tracking->visits = $tracking->visits + 1;
@@ -80,6 +117,14 @@ abstract class storage_repository {
         $tracking->ip = $trackdata->ip;
     }
 
+    /**
+     * Get default log.
+     *
+     * @param $trackdata
+     * @param $tracking
+     * @param $currentstamp
+     * @return \stdClass
+     */
     protected function get_default_log($trackdata, $tracking, $currentstamp) {
         $log = new \stdClass();
         $log->visits = ($this->ajaxrequest) ? 0 : 1;
@@ -91,6 +136,13 @@ abstract class storage_repository {
         return $log;
     }
 
+    /**
+     * Fill log.
+     *
+     * @param $log
+     * @param $trackdata
+     * @return void
+     */
     protected function fill_log(&$log, $trackdata) {
         if (!$this->ajaxrequest) {
             $log->visits = $log->visits + 1;
@@ -101,6 +153,14 @@ abstract class storage_repository {
         $log->timemodified = time();
     }
 
+    /**
+     * Get default log detail.
+     *
+     * @param $trackdata
+     * @param $log
+     * @param $currenthour
+     * @return \stdClass
+     */
     protected function get_default_log_detail($trackdata, $log, $currenthour) {
         $detail = new \stdClass();
         $detail->logid = $log->id;
@@ -112,6 +172,13 @@ abstract class storage_repository {
         return $detail;
     }
 
+    /**
+     * Fill detail.
+     *
+     * @param $detail
+     * @param $trackdata
+     * @return void
+     */
     protected function fill_detail(&$detail, $trackdata) {
         if (!$this->ajaxrequest) {
             $detail->visits = $detail->visits + 1;
@@ -121,5 +188,4 @@ abstract class storage_repository {
         }
         $detail->timemodified = time();
     }
-
 }

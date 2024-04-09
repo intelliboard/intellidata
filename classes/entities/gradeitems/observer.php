@@ -50,6 +50,8 @@ class observer {
     }
 
     /**
+     * Export data event.
+     *
      * @param $data
      * @param $eventdata
      * @param array $fields

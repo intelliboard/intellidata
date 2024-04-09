@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration Users.
+ * Class for migration Quiz question attempts step data migration.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -25,7 +25,7 @@
 namespace local_intellidata\entities\quizquestionanswers;
 
 /**
- * Class for migration Users.
+ * Class for migration Quiz question attempts step data migration.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -33,12 +33,16 @@ namespace local_intellidata\entities\quizquestionanswers;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qasdmigration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\quizquestionanswers\quizquestionattemptstepsdata';
-    public $table       = 'question_attempt_step_data';
-    public $tablealias  = 'qasd';
+    /** @var string */
+    public $entity  = '\local_intellidata\entities\quizquestionanswers\quizquestionattemptstepsdata';
+    /** @var string */
+    public $table = 'question_attempt_step_data';
+    /** @var string */
+    public $tablealias = 'qasd';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

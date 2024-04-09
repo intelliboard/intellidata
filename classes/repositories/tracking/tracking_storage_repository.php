@@ -21,56 +21,129 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories\tracking;
 
-
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class tracking_storage_repository {
 
-    const STORAGE_FOLDER_NAME       = 'local_intellidata/tracking';
-    const STORAGE_FILES_COMPONENT   = 'local_intellidata';
-    const STORAGE_FILE_TYPE         = 'csv';
+    /**
+     * Storage folder name.
+     */
+    const STORAGE_FOLDER_NAME = 'local_intellidata/tracking';
+    /**
+     * Storage files component.
+     */
+    const STORAGE_FILES_COMPONENT = 'local_intellidata';
+    /**
+     * Storage file type.
+     */
+    const STORAGE_FILE_TYPE = 'csv';
 
-    public $storagefolder   = null;
-    public $storagefile     = null;
-    protected $userid       = null;
+    /** @var string|null */
+    public $storagefolder = null;
+    /**
+     * @var string|null
+     */
+    public $storagefile = null;
+    /**
+     * @var int|null
+     */
+    protected $userid = null;
 
+    /**
+     * Tracking storage repository construct.
+     *
+     * @param $userid
+     */
     public function __construct($userid = null) {
         $this->userid = $userid;
         $this->storagefolder = self::prepare_storage_folder();
         $this->storagefile = self::get_storage_file();
     }
 
+    /**
+     * Prepare storage folder.
+     *
+     * @return false|string
+     */
     protected function prepare_storage_folder() {
         return make_temp_directory(self::STORAGE_FOLDER_NAME);
     }
 
+    /**
+     * Get storage folder.
+     *
+     * @return false|string|null
+     */
     public function get_storage_folder() {
         return $this->storagefolder;
     }
 
+    /**
+     * Get storage file.
+     *
+     * @return string
+     */
     public function get_storage_file() {
         return $this->storagefolder . '/' . $this->userid . '.' . self::STORAGE_FILE_TYPE;
     }
 
+    /**
+     * Save data.
+     *
+     * @param $data
+     * @return void
+     */
     public function save_data($data) {
         file_put_contents($this->storagefile, $data . PHP_EOL, FILE_APPEND | LOCK_EX);
     }
 
+    /**
+     * Get files.
+     *
+     * @param $params
+     * @return array|false
+     */
     public function get_files($params = []) {
         return array_diff(scandir($this->storagefolder), ['..', '.', '.DS_Store']);
     }
 
+    /**
+     * Delete file.
+     *
+     * @param $filename
+     * @return void
+     */
     public function delete_file($filename) {
         unlink($this->storagefolder . '/' . $filename);
     }
 
+    /**
+     * Delete file path.
+     *
+     * @param $filepath
+     * @return void
+     */
     public function delete_filepath($filepath) {
         unlink($filepath);
     }
 
+    /**
+     * Rename file.
+     *
+     * @param $filename
+     * @return string|null
+     */
     public function rename_file($filename) {
         if (rename($this->storagefolder . '/' . $filename, $this->storagefolder . '/' . $filename . '_temp')) {
             return $this->storagefolder . '/' . $filename . '_temp';
@@ -173,7 +246,6 @@ class tracking_storage_repository {
      * @param $userdata
      * @return array
      */
-
     public function prepare_usersdata($userdata) {
 
         $data = [];

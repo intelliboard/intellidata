@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -30,20 +30,38 @@ use local_intellidata\helpers\UserAccessHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\tracking\tracking_repository;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class tracking_service {
 
-    protected $repo         = null;
-
-    public $enabled         = false;
-    public $ajaxfrequency   = 30;
-    public $inactivity      = 0;
-    public $trackadmin      = false;
-    public $mediatrack      = false;
-    public $path            = '';
-    public $ajaxrequest     = false;
+    /** @var tracking_repository|null */
+    protected $repo = null;
+    /** @var bool */
+    public $enabled = false;
+    /** @var int */
+    public $ajaxfrequency = 30;
+    /** @var int */
+    public $inactivity = 0;
+    /** @var bool */
+    public $trackadmin = false;
+    /** @var bool */
+    public $mediatrack = false;
+    /** @var string */
+    public $path = '';
+    /** @var bool */
+    public $ajaxrequest = false;
+    /** @var string */
     public $trackparameters = '';
-    public $trackable       = false;
-    public $pageparams      = null;
+    /** @var bool */
+    public $trackable = false;
+    /** @var null|array */
+    public $pageparams = null;
 
     /**
      * Main method for tracking service.

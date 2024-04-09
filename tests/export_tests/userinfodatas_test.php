@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User info data migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -56,6 +58,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class userinfodatas_test extends custom_db_client_testcase {
 
     /**
+     * Test user info data create.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_created
@@ -75,6 +79,8 @@ class userinfodatas_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test user info data update.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_updated
@@ -96,6 +102,8 @@ class userinfodatas_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test user info data update.
+     *
      * @param int $tracking
      *
      * @return void
@@ -143,6 +151,8 @@ class userinfodatas_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create user info data test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -198,6 +208,8 @@ class userinfodatas_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create user info field.
+     *
      * @param int $tracking
      *
      * @return void

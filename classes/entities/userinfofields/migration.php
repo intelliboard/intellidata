@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\userinfofields;
 
-
 /**
  * Class for migration UserInfoFields.
  *
@@ -34,7 +33,10 @@ namespace local_intellidata\entities\userinfofields;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
+    /** @var string */
     public $entity      = '\local_intellidata\entities\userinfofields\userinfofield';
+    /** @var string */
     public $eventname   = '\core\event\user_info_field_created';
+    /** @var string */
     public $table       = 'user_info_field';
 }

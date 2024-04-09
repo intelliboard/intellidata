@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,7 +34,7 @@ require_once(__DIR__ . '/../../../../../../lib/dml/auroramysql_native_moodle_dat
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 class auroramysql_custom_moodle_database_internal extends \auroramysql_native_moodle_database {
 

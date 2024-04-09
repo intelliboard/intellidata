@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Edit config page.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2020

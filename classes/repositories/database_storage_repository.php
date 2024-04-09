@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
@@ -29,11 +29,24 @@ namespace local_intellidata\repositories;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\SettingsHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class database_storage_repository extends file_storage_repository {
 
+    /**
+     * Storage table.
+     */
     const STORAGE_TABLE   = 'local_intellidata_storage';
 
     /**
+     * Save data.
+     *
      * @param $data
      * @throws \dml_exception
      */
@@ -49,6 +62,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Save file.
+     *
      * @return \stored_file|null
      * @throws \coding_exception
      * @throws \dml_exception
@@ -99,6 +114,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Delete files.
+     *
      * @param null $params
      * @return int|void
      * @throws \dml_exception
@@ -109,6 +126,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Get records sql.
+     *
      * @param false $count
      * @return string
      */
@@ -125,6 +144,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Get records count.
+     *
      * @return int
      * @throws \dml_exception
      */
@@ -136,6 +157,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Get records.
+     *
      * @param $params
      * @return \moodle_recordset
      * @throws \dml_exception
@@ -154,6 +177,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Export data.
+     *
      * @param $tempfile
      * @param $records
      * @throws \dml_exception
@@ -191,6 +216,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Clean storage.
+     *
      * @param $lastrecordid
      * @throws \dml_exception
      */
@@ -210,6 +237,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Get log entity data.
+     *
      * @param string $crud
      * @param array $params
      * @return false|mixed
@@ -246,6 +275,8 @@ class database_storage_repository extends file_storage_repository {
     }
 
     /**
+     * Delete records.
+     *
      * @param array $params
      *
      * @return void
