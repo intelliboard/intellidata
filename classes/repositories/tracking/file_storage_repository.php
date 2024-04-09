@@ -21,19 +21,29 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories\tracking;
 
 use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\repositories\tracking\usertracking_repository;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class file_storage_repository extends storage_repository {
 
+    /** @var null */
     private $trackingstorage = null;
 
     /**
+     * Save data.
+     *
      * @param $trackdata
      * @throws \dml_exception
      */
@@ -62,6 +72,8 @@ class file_storage_repository extends storage_repository {
     }
 
     /**
+     * Get default file tracking.
+     *
      * @param $trackdata
      * @return \stdClass
      */
@@ -88,6 +100,8 @@ class file_storage_repository extends storage_repository {
     }
 
     /**
+     * Get default file log.
+     *
      * @param $trackdata
      * @param $currentstamp
      * @return \stdClass
@@ -108,6 +122,8 @@ class file_storage_repository extends storage_repository {
     }
 
     /**
+     * Get default file log detail.
+     *
      * @param $trackdata
      * @param $currenthour
      * @param $currentstamp
@@ -129,8 +145,10 @@ class file_storage_repository extends storage_repository {
         return $detail;
     }
 
-    /*
+    /**
      * Export data method.
+     *
+     * @return void
      */
     public function export_data() {
         $starttime = microtime();

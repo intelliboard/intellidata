@@ -20,16 +20,26 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\tools;
 
 use cache_application as moodle_cache_application;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class cache_application extends moodle_cache_application {
 
     /**
+     * Purge.
+     *
      * @return bool
      */
     public function purge() {
@@ -37,6 +47,8 @@ class cache_application extends moodle_cache_application {
     }
 
     /**
+     * Delete many.
+     *
      * @param array $keys
      * @param bool $recurse
      * @return bool
@@ -46,6 +58,8 @@ class cache_application extends moodle_cache_application {
     }
 
     /**
+     * Get all_keys.
+     *
      * @return array
      */
     public function get_all_keys() {
@@ -59,6 +73,8 @@ class cache_application extends moodle_cache_application {
     }
 
     /**
+     * Store supports get all keys.
+     *
      * @return bool
      */
     public function store_supports_get_all_keys() {

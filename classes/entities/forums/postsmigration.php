@@ -36,13 +36,18 @@ use local_intellidata\services\dbschema_service;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class postsmigration extends \local_intellidata\entities\migration {
-
+    /** @var string */
     public $entity = '\local_intellidata\entities\forums\forumpost';
+    /** @var string */
     public $eventname = '\mod_forum\event\post_created';
+    /** @var string */
     public $table = 'forum_posts';
+    /** @var string */
     public $tablealias = 'p';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

@@ -91,11 +91,45 @@ class gradeitem extends \local_intellidata\entities\entity {
     }
 
     /**
+     * Hook to execute after an export.
+     *
      * @param $record
      * @return mixed
      */
     public function after_export($record) {
         $record->event = '\core\event\grade_item_created';
         return $record;
+    }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = [], $table = '') {
+        global $DB;
+
+        if (!empty($object->itemtype)) {
+            $itemname = !empty($object->itemname) ? $object->itemname : '';
+            switch (!empty($object->itemtype)) {
+                case 'course':
+                    if (!empty($object->courseid) && ($course = $DB->get_record('course', ['id' => $object->courseid]))) {
+                        $itemname = $course->fullname;
+                    }
+                    break;
+                case 'category':
+                    $gradec = $DB->get_record('grade_categories', ['id' => $object->iteminstance]);
+                    if (!empty($object->iteminstance) && $gradec) {
+                        $itemname = $gradec->fullname;
+                    }
+                    break;
+            }
+            $object->itemname = $itemname;
+        }
+
+        return $object;
     }
 }

@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
@@ -32,6 +32,8 @@ namespace local_intellidata\helpers;
 class DeprecatedHelper {
 
     /**
+     * Get all headers.
+     *
      * @return array|false|string
      */
     public static function getallheaders() {

@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 /**
@@ -30,10 +30,16 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 interface local_intellidata_base_generator {
 
+    /**
+     * Base generate create method.
+     *
+     * @param $record
+     * @return mixed
+     */
     public function create($record = null);
 
 }

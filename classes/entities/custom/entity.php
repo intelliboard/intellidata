@@ -42,7 +42,7 @@ use local_intellidata\services\dbschema_service;
  */
 class entity {
 
-    /** The entity type name. */
+    /** @var string The entity type name. */
     public static $datatype = null;
 
     /** @var array The model data. */
@@ -57,6 +57,13 @@ class entity {
     /** @var array The list of fields. */
     private $fields = [];
 
+    /**
+     * Entity constructor.
+     *
+     * @param $datatype
+     * @param $record
+     * @param $returnfields
+     */
     public function __construct($datatype, $record = null, $returnfields = []) {
 
         self::$datatype = $datatype;
@@ -113,6 +120,8 @@ class entity {
     }
 
     /**
+     * Get crud.
+     *
      * @return mixed|string|null
      * @throws coding_exception
      */

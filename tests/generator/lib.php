@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -33,7 +33,7 @@ require_once(__DIR__ . '/generators/tracking_generator.php');
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 class local_intellidata_generator extends \component_generator_base {
 

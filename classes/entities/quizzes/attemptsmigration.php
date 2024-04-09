@@ -34,14 +34,18 @@ namespace local_intellidata\entities\quizzes;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class attemptsmigration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\quizzes\attempt';
-    public $eventname   = '\mod_quiz\event\attempt_started';
-    public $table       = 'quiz_attempts';
-    public $tablealias  = 'qa';
-
+    /** @var string */
+    public $entity = '\local_intellidata\entities\quizzes\attempt';
+    /** @var string */
+    public $eventname = '\mod_quiz\event\attempt_started';
+    /** @var string */
+    public $table = 'quiz_attempts';
+    /** @var string */
+    public $tablealias = 'qa';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

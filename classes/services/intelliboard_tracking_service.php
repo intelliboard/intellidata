@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -30,20 +30,49 @@ use local_intellidata\helpers\PageParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\TrackingHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class intelliboard_tracking_service {
 
+    /**
+     * Tracking types.
+     */
     const TRACKING_TYPES = [PageParamsHelper::PAGETYPE_COURSE, PageParamsHelper::PAGETYPE_MODULE];
 
+    /**
+     * Copy type tracking.
+     */
     const COPY_TYPE_TRACKING = 'tracking';
+    /**
+     * Copy type Logs.
+     */
     const COPY_TYPE_LOGS = 'logs';
+    /**
+     * Copy typedetails.
+     */
     const COPY_TYPE_DETAILS = 'details';
 
+    /**
+     * @var string[]
+     */
     private $copytypes = [
         self::COPY_TYPE_TRACKING,
         self::COPY_TYPE_LOGS,
         self::COPY_TYPE_DETAILS,
     ];
 
+    /**
+     * Copy process.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
     public function copy_process() {
         if (!$this->intelliboard_is_enable()) {
             $this->finish();
@@ -75,6 +104,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Check IntelliBoard enable.
+     *
      * @return bool
      */
     private function intelliboard_is_enable() {
@@ -343,8 +374,9 @@ class intelliboard_tracking_service {
     }
 
     /**
-     * @param int $value
+     * Set progress limit.
      *
+     * @param int $value
      * @return void.
      */
     private function set_progress_limit($value) {
@@ -352,6 +384,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Get progress limit.
+     *
      * @return string.
      */
     private function get_progress_limit() {
@@ -359,6 +393,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Get limit data.
+     *
      * @return array.
      */
     private function get_limit_data() {
@@ -374,6 +410,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Get copy method.
+     *
      * @return string.
      */
     private function get_copy_method() {
@@ -386,6 +424,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Get copy type setting.
+     *
      * @return mixed.
      */
     private function get_copy_type_setting() {
@@ -393,6 +433,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Set copy type setting.
+     *
      * @return mixed.
      */
     private function set_copy_type_setting($value) {
@@ -446,7 +488,9 @@ class intelliboard_tracking_service {
     }
 
     /**
-     * @params bool $enabled
+     * Config IntelliBoard tracking.
+     *
+     * @param bool $enabled
      * @return void
      */
     public function config_intelliboard_tracking($enabled = true) {
@@ -473,6 +517,8 @@ class intelliboard_tracking_service {
     }
 
     /**
+     * Disable copy IntelliBoard tracking task.
+     *
      * @return void
      */
     public static function disable_copy_intelliboard_tracking_task() {

@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\survey;
 
-
 /**
  * Class for migration survey.
  *
@@ -34,6 +33,8 @@ namespace local_intellidata\entities\survey;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class surveymigration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\survey\survey';
-    public $table       = 'survey';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\survey\survey';
+    /** @var string */
+    public $table = 'survey';
 }

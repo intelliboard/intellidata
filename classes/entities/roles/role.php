@@ -64,6 +64,16 @@ class role extends \local_intellidata\entities\entity {
         ];
     }
 
+    /**
+     * Hook to execute before an export.
+     *
+     * Please note that at this stage the data has already been validated and therefore
+     * any new data being set will not be validated before it is sent to the database.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
     protected function before_export() {
         global $CFG;
         require_once($CFG->libdir . '/accesslib.php');

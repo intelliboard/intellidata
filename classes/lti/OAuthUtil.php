@@ -15,18 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * OAuth LTI.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\lti;
 
+/**
+ * OAuth LTI.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class OAuthUtil {
 
     /**
+     * Url encode.
+     *
      * @param $input
      * @return array|string|string[]
      */
@@ -46,6 +59,8 @@ class OAuthUtil {
     }
 
     /**
+     * Build http query.
+     *
      * @param $params
      * @return string
      */

@@ -34,9 +34,10 @@ namespace local_intellidata\entities\forums;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class discussionsmigration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\forums\forumdiscussion';
-    public $eventname   = '\mod_forum\event\discussion_created';
-    public $table       = 'forum_discussions';
-
+    /** @var string */
+    public $entity = '\local_intellidata\entities\forums\forumdiscussion';
+    /** @var string */
+    public $eventname = '\mod_forum\event\discussion_created';
+    /** @var string */
+    public $table = 'forum_discussions';
 }

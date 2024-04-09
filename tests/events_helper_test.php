@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Events helper test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -26,7 +28,7 @@ namespace local_intellidata;
 use local_intellidata\helpers\EventsHelper;
 
 /**
- * Evetns helper test case.
+ * Events helper test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata

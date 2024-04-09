@@ -25,8 +25,6 @@
 
 namespace local_intellidata\entities\exceptions;
 
-
-
 /**
  * General invalid parameter exception.
  *

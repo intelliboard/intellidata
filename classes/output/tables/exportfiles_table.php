@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_intellidata
+ * Export files table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
@@ -26,17 +26,27 @@
 namespace local_intellidata\output\tables;
 defined('MOODLE_INTERNAL') || die;
 
-
 use html_writer;
 use local_intellidata\helpers\StorageHelper;
 
 require_once($CFG->libdir.'/tablelib.php');
 
+/**
+ * Export files table.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
 class exportfiles_table extends \table_sql {
 
-    public $download    = false;
-    public $fields      = [];
-    protected $prefs      = [];
+    /** @var bool|mixed */
+    public $download = false;
+    /** @var array|array[] */
+    public $fields = [];
+    /** @var array */
+    protected $prefs = [];
 
     /**
      * Table configuration constructor.

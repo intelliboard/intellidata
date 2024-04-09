@@ -21,23 +21,58 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class ParamsHelper {
+    /**
+     * Plugin name.
+     */
     const PLUGIN = 'local_intellidata';
 
+    /**
+     * Migration mode disabled.
+     */
     const MIGRATION_MODE_DISABLED = false;
+    /**
+     * Migration mode enabled.
+     */
     const MIGRATION_MODE_ENABLED = true;
 
+    /**
+     * Status active.
+     */
     const STATE_ACTIVE = 1;
+    /**
+     * Status in active.
+     */
     const STATE_INACTIVE = 0;
 
+    /**
+     * Status system.
+     */
     const CONTEXT_SYSTEM = 1;
+    /**
+     * Status course.
+     */
     const CONTEXT_COURSE = 2;
+    /**
+     * Status course cat.
+     */
     const CONTEXT_COURSECAT = 3;
+    /**
+     * Context user.
+     */
     const CONTEXT_USER = 5;
 
     /**

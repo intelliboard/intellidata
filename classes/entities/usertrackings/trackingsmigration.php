@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration User Trackings.
+ * Class for migration User Tracking.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -24,8 +24,17 @@
  */
 namespace local_intellidata\entities\usertrackings;
 
-
+/**
+ * Class for migration Tracking.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class trackingsmigration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\usertrackings\tracking';
-    public $table       = 'local_intellidata_tracking';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\usertrackings\tracking';
+    /** @var string */
+    public $table = 'local_intellidata_tracking';
 }

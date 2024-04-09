@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
@@ -31,12 +31,27 @@ use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class MigrationHelper {
+    /**
+     * Migrations completed status.
+     */
     const MIGRATIONS_COMPLETED_STATUS = 'migrationcompleted';
+    /**
+     * Migrations task class.
+     */
     const MIGRATIONS_TASK_CLASS = '\local_intellidata\task\migration_task';
 
     /**
-     * @var string[]
+     * @var array
      */
     private static $tasks = [
         '\local_intellidata\task\cleaner_task',
@@ -46,6 +61,8 @@ class MigrationHelper {
     ];
 
     /**
+     * Get next table.
+     *
      * @param $tables
      * @param string $processingtable
      * @return int|string
@@ -69,8 +86,11 @@ class MigrationHelper {
     }
 
     /**
+     * Set next migration params.
+     *
      * @param $migrationdatatype
      * @param int $migrationstart
+     * @return void
      */
     public static function set_next_migration_params($migrationdatatype, $migrationstart = 0) {
         SettingsHelper::set_setting('migrationdatatype', $migrationdatatype);
@@ -78,7 +98,10 @@ class MigrationHelper {
     }
 
     /**
+     * Disable sheduled tasks.
+     *
      * @param array $exclude
+     * @return void
      */
     public static function disable_sheduled_tasks($exclude = []) {
         foreach (self::$tasks as $task) {
@@ -89,7 +112,10 @@ class MigrationHelper {
     }
 
     /**
+     * Enable sheduled tasks.
+     *
      * @param array $exclude
+     * @return void
      */
     public static function enable_sheduled_tasks($exclude = []) {
         foreach (self::$tasks as $task) {
@@ -99,6 +125,12 @@ class MigrationHelper {
         }
     }
 
+    /**
+     * Enabled migration task.
+     *
+     * @return void
+     * @throws \dml_exception
+     */
     public static function enabled_migration_task() {
         global $DB;
 
@@ -133,6 +165,8 @@ class MigrationHelper {
     }
 
     /**
+     * Set disabled sheduled task.
+     *
      * @param string $classname
      * @param bool $status
      * @return bool

@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\enrolments;
 
-
 /**
  * Class for migration Users.
  *
@@ -34,13 +33,18 @@ namespace local_intellidata\entities\enrolments;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\enrolments\enrolment';
-    public $eventname   = '\core\event\user_enrolment_created';
-    public $table       = 'user_enrolments';
-    public $tablealias  = 'ue';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\enrolments\enrolment';
+    /** @var string */
+    public $eventname = '\core\event\user_enrolment_created';
+    /** @var string */
+    public $table = 'user_enrolments';
+    /** @var string */
+    public $tablealias = 'ue';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

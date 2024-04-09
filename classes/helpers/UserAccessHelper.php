@@ -21,14 +21,24 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class UserAccessHelper {
 
     /**
+     * Is user fully set up.
+     *
      * @return bool
      * @throws \coding_exception
      */
@@ -40,6 +50,8 @@ class UserAccessHelper {
     }
 
     /**
+     * User policy agreed.
+     *
      * @return bool
      */
     public static function user_policy_agreed() {
@@ -51,6 +63,8 @@ class UserAccessHelper {
     }
 
     /**
+     * Is logged in.
+     *
      * @return bool
      * @throws \coding_exception
      */

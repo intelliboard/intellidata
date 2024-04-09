@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 use local_intellidata\helpers\DebugHelper;
@@ -37,7 +37,7 @@ require_once(__DIR__.'/../../../../../../lib/dml/mariadb_native_moodle_database.
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 class mariadb_custom_moodle_database_external extends \mariadb_native_moodle_database {
 

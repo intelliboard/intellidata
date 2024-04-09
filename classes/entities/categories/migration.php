@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration Users.
+ * Class for migration Category.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -25,7 +25,7 @@
 namespace local_intellidata\entities\categories;
 
 /**
- * Class for migration Users.
+ * Class for migration Category.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -33,9 +33,10 @@ namespace local_intellidata\entities\categories;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\categories\category';
-    public $eventname   = '\core\event\course_category_created';
-    public $table       = 'course_categories';
-
+    /** @var string */
+    public $entity = '\local_intellidata\entities\categories\category';
+    /** @var string */
+    public $eventname = '\core\event\course_category_created';
+    /** @var string */
+    public $table = 'course_categories';
 }

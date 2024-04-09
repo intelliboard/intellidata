@@ -77,7 +77,6 @@ class record_deleted {
     /**
      * Export event.
      *
-     * @param $record
      * @param $eventdata
      * @param array $fields
      * @throws \core\invalid_persistent_exception

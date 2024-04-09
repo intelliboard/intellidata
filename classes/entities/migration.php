@@ -43,16 +43,27 @@ use local_intellidata\helpers\ParamsHelper;
  */
 abstract class migration {
 
-    public $encryptionservice   = null;
-    public $entity              = null;
-    public $table               = null;
-    public $tablealias          = null;
-    public $crud                = 'c';
-    public $datatype            = null;
-    public $writerecordslimits  = null;
-    public $migrationservice  = null;
-    public $exportservice  = null;
-    public $exportlogrepository  = null;
+    /** @var encryption_service */
+    public $encryptionservice = null;
+
+    /** @var \stdClass */
+    public $entity = null;
+    /** @var string */
+    public $table = null;
+    /** @var string */
+    public $tablealias = null;
+    /** @var string */
+    public $crud = 'c';
+    /** @var string */
+    public $datatype = null;
+    /** @var int */
+    public $writerecordslimits = null;
+    /** @var migration_service */
+    public $migrationservice = null;
+    /** @var export_service */
+    public $exportservice = null;
+    /** @var export_log_repository */
+    public $exportlogrepository = null;
 
     /**
      * Migration constructor.

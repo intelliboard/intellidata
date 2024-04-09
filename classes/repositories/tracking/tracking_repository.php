@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories\tracking;
@@ -30,10 +30,27 @@ use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\PageParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class tracking_repository {
 
+    /**
+     * Type live.
+     */
     const TYPE_LIVE = 0;
+    /**
+     * Type cache,
+     */
     const TYPE_CACHE = 1;
+    /**
+     * Type file.
+     */
     const TYPE_FILE = 2;
 
     /**

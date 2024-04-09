@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 use local_intellidata\helpers\DBManagerHelper;
@@ -31,6 +31,11 @@ use local_intellidata\repositories\export_id_repository;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\helpers\DebugHelper;
 
+/**
+ * Local intellidata plugin uninstallation.
+ *
+ * @return void
+ */
 function xmldb_local_intellidata_uninstall() {
 
     // Remove custom indexes.

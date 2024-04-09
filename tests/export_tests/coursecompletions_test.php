@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Course completions migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -43,7 +45,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
- * Course complations migration test case.
+ * Course completions migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -53,6 +55,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class coursecompletions_test extends custom_db_client_testcase {
 
     /**
+     * Test course completions create.
+     *
      * @covers \local_intellidata\entities\coursecompletions\coursecompletion
      * @covers \local_intellidata\entities\coursecompletions\migration
      * @covers \local_intellidata\entities\coursecompletions\observer::course_completed
@@ -72,6 +76,8 @@ class coursecompletions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course completions update.
+     *
      * @covers \local_intellidata\entities\coursecompletions\coursecompletion
      * @covers \local_intellidata\entities\coursecompletions\migration
      * @covers \local_intellidata\entities\coursecompletions\observer::course_completion_updated
@@ -93,6 +99,8 @@ class coursecompletions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Course completions create test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -155,6 +163,8 @@ class coursecompletions_test extends custom_db_client_testcase {
     }
 
     /**
+     * Course completions update test.
+     *
      * @param int $tracking
      *
      * @return void

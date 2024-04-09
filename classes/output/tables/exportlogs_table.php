@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_intellidata
+ * Export logs table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
@@ -26,21 +26,47 @@
 namespace local_intellidata\output\tables;
 defined('MOODLE_INTERNAL') || die;
 
-
 use html_writer;
-use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\persistent\export_logs;
 use local_intellidata\persistent\datatypeconfig;
 
 require_once($CFG->libdir.'/tablelib.php');
 
+/**
+ * Export logs table.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2022 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
 class exportlogs_table extends \table_sql {
 
-    public $fields     = [];
+    /**
+     * @var array|array[]
+     */
+    public $fields = [];
+    /**
+     * @var array|null
+     */
     public $tabletypes = null;
-    protected $prefs   = [];
+    /**
+     * @var array
+     */
+    protected $prefs = [];
+    /**
+     * @var \context_system|null
+     */
     protected $context = null;
 
+    /**
+     * Export logs table construct.
+     *
+     * @param $uniqueid
+     * @param $params
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function __construct($uniqueid, $params = '') {
         global $PAGE, $DB;
 
@@ -75,6 +101,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Get fields.
+     *
      * @return array[]
      * @throws \coding_exception
      */
@@ -107,6 +135,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Get headers.
+     *
      * @return array
      * @throws \coding_exception
      */
@@ -124,6 +154,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column datatype.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -137,6 +169,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column table type.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -148,6 +182,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column migrated.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -159,6 +195,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column progress.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -170,6 +208,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column time start.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -179,6 +219,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column last exported time.
+     *
      * @param $values
      * @return \lang_string|string
      * @throws \coding_exception
@@ -188,6 +230,8 @@ class exportlogs_table extends \table_sql {
     }
 
     /**
+     * Column date time.
+     *
      * @param $timestamp
      * @return string
      * @throws \coding_exception

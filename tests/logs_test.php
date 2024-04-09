@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Logs test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -27,7 +29,7 @@ use local_intellidata\persistent\logs;
 use local_intellidata\entities\users\user;
 
 /**
- * User migration test case.
+ * Logs test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata

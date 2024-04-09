@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
@@ -30,6 +30,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/adminlib.php');
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class DBManagerHelper {
 
     /**
@@ -75,6 +83,8 @@ class DBManagerHelper {
     }
 
     /**
+     * Extract xml key.
+     *
      * @param $key
      * @return array
      */
@@ -116,6 +126,8 @@ class DBManagerHelper {
     }
 
     /**
+     * Get field default value.
+     *
      * @param $column
      * @return mixed|string
      */

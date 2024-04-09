@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\userinfocategories;
 
-
 /**
  * Class for migration UserInfoCategories.
  *
@@ -34,7 +33,10 @@ namespace local_intellidata\entities\userinfocategories;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\userinfocategories\userinfocategory';
-    public $eventname   = '\core\event\user_info_category_created';
-    public $table       = 'user_info_category';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\userinfocategories\userinfocategory';
+    /** @var string */
+    public $eventname = '\core\event\user_info_category_created';
+    /** @var string */
+    public $table = 'user_info_category';
 }

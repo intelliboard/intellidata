@@ -24,14 +24,14 @@ use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\persistent\datatypeconfig;
-use local_intellidata\helpers\DBHelper;
-use local_intellidata\helpers\DebugHelper;
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
 /**
+ * Export lib.
+ *
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -39,6 +39,8 @@ require_once("$CFG->libdir/externallib.php");
 class local_intellidata_exportlib extends external_api {
 
     /**
+     * Validate credentials parameters.
+     *
      * @return external_function_parameters
      */
     public static function validate_credentials_parameters() {
@@ -48,6 +50,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Validate credentials.
+     *
      * @param $data
      * @return array
      * @throws coding_exception
@@ -104,6 +108,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Validate credentials returns.
+     *
      * @return external_single_structure
      */
     public static function validate_credentials_returns() {
@@ -116,6 +122,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Export data parameters.
+     *
      * @return external_function_parameters
      */
     public static function export_data_parameters() {
@@ -123,6 +131,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Export data.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -169,6 +179,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Export data returns.
+     *
      * @return external_single_structure
      */
     public static function export_data_returns() {
@@ -181,6 +193,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get data files parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_data_files_parameters() {
@@ -190,6 +204,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get data files.
+     *
      * @param $data
      * @return array
      * @throws coding_exception
@@ -257,6 +273,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get data files returns.
+     *
      * @return external_single_structure
      */
     public static function get_data_files_returns() {
@@ -269,6 +287,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get live data parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_live_data_parameters() {
@@ -278,6 +298,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get live data.
+     *
      * @param $data
      * @return array
      * @throws coding_exception
@@ -333,6 +355,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get live data returns.
+     *
      * @return external_single_structure
      */
     public static function get_live_data_returns() {
@@ -345,6 +369,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Set datatype parameters.
+     *
      * @return external_function_parameters
      */
     public static function set_datatype_parameters() {
@@ -424,6 +450,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Set datatype returns.
+     *
      * @return external_single_structure
      */
     public static function set_datatype_returns() {
@@ -437,6 +465,8 @@ class local_intellidata_exportlib extends external_api {
 
 
     /**
+     * Enable processing parameters.
+     *
      * @return external_function_parameters
      */
     public static function enable_processing_parameters() {
@@ -446,6 +476,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Enable processing.
+     *
      * @param $data
      * @return array
      * @throws coding_exception
@@ -491,6 +523,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Enable processing returns.
+     *
      * @return external_single_structure
      */
     public static function enable_processing_returns() {
@@ -503,6 +537,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get bbcollsessions parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_bbcollsessions_parameters() {
@@ -512,6 +548,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get bbcollsessions.
+     *
      * @param $data
      * @return array
      * @throws coding_exception
@@ -587,6 +625,8 @@ class local_intellidata_exportlib extends external_api {
     }
 
     /**
+     * Get bbcollsessions returns.
+     *
      * @return external_single_structure
      */
     public static function get_bbcollsessions_returns() {

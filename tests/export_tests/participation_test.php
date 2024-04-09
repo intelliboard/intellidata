@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Participation migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -43,7 +45,7 @@ require_once($CFG->dirroot . '/user/profile/definelib.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
- * Cohort migration test case.
+ * Participation migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -53,6 +55,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class participation_test extends custom_db_client_testcase {
 
     /**
+     * Test participation create.
+     *
      * @covers \local_intellidata\entities\participations\participation
      * @covers \local_intellidata\entities\participations\migration
      * @covers \local_intellidata\entities\participations\observer::new_participation
@@ -74,6 +78,8 @@ class participation_test extends custom_db_client_testcase {
     }
 
     /**
+     * Participation create test.
+     *
      * @param int $tracking
      *
      * @return void

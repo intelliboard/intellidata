@@ -19,7 +19,7 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -29,6 +29,13 @@ use local_intellidata\lti\OAuthRequest;
 use local_intellidata\lti\OAuthSignatureMethod_HMAC_SHA1;
 use local_intellidata\helpers\SettingsHelper;
 
+/**
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class lti_service {
     /** @var mixed LTI endpoint */
     private $endpoint;
@@ -90,6 +97,8 @@ class lti_service {
     }
 
     /**
+     * Lti sign parameters.
+     *
      * @param $oldparms
      * @return array|null
      */

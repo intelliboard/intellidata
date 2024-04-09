@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Categories migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -51,6 +53,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class categories_test extends custom_db_client_testcase {
 
     /**
+     * Test create category.
+     *
      * @covers \local_intellidata\entities\categories\category
      * @covers \local_intellidata\entities\categories\migration
      * @covers \local_intellidata\entities\categories\observer::course_category_created
@@ -70,6 +74,8 @@ class categories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test update category.
+     *
      * @covers \local_intellidata\entities\categories\category
      * @covers \local_intellidata\entities\categories\migration
      * @covers \local_intellidata\entities\categories\observer::course_category_updated
@@ -91,6 +97,8 @@ class categories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test delete category.
+     *
      * @covers \local_intellidata\entities\categories\category
      * @covers \local_intellidata\entities\categories\migration
      * @covers \local_intellidata\entities\categories\observer::course_category_deleted
@@ -106,6 +114,8 @@ class categories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete category test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -138,6 +148,8 @@ class categories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update category test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -174,6 +186,8 @@ class categories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create category test.
+     *
      * @param int $tracking
      *
      * @return void

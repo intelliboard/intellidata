@@ -15,11 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * SQL reports.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2022
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 require('../../../config.php');
 
 use local_intellidata\output\tables\sql_reports_table;

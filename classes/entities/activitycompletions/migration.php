@@ -33,13 +33,18 @@ namespace local_intellidata\entities\activitycompletions;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
+    /** @var string */
     public $entity      = '\local_intellidata\entities\activitycompletions\activitycompletion';
+    /** @var string */
     public $eventname   = '\core\event\course_module_completion_updated';
+    /** @var string */
     public $table       = 'course_modules_completion';
+    /** @var string */
     public $tablealias  = 'cmc';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

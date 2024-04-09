@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Sql reports table.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2022
@@ -26,8 +28,23 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/tablelib.php');
 
+
+/**
+ * Sql reports table.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class sql_reports_table extends \table_sql {
 
+    /**
+     * Sql reports table construct.
+     *
+     * @param $uniqueid
+     * @throws \coding_exception
+     */
     public function __construct($uniqueid) {
         global $PAGE;
 
@@ -49,6 +66,8 @@ class sql_reports_table extends \table_sql {
     }
 
     /**
+     * Column time created.
+     *
      * @param $values
      * @return false|string
      */
@@ -57,6 +76,8 @@ class sql_reports_table extends \table_sql {
     }
 
     /**
+     * Column status.
+     *
      * @param $values
      * @return mixed
      * @throws \coding_exception
@@ -69,6 +90,8 @@ class sql_reports_table extends \table_sql {
     }
 
     /**
+     * Column actions.
+     *
      * @param $values
      * @return string
      * @throws \coding_exception

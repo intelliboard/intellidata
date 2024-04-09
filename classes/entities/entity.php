@@ -24,13 +24,11 @@
  */
 namespace local_intellidata\entities;
 
-
+use stdClass;
+use lang_string;
 use coding_exception;
 use core\invalid_persistent_exception;
 use local_intellidata\helpers\EventsHelper;
-use lang_string;
-use local_intellidata\helpers\SettingsHelper;
-use stdClass;
 
 /**
  * Abstract class for core objects saved to the DB.
@@ -52,12 +50,18 @@ abstract class entity {
     /** @var array The list of validation errors. */
     private $errors = [];
 
-    /** @var boolean If the data was already validated. */
+    /** @var bool If the data was already validated. */
     private $validated = false;
 
     /** @var array The list of fields. */
     private $fields = [];
 
+    /**
+     * Entity constructor.
+     *
+     * @param $record
+     * @param $returnfields
+     */
     public function __construct($record = null, $returnfields = []) {
         if (count($returnfields)) {
             $this->returnfields = $returnfields;
@@ -111,6 +115,8 @@ abstract class entity {
     }
 
     /**
+     * Get crud.
+     *
      * @return mixed|string|null
      * @throws coding_exception
      */

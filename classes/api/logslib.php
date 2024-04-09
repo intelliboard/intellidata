@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 /**
+ * Logs lib API.
+ *
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,6 +35,8 @@ require_once("$CFG->libdir/externallib.php");
 class local_intellidata_logslib extends external_api {
 
     /**
+     * Get tasks logs parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_tasks_logs_parameters() {
@@ -42,6 +46,8 @@ class local_intellidata_logslib extends external_api {
     }
 
     /**
+     * Get tasks logs.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -87,6 +93,8 @@ class local_intellidata_logslib extends external_api {
     }
 
     /**
+     * Returns description of method result value.
+     *
      * @return external_single_structure
      */
     public static function get_tasks_logs_returns() {
@@ -99,6 +107,8 @@ class local_intellidata_logslib extends external_api {
     }
 
     /**
+     * Export logs parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_export_logs_parameters() {
@@ -106,6 +116,8 @@ class local_intellidata_logslib extends external_api {
     }
 
     /**
+     * Export logs.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -136,6 +148,8 @@ class local_intellidata_logslib extends external_api {
     }
 
     /**
+     * Returns description of method result value.
+     *
      * @return external_single_structure
      */
     public static function get_export_logs_returns() {

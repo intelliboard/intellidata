@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User logins migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -43,7 +45,7 @@ require_once($CFG->dirroot . '/user/profile/definelib.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
- * Cohort migration test case.
+ * User logins migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -53,6 +55,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class userlogins_test extends custom_db_client_testcase {
 
     /**
+     * Test user loggedin.
+     *
      * @covers \local_intellidata\entities\userlogins\userlogin
      * @covers \local_intellidata\entities\userlogins\migration
      * @covers \local_intellidata\entities\userlogins\observer::user_loggedin
@@ -72,6 +76,8 @@ class userlogins_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test user loggedout.
+     *
      * @covers \local_intellidata\entities\userlogins\userlogin
      * @covers \local_intellidata\entities\userlogins\migration
      * @covers \local_intellidata\entities\userlogins\observer::user_loggedout
@@ -93,6 +99,8 @@ class userlogins_test extends custom_db_client_testcase {
     }
 
     /**
+     * User loggedout test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -140,6 +148,8 @@ class userlogins_test extends custom_db_client_testcase {
     }
 
     /**
+     * User loggedin test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -189,6 +199,8 @@ class userlogins_test extends custom_db_client_testcase {
     }
 
     /**
+     * Insert logstore data.
+     *
      * @param string $event
      * @param int $userid
      *

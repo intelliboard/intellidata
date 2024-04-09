@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\userinfodatas;
 
-
 /**
  * Class for migration UserInfoDatas.
  *
@@ -34,12 +33,22 @@ namespace local_intellidata\entities\userinfodatas;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\userinfodatas\userinfodata';
-    public $eventname   = '\core\event\user_created';
-    public $table       = 'user_info_data';
-    public $tablealias  = 'ud';
+
+    /** @var string */
+    public $entity = '\local_intellidata\entities\userinfodatas\userinfodata';
+
+    /** @var string */
+    public $eventname = '\core\event\user_created';
+
+    /** @var string */
+    public $table = 'user_info_data';
+
+    /** @var string */
+    public $tablealias = 'ud';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

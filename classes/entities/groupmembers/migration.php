@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\groupmembers;
 
-
 /**
  * Class for migration Course Groups members.
  *
@@ -34,7 +33,10 @@ namespace local_intellidata\entities\groupmembers;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-    public $entity      = '\local_intellidata\entities\groupmembers\groupmember';
-    public $eventname   = '\core\event\group_member_added';
-    public $table       = 'groups_members';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\groupmembers\groupmember';
+    /** @var string */
+    public $eventname = '\core\event\group_member_added';
+    /** @var string */
+    public $table = 'groups_members';
 }

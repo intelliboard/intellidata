@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Sql report form.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2022
@@ -24,11 +26,24 @@
 namespace local_intellidata\output\forms;
 defined('MOODLE_INTERNAL') || die;
 
-
 require_once($CFG->dirroot . '/lib/formslib.php');
 
+/**
+ * Sql report form.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class local_intellidata_sql_report extends \moodleform {
 
+    /**
+     * Form definition.
+     *
+     * @return void
+     * @throws \coding_exception
+     */
     public function definition() {
         $mform = $this->_form;
         $data = $this->_customdata['data'];

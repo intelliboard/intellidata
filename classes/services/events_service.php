@@ -20,18 +20,27 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
 
 use local_intellidata\repositories\events_repository;
-use local_intellidata\repositories\export_log_repository;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class events_service {
 
-    protected $repo                 = null;
-    protected $eventtype            = null;
+    /** @var events_repository|null */
+    protected $repo = null;
+    /** @var null */
+    protected $eventtype = null;
 
     /**
      * Events service constructor.
