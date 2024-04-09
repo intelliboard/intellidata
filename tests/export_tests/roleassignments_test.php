@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Role assignment migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -41,7 +43,7 @@ require_once($CFG->dirroot . '/local/intellidata/tests/test_helper.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
- * Role migration test case.
+ * Role assignment migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -51,6 +53,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class roleassignments_test extends custom_db_client_testcase {
 
     /**
+     * Test assign user to role.
+     *
      * @covers \local_intellidata\entities\roles\roleassignment
      * @covers \local_intellidata\entities\roles\ramigration
      * @covers \local_intellidata\entities\roles\observer::role_assigned
@@ -70,6 +74,8 @@ class roleassignments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test un assign user from role.
+     *
      * @covers \local_intellidata\entities\roles\roleassignment
      * @covers \local_intellidata\entities\roles\ramigration
      * @covers \local_intellidata\entities\roles\observer::role_unassigned
@@ -91,6 +97,8 @@ class roleassignments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test un assign user from role.
+     *
      * @param int $tracking
      *
      * @return void
@@ -144,6 +152,8 @@ class roleassignments_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test assign user to role.
+     *
      * @param int $tracking
      *
      * @return void

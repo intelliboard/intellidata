@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * IntelliData config report.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2020

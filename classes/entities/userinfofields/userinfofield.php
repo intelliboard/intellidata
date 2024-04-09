@@ -85,6 +85,8 @@ class userinfofield extends \local_intellidata\entities\entity {
     }
 
     /**
+     * Hook to execute after an export.
+     *
      * @param $record
      * @return mixed
      */

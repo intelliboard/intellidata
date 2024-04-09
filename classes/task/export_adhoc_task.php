@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Task to process datafiles export for specific datatype.
  *
  * @package    local_intellidata
  * @category   task
@@ -24,7 +25,6 @@
  */
 
 namespace local_intellidata\task;
-
 
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\services\encryption_service;
@@ -45,6 +45,7 @@ use local_intellidata\repositories\export_log_repository;
  */
 class export_adhoc_task extends \core\task\adhoc_task {
 
+    /** @var bool */
     private $divideexportbydatatype = false;
 
     /**
@@ -89,7 +90,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
         ];
 
         $databaseservice = new database_service(true, $services);
-        $databaseservice->set_all_tables();
+        $databaseservice->set_all_tables(true);
         $databaseservice->set_adhoctask(true);
 
         foreach ($data->datatypes as $datatype) {
@@ -153,7 +154,7 @@ class export_adhoc_task extends \core\task\adhoc_task {
         ];
 
         $databaseservice = new database_service(true, $services);
-        $databaseservice->set_all_tables();
+        $databaseservice->set_all_tables(true);
         $databaseservice->set_adhoctask(true);
 
         foreach ($data->datatypes as $datatype) {

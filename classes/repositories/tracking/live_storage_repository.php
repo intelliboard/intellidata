@@ -21,16 +21,30 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories\tracking;
 
 use local_intellidata\helpers\SettingsHelper;
 
-
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class live_storage_repository extends storage_repository {
 
+    /**
+     * Save data.
+     *
+     * @param $trackdata
+     * @return void
+     * @throws \dml_transaction_exception
+     */
     public function save_data($trackdata) {
         global $DB;
         try {
@@ -94,6 +108,11 @@ class live_storage_repository extends storage_repository {
         }
     }
 
+    /**
+     * Export data.
+     *
+     * @return void
+     */
     public function export_data() {
         // Live data stored in database.
     }

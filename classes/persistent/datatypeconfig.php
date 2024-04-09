@@ -21,7 +21,7 @@
  * @subpackage intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\persistent;
@@ -33,26 +33,31 @@ use local_intellidata\services\datatypes_service;
  *
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 class datatypeconfig extends base {
 
     /** The table name. */
     const TABLE = 'local_intellidata_config';
 
+    /** Optional table prefix. */
     const OPTIONAL_TABLE_PREFIX = 'db_';
 
-    /** @var int The table type. */
+    /** @var int The table type required. */
     const TABLETYPE_REQUIRED = 0;
+    /** @var int The table type optional. */
     const TABLETYPE_OPTIONAL = 1;
+    /** @var int The table type logs */
     const TABLETYPE_LOGS = 2;
 
-    /** @var int The tables export types. */
+    /** @var int The tables export type event. */
     const TABLETYPE_EVENTS = 1;
+    /** @var int The tables export type static. */
     const TABLETYPE_STATIC = 2;
 
-    /** @var int The datatype status. */
+    /** @var int The datatype status enable. */
     const STATUS_ENABLED = 1;
+    /** @var int The datatype status disable. */
     const STATUS_DISABLED = 0;
 
     /**
@@ -140,6 +145,8 @@ class datatypeconfig extends base {
     }
 
     /**
+     * Is required by default.
+     *
      * @return mixed
      * @throws \coding_exception
      */
@@ -148,6 +155,8 @@ class datatypeconfig extends base {
     }
 
     /**
+     * Get data type.
+     *
      * @return mixed
      * @throws \coding_exception
      */

@@ -15,13 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Extra library for intellidata plugin.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
 
 use local_intellidata\api\apilib;
 use local_intellidata\helpers\DBHelper;
@@ -131,6 +131,12 @@ function local_intellidata_tracking_init() {
     }
 }
 
+/**
+ * Allow plugins to callback as soon possible after setup.php is loaded.
+ *
+ * @return void
+ * @throws dml_exception
+ */
 function local_intellidata_after_config() {
     global $DB;
 
@@ -139,6 +145,12 @@ function local_intellidata_after_config() {
     }
 }
 
+/**
+ * Allow plugins to callback just before the session is started.
+ *
+ * @return void
+ * @throws dml_exception
+ */
 function local_intellidata_before_session_start() {
     local_intellidata_after_config();
 }

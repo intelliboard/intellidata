@@ -21,22 +21,39 @@
  * @subpackage intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\output;
-
-
 
 use renderable;
 use templatable;
 use renderer_base;
 
+/**
+ * Class containing data of "View Lti" page
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class lti_launch implements renderable, templatable {
+    /** @var array */
     public $params = [];
+    /** @var string */
     public $endpoint = '';
+    /** @var bool|mixed */
     public $debug = false;
 
+    /**
+     * LTI launch construct.
+     *
+     * @param $params
+     * @param $endpoint
+     * @param $debug
+     */
     public function __construct($params, $endpoint, $debug=false) {
         $this->params = $params;
         $this->endpoint = $endpoint;

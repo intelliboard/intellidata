@@ -80,6 +80,8 @@ class observer {
     }
 
     /**
+     * Create export task.
+     *
      * @return void
      */
     public static function create_export_task() {
@@ -92,6 +94,14 @@ class observer {
         manager::queue_adhoc_task($exporttask);
     }
 
+    /**
+     * Export data event.
+     *
+     * @param $data
+     * @param $eventdata
+     * @param array $fields
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($data, $eventdata, $fields = []) {
         $data->crud = $eventdata['crud'];
 

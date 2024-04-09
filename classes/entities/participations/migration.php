@@ -24,16 +24,32 @@
  */
 namespace local_intellidata\entities\participations;
 
-
-
 use local_intellidata\helpers\DBHelper;
 
+/**
+ * Class for migration Participation.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class migration extends \local_intellidata\entities\migration {
+    /** @var string */
+    public $entity = '\local_intellidata\entities\participations\participation';
+    /** @var string */
+    public $eventname = '\generated\new_participation';
+    /** @var string */
+    public $table = 'logstore_standard_log';
 
-    public $entity      = '\local_intellidata\entities\participations\participation';
-    public $eventname   = '\generated\new_participation';
-    public $table       = 'logstore_standard_log';
-
+    /**
+     * Prepare SQL query to get data from DB.
+     *
+     * @param false $count
+     * @param null $condition
+     * @param array $sqlparams
+     * @return array
+     */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
         global $DB, $CFG;
 
@@ -68,6 +84,13 @@ class migration extends \local_intellidata\entities\migration {
         return [$sql, $params];
     }
 
+    /**
+     * Prepare records for export.
+     *
+     * @param $records
+     * @return \Generator
+     * @throws \coding_exception
+     */
     public function prepare_records_iterable($records) {
         foreach ($records as $record) {
             $record->type = ($record->contextlevel == CONTEXT_MODULE) ? 'activity' : 'course';

@@ -20,13 +20,21 @@ use local_intellidata\helpers\DeprecatedHelper;
 use local_intellidata\services\encryption_service;
 
 /**
+ * IntelliData Api lib.
+ *
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class apilib {
 
+    /**
+     * Status success.
+     */
     const STATUS_SUCCESS = 'success';
+    /**
+     * Status error.
+     */
     const STATUS_ERROR = 'error';
 
     /**

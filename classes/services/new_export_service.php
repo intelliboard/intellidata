@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2023 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -28,19 +28,25 @@ namespace local_intellidata\services;
 use local_intellidata\helpers\RolesHelper;
 use local_intellidata\helpers\TrackingHelper;
 
+/**
+ *
+ */
 class new_export_service {
 
+    /** @var null|string */
     public $entityclases = null;
 
+    /** @var array */
     public static $selecteventtables = [
         'course_modules',
         'forum_posts',
     ];
 
     /**
+     * Insert record event.
+     *
      * @param string $table
      * @param array $params
-     *
      * @return void
      */
     public function insert_record_event($table, $params) {
@@ -81,6 +87,8 @@ class new_export_service {
     }
 
     /**
+     * Insert records event.
+     *
      * @param string $table
      * @param array $dataobjects
      *
@@ -129,6 +137,9 @@ class new_export_service {
     }
 
     /**
+     * Prepare data for query.
+     *
+     * @param string $table
      * @param array $data
      *
      * @return array
@@ -148,6 +159,8 @@ class new_export_service {
     }
 
     /**
+     * Set field select event.
+     *
      * @param string $table
      * @param string $select
      * @param array $params
@@ -192,6 +205,8 @@ class new_export_service {
     }
 
     /**
+     * Update record event.
+     *
      * @param string $table
      * @param array $params
      *
@@ -236,6 +251,8 @@ class new_export_service {
     }
 
     /**
+     * Delete record event.
+     *
      * @param string $table
      * @param array $params
      *
@@ -263,6 +280,8 @@ class new_export_service {
     }
 
     /**
+     * Delete records event.
+     *
      * @param string $table
      * @param string $field
      * @param array $values
@@ -307,6 +326,8 @@ class new_export_service {
     }
 
     /**
+     * Delete records select event.
+     *
      * @param string $table
      * @param string $select
      * @param array $params
@@ -342,6 +363,8 @@ class new_export_service {
     }
 
     /**
+     * Get datatypes observer.
+     *
      * @param string $table
      * @param bool $useadditional
      * @return void
@@ -363,6 +386,12 @@ class new_export_service {
         $this->entityclases = !empty($entities) ? $entities : null;
     }
 
+    /**
+     * Get entity by datatype.
+     *
+     * @param $rdatatype
+     * @return string
+     */
     private function get_entity_by_datatype($rdatatype) {
         if (!is_array($rdatatype)) {
             $rdatatype = datatypes_service::get_required_datatypes()[$rdatatype];
@@ -371,6 +400,8 @@ class new_export_service {
     }
 
     /**
+     * Filter data for export.
+     *
      * @param string $table
      * @param \stdClass $data
      * @return bool
@@ -409,6 +440,8 @@ class new_export_service {
     }
 
     /**
+     * Filter id for export.
+     *
      * @param string $table
      * @param \stdClass $data
      * @return bool
@@ -432,6 +465,8 @@ class new_export_service {
     }
 
     /**
+     * Export datatype.
+     *
      * @param string $datatype
      * @param \stdClass $data
      * @return bool

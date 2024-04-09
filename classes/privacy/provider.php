@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\privacy;
@@ -34,9 +34,16 @@ use core_privacy\local\request\userlist;
 defined('MOODLE_INTERNAL') || die();
 
 if (interface_exists('\core_privacy\local\request\core_userlist_provider')) {
+
+    /**
+     * ID userlist provider.
+     */
     interface id_userlist_provider extends \core_privacy\local\request\core_userlist_provider {
     }
 } else {
+    /**
+     * ID userlist provider.
+     */
     interface id_userlist_provider {
     }
 }

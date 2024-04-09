@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * IntelliData sql request event.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
@@ -27,6 +28,14 @@ namespace local_intellidata\event;
 use core\event\base;
 use local_intellidata\helpers\ParamsHelper;
 
+/**
+ * IntelliData sql request event.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2022 IntelliBoard
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class local_intellidata_sql_request extends base {
 
     /**

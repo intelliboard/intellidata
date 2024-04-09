@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Edit config form.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2022
@@ -25,17 +27,25 @@ namespace local_intellidata\output\forms;
 
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\repositories\logs_tables_repository;
-defined('MOODLE_INTERNAL') || die;
 
+defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/lib/formslib.php');
 
 /**
  * Edit config form.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class local_intellidata_editlogsentity_config extends \moodleform {
 
     /**
+     * Form definition.
+     *
+     * @return void
      * @throws \coding_exception
      */
     public function definition() {
@@ -77,6 +87,8 @@ class local_intellidata_editlogsentity_config extends \moodleform {
     }
 
     /**
+     * Add action buttons.
+     *
      * @param bool $cancel
      * @param null $submitlabel
      * @throws \coding_exception
@@ -96,6 +108,8 @@ class local_intellidata_editlogsentity_config extends \moodleform {
     }
 
     /**
+     * Form validation rules.
+     *
      * @param array $data
      * @param array $files
      * @return array

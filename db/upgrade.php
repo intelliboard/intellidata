@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 use local_intellidata\services\config_service;
@@ -34,6 +34,19 @@ use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\DatatypesHelper;
 
+/**
+ * Local IntelliData plugin integration upgrade.
+ *
+ * @param $oldversion
+ * @return true
+ * @throws coding_exception
+ * @throws ddl_change_structure_exception
+ * @throws ddl_exception
+ * @throws ddl_table_missing_exception
+ * @throws dml_exception
+ * @throws downgrade_exception
+ * @throws upgrade_exception
+ */
 function xmldb_local_intellidata_upgrade($oldversion) {
     global $DB;
 
@@ -1367,6 +1380,51 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         \core\task\manager::queue_adhoc_task($exporttask);
 
         upgrade_plugin_savepoint(true, 2024030800, 'local', 'intellidata');
+    }
+
+    // Reset/export "gradeitems" datatype.
+    if ($oldversion < 2024032200) {
+
+        $exportlogrepository = new export_log_repository();
+
+        $datatype = 'gradeitems';
+
+        // Insert or update log record for datatype.
+        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+        // Add new datatypes to export ad-hoc task.
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$datatype],
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2024032200, 'local', 'intellidata');
+    }
+
+    // Add new config/reset/export "db_scale" datatype.
+    if ($oldversion < 2024040802) {
+        $datatypename = datatypes_service::generate_optional_datatype('scale');
+        $datatypes = datatypes_service::get_all_datatypes();
+        if (isset($datatypes[$datatypename])) {
+            $dbscale = $datatypes[$datatypename];
+
+            $configservice = new \local_intellidata\services\config_service([$datatypename => $dbscale]);
+            $configservice->setup_config();
+
+            $exportlogrepository = new export_log_repository();
+            // Insert or update log record for datatype.
+            $exportlogrepository->insert_datatype($datatypename);
+
+            // Add new datatypes to export ad-hoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatypename],
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        upgrade_plugin_savepoint(true, 2024040802, 'local', 'intellidata');
     }
 
     return true;

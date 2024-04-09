@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\courses;
 
-
 /**
  * Class for migration Users.
  *
@@ -34,13 +33,18 @@ namespace local_intellidata\entities\courses;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\courses\course';
-    public $eventname   = '\core\event\course_created';
-    public $table       = 'course';
-    public $tablealias  = 'c';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\courses\course';
+    /** @var string */
+    public $eventname = '\core\event\course_created';
+    /** @var string */
+    public $table = 'course';
+    /** @var string */
+    public $tablealias = 'c';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

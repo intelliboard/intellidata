@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Course migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -49,6 +51,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class courses_test extends custom_db_client_testcase {
 
     /**
+     * Test course create.
+     *
      * @covers \local_intellidata\entities\courses\course
      * @covers \local_intellidata\entities\courses\migration
      * @covers \local_intellidata\entities\courses\observer::course_created
@@ -68,6 +72,8 @@ class courses_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course update.
+     *
      * @covers \local_intellidata\entities\courses\course
      * @covers \local_intellidata\entities\courses\migration
      * @covers \local_intellidata\entities\courses\observer::course_updated
@@ -89,6 +95,8 @@ class courses_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course delete.
+     *
      * @covers \local_intellidata\entities\courses\course
      * @covers \local_intellidata\entities\courses\migration
      * @covers \local_intellidata\entities\courses\observer::course_deleted
@@ -110,6 +118,8 @@ class courses_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete course test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -140,6 +150,8 @@ class courses_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update course test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -174,6 +186,8 @@ class courses_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create course test.
+     *
      * @param int $tracking
      *
      * @return void

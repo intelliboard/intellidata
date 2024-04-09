@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
@@ -31,21 +31,34 @@ use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\EventsHelper;
-use local_intellidata\persistent\datatypeconfig;
-use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\encryption_service;
 use local_intellidata\services\export_service;
 use local_intellidata\task\export_adhoc_task;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class database_repository {
 
+    /**
+     * Logs display period.
+     */
     const LOGS_DISPLAY_PERIOD = 1000;
 
-    public static $encriptionservice    = null;
-    public static $exportservice        = null;
-    public static $exportlogrepository  = null;
-    public static $writerecordslimits   = null;
+    /** @var string|null */
+    public static $encriptionservice = null;
+    /** @var string|null */
+    public static $exportservice = null;
+    /** @var string|null */
+    public static $exportlogrepository = null;
+    /** @var string|null */
+    public static $writerecordslimits = null;
 
     /**
      * Init dependencies.
@@ -463,6 +476,16 @@ class database_repository {
         }
     }
 
+    /**
+     * Process export ids.
+     *
+     * @param $datatype
+     * @param $showlogs
+     * @return void
+     * @throws \coding_exception
+     * @throws \core\invalid_persistent_exception
+     * @throws \dml_exception
+     */
     private function process_export_ids($datatype, $showlogs) {
         // Process deleted records.
         self::process_deleted_records($datatype, $showlogs);

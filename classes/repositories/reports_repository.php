@@ -17,18 +17,27 @@
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
  *
- *
  * @package    local_intellidata
  * @copyright  2021 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2021 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class reports_repository {
 
     /**
+     * Update or create.
+     *
      * @param $report
      * @return mixed
      * @throws \dml_exception
@@ -52,6 +61,8 @@ class reports_repository {
     }
 
     /**
+     * Delete by external identifier.
+     *
      * @param $externalidentifier
      * @throws \dml_exception
      */
@@ -62,6 +73,8 @@ class reports_repository {
     }
 
     /**
+     * Get by external identifier.
+     *
      * @param $externalidentifier
      * @return false|mixed|\stdClass
      * @throws \dml_exception
@@ -73,6 +86,8 @@ class reports_repository {
     }
 
     /**
+     * Get by id.
+     *
      * @param $id
      * @return false|mixed|\stdClass
      * @throws \dml_exception

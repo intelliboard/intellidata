@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\users;
 
-
 use local_intellidata\helpers\ParamsHelper;
 
 /**
@@ -36,13 +35,18 @@ use local_intellidata\helpers\ParamsHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
+    /** @var string */
     public $entity = '\local_intellidata\entities\users\user';
+    /** @var string */
     public $eventname = '\core\event\user_created';
+    /** @var string */
     public $table = 'user';
+    /** @var string */
     public $tablealias = 'u';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams
@@ -64,8 +68,11 @@ class migration extends \local_intellidata\entities\migration {
     }
 
     /**
+     * Prepare records for export.
+     *
      * @param $records
      * @return \Generator
+     * @throws \coding_exception
      */
     public function prepare_records_iterable($records) {
         foreach ($records as $user) {

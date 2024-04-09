@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 use local_intellidata\api\apilib;
@@ -33,6 +33,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class local_intellidata_sqlreportlib extends external_api {
 
     /**
@@ -197,6 +205,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Run report returns.
+     *
      * @return external_single_structure
      */
     public static function run_report_returns() {
@@ -207,6 +217,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Save report parameters.
+     *
      * @return external_function_parameters
      */
     public static function save_report_parameters() {
@@ -216,6 +228,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Save report.
+     *
      * @param $data
      * @return array
      * @throws dml_exception
@@ -266,6 +280,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Save report returns.
+     *
      * @return external_single_structure
      */
     public static function save_report_returns() {
@@ -286,6 +302,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Delete report parameters.
+     *
      * @return external_function_parameters
      */
     public static function delete_report_parameters() {
@@ -295,6 +313,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Delete report.
+     *
      * @param $data
      * @return array
      * @throws dml_exception
@@ -340,6 +360,8 @@ class local_intellidata_sqlreportlib extends external_api {
     }
 
     /**
+     * Delete report returns.
+     *
      * @return external_single_structure
      */
     public static function delete_report_returns() {

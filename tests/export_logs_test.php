@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -39,9 +41,16 @@ use local_intellidata\repositories\export_log_repository;
  */
 class export_logs_test extends \advanced_testcase {
 
+    /** @var string */
     private $userdatatype;
+
+    /** @var string */
     private $coursedatatype;
+
+    /** @var string */
     private $enrolmentdatatype;
+
+    /** @var export_log_repository */
     private $exportlogrepository;
 
     public function setUp(): void {
@@ -81,6 +90,8 @@ class export_logs_test extends \advanced_testcase {
     }
 
     /**
+     * Test save migration.
+     *
      * @covers \local_intellidata\repositories\export_log_repository::save_migrated
      */
     public function test_save_migrated() {
@@ -98,6 +109,8 @@ class export_logs_test extends \advanced_testcase {
     }
 
     /**
+     * Test last processed data.
+     *
      * @covers \local_intellidata\repositories\export_log_repository::save_last_processed_data
      * @covers \local_intellidata\repositories\export_log_repository::get_last_processed_data
      */
@@ -121,6 +134,8 @@ class export_logs_test extends \advanced_testcase {
     }
 
     /**
+     * Test migrated datatype.
+     *
      * @covers \local_intellidata\repositories\export_log_repository::get_migrated_datatypes
      */
     public function test_get_migrated_datatypes() {
@@ -133,6 +148,8 @@ class export_logs_test extends \advanced_testcase {
     }
 
     /**
+     * Test clear migration.
+     *
      * @covers \local_intellidata\repositories\export_log_repository::clear_migrated
      * @covers \local_intellidata\repositories\export_log_repository::get_migrated_datatypes
      */

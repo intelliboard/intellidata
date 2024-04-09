@@ -21,19 +21,36 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
-use local_intellidata\repositories\config_repository;
-use local_intellidata\persistent\datatypeconfig;
-
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class EventsHelper {
 
+    /**
+     * Grud created.
+     */
     const CRUD_CREATED = 'c';
+    /**
+     * Crud read.
+     */
     const CRUD_READ = 'r';
+    /**
+     * Crud updated.
+     */
     const CRUD_UPDATED = 'u';
+    /**
+     * Crud deleted.
+     */
     const CRUD_DELETED = 'd';
 
     /**

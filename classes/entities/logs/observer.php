@@ -87,9 +87,8 @@ class observer {
     /**
      * Export event.
      *
-     * @param $record
+     * @param $datatypename
      * @param $eventdata
-     * @param array $fields
      * @throws \core\invalid_persistent_exception
      */
     private static function export_event($datatypename, $eventdata) {

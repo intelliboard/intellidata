@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User Grade migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -54,6 +56,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class usergrades_test extends custom_db_client_testcase {
 
     /**
+     * Test graded.
+     *
      * @covers \local_intellidata\entities\usergrades\usergrade
      * @covers \local_intellidata\entities\usergrades\migration
      * @covers \local_intellidata\entities\usergrades\observer
@@ -73,6 +77,8 @@ class usergrades_test extends custom_db_client_testcase {
     }
 
     /**
+     * Graded test.
+     *
      * @param int $tracking
      *
      * @return void

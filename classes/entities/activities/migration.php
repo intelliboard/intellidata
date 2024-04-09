@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\activities;
-use local_intellidata\helpers\DBHelper;
 
 /**
  * Class for migration Users.
@@ -34,13 +33,18 @@ use local_intellidata\helpers\DBHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
+    /** @var string */
     public $entity = '\local_intellidata\entities\activities\activity';
+    /** @var string */
     public $eventname = '\core\event\course_module_created';
+    /** @var string */
     public $table = 'course_modules';
+    /** @var string */
     public $tablealias = 'cm';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams
@@ -66,6 +70,8 @@ class migration extends \local_intellidata\entities\migration {
     }
 
     /**
+     * Prepare records for export.
+     *
      * @param $records
      * @return \Generator
      * @throws \coding_exception

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_intellidata
+ * IntelliData migration table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
@@ -27,16 +27,31 @@ namespace local_intellidata\output\tables;
 
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\export_log_repository;
-use local_intellidata\services\datatypes_service;
 
+/**
+ * IntelliData migration table.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2020 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
 class migrations_table {
 
+    /** @var array[] */
     private $fields;
+    /** @var array */
     private $headers;
+    /** @var array */
     private $statuses;
-
+    /** @var array */
     private $data = [];
 
+    /**
+     * Migrations table construct.
+     *
+     * @throws \coding_exception
+     */
     public function __construct() {
         $this->fields = $this->get_fields();
         $this->headers = $this->get_headers();
@@ -44,6 +59,8 @@ class migrations_table {
     }
 
     /**
+     * Get fields.
+     *
      * @return array[]
      * @throws \coding_exception
      */
@@ -70,6 +87,8 @@ class migrations_table {
     }
 
     /**
+     * Get headers.
+     *
      * @return array
      * @throws \coding_exception
      */
@@ -86,6 +105,8 @@ class migrations_table {
     }
 
     /**
+     * Get statuses.
+     *
      * @return array
      * @throws \coding_exception
      */
@@ -100,6 +121,8 @@ class migrations_table {
     }
 
     /**
+     * Get status.
+     *
      * @param $migrated
      * @return mixed
      */
@@ -109,6 +132,8 @@ class migrations_table {
     }
 
     /**
+     * Get record.
+     *
      * @param $datatypename
      * @param array $datatype
      * @return array|null
@@ -144,6 +169,8 @@ class migrations_table {
     }
 
     /**
+     * Col datetime.
+     *
      * @param $timestamp
      * @return string
      * @throws \coding_exception
@@ -153,6 +180,8 @@ class migrations_table {
     }
 
     /**
+     * Generate datatype.
+     *
      * @param $datafiles
      * @param array $datatypes
      */
@@ -168,6 +197,8 @@ class migrations_table {
     }
 
     /**
+     * Output.
+     *
      * @return string
      */
     public function out() {
@@ -198,6 +229,7 @@ class migrations_table {
     /**
      * Get the html for the calculate progress button.
      *
+     * @return mixed
      */
     public function calculate_progress_button() {
 

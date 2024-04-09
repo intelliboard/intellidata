@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Course sections migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -52,6 +54,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class coursesections_test extends custom_db_client_testcase {
 
     /**
+     * Test course sections create.
+     *
      * @covers \local_intellidata\entities\coursesections\sections
      * @covers \local_intellidata\entities\coursesections\migration
      * @covers \local_intellidata\entities\coursesections\observer::course_section_created
@@ -71,6 +75,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course sections update.
+     *
      * @covers \local_intellidata\entities\coursesections\sections
      * @covers \local_intellidata\entities\coursesections\migration
      * @covers \local_intellidata\entities\coursesections\observer::course_section_updated
@@ -92,6 +98,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course sections delete.
+     *
      * @covers \local_intellidata\entities\coursesections\sections
      * @covers \local_intellidata\entities\coursesections\migration
      * @covers \local_intellidata\entities\coursesections\observer::course_section_deleted
@@ -113,6 +121,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test course module create.
+     *
      * @covers \local_intellidata\entities\coursesections\sections
      * @covers \local_intellidata\entities\coursesections\migration
      * @covers \local_intellidata\entities\coursesections\observer::course_module_created
@@ -132,6 +142,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create course module test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -176,6 +188,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete course section test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -215,6 +229,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update course section test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -254,6 +270,8 @@ class coursesections_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create course section test.
+     *
      * @param int $tracking
      *
      * @return void

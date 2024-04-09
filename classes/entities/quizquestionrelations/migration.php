@@ -23,10 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_intellidata\entities\quizquestionrelations;
+
 use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\ParamsHelper;
-
-
 
 /**
  * Class for migration Quiz Slots.
@@ -37,12 +36,16 @@ use local_intellidata\helpers\ParamsHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
-    public $entity      = '\local_intellidata\entities\quizquestionrelations\quizquestionrelation';
-    public $table       = 'quiz_slots';
-    public $tablealias  = 't';
+    /** @var string */
+    public $entity = '\local_intellidata\entities\quizquestionrelations\quizquestionrelation';
+    /** @var string */
+    public $table = 'quiz_slots';
+    /** @var string */
+    public $tablealias = 't';
 
     /**
+     * Prepare SQL query to get data from DB.
+     *
      * @param false $count
      * @param null $condition
      * @param array $conditionparams

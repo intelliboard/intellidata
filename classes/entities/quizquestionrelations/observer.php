@@ -45,6 +45,13 @@ class observer {
         }
     }
 
+    /**
+     * Export data event.
+     *
+     * @param $event
+     * @param array $fields
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($event, $fields = []) {
         global $DB;
 

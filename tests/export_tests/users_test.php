@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -52,6 +54,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class users_test extends custom_db_client_testcase {
 
     /**
+     * Test user create.
+     *
      * @covers \local_intellidata\entities\users\user
      * @covers \local_intellidata\entities\users\migration
      * @covers \local_intellidata\entities\users\observer::user_created
@@ -71,6 +75,8 @@ class users_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test user update.
+     *
      * @covers \local_intellidata\entities\users\user
      * @covers \local_intellidata\entities\users\migration
      * @covers \local_intellidata\entities\users\observer::user_updated
@@ -92,6 +98,8 @@ class users_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test user delete.
+     *
      * @covers \local_intellidata\entities\users\user
      * @covers \local_intellidata\entities\users\migration
      * @covers \local_intellidata\entities\users\observer::user_deleted
@@ -113,6 +121,8 @@ class users_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete user test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -142,6 +152,8 @@ class users_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update user test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -175,6 +187,8 @@ class users_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create user test.
+     *
      * @param int $tracking
      *
      * @return void

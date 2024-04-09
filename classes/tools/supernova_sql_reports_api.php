@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Supernova sql reports API.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2022
@@ -23,14 +25,25 @@
 
 namespace local_intellidata\tools;
 
+/**
+ * Supernova sql reports API.
+ *
+ * @package    local_intellidata
+ * @subpackage intellidata
+ * @copyright  2022
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class supernova_sql_reports_api {
     /** @var \curl $client */
     private $client;
     /** @var object $report */
     private $report;
+    /** @var false */
     private $debug;
 
     /**
+     * Supernova sql reports API construct.
+     *
      * @param $report
      * @param false $debug
      */
@@ -45,6 +58,8 @@ class supernova_sql_reports_api {
     }
 
     /**
+     * Save report.
+     *
      * @param array $data
      * @return bool|void
      */
@@ -70,6 +85,8 @@ class supernova_sql_reports_api {
     }
 
     /**
+     * Delete report.
+     *
      * @return bool|void
      */
     public function delete() {

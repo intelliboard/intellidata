@@ -24,7 +24,6 @@
  */
 namespace local_intellidata\entities\lti;
 
-
 /**
  * Class for migration Lti Types.
  *
@@ -34,6 +33,8 @@ namespace local_intellidata\entities\lti;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class ltitypesmigration extends \local_intellidata\entities\migration {
+    /** @var string */
     public $entity = '\local_intellidata\entities\lti\ltitypes';
+    /** @var string */
     public $table = 'lti_types';
 }

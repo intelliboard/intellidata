@@ -21,34 +21,39 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\repositories\tracking;
 
-use local_intellidata\helpers\DebugHelper;
-use local_intellidata\helpers\PageParamsHelper;
-use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\persistent\tracking;
 use local_intellidata\persistent\trackinglogs;
 use local_intellidata\persistent\trackingdetails;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class usertracking_repository {
 
-    /** The User ID. */
+    /** @var int The User ID. */
     private $userid = null;
 
-    /** The File Data. */
+    /** @var array The File Data. */
     private $userdata = null;
 
-    /** Tracking records. */
+    /** @var null|\stdClass Tracking records. */
     private $trackingrecords = null;
 
-    /** Logs records. */
+    /** @var null|\stdClass Logs records. */
     private $logsrecords = null;
 
-    /** Details records. */
+    /** @var null|\stdClass Details records. */
     private $detailsrecords = null;
 
     /**

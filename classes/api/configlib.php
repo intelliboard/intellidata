@@ -31,6 +31,8 @@ defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->libdir/externallib.php");
 
 /**
+ * IntelliData config lib.
+ *
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -38,6 +40,8 @@ require_once("$CFG->libdir/externallib.php");
 class local_intellidata_configlib extends external_api {
 
     /**
+     * Get plugin config parameters.
+     *
      * @return external_function_parameters
      */
     public static function get_plugin_config_parameters() {
@@ -47,6 +51,8 @@ class local_intellidata_configlib extends external_api {
     }
 
     /**
+     * Get plugin config.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -89,6 +95,8 @@ class local_intellidata_configlib extends external_api {
     }
 
     /**
+     * Get plugin config returns.
+     *
      * @return external_single_structure
      */
     public static function get_plugin_config_returns() {
@@ -101,6 +109,8 @@ class local_intellidata_configlib extends external_api {
     }
 
     /**
+     * Set plugin config parameters.
+     *
      * @return external_function_parameters
      */
     public static function set_plugin_config_parameters() {
@@ -110,6 +120,8 @@ class local_intellidata_configlib extends external_api {
     }
 
     /**
+     * Set plugin config.
+     *
      * @return array
      * @throws dml_exception
      * @throws invalid_parameter_exception
@@ -161,6 +173,8 @@ class local_intellidata_configlib extends external_api {
     }
 
     /**
+     * Set plugin config returns.
+     *
      * @return external_single_structure
      */
     public static function set_plugin_config_returns() {

@@ -21,21 +21,27 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
 
-use local_intellidata\helpers\ParamsHelper;
-use local_intellidata\helpers\DebugHelper;
 use core\task\manager;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class TasksHelper {
 
-    /* Tasks list table */
+    /** Tasks list table */
     const TASKS_TABLE = 'task_scheduled';
 
-    /* Tasks logs table */
+    /** Tasks logs table */
     const LOG_TABLE = 'task_log';
 
     /**

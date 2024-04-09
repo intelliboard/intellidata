@@ -74,8 +74,17 @@ class module extends \local_intellidata\entities\entity {
         ];
     }
 
+    /**
+     * Hook to execute before an export.
+     *
+     * Please note that at this stage the data has already been validated and therefore
+     * any new data being set will not be validated before it is sent to the database.
+     *
+     * This is only intended to be used by child classes, do not put any logic here!
+     *
+     * @return void
+     */
     protected function before_export() {
-
         $record = $this->to_record();
 
         $modulename = get_string_manager()->string_exists('modulename', 'mod_' . $record->name)

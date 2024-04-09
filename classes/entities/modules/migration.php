@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for migration Users.
+ * Class for migration Modules.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -24,11 +24,8 @@
  */
 namespace local_intellidata\entities\modules;
 
-
-use local_intellidata\helpers\ParamsHelper;
-
 /**
- * Class for migration Users.
+ * Class for migration Modules.
  *
  * @package    local_intellidata
  * @author     IntelliBoard
@@ -36,11 +33,14 @@ use local_intellidata\helpers\ParamsHelper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class migration extends \local_intellidata\entities\migration {
-
+    /** @var string */
     public $entity = '\local_intellidata\entities\modules\module';
+    /** @var string */
     public $table  = 'modules';
 
     /**
+     * Prepare records for export.
+     *
      * @param $records
      * @return \Generator
      * @throws \coding_exception

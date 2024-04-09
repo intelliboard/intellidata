@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User info fields migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -55,6 +57,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class userinfofields_test extends custom_db_client_testcase {
 
     /**
+     * Test create user info field.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_created
@@ -74,6 +78,8 @@ class userinfofields_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test update user info field.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_updated
@@ -95,6 +101,8 @@ class userinfofields_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test delete user info field.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_deleted
@@ -116,6 +124,8 @@ class userinfofields_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete user info field test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -139,6 +149,8 @@ class userinfofields_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update user info field test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -173,6 +185,8 @@ class userinfofields_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create user info field test.
+     *
      * @param int $tracking
      *
      * @return void

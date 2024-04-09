@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Forum posts migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -42,7 +44,7 @@ require_once($CFG->dirroot . '/mod/forum/externallib.php');
 require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase.php');
 
 /**
- * User migration test case.
+ * Forum posts migration test case.
  *
  * @package    local_intellidata
  * @subpackage intellidata
@@ -52,6 +54,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class forumposts_test extends custom_db_client_testcase {
 
     /**
+     * Test forum post create.
+     *
      * @covers \local_intellidata\entities\forums\forumpost
      * @covers \local_intellidata\entities\forums\postsmigration
      * @covers \local_intellidata\entities\forums\observer::post_created
@@ -71,6 +75,8 @@ class forumposts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test forum post update.
+     *
      * @covers \local_intellidata\entities\forums\forumpost
      * @covers \local_intellidata\entities\forums\postsmigration
      * @covers \local_intellidata\entities\forums\observer::post_updated
@@ -92,6 +98,8 @@ class forumposts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test forum post delete.
+     *
      * @covers \local_intellidata\entities\forums\forumpost
      * @covers \local_intellidata\entities\forums\postsmigration
      * @covers \local_intellidata\entities\forums\observer::post_deleted
@@ -113,6 +121,8 @@ class forumposts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete forum post test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -185,6 +195,8 @@ class forumposts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update forum post test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -260,6 +272,8 @@ class forumposts_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create forum post test.
+     *
      * @param int $tracking
      *
      * @return void

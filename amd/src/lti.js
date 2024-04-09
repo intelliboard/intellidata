@@ -16,7 +16,7 @@
 /**
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    https://intelliboard.net/
+ * @see    https://intelliboard.net/
  */
 define(['jquery'], function($) {
 

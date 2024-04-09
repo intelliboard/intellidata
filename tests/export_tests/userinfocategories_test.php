@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * User info categories migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2023
@@ -52,6 +54,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class userinfocategories_test extends custom_db_client_testcase {
 
     /**
+     * Test create user info category.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_created
@@ -71,6 +75,8 @@ class userinfocategories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test update user info category.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_updated
@@ -92,6 +98,8 @@ class userinfocategories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test delete user info category.
+     *
      * @covers \local_intellidata\entities\userinfocategories\userinfocategory
      * @covers \local_intellidata\entities\userinfocategories\migration
      * @covers \local_intellidata\entities\userinfocategories\observer::user_info_category_deleted
@@ -113,6 +121,8 @@ class userinfocategories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete user info category test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -143,6 +153,8 @@ class userinfocategories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Update user info category test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -184,6 +196,8 @@ class userinfocategories_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create user info category test.
+     *
      * @param int $tracking
      *
      * @return void

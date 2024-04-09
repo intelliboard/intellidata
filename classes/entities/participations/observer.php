@@ -57,6 +57,8 @@ class observer {
     }
 
     /**
+     * Export event data.
+     *
      * @param $record
      * @param $eventdata
      * @param array $fields

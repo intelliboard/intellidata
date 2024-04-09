@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Cohort members migration test case.
+ *
  * @package    local_intellidata
  * @subpackage intellidata
  * @copyright  2021
@@ -51,6 +53,8 @@ require_once($CFG->dirroot . '/local/intellidata/tests/custom_db_client_testcase
 class cohortmembers_test extends custom_db_client_testcase {
 
     /**
+     * Test cohort member create.
+     *
      * @covers \local_intellidata\entities\cohortmembers\cohortmember
      * @covers \local_intellidata\entities\cohortmembers\migration
      * @covers \local_intellidata\entities\cohortmembers\observer::cohort_member_added
@@ -70,6 +74,8 @@ class cohortmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Test cohort member delete.
+     *
      * @covers \local_intellidata\entities\cohortmembers\cohortmember
      * @covers \local_intellidata\entities\cohortmembers\migration
      * @covers \local_intellidata\entities\cohortmembers\observer::cohort_member_removed
@@ -91,6 +97,8 @@ class cohortmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Delete cohort member test.
+     *
      * @param int $tracking
      *
      * @return void
@@ -136,6 +144,8 @@ class cohortmembers_test extends custom_db_client_testcase {
     }
 
     /**
+     * Create cohort member test.
+     *
      * @param int $tracking
      *
      * @return void

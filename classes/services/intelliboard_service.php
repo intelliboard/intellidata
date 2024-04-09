@@ -20,7 +20,7 @@
  * @package    local_intellidata
  * @copyright  2022 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\services;
@@ -29,11 +29,22 @@ use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\CurlHelper;
 use local_intellidata\repositories\statistics_repository;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2022 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class intelliboard_service {
 
-    protected $debug        = false;
-    protected $params       = [];
-    protected $apiurl       = 'https://next.intelliboard.net/api/prospects/moodle/';
+    /** @var bool */
+    protected $debug = false;
+    /** @var array */
+    protected $params = [];
+    /** @var string */
+    protected $apiurl = 'https://next.intelliboard.net/api/prospects/moodle/';
 
     /**
      * Service to send request to IntelliBoard.

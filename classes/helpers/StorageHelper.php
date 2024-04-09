@@ -21,7 +21,7 @@
  * @package    local_intellidata
  * @copyright  2020 IntelliBoard, Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @website    http://intelliboard.net/
+ * @see    http://intelliboard.net/
  */
 
 namespace local_intellidata\helpers;
@@ -31,12 +31,28 @@ use local_intellidata\persistent\logs;
 use local_intellidata\repositories\database_storage_repository;
 use local_intellidata\repositories\file_storage_repository;
 use local_intellidata\services\encryption_service;
-use local_intellidata\helpers\SettingsHelper;
 
+/**
+ * This plugin provides access to Moodle data in form of analytics and reports in real time.
+ *
+ * @package    local_intellidata
+ * @copyright  2020 IntelliBoard, Inc
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @see    http://intelliboard.net/
+ */
 class StorageHelper {
 
+    /**
+     * File storage.
+     */
     const FILE_STORAGE = 0;
+    /**
+     * Databse storage.
+     */
     const DATABASE_STORAGE = 1;
+    /**
+     * Cache storage.
+     */
     const CACHE_STORAGE = 2;
 
     /**

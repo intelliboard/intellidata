@@ -66,6 +66,13 @@ class observer {
         }
     }
 
+    /**
+     * Export data event.
+     *
+     * @param $event
+     * @param array $fields
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($event, $fields = []) {
 
         $eventdata = $event->get_data();
@@ -83,6 +90,13 @@ class observer {
         $tracking->track($data);
     }
 
+    /**
+     * Set additional params.
+     *
+     * @param $modulename
+     * @param $instance
+     * @return false|string
+     */
     public static function set_additional_params($modulename, $instance) {
 
         switch ($modulename) {
@@ -185,6 +199,13 @@ class observer {
         return (count($params)) ? json_encode($params) : '';
     }
 
+    /**
+     * Get assignment submission types.
+     *
+     * @param $instance
+     * @return string
+     * @throws \dml_exception
+     */
     private static function get_assignment_submissiontypes($instance) {
         global $DB;
 

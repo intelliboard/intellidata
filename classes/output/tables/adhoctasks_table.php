@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_intellidata
+ * Adhoc tasks table.
  *
  * @package    local_intellidata
  * @author     IntelliBoard Inc.
@@ -26,16 +26,36 @@
 namespace local_intellidata\output\tables;
 defined('MOODLE_INTERNAL') || die;
 
-use html_writer;
 use local_intellidata\helpers\ParamsHelper;
 
 require_once($CFG->libdir.'/tablelib.php');
 
+/**
+ * Adhoc tasks table.
+ *
+ * @package    local_intellidata
+ * @author     IntelliBoard Inc.
+ * @copyright  2023 intelliboard.net
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
+ */
 class adhoctasks_table extends \table_sql {
 
+    /**
+     * @var array|array[]
+     */
     public $fields = [];
+    /**
+     * @var \context_system|null
+     */
     protected $context = null;
 
+    /**
+     * Adhoc tasks table construct.
+     *
+     * @param $uniqueid
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
     public function __construct($uniqueid) {
         global $PAGE, $CFG, $DB;
 

@@ -50,6 +50,14 @@ class observer {
         }
     }
 
+    /**
+     * Export data event.
+     *
+     * @param $data
+     * @param $eventdata
+     * @param array $fields
+     * @throws \core\invalid_persistent_exception
+     */
     private static function export_event($data, $eventdata, $fields = []) {
         $entity = new activitycompletion($data, $fields);
         $data = $entity->export();
