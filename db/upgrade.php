@@ -1382,26 +1382,6 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024030800, 'local', 'intellidata');
     }
 
-    // Reset/export "gradeitems" datatype.
-    if ($oldversion < 2024032200) {
-
-        $exportlogrepository = new export_log_repository();
-
-        $datatype = 'gradeitems';
-
-        // Insert or update log record for datatype.
-        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
-
-        // Add new datatypes to export ad-hoc task.
-        $exporttask = new export_adhoc_task();
-        $exporttask->set_custom_data([
-            'datatypes' => [$datatype],
-        ]);
-        \core\task\manager::queue_adhoc_task($exporttask);
-
-        upgrade_plugin_savepoint(true, 2024032200, 'local', 'intellidata');
-    }
-
     // Add new config/reset/export "db_scale" datatype.
     if ($oldversion < 2024040802) {
         $datatypename = datatypes_service::generate_optional_datatype('scale');
@@ -1425,6 +1405,33 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2024040802, 'local', 'intellidata');
+    }
+
+    // Reset/export "gradeitems" datatype.
+    if ($oldversion < 2024041500) {
+
+        $exportlogrepository = new export_log_repository();
+
+        $datatype = 'gradeitems';
+
+        // Insert or update log record for datatype.
+        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+        // Add new datatypes to export ad-hoc task.
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$datatype],
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2024041500, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2024042600) {
+
+        $DB->execute("UPDATE {local_intellidata_export_log} SET tabletype=1 WHERE datatype LIKE 'db_%' AND tabletype=0");
+
+        upgrade_plugin_savepoint(true, 2024042600, 'local', 'intellidata');
     }
 
     return true;

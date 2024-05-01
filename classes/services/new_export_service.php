@@ -40,6 +40,7 @@ class new_export_service {
     public static $selecteventtables = [
         'course_modules',
         'forum_posts',
+        'questionnaire_question',
     ];
 
     /**

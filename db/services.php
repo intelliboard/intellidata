@@ -85,6 +85,13 @@ $functions = [
         'description' => 'Save Supernova SQL report',
         'type'        => 'write',
     ],
+    'local_intellidata_set_lti_role' => [
+        'classname'   => 'local_intellidata_datalib',
+        'methodname'  => 'set_lti_role',
+        'classpath'   => 'local/intellidata/classes/api/datalib.php',
+        'description' => 'Accepts roles and ids of users that need to be assigned to LTI role',
+        'type'        => 'write',
+    ],
     'local_intellidata_delete_report' => [
         'classname'   => 'local_intellidata_sqlreportlib',
         'methodname'  => 'delete_report',
@@ -244,6 +251,7 @@ $services = [
             'local_intelldata_save_tracking',
             'local_intellidata_run_report',
             'local_intellidata_save_report',
+            'local_intellidata_set_lti_role',
             'local_intellidata_delete_report',
             'local_intellidata_get_dbschema_custom',
             'local_intellidata_get_dbschema_unified',

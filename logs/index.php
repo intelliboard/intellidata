@@ -45,7 +45,7 @@ if (!empty($action) || !empty($query)) {
 $context = context_system::instance();
 require_capability('local/intellidata:viewlogs', $context);
 
-$pageurl = new \moodle_url('/local/intellidata/logs/index.php', ['query' => $query]);
+$pageurl = new \moodle_url('/local/intellidata/logs/index.php', ['query' => $query, 'sesskey' => sesskey()]);
 $PAGE->set_url($pageurl);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
