@@ -73,6 +73,8 @@ class SettingsHelper {
         'ltisharedsecret' => '',
         'ltititle' => '',
         'custommenuitem' => 0,
+        'ltiassigndefaultmethod' => 0,
+        'ibnltirole' => '',
         'debug' => 0,
         // Internal settings.
         'lastmigrationdate' => 0,
@@ -198,6 +200,23 @@ class SettingsHelper {
         if (!empty($PAGE->theme->layouts)) {
             foreach (array_keys($PAGE->theme->layouts) as $layout) {
                 $options[$layout] = $layout;
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get roles for options.
+     *
+     * @return array
+     */
+    public static function get_roles_options() {
+        $options = ['' => get_string('notselected', ParamsHelper::PLUGIN)];
+
+        if ($roles = get_roles_with_capability('local/intellidata:viewlti', CAP_ALLOW)) {
+            foreach ($roles as $role) {
+                $options[$role->id] = !empty($role->name) ? $role->name : ucfirst($role->shortname);
             }
         }
 

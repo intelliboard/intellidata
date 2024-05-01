@@ -156,4 +156,80 @@ class local_intellidata_datalib extends external_api {
             'data' => new external_value(PARAM_RAW, 'Report data'),
         ]);
     }
+
+    /**
+     * Set LTI role parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_lti_role_parameters() {
+        return new external_function_parameters([
+            'data' => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Set LTI role parameters.
+     *
+     * @param $data
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function set_lti_role($data) {
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR,
+            ];
+        }
+
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(self::set_lti_role_parameters(), ['data' => $data]);
+
+        // Validate if credentials not empty.
+        $encryptionservice = new encryption_service();
+
+        if (!$encryptionservice->validate_credentials()) {
+            return [
+                'data' => 'emptycredentials',
+                'status' => apilib::STATUS_ERROR,
+            ];
+        }
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'ids' => PARAM_RAW,
+            'roles' => PARAM_RAW,
+        ]);
+
+        $setltiroletask = new \local_intellidata\task\set_lti_role_adhoc_task();
+        $setltiroletask->set_custom_data($params);
+        \core\task\manager::queue_adhoc_task($setltiroletask);
+
+        $encryptionservice = new encryption_service();
+
+        return [
+            'data' => $encryptionservice->encrypt('Lti role successfully assigned.'),
+            'status' => apilib::STATUS_SUCCESS,
+        ];
+    }
+
+    /**
+     * Set LTI role returns.
+     *
+     * @return external_single_structure
+     */
+    public static function set_lti_role_returns() {
+        return new external_single_structure([
+            'status' => new external_value(PARAM_TEXT, 'Response status.'),
+            'data' => new external_value(PARAM_TEXT, 'Response message.'),
+        ]);
+    }
+
 }
