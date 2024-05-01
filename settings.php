@@ -351,6 +351,27 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'ibnltirole';
+    $setting = new admin_setting_configselect(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        SettingsHelper::get_roles_options()
+    );
+    $settings->add($setting);
+
+    $name = 'ltiassigndefaultmethod';
+    $setting = new admin_setting_configcheckbox(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        get_string($name . '_description', $pluginname),
+        SettingsHelper::get_defaut_config_value($name),
+        true,
+        false
+    );
+    $settings->add($setting);
+
     $name = 'debug';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
@@ -388,7 +409,7 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    if (ParamsHelper::get_release() >= 3.8) {
+    if (!empty($CFG->intellidata_force_enable_new_tracking) ||  ParamsHelper::get_release() >= 3.8) {
         $name = 'newtracking';
         $setting = new admin_setting_configcheckbox(
             $pluginname . '/' . $name,

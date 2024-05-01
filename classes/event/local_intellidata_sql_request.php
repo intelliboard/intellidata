@@ -64,7 +64,8 @@ class local_intellidata_sql_request extends base {
      * @return string
      */
     public function get_description() {
-        return "The web service function 'local_intellidata_get_data' has been called with params: '{$this->other}'.";
+        $other = is_array($this->other) ? json_encode($this->other) : $this->other;
+        return "The web service function 'local_intellidata_get_data' has been called with params: '{$other}'.";
     }
 
     /**

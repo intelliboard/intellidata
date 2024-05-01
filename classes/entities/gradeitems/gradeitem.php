@@ -57,6 +57,11 @@ class gradeitem extends \local_intellidata\entities\entity {
                 'description' => 'Course ID.',
                 'default' => 0,
             ],
+            'categoryid' => [
+                'type' => PARAM_INT,
+                'description' => 'Category ID.',
+                'default' => 0,
+            ],
             'iteminstance' => [
                 'type' => PARAM_INT,
                 'description' => 'Activity ID.',
@@ -114,7 +119,7 @@ class gradeitem extends \local_intellidata\entities\entity {
 
         if (!empty($object->itemtype)) {
             $itemname = !empty($object->itemname) ? $object->itemname : '';
-            switch (!empty($object->itemtype)) {
+            switch ($object->itemtype) {
                 case 'course':
                     if (!empty($object->courseid) && ($course = $DB->get_record('course', ['id' => $object->courseid]))) {
                         $itemname = $course->fullname;
@@ -127,6 +132,7 @@ class gradeitem extends \local_intellidata\entities\entity {
                     }
                     break;
             }
+
             $object->itemname = $itemname;
         }
 
