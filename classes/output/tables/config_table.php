@@ -117,6 +117,9 @@ class config_table extends \table_sql {
             'tabletype' => [
                 'label' => get_string('tabletype', 'local_intellidata'),
             ],
+            'rewritable' => [
+                'label' => get_string('rewritable', 'local_intellidata'),
+            ],
         ];
 
         // Event tracking fields.
@@ -130,9 +133,6 @@ class config_table extends \table_sql {
                 ],
                 'filterbyid' => [
                     'label' => get_string('filterbyid', 'local_intellidata'),
-                ],
-                'rewritable' => [
-                    'label' => get_string('rewritable', 'local_intellidata'),
                 ],
             ]);
         }

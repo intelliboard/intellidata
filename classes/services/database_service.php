@@ -212,6 +212,14 @@ class database_service {
             $tables = datatypes_service::get_static_datatypes([], $params);
         }
 
+        if (isset($params['rewritable']) && $tables) {
+            foreach ($tables as $datatype => $data) {
+                if (isset($data['rewritable']) && ($data['rewritable'] != $params['rewritable'])) {
+                    unset($tables[$datatype]);
+                }
+            }
+        }
+
         return $tables;
     }
 

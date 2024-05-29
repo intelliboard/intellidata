@@ -208,10 +208,8 @@ class config_service {
 
         // Set table rewritable.
         if ($isoptional) {
-            $rewritable = (!empty($config->rewritable) || empty($this->datatypes[$datatypename]['timemodified_field']));
-
-            $this->datatypes[$datatypename]['rewritable'] = TrackingHelper::new_tracking_enabled() ? false :
-                (!$config->filterbyid && $rewritable);
+            $this->datatypes[$datatypename]['rewritable'] = TrackingHelper::new_tracking_enabled() ? $config->rewritable :
+                (!$config->filterbyid && (!empty($config->rewritable) || empty($this->datatypes[$datatypename]['timemodified_field'])));
         }
 
         // Set deleted event param.
@@ -287,7 +285,7 @@ class config_service {
             } else if ($dataconfig->rewritable) {
                 $dataconfig->timemodified_field = '';
                 $dataconfig->filterbyid = datatypeconfig::STATUS_DISABLED;
-            } else {
+            } else if (!TrackingHelper::new_tracking_enabled()) {
                 $dataconfig->rewritable = datatypeconfig::STATUS_ENABLED;
             }
 

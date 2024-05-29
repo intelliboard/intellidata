@@ -56,13 +56,20 @@ class export_data_task extends \core\task\scheduled_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-        if (TrackingHelper::enabled() && TrackingHelper::eventstracking_enabled()) {
+        if (TrackingHelper::enabled()) {
             raise_memory_limit(MEMORY_HUGE);
 
             DebugHelper::enable_moodle_debug();
 
+            $params = ['cronprocessing' => true];
+
+            if (TrackingHelper::new_tracking_enabled()) {
+                $params['forceexport'] = 1;
+                $params['rewritable'] = 1;
+            }
+
             $exportservice = new export_service();
-            ExportHelper::process_data_export($exportservice, ['cronprocessing' => true]);
+            ExportHelper::process_data_export($exportservice, $params);
         }
     }
 }

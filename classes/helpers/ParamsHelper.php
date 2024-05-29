@@ -119,6 +119,42 @@ class ParamsHelper {
     }
 
     /**
+     * Returns true if the moodle release is greater than the parameter release.
+     *
+     * @param string $comparerelease
+     *
+     * @return bool
+     */
+    public static function compare_release($comparerelease) {
+        global $CFG;
+
+        if (empty($CFG->release)) {
+            return false;
+        }
+
+        $release = explode(" ", $CFG->release)[0];
+
+        $versionparts = explode('.', $release);
+        $requiredversionparts = explode('.', $comparerelease);
+
+        $isgreater = false;
+        for ($i = 0; $i < count($versionparts); $i++) {
+            if (!isset($versionparts[$i]) || !isset($requiredversionparts[$i])) {
+                break;
+            }
+
+            if ((int)$versionparts[$i] > (int)$requiredversionparts[$i]) {
+                $isgreater = true;
+                break;
+            } else if ((int)$versionparts[$i] < (int)$requiredversionparts[$i]) {
+                break;
+            }
+        }
+
+        return $isgreater;
+    }
+
+    /**
      * Get Moodle version.
      */
     public static function get_release() {

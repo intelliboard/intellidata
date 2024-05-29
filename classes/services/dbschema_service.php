@@ -291,7 +291,7 @@ class dbschema_service {
 
         $fields['recordtimecreated'] = [
             'name' => 'recordtimecreated',
-            'type' => 'bigint',
+            'type' => 'float',
             'max_length' => '19',
             'not_null' => false,
             'primary_key' => false,
