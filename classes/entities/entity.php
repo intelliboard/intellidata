@@ -249,7 +249,7 @@ abstract class entity {
 
         $def['recordtimecreated'] = [
             'default' => 0,
-            'type' => PARAM_INT,
+            'type' => PARAM_FLOAT,
             'description' => 'Timestamp when record created.',
             'null' => NULL_NOT_ALLOWED,
         ];
@@ -356,7 +356,7 @@ abstract class entity {
         $this->before_export();
 
         // We can safely set those values bypassing the validation because we know what we're doing.
-        $now = time();
+        $now = microtime(true);
         $this->raw_set('recordtimecreated', $now);
         $this->raw_set('recordusermodified', $USER->id);
         $this->raw_set('crud', $this->get_crud());

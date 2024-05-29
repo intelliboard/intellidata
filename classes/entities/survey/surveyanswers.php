@@ -94,4 +94,39 @@ class surveyanswers extends \local_intellidata\entities\entity {
             ],
         ];
     }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = [], $table = '') {
+        global $DB;
+
+        if (!isset($object->userid) || isset($object->survey) || isset($object->question)) {
+            return $object;
+        }
+
+        $params = [
+            'time' => $object->time,
+            'userid' => $object->userid,
+            'survey' => $object->survey,
+            'question' => $object->question,
+        ];
+
+        $record = $DB->get_record_sql('SELECT sa.*, sq.text as questiontext, sq.type as questiontype
+                                             FROM {survey_answers} sa
+                                        LEFT JOIN {survey_questions} sq ON sq.id = sa.question
+                                            WHERE `time`=:time AND userid=:userid AND
+                                                   survey=:survey AND question=:question', $params);
+
+        if ($record) {
+            return $record;
+        }
+
+        return $object;
+    }
 }

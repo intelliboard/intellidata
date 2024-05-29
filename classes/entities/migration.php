@@ -289,7 +289,7 @@ abstract class migration {
         $this->exportlogrepository->save_last_processed_data(
             $entity::TYPE,
             $record,
-            (isset($record->recordtimecreated)) ? $record->recordtimecreated : time(),
+            (isset($record->recordtimecreated)) ? (int)$record->recordtimecreated : time(),
             $this
         );
     }
