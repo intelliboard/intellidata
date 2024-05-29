@@ -143,7 +143,8 @@ class userinfodatas_test extends custom_db_client_testcase {
 
         $storage = StorageHelper::get_storage_service(['name' => 'userinfodatas']);
 
-        $datarecord = $storage->get_log_entity_data('u', ['id' => $userinfodata->id]);
+        $datarecord = $storage->get_log_entity_data('u', ['id' => $userinfodata->id, 'data' => $data['data']]);
+
         $this->assertNotEmpty($datarecord);
 
         $datarecorddata = test_helper::filter_fields(json_decode($datarecord->data), $data);

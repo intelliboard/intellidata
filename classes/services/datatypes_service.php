@@ -387,8 +387,8 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => ParamsHelper::get_release() < 3.8,
-                'exportids' => ParamsHelper::get_release() < 3.8,
+                'databaseexport' => !ParamsHelper::compare_release('3.8'),
+                'exportids' => !ParamsHelper::compare_release('3.8'),
             ],
             'roles' => [
                 'name' => 'roles',
@@ -462,8 +462,8 @@ class datatypes_service {
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
-                'databaseexport' => ParamsHelper::get_release() < 3.7,
-                'exportids' => ParamsHelper::get_release() < 3.7,
+                'databaseexport' => !ParamsHelper::compare_release('3.7'),
+                'exportids' => !ParamsHelper::compare_release('3.7'),
             ],
             'quizquestionrelations' => [
                 'name' => 'quizquestionrelations',
@@ -477,7 +477,7 @@ class datatypes_service {
                 'timemodified_field' => false,
                 'filterbyid' => true,
                 'databaseexport' => true,
-                'exportids' => ParamsHelper::get_release() < 4.0,
+                'exportids' => !ParamsHelper::compare_release('4.0'),
             ],
             'quizquestionattempts' => [
                 'name' => 'quizquestionattempts',

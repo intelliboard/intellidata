@@ -125,21 +125,18 @@ class local_intellidata_edit_config extends \moodleform {
             $mform->addElement('advcheckbox', 'filterbyid', get_string('filterbyid', 'local_intellidata'));
             $mform->setType('filterbyid', PARAM_INT);
             $mform->disabledIf('filterbyid', 'timemodified_field', 'neq', '');
-
-            $mform->addElement('advcheckbox', 'rewritable', get_string('rewritable', 'local_intellidata'));
-            $mform->setType('rewritable', PARAM_INT);
-            $mform->disabledIf('rewritable', 'timemodified_field', 'neq', '');
-            $mform->disabledIf('rewritable', 'filterbyid', 'checked');
         } else {
             $mform->addElement('hidden', 'filterbyid');
             $mform->setType('filterbyid', PARAM_INT);
 
-            $mform->addElement('hidden', 'rewritable');
-            $mform->setType('rewritable', PARAM_INT);
-
             $mform->addElement('hidden', 'timemodified_field');
             $mform->setType('timemodified_field', PARAM_ALPHANUMEXT);
         }
+
+        $mform->addElement('advcheckbox', 'rewritable', get_string('rewritable', 'local_intellidata'));
+        $mform->setType('rewritable', PARAM_INT);
+        $mform->disabledIf('rewritable', 'timemodified_field', 'neq', '');
+        $mform->disabledIf('rewritable', 'filterbyid', 'checked');
     }
 
     /**

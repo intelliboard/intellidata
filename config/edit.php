@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\output\forms\local_intellidata_edit_config;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\services\config_service;
@@ -115,8 +116,14 @@ $PAGE->navbar->add($title);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+$recorddata = $record->to_record();
+if (TrackingHelper::new_tracking_enabled()) {
+    $recorddata->filterbyid = 0;
+    $recorddata->timemodified_field = '';
+}
+
 $editform = new local_intellidata_edit_config(null, [
-    'data' => $record->to_record(),
+    'data' => $recorddata,
     'config' => (object)$datatypeconfig,
     'exportlog' => $exportlog,
     'is_required' => $isrequired,
