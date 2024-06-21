@@ -26,6 +26,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 
 /**
@@ -81,10 +82,21 @@ class file_storage_repository {
     /**
      * Get storage file path.
      *
+     * @param int|null $step
      * @return string
      */
-    public function get_storage_file() {
-        return $this->storagefolder . '/' . $this->datatype['name'] . '.' . self::STORAGE_FILE_TYPE;
+    public function get_storage_file($step = null) {
+        return $this->storagefolder . '/' . $this->get_file_name($step);
+    }
+
+    /**
+     * Get storage file name path.
+     *
+     * @param int|null $step
+     * @return string
+     */
+    public function get_file_name($step = null) {
+        return $this->datatype['name'] . ($step ? '_' . $step : '') . '.' . self::STORAGE_FILE_TYPE;
     }
 
     /**

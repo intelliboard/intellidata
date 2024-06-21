@@ -149,6 +149,9 @@ class database_repository {
                     " Execution took " . $difftime . " seconds.");
             }
 
+            // Export table to Moodledata.
+            ExportHelper::process_file_export(self::$exportservice, ['datatype' => $datatype['name']]);
+
             // Stop export in no limit.
             if (!$limit) {
                 break;
@@ -161,9 +164,6 @@ class database_repository {
             " Execution took " . $difftime . " seconds.");
 
         self::$exportlogrepository->save_last_processed_data($datatype['name'], $lastrecord, time());
-
-        // Export table to Moodledata.
-        ExportHelper::process_file_export(self::$exportservice, ['datatype' => $datatype['name']]);
 
         return [$overalexportedrecords, $lastrecord];
     }

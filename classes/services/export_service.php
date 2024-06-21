@@ -25,6 +25,7 @@
 
 namespace local_intellidata\services;
 
+use local_intellidata\persistent\export_logs;
 use local_intellidata\repositories\database_storage_repository;
 use local_intellidata\repositories\file_storage_repository;
 use local_intellidata\helpers\ParamsHelper;
@@ -97,14 +98,19 @@ class export_service {
                 $storageservice = new storage_service($datatype);
                 $starttime = microtime();
 
-                if ($file = $storageservice->save_file()) {
-                    $files[] = $file;
+                if ($filesres = $storageservice->save_file()) {
+                    if (!is_array($filesres)) {
+                        $filesres = [$filesres];
+                    }
+                    foreach ($filesres as $file) {
+                        $files[] = $file;
 
-                    if ($this->showlogs) {
-                        $difftime = microtime_diff($starttime, microtime());
-                        mtrace("File {$key} exported at " . date('r') . ".");
-                        mtrace("Execution took " . $difftime . " seconds.");
-                        mtrace("-------------------------------------------");
+                        if ($this->showlogs) {
+                            $difftime = microtime_diff($starttime, microtime());
+                            mtrace("File {$key} exported at " . date('r') . ".");
+                            mtrace("Execution took " . $difftime . " seconds.");
+                            mtrace("-------------------------------------------");
+                        }
                     }
                 }
             }
@@ -129,7 +135,21 @@ class export_service {
             $datatypes = $this->datatypes;
         }
 
-        return $datatypes;
+        // Filter 'required datatypes' ones that can be disabled.
+        $resdatatypes = [];
+        foreach ($datatypes as $key => $datatype) {
+            if (!export_logs::record_exists_select('datatype=:datatype', ['datatype' => $key])) {
+                continue;
+            }
+
+            if (isset($params['except_rewritable']) && isset($datatype['rewritable']) && $datatype['rewritable']) {
+                continue;
+            }
+
+            $resdatatypes[$key] = $datatype;
+        }
+
+        return $resdatatypes;
     }
 
     /**
