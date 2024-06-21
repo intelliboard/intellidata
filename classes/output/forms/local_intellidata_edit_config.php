@@ -52,6 +52,9 @@ class local_intellidata_edit_config extends \moodleform {
     public function definition() {
         $mform = $this->_form;
         $data = $this->_customdata['data'];
+        $exportlog = $this->_customdata['exportlog'];
+
+        $data->enableexport = (!empty($exportlog)) ? 1 : 0;
 
         if (isset($this->_customdata['is_required']) && $this->_customdata['is_required']) {
             $this->required_form();
@@ -77,6 +80,7 @@ class local_intellidata_edit_config extends \moodleform {
      */
     protected function required_form() {
         $mform = $this->_form;
+        $config = $this->_customdata['config'];
 
         $options = [
             datatypeconfig::TABLETYPE_REQUIRED => get_string('required', 'local_intellidata'),
@@ -84,6 +88,12 @@ class local_intellidata_edit_config extends \moodleform {
         ];
         $mform->addElement('select', 'tabletype', get_string('tabletype', 'local_intellidata'), $options);
         $mform->setType('tabletype', PARAM_INT);
+
+        if (isset($config->canbedisabled)) {
+            $mform->addElement('advcheckbox', 'enableexport', get_string('enableexport', 'local_intellidata'));
+            $mform->setType('enableexport', PARAM_INT);
+            $mform->disabledIf('enableexport', 'status', 'neq', datatypeconfig::STATUS_ENABLED);
+        }
     }
 
     /**
@@ -95,11 +105,7 @@ class local_intellidata_edit_config extends \moodleform {
      */
     protected function optional_form() {
         $mform = $this->_form;
-        $data = $this->_customdata['data'];
         $config = $this->_customdata['config'];
-        $exportlog = $this->_customdata['exportlog'];
-
-        $data->enableexport = (!empty($exportlog)) ? 1 : 0;
 
         $options = [
             datatypeconfig::STATUS_ENABLED => get_string('enabled', 'local_intellidata'),

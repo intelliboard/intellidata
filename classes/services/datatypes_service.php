@@ -97,6 +97,17 @@ class datatypes_service {
     }
 
     /**
+     * Get datatypes that do not need to synchronize deleted elements.
+     *
+     * @return array|array[]
+     */
+    public static function get_not_export_ids_datatypes() {
+        return [
+            'db_logstore_standard_log',
+        ];
+    }
+
+    /**
      * Get datatypes.
      *
      * @param bool $applyconfig
@@ -676,6 +687,7 @@ class datatypes_service {
                 'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
                 'databaseexport' => false,
+                'canbedisabled' => true,
                 'exportids' => false,
             ],
             'userlogins' => [
@@ -689,6 +701,7 @@ class datatypes_service {
                 'timemodified_field' => 'timecreated',
                 'filterbyid' => false,
                 'databaseexport' => false,
+                'canbedisabled' => true,
             ],
         ];
 

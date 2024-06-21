@@ -91,6 +91,8 @@ class ExportHelper {
 
         if (TrackingHelper::new_tracking_enabled()) {
             (new tracking_repository())->export_records();
+
+            $params['except_rewritable'] = true;
         }
 
         // Export files to Moodledata.
@@ -98,7 +100,7 @@ class ExportHelper {
 
         // Export migration files to Moodledata.
         $exportservice->set_migration_mode();
-        $exportservice->save_files();
+        $exportservice->save_files($params);
 
         // Set last export date.
         SettingsHelper::set_lastexportdate();

@@ -67,7 +67,6 @@ class database_service {
         $this->showlogs = $showlogs;
         $this->repo = new database_repository();
         $this->services = $services;
-
     }
 
     /**
@@ -158,7 +157,7 @@ class database_service {
         // Export table records.
         $recordsexported = $this->repo->export($datatype, $params, $this->showlogs, $this->services);
 
-        if (!TrackingHelper::new_tracking_enabled()) {
+        if (!TrackingHelper::new_tracking_enabled() && !in_array($datatype, datatypes_service::get_not_export_ids_datatypes())) {
             // Sync deleted items.
             $this->repo->export_ids($datatype, $this->showlogs);
         }
