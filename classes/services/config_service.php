@@ -256,9 +256,11 @@ class config_service {
      *
      * @param \local_intellidata\persistent\datatypeconfig $recordconfig
      * @param \stdClass $dataconfig
+     * @param null|array $datatypeconfig
+     *
      * @return void
      */
-    public function save_config($recordconfig, $dataconfig) {
+    public function save_config($recordconfig, $dataconfig, $datatypeconfig = null) {
         // Delete index for old timemodified_field.
         if (!empty($recordconfig->get('tableindex')) &&
             $dataconfig->timemodified_field != $recordconfig->get('timemodified_field')) {
@@ -305,7 +307,8 @@ class config_service {
         // Cache config after deletion.
         $this->cache_config();
 
-        if (!$recordconfig->is_required_by_default()) {
+        if (!$recordconfig->is_required_by_default() ||
+            isset($datatypeconfig['canbedisabled']) && $datatypeconfig['canbedisabled']) {
             // Process export log.
             $this->export_log($recordconfig, $dataconfig);
         } else if (($recordconfig->get('tabletype') == datatypeconfig::TABLETYPE_REQUIRED) &&

@@ -137,7 +137,7 @@ if ($editform->is_cancelled()) {
         $data = $configservice->create_config($datatype, $datatypeconfig);
         $returnurl = $pageurl;
     } else {
-        $configservice->save_config($record, $data);
+        $configservice->save_config($record, $data, $datatypeconfig);
     }
 
     \local_intellidata\services\datatypes_service::get_datatypes(true, true);

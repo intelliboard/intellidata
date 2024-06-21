@@ -1459,5 +1459,19 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024050300, 'local', 'intellidata');
     }
 
+    // Add new config "db_logstore_standard_log" datatype.
+    if ($oldversion < 2024051601) {
+        $datatypename = datatypes_service::generate_optional_datatype('logstore_standard_log');
+        $datatypes = datatypes_service::get_all_datatypes();
+        if (isset($datatypes[$datatypename])) {
+            $dbscale = $datatypes[$datatypename];
+
+            $configservice = new \local_intellidata\services\config_service([$datatypename => $dbscale]);
+            $configservice->setup_config();
+        }
+
+        upgrade_plugin_savepoint(true, 2024051601, 'local', 'intellidata');
+    }
+
     return true;
 }
