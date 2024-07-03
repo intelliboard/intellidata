@@ -103,7 +103,13 @@ class observer {
      * @throws \core\invalid_persistent_exception
      */
     private static function export_event($coursedata, $eventdata, $fields = []) {
+        global $CFG;
+
         $coursedata->crud = $eventdata['crud'];
+
+        if (isset($CFG->audiencevisibility) && ($CFG->audiencevisibility == 1) && isset($coursedata->audiencevisible)) {
+            $coursedata->visible = $coursedata->audiencevisible == COHORT_VISIBLE_NOUSERS ? 0 : 1;
+        }
 
         $entity = new course($coursedata, $fields);
         $data = $entity->export();

@@ -26,6 +26,7 @@
 
 namespace local_intellidata\helpers;
 
+use local_intellidata\repositories\config_repository;
 use local_intellidata\services\config_service;
 use local_intellidata\services\datatypes_service;
 use local_intellidata\repositories\export_log_repository;
@@ -73,5 +74,23 @@ class DatatypesHelper {
         }
 
         $configservice->cache_config();
+    }
+
+    /**
+     * Reset datatype.
+     *
+     * @param string $datatype
+     *
+     * @return void
+     * @throws \coding_exception
+     */
+    public static function reset_datatype($datatype) {
+        $configrepository = new config_repository();
+        $record = $configrepository->get_record(['datatype' => $datatype]);
+        if (!$record) {
+            return;
+        }
+
+        (new config_service())->reset_config_datatype($record);
     }
 }

@@ -169,6 +169,8 @@ class required_tables_repository extends base_tables_repository {
 
             'assign_user_flags', 'roleassignments', 'question_categories', 'user_lastaccess',
             'org_type_info_field', 'org_type_info_data',
+
+            'course_completion_criteria',
         ];
     }
 }
