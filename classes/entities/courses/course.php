@@ -25,6 +25,8 @@
 namespace local_intellidata\entities\courses;
 
 
+use local_intellidata\services\dbschema_service;
+
 /**
  * Class for preparing data for Users.
  *
@@ -98,5 +100,23 @@ class course extends \local_intellidata\entities\entity {
                 'default' => 0,
             ],
         ];
+    }
+
+    /**
+     * Prepare entity data for export.
+     *
+     * @param \stdClass $object
+     * @param array $fields
+     * @return null
+     * @throws invalid_persistent_exception
+     */
+    public static function prepare_export_data($object, $fields = [], $table = '') {
+        global $CFG;
+
+        if (isset($CFG->audiencevisibility) && ($CFG->audiencevisibility == 0) && isset($object->audiencevisible)) {
+            $object->visible = $object->audiencevisible;
+        }
+
+        return $object;
     }
 }

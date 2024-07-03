@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 use local_intellidata\api\apilib;
 use local_intellidata\repositories\export_log_repository;
 use local_intellidata\services\database_service;

@@ -24,6 +24,8 @@
  */
 namespace local_intellidata\entities\courses;
 
+use local_intellidata\services\dbschema_service;
+
 /**
  * Class for migration Users.
  *
@@ -51,13 +53,22 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
+        global $CFG;
 
         $where = 'c.id > :cid';
         $sqlparams = ['cid' => 1];
 
+        $dbschema = new dbschema_service();
+        $visible = 'c.visible';
+        if (isset($CFG->audiencevisibility) && ($CFG->audiencevisibility == 1) &&
+            $dbschema->column_exists('course', 'audiencevisible')) {
+            $visible = 'CASE WHEN c.audiencevisible = ' . COHORT_VISIBLE_NOUSERS . ' THEN 0 ELSE 1 END as visible';
+        }
+
         $select = ($count) ?
             "SELECT COUNT(c.id) as recordscount" :
-            "SELECT c.*";
+            "SELECT c.id, c.idnumber, c.fullname, c.startdate,
+                    c.enddate, c.timecreated, $visible, c.format, c.sortorder, c.category";
 
         $sql = "$select
                   FROM {".$this->table."} c

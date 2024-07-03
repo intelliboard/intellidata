@@ -206,7 +206,6 @@ class database_service {
         $tables = (!empty($params['table']) && isset($this->tables[$params['table']]))
             ? [$params['table'] => $this->tables[$params['table']]]
             : $this->tables;
-
         if (!empty($params['forceexport'])) {
             $tables = datatypes_service::get_static_datatypes([], $params);
         }
