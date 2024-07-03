@@ -63,7 +63,6 @@ class export_adhoc_task extends \core\task\adhoc_task {
             } else {
                 $this->execute_full_export();
             }
-
         }
     }
 

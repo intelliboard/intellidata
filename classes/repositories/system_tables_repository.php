@@ -135,7 +135,6 @@ class system_tables_repository extends base_tables_repository {
             'config*',
             'context_temp',
             'contentbank_content',
-            'course_completion_*',
             'enrol_*',
             'editor_*',
             'events_*',

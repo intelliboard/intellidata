@@ -33,6 +33,11 @@ $observers = [
         'priority' => 1,
     ],
     [
+        'eventname' => '\core\event\config_log_created',
+        'callback' => '\local_intellidata\entities\config_log_observer::config_log_created',
+        'priority' => 1,
+    ],
+    [
         'eventname' => '\core\event\user_updated',
         'callback' => '\local_intellidata\entities\users\observer::user_updated',
         'priority' => 1,

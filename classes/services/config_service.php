@@ -545,6 +545,10 @@ class config_service {
                 'filterbyid' => true,
                 'rewritable' => false,
             ],
+            'course_completion_criteria' => [
+                'filterbyid' => true,
+                'rewritable' => false,
+            ],
         ];
 
         return ($datatype && !empty($config[$datatype])) ? $config[$datatype] : $config;
