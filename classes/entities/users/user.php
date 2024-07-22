@@ -120,6 +120,16 @@ class user extends \local_intellidata\entities\entity {
                 'description' => 'User last name.',
                 'default' => '',
             ],
+            'institution' => [
+                'type' => PARAM_TEXT,
+                'description' => 'User institution.',
+                'default' => '',
+            ],
+            'department' => [
+                'type' => PARAM_TEXT,
+                'description' => 'User department.',
+                'default' => '',
+            ],
         ];
     }
 

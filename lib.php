@@ -145,12 +145,3 @@ function local_intellidata_after_config() {
     }
 }
 
-/**
- * Allow plugins to callback just before the session is started.
- *
- * @return void
- * @throws dml_exception
- */
-function local_intellidata_before_session_start() {
-    local_intellidata_after_config();
-}

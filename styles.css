@@ -192,3 +192,7 @@
         max-width: 70%;
     }
 }
+
+#contentframe {
+    min-height: 600px;
+}
