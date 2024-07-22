@@ -616,11 +616,19 @@ class DBHelper {
                     self::$customdbclient[$penetrationtype]->dispose();
                 } catch (\Throwable $e) {
                     // Ignore if connection already disposed.
-
                     $e->getMessage();
                 }
 
                 unset(self::$customdbclient[$penetrationtype]);
+            }
+
+            if ((!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) && !defined('CLI_SCRIPT')) {
+                try {
+                    $DB->dispose();
+                } catch (\Throwable $e) {
+                    // Ignore if connection already disposed.
+                    $e->getMessage();
+                }
             }
 
             if (!isset(self::$customdbclient[$penetrationtype])) {
@@ -629,6 +637,7 @@ class DBHelper {
 
                 self::$customdbclient[$penetrationtype] = $db;
             }
+
             return self::$customdbclient[$penetrationtype];
         }
 

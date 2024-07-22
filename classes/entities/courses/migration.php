@@ -67,7 +67,7 @@ class migration extends \local_intellidata\entities\migration {
 
         $select = ($count) ?
             "SELECT COUNT(c.id) as recordscount" :
-            "SELECT c.id, c.idnumber, c.fullname, c.startdate,
+            "SELECT c.id, c.idnumber, c.fullname, c.startdate, c.shortname,
                     c.enddate, c.timecreated, $visible, c.format, c.sortorder, c.category";
 
         $sql = "$select

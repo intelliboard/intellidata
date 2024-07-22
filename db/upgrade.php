@@ -1498,5 +1498,47 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024061102, 'local', 'intellidata');
     }
 
+    // Reset/export "trackinglog" datatype.
+    if ($oldversion < 2024061800) {
+
+        $exportlogrepository = new export_log_repository();
+
+        $datatype = 'trackinglog';
+
+        // Insert or update log record for datatype.
+        $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+        // Add new datatypes to export ad-hoc task.
+        $exporttask = new export_adhoc_task();
+        $exporttask->set_custom_data([
+            'datatypes' => [$datatype],
+        ]);
+        \core\task\manager::queue_adhoc_task($exporttask);
+
+        upgrade_plugin_savepoint(true, 2024061800, 'local', 'intellidata');
+    }
+
+    // Reset/export "users" and "courses" datatypes.
+    if ($oldversion < 2024070500) {
+
+        $exportlogrepository = new export_log_repository();
+
+        $datatypes = ['users', 'courses'];
+
+        foreach ($datatypes as $datatype) {
+            // Insert or update log record for datatype.
+            $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+            // Add new datatypes to export ad-hoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatype],
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        upgrade_plugin_savepoint(true, 2024070500, 'local', 'intellidata');
+    }
+
     return true;
 }

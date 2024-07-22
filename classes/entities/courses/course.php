@@ -99,6 +99,11 @@ class course extends \local_intellidata\entities\entity {
                 'description' => 'Course category.',
                 'default' => 0,
             ],
+            'shortname' => [
+                'type' => PARAM_TEXT,
+                'description' => 'Course shortname.',
+                'default' => '',
+            ],
         ];
     }
 

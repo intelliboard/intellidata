@@ -74,15 +74,7 @@ class migration extends \local_intellidata\entities\migration {
         global $CFG;
         require_once($CFG->libdir . '/gradelib.php');
 
-        $gradeitems = \grade_item::fetch_all([]);
-
         foreach ($records as $gradeobject) {
-
-            // Ignore record if gradeitem not exists.
-            if (!isset($gradeitems[$gradeobject->itemid])) {
-                continue;
-            }
-
             $grade = usergrade::prepare_export_data($gradeobject);
             $entity = new $this->entity($grade);
             $gradedata = $entity->export();
