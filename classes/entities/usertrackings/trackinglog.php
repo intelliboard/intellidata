@@ -71,6 +71,11 @@ class trackinglog extends \local_intellidata\entities\entity {
                 'description' => 'Timepoint.',
                 'default' => 0,
             ],
+            'timemodified' => [
+                'type' => PARAM_INT,
+                'description' => 'Timestamp when record modified.',
+                'default' => 0,
+            ],
         ];
     }
 }

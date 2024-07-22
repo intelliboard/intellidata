@@ -114,26 +114,39 @@ class usergrade extends \local_intellidata\entities\entity {
         require_once($CFG->libdir . '/gradelib.php');
 
         $gradeitem = \grade_item::fetch(['id' => $object->itemid]);
-
-        // Each user have own grade max and grade min.
-        $gradeitem->grademax = $object->rawgrademax;
-        $gradeitem->grademin = $object->rawgrademin;
-
-        $score = grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
         $data = new \stdClass();
         $data->id = $object->id;
         $data->gradeitemid = $object->itemid;
         $data->userid = $object->userid;
         $data->usermodified = $object->usermodified;
-        $displaytype = $gradeitem->gradetype == GRADE_TYPE_SCALE ? GRADE_DISPLAY_TYPE_REAL : GRADE_DISPLAY_TYPE_LETTER;
-        $data->letter = grade_format_gradevalue($object->finalgrade, $gradeitem, true, $displaytype);
-        $data->score = str_replace(' %', '', $score);
-        $data->point = ($gradeitem->gradetype == GRADE_TYPE_SCALE) ?
-            $gradeitem->bounded_grade($object->finalgrade) :
-            grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_REAL);
         $data->feedback = !empty($object->feedback) ? $object->feedback : '';
         $data->hidden = $object->hidden;
         $data->timemodified = $object->timemodified;
+
+        if ($gradeitem) {
+            // Each user have own grade max and grade min.
+            $gradeitem->grademax = $object->rawgrademax;
+            $gradeitem->grademin = $object->rawgrademin;
+
+            $score = grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
+            $displaytype = $gradeitem->gradetype == GRADE_TYPE_SCALE ? GRADE_DISPLAY_TYPE_REAL : GRADE_DISPLAY_TYPE_LETTER;
+            $data->letter = grade_format_gradevalue($object->finalgrade, $gradeitem, true, $displaytype);
+            $data->score = str_replace(' %', '', $score);
+            $data->point = ($gradeitem->gradetype == GRADE_TYPE_SCALE) ?
+                $gradeitem->bounded_grade($object->finalgrade) :
+                grade_format_gradevalue($object->finalgrade, $gradeitem, true, GRADE_DISPLAY_TYPE_REAL);
+        } else {
+            if (CLI_SCRIPT) {
+                mtrace('Not found gradeitem: ' . $object->itemid);
+            }
+
+            // Each user have own grade max and grade min.
+            $gradeitem->grademax = null;
+            $gradeitem->grademin = null;
+            $data->letter = null;
+            $data->score = null;
+            $data->point = null;
+        }
 
         return $data;
     }
