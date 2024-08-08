@@ -64,7 +64,7 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
             $this->resetAfterTest(false);
         }
 
-        if (!ParamsHelper::compare_release('3.9')) {
+        if (!ParamsHelper::compare_release('3.9.0')) {
             return;
         }
 
@@ -91,7 +91,7 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
             $this->test_create();
         }
 
-        if (!ParamsHelper::compare_release('3.9')) {
+        if (!ParamsHelper::compare_release('3.9.0')) {
             return;
         }
 

@@ -1540,5 +1540,27 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024070500, 'local', 'intellidata');
     }
 
+    // Add new config 'messages, message_conversation_members, message_user_actions' datatypes.
+    if ($oldversion < 2024073101) {
+        $reqdatatypes = [
+            'messages', 'message_conversation_members', 'message_user_actions',
+        ];
+        foreach ($reqdatatypes as $reqdatatype) {
+            $datatypename = datatypes_service::generate_optional_datatype($reqdatatype);
+            $datatypes = datatypes_service::get_all_datatypes();
+            if (isset($datatypes[$datatypename])) {
+                $dbscale = $datatypes[$datatypename];
+
+                $configservice = new \local_intellidata\services\config_service([$datatypename => $dbscale]);
+                $configservice->setup_config();
+
+                $exportlogrepository = new export_log_repository();
+                $exportlogrepository->insert_datatype($datatypename);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2024073101, 'local', 'intellidata');
+    }
+
     return true;
 }
