@@ -68,7 +68,7 @@ jobs:
 
       - name: Install moodle-plugin-ci
         run: |
-          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 -vvv
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 -vvv --no-init
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
