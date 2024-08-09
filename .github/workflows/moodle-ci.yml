@@ -66,6 +66,7 @@ jobs:
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
           sed -i "s/ nvm install / nvm install --lts /g" ci/src/Installer/VendorInstaller.php
+          sed -i "s/ installation failed.'); / installation failed. ' . $process->getOutput()); /g" ci/src/Installer/VendorInstaller.php
           cat ci/src/Installer/VendorInstaller.php
           pwd
           ls -la
