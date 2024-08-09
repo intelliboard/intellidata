@@ -58,6 +58,7 @@ jobs:
           coverage: none
 
       - name: Initialise moodle-plugin-ci
+        shell: bash -l {0}
         run: |
           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
