@@ -59,7 +59,7 @@ jobs:
       - name: Set the correct Node version using nvm
         shell: bash -l {0}
         run: |
-          cd plugin
+          cd ci
           pwd
           ls -la
           nvm install --lts
