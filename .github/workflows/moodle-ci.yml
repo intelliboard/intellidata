@@ -31,17 +31,21 @@ jobs:
           - php: '7.3'
             moodle-branch: 'MOODLE_311_STABLE'
             database: pgsql
+            node-version: '20.10.0'
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: pgsql
+            node-version: '20.10.0'
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
+            node-version: '20.10.0'
           - php: '8.1'
             moodle-branch: 'MOODLE_403_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
+            node-version: '20.10.0'
 
     steps:
       - name: Check out repository code
@@ -71,6 +75,7 @@ jobs:
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
+          NODE_VERSION: ${{ matrix.node-version }}
 
       - name: PHP Lint
         if: ${{ always() }}
