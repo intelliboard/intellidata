@@ -68,6 +68,14 @@ jobs:
           pwd
           ls -la
           nvm install --lts
+          cd plugin
+          pwd
+          ls -la
+          nvm install --lts
+          cd ../ci
+          pwd
+          ls -la
+          nvm install --lts
 
       - name: Install moodle-plugin-ci
         shell: bash -l {0}
