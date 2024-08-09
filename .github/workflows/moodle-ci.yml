@@ -65,7 +65,7 @@ jobs:
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
-          sed -i "s/ nvm install /c\ nvm install --lts/g" ci/src/Installer/VendorInstaller.php
+          sed -i "s/ nvm install / nvm install --lts /g" ci/src/Installer/VendorInstaller.php
           cat ci/src/Installer/VendorInstaller.php
           pwd
           ls -la
