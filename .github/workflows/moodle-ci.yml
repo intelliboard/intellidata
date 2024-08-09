@@ -67,7 +67,7 @@ jobs:
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
           pwd
           ls -la
-          nvm install
+          nvm install --lts
 
       - name: Install moodle-plugin-ci
         run: |
