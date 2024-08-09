@@ -66,7 +66,7 @@ jobs:
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
           
-          sed -i '/ nvm install /c\ $cmd     = ". $nvmDir/nvm.sh && nvm install && nvm use && echo \"NVM_BIN=\$NVM_BIN\""; ' ci/src/Installer/VendorInstaller.php
+          sed -i '/ nvm install /c\ $cmd     = ". $nvmDir/nvm.sh && nvm install && nvm use && echo \\"NVM_BIN=\\$NVM_BIN\\""; ' ci/src/Installer/VendorInstaller.php
           sed -i '/Node.js installation failed./c\ throw new \RuntimeException("Node.js installation failed. " . $process->getOutput()); ' ci/src/Installer/VendorInstaller.php
           cat ci/src/Installer/VendorInstaller.php
           pwd
