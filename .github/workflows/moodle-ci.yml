@@ -58,7 +58,9 @@ jobs:
           coverage: none
       - name: Set the correct Node version using nvm
         shell: bash -l {0}
-        run: nvm install
+        run: |
+          pwd
+          nvm install
 
       - name: Initialise moodle-plugin-ci
         run: |
