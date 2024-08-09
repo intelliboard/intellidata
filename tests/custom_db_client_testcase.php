@@ -57,7 +57,7 @@ class custom_db_client_testcase extends \advanced_testcase {
 
         $DB->force_transaction_rollback();
 
-        if (ParamsHelper::compare_release('3.8')) {
+        if (ParamsHelper::compare_release('3.8.0')) {
             setup_helper::enable_custom_driver();
         }
 
@@ -75,7 +75,7 @@ class custom_db_client_testcase extends \advanced_testcase {
         SettingsHelper::set_setting('trackingstorage', StorageHelper::DATABASE_STORAGE);
 
         $this->release = ParamsHelper::get_release();
-        $this->newexportavailable = ParamsHelper::compare_release('3.8');
+        $this->newexportavailable = ParamsHelper::compare_release('3.8.0');
     }
 
     public function tearDown(): void {

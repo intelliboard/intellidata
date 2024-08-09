@@ -173,8 +173,6 @@ class system_tables_repository extends base_tables_repository {
             'lti_tool*',
             'lti_access_tokens',
             'ltiservice*',
-            'message*',
-            'messages*',
             'messageinbound*',
             'mnet_*',
             'mnetservice_*',

@@ -139,10 +139,6 @@ class usergrade extends \local_intellidata\entities\entity {
             if (CLI_SCRIPT) {
                 mtrace('Not found gradeitem: ' . $object->itemid);
             }
-
-            // Each user have own grade max and grade min.
-            $gradeitem->grademax = null;
-            $gradeitem->grademin = null;
             $data->letter = null;
             $data->score = null;
             $data->point = null;

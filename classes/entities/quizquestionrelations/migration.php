@@ -52,7 +52,7 @@ class migration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $release4 = ParamsHelper::compare_release('4.0');
+        $release4 = ParamsHelper::compare_release('4.0.0');
 
         if ($release4) {
             $select = ($count) ?

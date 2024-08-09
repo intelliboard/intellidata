@@ -68,7 +68,7 @@ class quizquestions_test extends custom_db_client_testcase {
         }
 
         // No events until version 3.7.
-        if (!ParamsHelper::compare_release('3.7')) {
+        if (!ParamsHelper::compare_release('3.7.0')) {
             return;
         }
 
@@ -143,7 +143,7 @@ class quizquestions_test extends custom_db_client_testcase {
         }
 
         // No events until version 3.7.
-        if (!ParamsHelper::compare_release('3.7')) {
+        if (!ParamsHelper::compare_release('3.7.0')) {
             return;
         }
 

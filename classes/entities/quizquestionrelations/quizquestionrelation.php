@@ -90,7 +90,7 @@ class quizquestionrelation extends \local_intellidata\entities\entity {
     public static function prepare_export_data($object, $fields = [], $table = '') {
         global $DB;
 
-        $release4 = ParamsHelper::compare_release('4.0');
+        $release4 = ParamsHelper::compare_release('4.0.0');
 
         if (!$release4) {
             $object->type = 'q';
