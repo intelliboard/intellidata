@@ -56,6 +56,9 @@ jobs:
           extensions: ${{ matrix.extensions }}
           ini-values: max_input_vars=5000
           coverage: none
+      - name: Set the correct Node version using nvm
+        shell: bash -l {0}
+        run: nvm install
 
       - name: Initialise moodle-plugin-ci
         run: |
