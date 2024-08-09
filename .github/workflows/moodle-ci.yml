@@ -60,6 +60,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pwd
+          ls -la
           nvm install
 
       - name: Initialise moodle-plugin-ci
