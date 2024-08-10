@@ -71,7 +71,7 @@ jobs:
           cat ci/src/Installer/VendorInstaller.php
           pwd
           ls -la
-          nvm install --lts
+          nvm install 
           npm -v
 
       - name: Install moodle-plugin-ci
