@@ -71,9 +71,9 @@ jobs:
           cat ci/src/Installer/VendorInstaller.php
           pwd
           ls -la
-          nvm install --lts
+          nvm install lts/gallium
           nvm current 
-          nvm use --lts
+          nvm use lts/gallium
           nvm current 
 
       - name: Install moodle-plugin-ci
