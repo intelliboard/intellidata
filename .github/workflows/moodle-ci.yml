@@ -65,12 +65,24 @@ jobs:
           nvm install --lts
 
       - name: Initialise moodle-plugin-ci
+        shell: bash -l {0}
         run: |
           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+          pwd
+          ls -la
+          nvm install --lts
+          cd plugin
+          pwd
+          ls -la
+          nvm install --lts
+          cd ../ci
+          pwd
+          ls -la
+          nvm install --lts
 
       - name: Install moodle-plugin-ci
         run: |
