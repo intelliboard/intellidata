@@ -69,6 +69,9 @@ jobs:
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+          
+          nvm install ${{ matrix.node-version }}
+          nvm use ${{ matrix.node-version }}
 
       - name: Install moodle-plugin-ci
         shell: bash -l {0}
