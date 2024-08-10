@@ -72,12 +72,13 @@ jobs:
           pwd
           ls -la
           nvm install --lts
+          npm -v
 
       - name: Install moodle-plugin-ci
         shell: bash -l {0}
         run: |
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 -vvv
-          /home/runner/.nvm/nvm.sh && nvm install && nvm use && echo "NVM_BIN=$NVM_BIN"
+          /home/runner/.nvm/nvm.sh && nvm install --lts && nvm use && echo "NVM_BIN=$NVM_BIN"
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
