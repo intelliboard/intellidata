@@ -31,17 +31,21 @@ jobs:
           - php: '7.3'
             moodle-branch: 'MOODLE_311_STABLE'
             database: pgsql
+            node-version: 'lts/gallium'
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: pgsql
+            node-version: 'lts/gallium'
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
+            node-version: 'lts/gallium'
           - php: '8.1'
             moodle-branch: 'MOODLE_403_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
+            node-version: '--lts'
 
     steps:
       - name: Check out repository code
@@ -71,10 +75,8 @@ jobs:
           cat ci/src/Installer/VendorInstaller.php
           pwd
           ls -la
-          nvm install lts/gallium
-          nvm current 
-          nvm use lts/gallium
-          nvm current 
+          nvm install ${{ matrix.node-version }}
+          nvm use ${{ matrix.node-version }}
 
       - name: Install moodle-plugin-ci
         shell: bash -l {0}
