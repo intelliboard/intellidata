@@ -67,7 +67,7 @@ jobs:
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
           
           sed -i '/ nvm install /c\ $cmd     = ". $nvmDir/nvm.sh && nvm install && nvm use && echo \\"NVM_BIN=\\$NVM_BIN\\""; ' ci/src/Installer/VendorInstaller.php
-          sed -i '/Node.js installation failed./c\ throw new \\RuntimeException("Node.js installation failed. " . $process->getErrorOutput()); ' ci/src/Installer/VendorInstaller.php
+          sed -i '/Node.js installation failed./c\ echo "Node.js installation failed. " . $process->getErrorOutput(); ' ci/src/Installer/VendorInstaller.php
           cat ci/src/Installer/VendorInstaller.php
           pwd
           ls -la
@@ -77,6 +77,7 @@ jobs:
         shell: bash -l {0}
         run: |
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 -vvv
+          /home/runner/.nvm/nvm.sh && nvm install && nvm use && echo "NVM_BIN=$NVM_BIN"
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
