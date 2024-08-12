@@ -39,15 +39,22 @@ class observer {
      * @param \core\event\cohort_member_added $event
      */
     public static function cohort_member_added(\core\event\cohort_member_added $event) {
+        global $DB;
+
         if (TrackingHelper::eventstracking_enabled()) {
             $eventdata = $event->get_data();
 
-            $cohortmember = new \stdClass();
-            $cohortmember->cohortid = $eventdata['objectid'];
-            $cohortmember->userid = $eventdata['relateduserid'];
-            $cohortmember->timeadded = $eventdata['timecreated'];
+            $cohortmember = [
+                'cohortid' => $eventdata['objectid'],
+                'userid' => $eventdata['relateduserid'],
+                'timeadded' => $eventdata['timecreated'],
+            ];
 
-            self::export_event($cohortmember, $eventdata);
+            if ($record = $DB->get_record('cohort_members', $cohortmember)) {
+                $cohortmember['id'] = $record->id;
+            }
+
+            self::export_event((object)$cohortmember, $eventdata);
         }
     }
 

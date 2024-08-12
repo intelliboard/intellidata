@@ -409,7 +409,7 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    if (!empty($CFG->intellidata_force_enable_new_tracking) ||  ParamsHelper::compare_release('3.8')) {
+    if (!empty($CFG->intellidata_force_enable_new_tracking) ||  ParamsHelper::compare_release('3.8.0')) {
         $name = 'newtracking';
         $setting = new admin_setting_configcheckbox(
             $pluginname . '/' . $name,
