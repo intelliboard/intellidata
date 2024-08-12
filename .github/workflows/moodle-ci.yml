@@ -4,7 +4,7 @@ on: [pull_request]
 
 jobs:
   test:
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-20.04'
 
     services:
       postgres:
@@ -31,17 +31,21 @@ jobs:
           - php: '7.3'
             moodle-branch: 'MOODLE_311_STABLE'
             database: pgsql
+            node-version: 'lts/gallium'
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: pgsql
+            node-version: 'lts/gallium'
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
+            node-version: 'lts/gallium'
           - php: '8.1'
             moodle-branch: 'MOODLE_403_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
+            node-version: '--lts'
 
     steps:
       - name: Check out repository code
@@ -58,16 +62,21 @@ jobs:
           coverage: none
 
       - name: Initialise moodle-plugin-ci
+        shell: bash -l {0}
         run: |
           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+          
+          nvm install ${{ matrix.node-version }}
+          nvm use ${{ matrix.node-version }}
 
       - name: Install moodle-plugin-ci
+        shell: bash -l {0}
         run: |
-          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 -vvv
         env:
           DB: ${{ matrix.database }}
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}
