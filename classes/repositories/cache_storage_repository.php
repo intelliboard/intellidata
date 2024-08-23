@@ -126,7 +126,7 @@ class cache_storage_repository extends file_storage_repository {
         $cacherecord[] = $data;
 
         if (count($cacherecord) > 1000) {
-            $this->save_file();
+            $this->save_file(false);
             $cacherecord = [];
         }
 

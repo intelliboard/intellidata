@@ -52,18 +52,22 @@ class mariadb_custom_moodle_database_external extends \mariadb_native_moodle_dat
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
     public function insert_record_raw($table, $params, $returnid = true, $bulk = false, $customsequence = false) {
-        $returnid = parent::insert_record_raw($table, $params, $returnid, $bulk, $customsequence);
+        $id = parent::insert_record_raw($table, $params, true, $bulk, $customsequence);
 
         try {
             $exportservice = new new_export_service();
             $data = (object)$params;
-            $data->id = $returnid;
+            $data->id = $id;
             $exportservice->insert_record_event($table, $data);
         } catch (Exception $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
-        return $returnid;
+        if (!$returnid) {
+            return true;
+        } else {
+            return (int)$id;
+        }
     }
 
     /**
