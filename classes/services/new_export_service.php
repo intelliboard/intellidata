@@ -69,11 +69,9 @@ class new_export_service {
                 continue;
             }
 
-            $record = null;
+            $record = $params;
             if ($requiredatatype) {
                 $record = $entity::prepare_export_data($params, [], $table);
-            } else if (isset($params->id)) {
-                $record = $DB->get_record($table, ['id' => $params->id]);
             }
 
             if (!$record) {
@@ -119,6 +117,14 @@ class new_export_service {
                     }
                 } else {
                     $record = (object)$dataobject;
+
+                    if (!isset($record->id)) {
+                        $params = $this->prepare_data_for_query($table, (array)$dataobject);
+                        $records = $DB->get_records($table, $params, 'id DESC', '*', 0, 1);
+                        if (!$record = array_shift($records)) {
+                            continue;
+                        }
+                    }
                 }
 
                 if (!isset($record) || ($requiredatatype && !$this->filter($entity::TYPE, $record))) {
