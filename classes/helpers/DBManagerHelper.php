@@ -54,7 +54,12 @@ class DBManagerHelper {
                 if (!$xmldbfile->loadXMLStructure()) {
                     continue;
                 }
+
                 $structure = $xmldbfile->getStructure();
+                if (!$structure) {
+                    continue;
+                }
+
                 $xmltables = $structure->getTables();
 
                 foreach ($xmltables as $xmltable) {

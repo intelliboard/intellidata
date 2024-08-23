@@ -97,10 +97,38 @@ class quizquestionrelation extends \local_intellidata\entities\entity {
         } else {
             $datatype = datatypes_service::get_datatype('quizquestionrelations');
             if (isset($datatype['additional_tables']) && (in_array($table, $datatype['additional_tables']))) {
-
-                $migration = datatypes_service::init_migration($datatype, null, false);
-                $reffield = $table == 'question_set_references' ? 'refsid' : 'refid';
-                list($sql, $params) = $migration->get_sql(false, $reffield . '=' . $object->id);
+                if ($table == 'question_set_references') {
+                    $catidsql = DBHelper::get_operator('JSON_EXTRACT', 'qsr.filtercondition', ['path' => 'questioncategoryid']);
+                    $sql = "SELECT
+                            qs.id,
+                            qs.quizid,
+                            qc.id AS questionid,
+                            qs.slot,
+                            'c' AS type,
+                            null as refid,
+                            qsr.id as refsid
+                        FROM {quiz_slots} qs
+                          JOIN {question_set_references} qsr ON qsr.questionarea = 'slot' AND qsr.itemid = qs.id
+                          JOIN {question_categories} qc ON qc.contextid = qsr.questionscontextid
+                                                           AND qc.id = CAST({$catidsql} AS DECIMAL)
+                        WHERE qsr.id=:id";
+                    $params = ['id' => $object->id];
+                } else {
+                    $sql = "SELECT
+                            qs.id,
+                            qs.quizid,
+                            MAX(qve.questionid) AS questionid,
+                            qs.slot,
+                            'q' AS type,
+                            MAX(qre.id) as refid,
+                            null as refsid
+                        FROM {quiz_slots} qs
+                          JOIN {question_references} qre ON qre.itemid = qs.id
+                          JOIN {question_versions} qve ON qve.questionbankentryid = qre.questionbankentryid
+                        WHERE qre.id=:id
+                        GROUP BY qs.id, qs.quizid, qs.slot";
+                    $params = ['id' => $object->id];
+                }
                 $record = $DB->get_record_sql($sql, $params);
 
                 if (isset($record)) {
