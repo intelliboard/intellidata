@@ -125,6 +125,12 @@ class cache_storage_repository extends file_storage_repository {
 
         $cacherecord[] = $data;
 
+        if (!$cache->set($cachekey, $cacherecord)) {
+            // Something wrong.
+            DebugHelper::error_log("IntelliData events tracking: error save event to cache,
+            key:{$cachekey}, data:" . json_encode($cacherecord));
+        }
+
         if (count($cacherecord) > 1000) {
             $this->save_file(false);
             $cacherecord = [];
