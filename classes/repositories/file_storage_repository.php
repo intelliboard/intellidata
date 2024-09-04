@@ -26,7 +26,6 @@
 
 namespace local_intellidata\repositories;
 
-use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 
 /**
@@ -43,6 +42,12 @@ class file_storage_repository {
      * Storage folder name.
      */
     const STORAGE_FOLDER_NAME = 'ibdata';
+
+    /**
+     * The name of the folder for storing files by user.
+     */
+    const STORAGE_FOLDER_BY_USER_NAME = 'byusers';
+
     /**
      * Storage file type.
      */
@@ -80,23 +85,38 @@ class file_storage_repository {
     }
 
     /**
+     * Get storing files by user folder path.
+     *
+     * @return void
+     */
+    protected function make_storage_datatype_by_user_folder() {
+        make_temp_directory(self::STORAGE_FOLDER_NAME . '/' . $this->datatype['name'] . '_' . self::STORAGE_FOLDER_BY_USER_NAME);
+    }
+
+    /**
      * Get storage file path.
      *
-     * @param int|null $step
      * @return string
      */
-    public function get_storage_file($step = null) {
-        return $this->storagefolder . '/' . $this->get_file_name($step);
+    public function get_storage_file($withuser = true) {
+        return $this->storagefolder . '/' . $this->get_file_name($withuser);
     }
 
     /**
      * Get storage file name path.
      *
-     * @param int|null $step
      * @return string
      */
-    public function get_file_name($step = null) {
-        return $this->datatype['name'] . ($step ? '_' . $step : '') . '.' . self::STORAGE_FILE_TYPE;
+    public function get_file_name($withuser = true) {
+        global $USER;
+
+        if ($withuser) {
+            $foldername = $this->datatype['name'] . '_' . self::STORAGE_FOLDER_BY_USER_NAME;
+            $userid = !empty($USER->id) ? $USER->id : '';
+            return $foldername . '/user_' . $userid . '.' . self::STORAGE_FILE_TYPE;
+        }
+
+        return $this->datatype['name'] . '.' . self::STORAGE_FILE_TYPE;
     }
 
     /**
@@ -115,6 +135,8 @@ class file_storage_repository {
      * @throws \moodle_exception
      */
     public function save_data($data) {
+        $this->make_storage_datatype_by_user_folder();
+
         StorageHelper::save_in_file($this->storagefile, $data);
     }
 
@@ -132,12 +154,17 @@ class file_storage_repository {
 
         $tempfile = $this->get_temp_file();
 
-        if (!file_exists($this->storagefile)) {
+        $filesbyuser = $this->storagefolder . '/' . $this->datatype['name'] . '_' . self::STORAGE_FOLDER_BY_USER_NAME . '/user_*.csv';
+        $files = glob($filesbyuser);
+        $storagefile = $this->get_storage_file(false);
+        if (empty($files)) {
             return null;
         }
 
+        exec('for f in ' . $filesbyuser . '; do echo; cat $f; rm $f; done | tail -n +2 >> ' . $storagefile . '; ');
+
         // Rename temp file to process.
-        StorageHelper::rename_file($this->storagefile, $tempfile);
+        StorageHelper::rename_file($storagefile, $tempfile);
 
         // Save file to filedir and database.
         $params = [
