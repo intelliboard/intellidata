@@ -622,7 +622,7 @@ class DBHelper {
                 unset(self::$customdbclient[$penetrationtype]);
             }
 
-            if ((!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) && !defined('CLI_SCRIPT')) {
+            if ((!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) && !defined('CLI_SCRIPT') && $penetrationtype == self::PENETRATION_TYPE_EXTERNAL) {
                 try {
                     $DB->dispose();
                 } catch (\Throwable $e) {
