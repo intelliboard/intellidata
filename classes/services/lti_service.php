@@ -113,9 +113,11 @@ class lti_service {
             return;
         }
 
+        $context = \context_system::instance();
+
         try {
             // Removing all user assign for lti role.
-            $DB->delete_records('role_assignments', ['roleid' => $role->id]);
+            $DB->delete_records('role_assignments', ['roleid' => $role->id, 'contextid' => $context->id]);
         } catch (\Exception $e) {
             DebugHelper::error_log($e->getMessage());
         }
@@ -123,8 +125,6 @@ class lti_service {
         if (!$ids && !$roles) {
             return;
         }
-
-        $context = \context_system::instance();
 
         $sqlids = $ids ? " SELECT u.id
                 FROM mdl_user u
