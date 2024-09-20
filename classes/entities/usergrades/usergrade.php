@@ -109,11 +109,16 @@ class usergrade extends \local_intellidata\entities\entity {
      * @throws invalid_persistent_exception
      */
     public static function prepare_export_data($object, $fields = [], $table = '') {
-        global $CFG;
+        global $CFG, $PAGE;
 
         require_once($CFG->libdir . '/gradelib.php');
 
         $gradeitem = \grade_item::fetch(['id' => $object->itemid]);
+
+        if (AJAX_SCRIPT && $CFG->debugdeveloper) {
+            $PAGE->set_context($gradeitem->get_context());
+        }
+
         $data = new \stdClass();
         $data->id = $object->id;
         $data->gradeitemid = $object->itemid;
