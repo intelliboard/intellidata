@@ -109,8 +109,13 @@ class attempt extends \local_intellidata\entities\entity {
 
         $object->points = $quiz->score = 0;
         if ($object->sumgrades && $quiz->sumgrades) {
-            $object->points = ($object->sumgrades / $quiz->sumgrades) * $quiz->grade;
-            $object->score = ($object->sumgrades / $quiz->sumgrades) * 100;
+            if ($object->sumgrades == 0) {
+                $object->points = 0;
+                $object->score = 0;
+            } else {
+                $object->points = ($object->sumgrades / $quiz->sumgrades) * $quiz->grade;
+                $object->score = ($object->sumgrades / $quiz->sumgrades) * 100;
+            }
         }
         return $object;
     }
