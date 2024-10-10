@@ -39,7 +39,7 @@ class local_intellidata_trackinglib extends external_api {
             [
                 'page'   => new external_value(PARAM_TEXT, 'page identifier'),
                 'param' => new external_value(PARAM_INT, 'page param'),
-                'useragent' => new external_value(PARAM_TEXT, 'page param', VALUE_OPTIONAL),
+                'useragent' => new external_value(PARAM_TEXT, 'user agent', VALUE_OPTIONAL),
             ]
         );
     }
@@ -56,7 +56,7 @@ class local_intellidata_trackinglib extends external_api {
      * @throws required_capability_exception
      * @throws restricted_context_exception
      */
-    public static function save_tracking($page, $param, $useragent = '') {
+    public static function save_tracking($page, $param, $useragent = null) {
         global $SESSION;
 
         $params = self::validate_parameters(
