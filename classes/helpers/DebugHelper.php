@@ -54,6 +54,13 @@ class DebugHelper {
      */
     public static function error_log($errorstring) {
         if (self::debugenabled()) {
+
+            try {
+                \local_intellidata\entities\syslogs\observer::export_event($errorstring);
+            } catch (\moodle_exception $e) {
+                syslog(LOG_ERR, 'IntelliData Export Debug: ' . $errorstring);
+            }
+
             syslog(LOG_ERR, 'IntelliData Debug: ' . $errorstring);
         }
     }

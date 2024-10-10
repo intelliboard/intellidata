@@ -70,7 +70,8 @@ class tracking_repository {
         $data->page         = $pageparams['page'];
         $data->param        = $pageparams['param'];
         $data->timespend    = $pageparams['time'];
-        $data->useragent    = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $data->useragent    = !empty($pageparams['useragent']) ? $pageparams['useragent'] :
+            (isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '');
 
         if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
             $ip = $_SERVER["HTTP_X_FORWARDED_FOR"];

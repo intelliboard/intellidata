@@ -168,6 +168,10 @@ class tracking_service {
                 ? clean_param($_COOKIE['intellidatatime'], PARAM_INT) : 0;
         }
 
+        if (!empty($this->trackparameters['useragent'])) {
+            $pageparams['useragent'] = $this->trackparameters['useragent'];
+        }
+
         $this->pageparams = $pageparams;
     }
 
