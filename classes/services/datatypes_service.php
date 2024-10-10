@@ -703,6 +703,18 @@ class datatypes_service {
                 'databaseexport' => false,
                 'canbedisabled' => true,
             ],
+            'syslogs' => [
+                'name' => 'syslogs',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'migration' => false,
+                'entity' => 'syslogs\syslogs',
+                'observer' => 'syslogs\observer',
+                'rewritable' => false,
+                'timemodified_field' => false,
+                'filterbyid' => false,
+                'databaseexport' => false,
+                'canbedisabled' => true,
+            ],
         ];
 
         return self::format_required_datatypes($datatypes);

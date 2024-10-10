@@ -138,14 +138,16 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
 
         $assignment = new \assign($context, $cm, $course);
 
-        $assign->create_submission([
+        $params = [
             'userid' => $student1->id,
-            'assignid' => $cm->id,
             'onlinetext_editor' => [
                 'text' => 'test text submission',
                 'format' => FORMAT_MOODLE,
             ],
-        ]);
+        ];
+        $params[ParamsHelper::compare_release('4.2.0') ? 'cmid' : 'assignid'] = $cm->id;
+
+        $assign->create_submission($params);
 
         $submission = $DB->get_record('assign_submission', ['assignment' => $cm->instance, 'userid' => $student1->id]);
 
@@ -230,14 +232,15 @@ class assignmentsubmissions_test extends custom_db_client_testcase {
 
         $assignment = new \assign($context, $cm, $course);
 
-        $assign->create_submission([
+        $params = [
             'userid' => $student1->id,
-            'assignid' => $cm->id,
             'onlinetext_editor' => [
                 'text' => 'test text submission',
                 'format' => FORMAT_MOODLE,
             ],
-        ]);
+        ];
+        $params[ParamsHelper::compare_release('4.2.0') ? 'cmid' : 'assignid'] = $cm->id;
+        $assign->create_submission($params);
 
         $submission = $DB->get_record('assign_submission', ['assignment' => $cm->instance, 'userid' => $student1->id]);
 
