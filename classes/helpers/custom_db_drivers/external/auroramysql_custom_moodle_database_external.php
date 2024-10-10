@@ -59,7 +59,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
             $data = (object)$params;
             $data->id = $id;
             $exportservice->insert_record_event($table, $data);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
@@ -94,7 +94,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
         try {
             $exportservice = new new_export_service();
             $exportservice->insert_records_event($table, $dataobjects);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
     }
@@ -114,7 +114,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
             $exportservice = new new_export_service();
             $data = (object)$params;
             $exportservice->update_record_event($table, $data);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
@@ -147,7 +147,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
 
         try {
             (new new_export_service())->set_field_select_event($table, $select, $params);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
@@ -168,7 +168,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_record_event($table, $conditions);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
@@ -189,7 +189,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_records_event($table, $field, $values);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
@@ -212,7 +212,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_records_select_event($table, $field . ' IN (' . $subquery . ')', $params);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 
@@ -232,7 +232,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_records_select_event($table, $select, $params);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
         }
 

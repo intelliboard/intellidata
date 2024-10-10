@@ -22,14 +22,33 @@
  */
 define(['jquery', 'core/ajax', 'core/log'], function($, ajax, log) {
 
-    var sendRequest = function(page, param) {
+    var sendRequest = async function(page, param) {
 
         log.debug('IntelliData Request', [page, param]);
+
+        var useragent = '';
+        if (navigator.userAgent && navigator.userAgentData) {
+            useragent = navigator.userAgent;
+            try {
+                const ua = await navigator.userAgentData.getHighEntropyValues(['platform', 'platformVersion']);
+                const windowsIndex = useragent.indexOf('Windows');
+                if ((ua.platform == 'Windows') && (windowsIndex !== -1)) {
+                    const semicolonIndex = useragent.indexOf(';', windowsIndex);
+                    if (semicolonIndex !== -1) {
+                        useragent = useragent.substring(0, windowsIndex) +
+                            'Windows NT ' + ua.platformVersion + useragent.substring(semicolonIndex);
+                    }
+                }
+            } catch (error) {
+                log.debug('Error retrieving platform info: ' + error.message);
+            }
+        }
 
         ajax.call([{
             methodname: 'local_intelldata_save_tracking', args: {
                 page: page,
-                param: param
+                param: param,
+                useragent: useragent
             }
         }])[0]
         .done(function(response) {

@@ -1562,5 +1562,14 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024073101, 'local', 'intellidata');
     }
 
+    // Add new config 'syslogs' datatype.
+    if ($oldversion < 2024092501) {
+
+        // Insert or update log record for datatype.
+        (new export_log_repository())->insert_datatype('syslogs', export_logs::TABLE_TYPE_UNIFIED, true);
+
+        upgrade_plugin_savepoint(true, 2024092501, 'local', 'intellidata');
+    }
+
     return true;
 }

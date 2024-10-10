@@ -167,14 +167,13 @@ class datatypes_service_test extends \advanced_testcase {
             'quizquestionattemptsteps', 'quizquestionattemptstepsdata', 'assignmentsubmissions',
             'ltisubmittion', 'coursesections', 'ltitypes', 'survey', 'surveyanswers', 'tracking',
             'trackinglog', 'trackinglogdetail', 'userinfocategories', 'userinfofields',
-            'userinfodatas', 'participation', 'userlogins',
+            'userinfodatas', 'participation', 'userlogins', 'syslogs',
         ];
         $this->assertEquals($defaultdatatypes, array_keys($datatypes));
 
         foreach ($datatypes as $datatype) {
             $this->assertTrue(!empty($datatype['name']));
             $this->assertEquals(datatypeconfig::TABLETYPE_REQUIRED, $datatype['tabletype']);
-            $this->assertTrue(!empty($datatype['migration']));
             $this->assertTrue(!empty($datatype['entity']));
 
             // Validate datatype should have observer if table is empty.

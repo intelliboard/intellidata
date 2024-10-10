@@ -114,6 +114,7 @@ $string['datatype_intelliboardlogs'] = 'IntelliBoard Logs';
 $string['datatype_intelliboardtotals'] = 'IntelliBoard Totals';
 $string['datatype_intelliboarddetails'] = 'IntelliBoard Details';
 $string['datatype_cohorts'] = 'Cohorts';
+$string['datatype_syslogs'] = 'System logs';
 $string['datatype_cohortmembers'] = 'Cohort Members';
 $string['datatype_userinfofields'] = 'User Info Fields';
 $string['datatype_userinfodatas'] = 'User Info Data';
