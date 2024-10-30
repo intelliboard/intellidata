@@ -134,7 +134,7 @@ class migration_test extends \advanced_testcase {
 
         $datatype['name'] = $exportservice->get_migration_name($datatype);
         $filestoragerepository = new file_storage_repository($datatype);
-        $storagefile = $filestoragerepository->get_storage_file();
+        $storagefile = $filestoragerepository->get_storage_file(false);
 
         // Validate temp file not exists.
         $assertfiledoesnotexistmethod = test_helper::assert_file_does_not_exist_method($this);

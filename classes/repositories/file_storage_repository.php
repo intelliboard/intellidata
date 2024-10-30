@@ -72,7 +72,8 @@ class file_storage_repository {
     public function __construct($datatype = null) {
         $this->datatype = $datatype;
         $this->storagefolder = self::get_storage_folder();
-        $this->storagefile = $datatype ? self::get_storage_file() : null;
+        $withuser = $datatype && isset($datatype['migrationmode']) && $datatype['migrationmode'] ? false : true;
+        $this->storagefile = $datatype ? self::get_storage_file($withuser) : null;
     }
 
     /**
@@ -154,16 +155,22 @@ class file_storage_repository {
 
         $tempfile = $this->get_temp_file();
 
-        $filesbyuser = $this->storagefolder . '/' . $this->datatype['name'] . '_' . self::STORAGE_FOLDER_BY_USER_NAME . '/user_*.csv';
-        $files = glob($filesbyuser);
-        $storagefile = $this->get_storage_file(false);
-        if (empty($files)) {
-            return null;
+        if ($this->datatype && isset($this->datatype['migrationmode']) && $this->datatype['migrationmode']) {
+            $storagefile = $this->storagefile;
+            if (!file_exists($this->storagefile)) {
+                return null;
+            }
+        } else {
+            $filesbyuser = $this->storagefolder . '/' . $this->datatype['name'] . '_' . self::STORAGE_FOLDER_BY_USER_NAME . '/user_*.csv';
+            $files = glob($filesbyuser);
+            $storagefile = $this->get_storage_file(false);
+            if (empty($files)) {
+                return null;
+            }
+
+            exec('for f in ' . $filesbyuser . '; do echo; cat $f; rm $f; done | tail -n +2 >> ' . $storagefile . '; ');
         }
 
-        exec('for f in ' . $filesbyuser . '; do echo; cat $f; rm $f; done | tail -n +2 >> ' . $storagefile . '; ');
-
-        // Rename temp file to process.
         StorageHelper::rename_file($storagefile, $tempfile);
 
         // Save file to filedir and database.
