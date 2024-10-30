@@ -28,6 +28,7 @@ namespace local_intellidata\task;
 
 use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\TrackingHelper;
@@ -170,12 +171,12 @@ class migration_task extends \core\task\scheduled_task {
         if (TrackingHelper::new_tracking_enabled()) {
             SettingsHelper::set_setting('divideexportbydatatype', 0);
 
-            $exportservice = new export_service();
+            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
             ExportHelper::process_data_export($exportservice, ['cronprocessing' => true, 'forceexport' => true]);
         }
 
         // Export files to Moodledata.
-        ExportHelper::process_files_export(new export_service());
+        ExportHelper::process_files_export(new export_service(ParamsHelper::MIGRATION_MODE_ENABLED));
 
         // Send callback to IBN.
         MigrationHelper::send_callback();

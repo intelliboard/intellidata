@@ -92,6 +92,16 @@ class gradeitem extends \local_intellidata\entities\entity {
                 'description' => 'Max Grade.',
                 'default' => 0,
             ],
+            'aggregationcoef' => [
+                'type' => PARAM_FLOAT,
+                'description' => 'Grade Item Weight.',
+                'default' => 0,
+            ],
+            'aggregationcoef2' => [
+                'type' => PARAM_FLOAT,
+                'description' => 'Grade Item Weight.',
+                'default' => 0,
+            ],
         ];
     }
 
