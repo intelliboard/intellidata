@@ -127,7 +127,7 @@ class lti_service {
         }
 
         $sqlids = $ids ? " SELECT u.id
-                FROM mdl_user u
+                FROM {user} u
                WHERE u.id IN (" . implode(",", $ids) . ") " : '';
 
         $sqlroles = $roles ? " SELECT DISTINCT u.id
