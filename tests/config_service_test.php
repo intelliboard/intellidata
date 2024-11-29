@@ -53,6 +53,8 @@ class config_service_test extends \advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        SettingsHelper::set_setting('newtracking', 0);
+
         $optionalconfigwithdeletedevent = [
             'tabletype' => datatypeconfig::TABLETYPE_OPTIONAL,
             'datatype' => datatypes_service::generate_optional_datatype('competency'),
