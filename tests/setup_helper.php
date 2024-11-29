@@ -44,6 +44,7 @@ class setup_helper {
     public static function enable_plugin() {
         SettingsHelper::set_setting('enabled', 1);
         SettingsHelper::set_setting('enabledtracking', 1);
+        SettingsHelper::set_setting('newtracking', 0);
     }
 
     /**

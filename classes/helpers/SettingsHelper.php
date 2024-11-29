@@ -45,7 +45,7 @@ class SettingsHelper {
         'enabled' => 1,
         'ispluginsetup' => 0,
         'migrationcallbackurl' => '',
-        'trackingstorage' => StorageHelper::FILE_STORAGE,
+        'trackingstorage' => StorageHelper::CACHE_STORAGE,
         'encryptionkey' => '',
         'clientidentifier' => '',
         'cleaner_duration' => DAYSECS * 14,
@@ -91,7 +91,7 @@ class SettingsHelper {
         'dividemigrationtbydatatype' => 1,
         'enablescheduledsnapshot' => 0,
         'eventstracking' => 1,
-        'newtracking' => 0,
+        'newtracking' => 1,
         'exportids' => 1,
         'exportdeletedrecords' => self::EXPORTDELETED_TRACKEVENTS,
         'debugenabled' => 0,
@@ -100,7 +100,7 @@ class SettingsHelper {
         'intelliboardcopyprocessedlimit' => 0,
         'cacheconfig' => 1,
         'forcedisablemigration' => 0,
-        'enablecustomdbdriver' => 0,
+        'enablecustomdbdriver' => 1,
     ];
 
     /**

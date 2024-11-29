@@ -609,9 +609,12 @@ class DBHelper {
         }
 
         if (in_array($CFG->dbtype, self::$supporteddbclients[$penetrationtype])) {
+            $db = self::get_driver_instance($CFG->dbtype, $penetrationtype);
+            $temptables = null;
 
             if (isset(self::$customdbclient[$penetrationtype]) &&
                 !self::is_database_connected(self::$customdbclient[$penetrationtype])) {
+                $temptables = $db::get_temptables(self::$customdbclient[$penetrationtype]);
                 try {
                     self::$customdbclient[$penetrationtype]->dispose();
                 } catch (\Throwable $e) {
@@ -623,6 +626,7 @@ class DBHelper {
             }
 
             if ((!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) && (!defined('CLI_SCRIPT') || !CLI_SCRIPT) && $penetrationtype == self::PENETRATION_TYPE_EXTERNAL) {
+                $temptables = $db::get_temptables($DB);
                 try {
                     $DB->dispose();
                 } catch (\Throwable $e) {
@@ -632,8 +636,10 @@ class DBHelper {
             }
 
             if (!isset(self::$customdbclient[$penetrationtype])) {
-                $db = self::get_driver_instance($CFG->dbtype, $penetrationtype);
                 $db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
+                if ($temptables !== null) {
+                    $db->set_temptables($db, $temptables);
+                }
 
                 self::$customdbclient[$penetrationtype] = $db;
             }

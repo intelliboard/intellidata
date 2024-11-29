@@ -236,4 +236,24 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
 
         return parent::delete_records_select($table, $select, $params);
     }
+
+    /**
+     * Returns temptables for specific db connection.
+     *
+     * @param moodle_database $db The database connection where need to take temptables.
+     * @return moodle_temptables temptables manager to provide cross-db support for temp tables.
+     */
+    public static function get_temptables($db) {
+        return clone $db->temptables;
+    }
+
+    /**
+     * Set temptables for specific db connection.
+     *
+     * @param moodle_database $db The database connection where need to take temptables.
+     * @param moodle_temptables $temptables temptables manager to provide cross-db support for temp tables.
+     */
+    public function set_temptables($db, $temptables) {
+        $db->temptables = $temptables;
+    }
 }

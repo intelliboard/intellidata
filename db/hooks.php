@@ -14,18 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- *
- * @package    local_intellidata
- * @subpackage intellidata
- * @copyright  2023
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+ /**
+  * Hook callbacks for IntelliData
+  *
+  * @package    local_intellidata
+  * @copyright  2024 IntelliBoard, Inc
+  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+  * @see    http://intelliboard.net/
+  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2024112600;
-$plugin->requires = 2017111300;
-$plugin->release = '1.235.0';
-$plugin->maturity = MATURITY_STABLE;
-$plugin->component = 'local_intellidata';
+$callbacks = [
+    [
+        'hook' => \core\hook\after_config::class,
+        'callback' => [\local_intellidata\hook_callbacks::class, 'after_config'],
+    ],
+];
