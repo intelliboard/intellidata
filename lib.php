@@ -131,17 +131,19 @@ function local_intellidata_tracking_init() {
     }
 }
 
-/**
- * Allow plugins to callback as soon possible after setup.php is loaded.
- *
- * @return void
- * @throws dml_exception
- */
-function local_intellidata_after_config() {
-    global $DB;
+if (!ParamsHelper::compare_release('4.4.999')) {
+    /**
+     * Allow plugins to callback as soon possible after setup.php is loaded.
+     *
+     * @return void
+     * @throws dml_exception
+     */
+    function local_intellidata_after_config() {
+        global $DB;
 
-    if (TrackingHelper::new_tracking_enabled()) {
-        $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
+        if (TrackingHelper::new_tracking_enabled()) {
+            $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
+        }
     }
 }
 
