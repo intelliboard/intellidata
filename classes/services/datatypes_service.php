@@ -119,7 +119,7 @@ class datatypes_service {
     public static function get_datatypes($applyconfig = true, $rebuildcache = false, $params = []) {
         $cache = \cache::make('local_intellidata', 'datatypes');
 
-        // Get datatypes with default configuration.
+        // Get datatypes with default configuration, be careful during moodle upgrade cache is empty.
         $defaultdatatypes = $cache->get('defaultdatatypes');
         if ($rebuildcache || !$defaultdatatypes) {
             $defaultdatatypes = array_merge(
