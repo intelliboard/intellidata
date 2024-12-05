@@ -82,6 +82,13 @@ class TrackingHelper {
      * @throws \dml_exception
      */
     public static function new_tracking_enabled() {
+        global $CFG;
+
+        // No need to track events during moodle upgrade.
+        if (!empty($CFG->upgraderunning)) {
+            return false;
+        }
+
         return (self::enabled() && SettingsHelper::get_setting('newtracking')) ? true : false;
     }
 
