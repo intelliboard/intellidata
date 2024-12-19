@@ -26,6 +26,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\DatatypesHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\helpers\SettingsHelper;
 
@@ -106,7 +107,8 @@ class database_storage_repository extends file_storage_repository {
             'tempfile' => $tempfile,
         ];
 
-        if ($this->datatype['rewritable']) {
+        $step = DatatypesHelper::get_datatype_export_step($this->datatype['name']);
+        if ($this->datatype['rewritable'] && ($step < 2)) {
             $this->delete_files();
         }
 
