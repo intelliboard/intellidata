@@ -25,6 +25,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\DatatypesHelper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
@@ -172,8 +173,9 @@ class cache_storage_repository extends file_storage_repository {
                 'tempfile' => $tempfile,
             ];
 
-            if ($this->datatype['rewritable']) {
-                parent::delete_files();
+            $step = DatatypesHelper::get_datatype_export_step($this->datatype['name']);
+            if ($this->datatype['rewritable'] && ($step < 2)) {
+                $this->delete_files();
             }
 
             return StorageHelper::save_file($params);
