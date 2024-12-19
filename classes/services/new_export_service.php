@@ -348,7 +348,7 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatypes_observer($table);
+        $this->get_datatypes_observer($table, true);
         if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
@@ -361,6 +361,10 @@ class new_export_service {
             foreach ($ids as $id) {
                 $record = new \stdClass;
                 $record->id = $id;
+
+                if ($requiredatatype) {
+                    $record = $entity::prepare_export_data($record, [], $table);
+                }
                 $record->crud = 'd';
                 $entity->set_values($record);
 
