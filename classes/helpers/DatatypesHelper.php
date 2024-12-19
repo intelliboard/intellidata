@@ -93,4 +93,37 @@ class DatatypesHelper {
 
         (new config_service())->reset_config_datatype($record);
     }
+
+    /**
+     * Set limit export step for datatype.
+     *
+     * @param $datatype
+     * @param $step
+     */
+    public static function set_datatype_export_step($datatype, $step) {
+        $cache = \cache::make('local_intellidata', 'datatypes');
+        $cache->set('limit_step_' . $datatype, $step);
+    }
+
+    /**
+     * Get export datatype limit step.
+     *
+     * @param $datatype
+     *
+     * @return int
+     */
+    public static function get_datatype_export_step($datatype) {
+        $cache = \cache::make('local_intellidata', 'datatypes');
+        return (int)$cache->get('limit_step_' . $datatype);
+    }
+
+    /**
+     * Delete export datatype limit step.
+     *
+     * @param $datatype
+     */
+    public static function delete_datatype_export_step($datatype) {
+        $cache = \cache::make('local_intellidata', 'datatypes');
+        $cache->delete('limit_step_' . $datatype);
+    }
 }
