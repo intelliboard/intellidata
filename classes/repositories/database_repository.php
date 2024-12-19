@@ -26,6 +26,7 @@
 
 namespace local_intellidata\repositories;
 
+use local_intellidata\helpers\DatatypesHelper;
 use local_intellidata\helpers\DBHelper;
 use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\SettingsHelper;
@@ -127,10 +128,12 @@ class database_repository {
      * @throws \dml_exception
      */
     public static function export_all($datatype, $limit, $showlogs) {
+        DatatypesHelper::set_datatype_export_step($datatype['name'], 1);
 
         $start = 0; $overalexportedrecords = 0; $lastrecord = new \stdClass();
         $exportstarttime = microtime();
 
+        $step = 1;
         while ($records = self::get_records($datatype, $start, $limit)) {
 
             // Stop export when no records.
@@ -157,7 +160,12 @@ class database_repository {
                 break;
             }
             $start += $limit;
+            $step++;
+
+            DatatypesHelper::set_datatype_export_step($datatype['name'], $step);
         }
+
+        DatatypesHelper::delete_datatype_export_step($datatype['name']);
 
         $difftime = microtime_diff($exportstarttime, microtime());
         mtrace("Datatype '" . $datatype['name'] . "' export completed." .
@@ -330,11 +338,10 @@ class database_repository {
             $where .= (!empty($where) ? ' OR ' : '') . 'id > '. $lastexportedid;
         }
 
-        if (empty($where)) {
-            $where = 'id > 0';
-        }
-
         if (!empty($datatype['migration'])) {
+            if (empty($where)) {
+                $where = 'id > 0';
+            }
 
             $migration = datatypes_service::init_migration($datatype, null, false);
             list($sql, $params) = $migration->get_sql(false, $where, $sqlparams, $lastexportedtime);
@@ -342,11 +349,13 @@ class database_repository {
             $sqlparams = array_merge($sqlparams, $params);
 
         } else if (!empty($datatype['table'])) {
+            if (!empty($where)) {
+                $where = 'WHERE ' . $where;
+            }
 
             $sql = "SELECT *
                       FROM {" . $datatype['table'] . "}
-                     WHERE $where
-                  ORDER BY id";
+                     $where";
         }
 
         return [$sql, $sqlparams];
