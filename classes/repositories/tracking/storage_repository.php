@@ -147,7 +147,7 @@ abstract class storage_repository {
         if (!$this->ajaxrequest) {
             $log->visits = $log->visits + 1;
         }
-        if (time() <= ($log->timemodified + $trackdata->timespend)) {
+        if ($trackdata->timespend) {
             $log->timespend = $log->timespend + $trackdata->timespend;
         }
         $log->timemodified = time();
@@ -183,7 +183,7 @@ abstract class storage_repository {
         if (!$this->ajaxrequest) {
             $detail->visits = $detail->visits + 1;
         }
-        if (time() <= ($detail->timemodified + $trackdata->timespend)) {
+        if ($trackdata->timespend) {
             $detail->timespend = $detail->timespend + $trackdata->timespend;
         }
         $detail->timemodified = time();
