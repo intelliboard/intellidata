@@ -128,7 +128,6 @@ class system_tables_repository extends base_tables_repository {
             'badge_external_backpack',
             'badge_external_identifier',
             'backup_*',
-            'block*',
             'blog*',
             'cache_*',
             'capabilities',
