@@ -37,6 +37,12 @@ class hook_callbacks {
     public static function after_config(\core\hook\after_config $hook): void {
         global $DB;
 
+        // Check if the system is currently in the initial installation phase.
+        // If true, exit the method to prevent executing the hook during installation.
+        if (during_initial_install()) {
+            return;
+        }
+
         if (TrackingHelper::new_tracking_enabled()) {
             $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
         }
