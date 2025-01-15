@@ -59,11 +59,7 @@ class surveyanswersmigration extends \local_intellidata\entities\migration {
              LEFT JOIN {survey_questions} sq ON sq.id = sa.question
                  WHERE $where";
 
-        if ($condition) {
-            $sql .= " AND " . $condition;
-        }
-
-        return [$sql, $conditionparams];
+        return $this->set_condition($condition, $conditionparams, $sql);
     }
 
     /**
