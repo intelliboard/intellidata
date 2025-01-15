@@ -60,6 +60,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->insert_record_event($table, $data);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         if (!$returnid) {
@@ -95,6 +96,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->insert_records_event($table, $dataobjects);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
     }
 
@@ -114,6 +116,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->update_record_event($table, $data);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         return $status;
@@ -135,6 +138,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->delete_record_event($table, $conditions);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         return $status;
@@ -168,6 +172,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             (new new_export_service())->set_field_select_event($table, $select, $params);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         return $status;
@@ -189,6 +194,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->delete_records_event($table, $field, $values);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         return parent::delete_records_list($table, $field, $values);
@@ -212,6 +218,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->delete_records_select_event($table, $field . ' IN (' . $subquery . ')', $params);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         parent::delete_records_subquery($table, $field, $alias, $subquery, $params);
@@ -232,6 +239,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             $exportservice->delete_records_select_event($table, $select, $params);
         } catch (Throwable $e) {
             DebugHelper::error_log($e->getMessage());
+            DebugHelper::error_log($e->getTraceAsString());
         }
 
         return parent::delete_records_select($table, $select, $params);
