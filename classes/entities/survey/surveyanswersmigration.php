@@ -49,7 +49,10 @@ class surveyanswersmigration extends \local_intellidata\entities\migration {
      * @return array
      */
     public function get_sql($count = false, $condition = null, $conditionparams = []) {
-        $where = 'sa.id > 0';
+        $where = 'sa.id > :minid';
+        $params = [
+            'minid' => 0,
+        ];
         $select = ($count) ?
             "SELECT COUNT(sa.id) as recordscount" :
             "SELECT sa.*, sq.text as questiontext, sq.type as questiontype";
@@ -59,7 +62,7 @@ class surveyanswersmigration extends \local_intellidata\entities\migration {
              LEFT JOIN {survey_questions} sq ON sq.id = sa.question
                  WHERE $where";
 
-        return $this->set_condition($condition, $conditionparams, $sql);
+        return $this->set_condition($condition, $conditionparams, $sql, $params);
     }
 
     /**
