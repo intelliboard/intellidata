@@ -64,12 +64,11 @@ class StorageHelper {
      */
     public static function get_storage_service($datatype) {
 
-        if (!empty($datatype['migrationmode'])) {
+        if (!empty($datatype['migrationmode']) || !empty($datatype['rewritable'])) {
             return new file_storage_repository($datatype);
         }
 
         $storagename = 'local_intellidata\\repositories\\' . self::get_storage_classname();
-
         return new $storagename($datatype);
     }
 

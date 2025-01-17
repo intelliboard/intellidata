@@ -65,7 +65,7 @@ class tracking_repository {
         $compresstracking = SettingsHelper::get_setting('compresstracking');
 
         $data = new \stdClass();
-        $data->userid       = $USER->id;
+        $data->userid       = !empty($pageparams['user']) ? $pageparams['user'] : $USER->id;
         $data->courseid     = PageParamsHelper::get_courseid($pageparams);
         $data->page         = $pageparams['page'];
         $data->param        = $pageparams['param'];
