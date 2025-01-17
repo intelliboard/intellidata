@@ -273,6 +273,16 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
+    $name = 'webservicetoken';
+    $setting = new admin_setting_configtext(
+        $pluginname . '/' . $name,
+        get_string($name, $pluginname),
+        '',
+        SettingsHelper::get_defaut_config_value($name),
+        PARAM_TEXT
+    );
+    $settings->add($setting);
+
     $name = 'trackadmin';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
