@@ -101,6 +101,7 @@ class SettingsHelper {
         'cacheconfig' => 1,
         'forcedisablemigration' => 0,
         'enablecustomdbdriver' => 1,
+        'webservicetoken' => '',
     ];
 
     /**

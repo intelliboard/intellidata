@@ -371,3 +371,4 @@ $string['scheduledsnapshotdisabled'] = 'Scheduled snapshot disabled';
 $string['daily_snapshot_task'] = 'Daily snapshot task';
 $string['enablecustomdbdriver'] = 'Enable custom DB driver';
 $string['ltititlefield'] = 'IntelliBoard Pro Analytics';
+$string['webservicetoken'] = 'Web service token';

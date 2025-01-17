@@ -62,6 +62,14 @@ $functions = [
         'type'          => 'write',
         'ajax'          => true,
     ],
+    'local_intelldata_save_mobile_tracking' => [
+        'classname'     => 'local_intellidata_trackinglib',
+        'methodname'    => 'save_mobile_tracking',
+        'classpath'     => 'local/intellidata/classes/api/trackinglib.php',
+        'description'   => 'Save Tracking from mobile app',
+        'type'          => 'write',
+        'ajax'          => true,
+    ],
     'local_intellidata_get_live_data' => [
         'classname'     => 'local_intellidata_exportlib',
         'methodname'    => 'get_live_data',
@@ -249,6 +257,7 @@ $services = [
             'local_intellidata_get_live_data',
             'local_intellidata_export_data',
             'local_intelldata_save_tracking',
+            'local_intelldata_save_mobile_tracking',
             'local_intellidata_run_report',
             'local_intellidata_save_report',
             'local_intellidata_set_lti_role',

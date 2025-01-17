@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\helpers\PageParamsHelper;
+use local_intellidata\services\tracking_service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -86,7 +88,7 @@ class local_intellidata_trackinglib extends external_api {
         }
 
         if ($params['time'] > 0) {
-            $tracking = new \local_intellidata\services\tracking_service(true, $params);
+            $tracking = new tracking_service(true, $params);
             $tracking->track();
         }
 
@@ -106,4 +108,82 @@ class local_intellidata_trackinglib extends external_api {
         );
     }
 
+    /**
+     * Tracking mobile validate params.
+     *
+     * @return external_function_parameters
+     */
+    public static function save_mobile_tracking_parameters() {
+        return new external_function_parameters(
+            [
+                'user' => new external_value(PARAM_INT, 'user identifier'),
+                'page' => new external_value(PARAM_TEXT, 'page identifier'),
+                'param' => new external_value(PARAM_RAW, 'page param'),
+                'time' => new external_value(PARAM_INT, 'time',  VALUE_DEFAULT, 0),
+                'init' => new external_value(PARAM_INT, 'init',  VALUE_DEFAULT, 0),
+            ]
+        );
+    }
+
+    /**
+     * Save IntelliBoard tracking mobile.
+     *
+     * @param string $page
+     * @param int $param
+     * @param int $time
+     * @param int $init
+     *
+     * @return int[]
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws required_capability_exception
+     * @throws restricted_context_exception
+     */
+    public static function save_mobile_tracking($user, $page, $param, $time, $init) {
+        $params = self::validate_parameters(
+            self::save_mobile_tracking_parameters(),
+            [
+                'user' => $user,
+                'page' => $page,
+                'param' => $param,
+                'time' => $time,
+                'init' => $init,
+            ]
+        );
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+        require_capability('local/intellidata:trackdata', $context);
+
+        $ajaxfrequency = (int)SettingsHelper::get_setting('ajaxfrequency');
+        $time = $params['time'];
+        $params['time'] = 1;
+        if ($time && $time <= time() && $time > (time() - ($ajaxfrequency * 2))) {
+            $params['time'] = time() - $time;
+        } else if ($time && ($time <= time() - $ajaxfrequency) && $time < ((time() - ($ajaxfrequency * 2)))) {
+            $params['time'] = $ajaxfrequency;
+        }
+
+        if (($params['time'] > 0) || (bool)$params['init']) {
+            $tracking = new tracking_service(!(bool)$params['init'], $params);
+            $tracking->track();
+            $time = time();
+        }
+
+        return ['time' => $time];
+    }
+
+    /**
+     * Tracking return params.
+     *
+     * @return external_single_structure
+     */
+    public static function save_mobile_tracking_returns() {
+        return new external_single_structure(
+            [
+                'time' => new external_value(PARAM_INT, 'time'),
+            ]
+        );
+    }
 }

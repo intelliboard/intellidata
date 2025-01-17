@@ -94,6 +94,7 @@ class tracking_service {
      * @return bool
      */
     protected function istrackable() {
+        global $USER;
 
         if (!$this->enabled) {
             return false;
@@ -107,7 +108,8 @@ class tracking_service {
             return false;
         }
 
-        if (is_siteadmin() && !$this->trackadmin) {
+        $userid = !empty($this->trackparameters['user']) ? $this->trackparameters['user'] : $USER->id;
+        if (is_siteadmin($userid) && !$this->trackadmin) {
             return false;
         }
 
@@ -170,6 +172,10 @@ class tracking_service {
 
         if (!empty($this->trackparameters['useragent'])) {
             $pageparams['useragent'] = $this->trackparameters['useragent'];
+        }
+
+        if (!empty($this->trackparameters['user'])) {
+            $pageparams['user'] = $this->trackparameters['user'];
         }
 
         $this->pageparams = $pageparams;
