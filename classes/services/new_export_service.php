@@ -51,8 +51,6 @@ class new_export_service {
      * @return void
      */
     public function insert_record_event($table, $params) {
-        global $DB;
-
         if (!TrackingHelper::new_tracking_enabled()) {
             return;
         }
@@ -156,7 +154,11 @@ class new_export_service {
 
         $columns = $DB->get_columns($table);
         foreach ($data as $key => $value) {
-            $column = $columns[$key];
+            if (!$column = $columns[$key]) {
+                // If the column is not in the table.
+                unset($data[$key]);
+            }
+
             if ($column->meta_type == 'X') {
                 unset($data[$key]);
             }
@@ -363,7 +365,9 @@ class new_export_service {
                 $record->id = $id;
 
                 if ($requiredatatype) {
-                    $record = $entity::prepare_export_data($record, [], $table);
+                    if (!$record = $entity::prepare_export_data($record, [], $table)) {
+                        continue;
+                    }
                 }
                 $record->crud = 'd';
                 $entity->set_values($record);
