@@ -237,9 +237,13 @@ class observer {
                     $innerwhere
                     GROUP BY s.id";
 
-            $record = $DB->get_record_sql($submissionssql, $condition);
+            try {
+                $record = $DB->get_record_sql($submissionssql, $condition);
 
-            return (isset($record->submission_type)) ? $record->submission_type : '';
+                return (isset($record->submission_type)) ? $record->submission_type : '';
+            } catch (\Throwable $e) {
+                return '';
+            }
         }
 
         return '';
