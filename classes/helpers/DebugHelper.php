@@ -57,8 +57,9 @@ class DebugHelper {
 
             try {
                 \local_intellidata\entities\syslogs\observer::export_event($errorstring);
-            } catch (\moodle_exception $e) {
-                syslog(LOG_ERR, 'IntelliData Export Debug: ' . $errorstring);
+            } catch (\Throwable $e) {
+                syslog(LOG_ERR, 'IntelliData Export Debug DB: ' . $errorstring);
+                syslog(LOG_ERR, 'IntelliData Export Debug Export: ' . $e->getMessage());
             }
 
             syslog(LOG_ERR, 'IntelliData Debug: ' . $errorstring);
