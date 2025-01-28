@@ -64,10 +64,6 @@ class migration extends \local_intellidata\entities\migration {
                   FROM {" . $this->table . "} " . $this->tablealias . "
              LEFT JOIN {user} u ON u.id = " . $this->tablealias . ".userid";
 
-        if ($condition) {
-            $sql .= " WHERE " . $condition;
-        }
-
-        return [$sql, $conditionparams];
+        return $this->set_condition($condition, $conditionparams, $sql);
     }
 }

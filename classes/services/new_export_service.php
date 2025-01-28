@@ -27,6 +27,7 @@ namespace local_intellidata\services;
 
 use local_intellidata\helpers\RolesHelper;
 use local_intellidata\helpers\TrackingHelper;
+use local_intellidata\persistent\export_logs;
 
 /**
  *
@@ -63,7 +64,13 @@ class new_export_service {
         foreach ($this->entityclases as $entity) {
             $requiredatatype = !isset($entity::$datatype);
             // Check if not optional date type and passed filters.
-            if ($requiredatatype && !$this->filter($entity::TYPE, $params)) {
+
+            $filterparams = [];
+            if (!empty($entity->params)) {
+                $filterparams = $entity->params;
+            }
+
+            if ($requiredatatype && !$this->filter($entity::TYPE, $params, $filterparams)) {
                 continue;
             }
 
@@ -79,7 +86,7 @@ class new_export_service {
             $record->crud = 'c';
             $entity->set_values($record);
 
-            $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+            $this->export($entity);
         }
     }
 
@@ -136,7 +143,7 @@ class new_export_service {
                 $record->crud = 'c';
                 $entity->set_values($record);
 
-                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+                $this->export($entity);
             }
         }
     }
@@ -208,7 +215,7 @@ class new_export_service {
                 $record->crud = 'u';
                 $entity->set_values($record);
 
-                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+                $this->export($entity);
             }
         }
     }
@@ -255,7 +262,7 @@ class new_export_service {
             $record->crud = 'u';
             $entity->set_values($record);
 
-            $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+            $this->export($entity);
         }
     }
 
@@ -284,7 +291,7 @@ class new_export_service {
             $data->crud = 'd';
             $entity->set_values($data);
 
-            $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+            $this->export($entity);
         }
     }
 
@@ -329,7 +336,7 @@ class new_export_service {
                 $params->crud = 'd';
                 $entity->set_values($params);
 
-                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+                $this->export($entity);
             }
         }
     }
@@ -372,7 +379,7 @@ class new_export_service {
                 $record->crud = 'd';
                 $entity->set_values($record);
 
-                $this->export($requiredatatype ? $entity::TYPE : $entity::$datatype, $entity->export());
+                $this->export($entity);
             }
         }
     }
@@ -394,7 +401,12 @@ class new_export_service {
             }
 
             if (($data['table'] == $table) || ($useadditional && $issetatable && in_array($table, $data['additional_tables']))) {
-                $entities[] = datatypes_service::init_entity($data, []);
+                $entity = datatypes_service::init_entity($data, []);
+                if (($data['tabletype'] == export_logs::TABLE_TYPE_LOGS) &&  !empty($data['params'])) {
+                    $entity->datatype = $data['name'];
+                    $entity->params = $data['params'];
+                }
+                $entities[] = $entity;
             }
         }
 
@@ -421,7 +433,7 @@ class new_export_service {
      * @param \stdClass $data
      * @return bool
      */
-    private function filter($datatype, $data) {
+    private function filter($datatype, $data, $filterparams = []) {
         global $DB;
 
         $access = true;
@@ -449,6 +461,14 @@ class new_export_service {
                 }
 
                 break;
+        }
+
+        if ($filterparams) {
+            foreach ($filterparams as $key => $value) {
+                if ($value) {
+                    $access = isset($data->$key) && ($data->$key == $value);
+                }
+            }
         }
 
         return $access;
@@ -482,12 +502,13 @@ class new_export_service {
     /**
      * Export datatype.
      *
-     * @param string $datatype
-     * @param \stdClass $data
-     * @return bool
+     * @param \local_intellidata\entities\entity $entity
      */
-    private function export($datatype, $data) {
+    private function export($entity) {
+        $datatype = isset($entity::$datatype) ? $entity::$datatype :
+            (isset($entity->datatype) ? $entity->datatype : $entity::TYPE);
+
         $tracking = new events_service($datatype);
-        $tracking->track($data);
+        $tracking->track($entity->export());
     }
 }
