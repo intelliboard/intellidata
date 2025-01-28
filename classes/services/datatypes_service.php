@@ -959,6 +959,7 @@ class datatypes_service {
 
         $data = [
             'name' => $datatype,
+            'table' => logs_tables_repository::TABLE,
             'tabletype' => datatypeconfig::TABLETYPE_LOGS,
             'migration' => 'logs\migration',
             'entity' => 'logs\log',

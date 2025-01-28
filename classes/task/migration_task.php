@@ -168,12 +168,15 @@ class migration_task extends \core\task\scheduled_task {
      * @return void
      */
     private function complete_migration() {
-        if (TrackingHelper::new_tracking_enabled()) {
-            SettingsHelper::set_setting('divideexportbydatatype', 0);
+        SettingsHelper::set_setting('divideexportbydatatype', 0);
 
-            $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
-            ExportHelper::process_data_export($exportservice, ['cronprocessing' => true, 'forceexport' => true]);
+        $paramsexportdata = ['cronprocessing' => true];
+        if (TrackingHelper::new_tracking_enabled()) {
+            $paramsexportdata['forceexport'] = true;
         }
+
+        $exportservice = new export_service(ParamsHelper::MIGRATION_MODE_ENABLED);
+        ExportHelper::process_data_export($exportservice, $paramsexportdata);
 
         // Export files to Moodledata.
         ExportHelper::process_files_export(new export_service(ParamsHelper::MIGRATION_MODE_ENABLED));
