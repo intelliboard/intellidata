@@ -366,7 +366,7 @@ abstract class migration {
      * @return mixed|string
      */
     public function apply_tablealias($condition) {
-        return (!empty($this->tablealias) && !stristr($condition, $this->tablealias . '.'))
+        return (!empty($this->tablealias) && strpos($condition, ".") === false)
             ? $this->tablealias . '.' . $condition : $condition;
     }
 

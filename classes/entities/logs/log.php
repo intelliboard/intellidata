@@ -36,6 +36,9 @@ namespace local_intellidata\entities\logs;
  */
 class log extends \local_intellidata\entities\entity {
 
+    /** @var null|array */
+    public $params = null;
+
     /**
      * Return the definition of the properties of this model.
      *

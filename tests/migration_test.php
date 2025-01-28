@@ -25,7 +25,9 @@
 
 namespace local_intellidata;
 
+use local_intellidata\helpers\ExportHelper;
 use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\services\export_service;
@@ -179,6 +181,7 @@ class migration_test extends \advanced_testcase {
 
         // Enable exporting files.
         setup_helper::enable_exportfilesduringmigration();
+        setup_helper::enable_eventstracking();
 
         // Generate data.
         generator::create_users($this->recordsnum['users']);
