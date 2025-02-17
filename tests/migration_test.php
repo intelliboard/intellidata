@@ -30,6 +30,7 @@ use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
+use local_intellidata\helpers\TasksHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\services\migration_service;
 use local_intellidata\repositories\file_storage_repository;
@@ -107,7 +108,7 @@ class migration_test extends \advanced_testcase {
 
         // Check enablement the task - migration_task.
         $this->assertTrue(
-            $DB->record_exists('task_scheduled', ['classname' => MigrationHelper::MIGRATIONS_TASK_CLASS, 'disabled' => 0])
+            $DB->record_exists('task_scheduled', ['classname' => TasksHelper::TASK_CLASS_MIGRATIONS, 'disabled' => 0])
         );
     }
 

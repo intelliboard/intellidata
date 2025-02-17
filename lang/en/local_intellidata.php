@@ -372,3 +372,4 @@ $string['daily_snapshot_task'] = 'Daily snapshot task';
 $string['enablecustomdbdriver'] = 'Enable custom DB driver';
 $string['ltititlefield'] = 'IntelliBoard Pro Analytics';
 $string['webservicetoken'] = 'Web service token';
+$string['failedtaskinprogress'] = 'One of the tasks ({$a->runningtasks}) is still in progress. For proper operation, all these tasks must be completed before starting the {$a->taskname} task. Please try running the task again after some time.';
