@@ -132,7 +132,8 @@ class cache_storage_repository extends file_storage_repository {
             key:{$cachekey}, data:" . json_encode($cacherecord));
         }
 
-        if (count($cacherecord) > 1000) {
+        $inprocessmigration = (SettingsHelper::get_setting('migrationdatatype') == $this->datatype['name']);
+        if ((count($cacherecord) > 1000) && !$inprocessmigration) {
             $this->save_file(false);
             $cacherecord = [];
         }

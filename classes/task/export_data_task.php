@@ -26,6 +26,7 @@
 namespace local_intellidata\task;
 
 
+use local_intellidata\helpers\TasksHelper;
 use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\helpers\DebugHelper;
@@ -61,8 +62,22 @@ class export_data_task extends \core\task\scheduled_task {
 
             DebugHelper::enable_moodle_debug();
 
-            $params = ['cronprocessing' => true];
+            $procresstasks = [
+                TasksHelper::TASK_CLASS_EXPORT_DATA,
+                TasksHelper::TASK_CLASS_MIGRATIONS,
+            ];
 
+            if (TasksHelper::tasks_in_process($procresstasks)) {
+
+                $a = new \stdClass();
+                $a->runningtasks = implode(",", $procresstasks);
+                $a->taskname = 'export';
+                mtrace(get_string('failedtaskinprogress', 'local_intellidata'), $a);
+
+                return true;
+            }
+
+            $params = ['cronprocessing' => true];
             if (TrackingHelper::new_tracking_enabled()) {
                 $params['forceexport'] = 1;
                 $params['rewritable'] = 1;

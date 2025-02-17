@@ -27,6 +27,7 @@
 namespace local_intellidata\helpers;
 
 use core\task\manager;
+use core\task\manager as task_manager;
 
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
@@ -43,6 +44,21 @@ class TasksHelper {
 
     /** Tasks logs table */
     const LOG_TABLE = 'task_log';
+
+    /**
+     * Migrations task class.
+     */
+    const TASK_CLASS_MIGRATIONS = '\local_intellidata\task\migration_task';
+
+    /**
+     * Export data task class.
+     */
+    const TASK_CLASS_EXPORT_DATA = '\local_intellidata\task\export_data_task';
+
+    /**
+     * Export data task class.
+     */
+    const TASK_CLASS_EXPORT_FILES = '\local_intellidata\task\export_files_task';
 
     /**
      * Validate adhoc tasks.
@@ -212,6 +228,32 @@ class TasksHelper {
      */
     public static function is_task_running($task) {
         return method_exists($task, 'get_timestarted') && $task->get_timestarted();
+    }
+
+    /**
+     * Check if a task is in progress.
+     * Returns true if at least one of the tasks passed in the parameter is in progress.
+     *
+     * @param array $tasksclasses
+     *
+     * @return bool
+     * @throws \dml_exception
+     */
+    public static function tasks_in_process($tasksclasses) {
+        // Ignore validation for older 3.9 Moodle versions.
+        if (!method_exists('\\core\\task\\manager', 'get_running_tasks')) {
+            return false;
+        }
+
+        if ($tasks = task_manager::get_running_tasks()) {
+            foreach ($tasks as $task) {
+                if (in_array($task->classname, $tasksclasses)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

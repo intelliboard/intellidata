@@ -437,6 +437,26 @@ class SettingsHelper {
      * @param $settingname
      * @return bool
      */
+    public static function newtracking_setting_available() {
+        global $CFG;
+
+        // Check Totara release.
+        if (isset($CFG->totara_release) && $CFG->totara_release > 17.2) {
+            return true;
+        }
+
+        if (!empty($CFG->intellidata_force_enable_new_tracking) || ParamsHelper::compare_release('3.8.0')) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Validate if setting is updatable.
+     *
+     * @param $settingname
+     * @return bool
+     */
     public static function is_setting_updatable($settingname) {
 
         if (!isset(self::DEFAULT_VALUES[$settingname])) {

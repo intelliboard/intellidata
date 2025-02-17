@@ -45,19 +45,15 @@ class MigrationHelper {
      * Migrations completed status.
      */
     const MIGRATIONS_COMPLETED_STATUS = 'migrationcompleted';
-    /**
-     * Migrations task class.
-     */
-    const MIGRATIONS_TASK_CLASS = '\local_intellidata\task\migration_task';
 
     /**
      * @var array
      */
     private static $tasks = [
         '\local_intellidata\task\cleaner_task',
-        '\local_intellidata\task\export_data_task',
-        '\local_intellidata\task\export_files_task',
-        self::MIGRATIONS_TASK_CLASS,
+        TasksHelper::TASK_CLASS_EXPORT_DATA,
+        TasksHelper::TASK_CLASS_EXPORT_FILES,
+        TasksHelper::TASK_CLASS_MIGRATIONS,
     ];
 
     /**
@@ -134,10 +130,10 @@ class MigrationHelper {
     public static function enabled_migration_task() {
         global $DB;
 
-        $classname = self::MIGRATIONS_TASK_CLASS;
+        $classname = TasksHelper::TASK_CLASS_MIGRATIONS;
         if ($DB->record_exists('task_scheduled', ['classname' => $classname])) {
             self::enable_sheduled_tasks();
-            self::disable_sheduled_tasks([self::MIGRATIONS_TASK_CLASS]);
+            self::disable_sheduled_tasks([TasksHelper::TASK_CLASS_MIGRATIONS]);
         }
     }
 

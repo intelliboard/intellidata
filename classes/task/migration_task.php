@@ -31,6 +31,7 @@ use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\DebugHelper;
+use local_intellidata\helpers\TasksHelper;
 use local_intellidata\helpers\TrackingHelper;
 use local_intellidata\services\migration_service;
 use local_intellidata\services\export_service;
@@ -75,6 +76,28 @@ class migration_task extends \core\task\scheduled_task {
             mtrace(get_string('migrationdisabled', 'local_intellidata'));
             return true;
         }
+
+        // Check if export task in progress.
+        $tasks = [
+            TasksHelper::TASK_CLASS_MIGRATIONS,
+        ];
+
+        $procresstasks = array_merge($tasks, [
+            TasksHelper::TASK_CLASS_EXPORT_FILES,
+            TasksHelper::TASK_CLASS_EXPORT_DATA,
+        ]);
+
+        if (TasksHelper::tasks_in_process($procresstasks)) {
+
+            $a = new \stdClass();
+            $a->runningtasks = implode(",", $procresstasks);
+            $a->taskname = 'migration';
+            mtrace(get_string('failedtaskinprogress', 'local_intellidata'), $a);
+
+            return true;
+        }
+
+        MigrationHelper::disable_sheduled_tasks($tasks);
 
         raise_memory_limit(MEMORY_HUGE);
 
@@ -155,7 +178,7 @@ class migration_task extends \core\task\scheduled_task {
         // Export tables.
         $exportservice->set_migration_mode();
         $migrationservice = new migration_service(null, $exportservice);
-        $migrationservice->process($params);
+        $migrationservice->process($params, true);
 
         $this->complete_migration();
 
@@ -189,7 +212,7 @@ class migration_task extends \core\task\scheduled_task {
 
         // Disable scheduled migration task.
         MigrationHelper::disable_sheduled_tasks();
-        MigrationHelper::enable_sheduled_tasks(['\local_intellidata\task\migration_task']);
+        MigrationHelper::enable_sheduled_tasks([TasksHelper::TASK_CLASS_MIGRATIONS]);
     }
 
     /**
