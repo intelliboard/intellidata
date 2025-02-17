@@ -14,38 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace local_intellidata;
-
-use core\hook\after_config;
-use local_intellidata\helpers\DBHelper;
-use local_intellidata\helpers\SettingsHelper;
-use local_intellidata\helpers\TrackingHelper;
-
  /**
-  * Callbacks for hooks.
+  * Hook callbacks for IntelliData
   *
   * @package    local_intellidata
   * @copyright  2024 IntelliBoard, Inc
   * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
   * @see    http://intelliboard.net/
   */
-class hook_callbacks {
-    /**
-     * Listener for the after_config hook.
-     *
-     * @param after_config $hook
-     */
-    public static function after_config(\core\hook\after_config $hook): void {
-        global $DB;
 
-        // Check if the system is currently in the initial installation phase.
-        // If true, exit the method to prevent executing the hook during installation.
-        if (during_initial_install()) {
-            return;
-        }
+defined('MOODLE_INTERNAL') || die();
 
-        if (TrackingHelper::new_tracking_enabled()) {
-            $DB = DBHelper::get_db_client(DBHelper::PENETRATION_TYPE_EXTERNAL);
-        }
-    }
-}
+$addons = [
+    'local_intellidata' => [
+        'handlers' => [
+            'intellidataHandler' => [
+                'init' => 'init_tracking',
+            ],
+        ],
+        'lang' => [
+            ['pluginname', 'local_intellidata'],
+        ],
+    ],
+];

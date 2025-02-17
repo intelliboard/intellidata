@@ -374,7 +374,7 @@ class local_intellidata_configlib extends external_api {
             ];
         }
 
-        $taskname = MigrationHelper::MIGRATIONS_TASK_CLASS;
+        $taskname = TasksHelper::TASK_CLASS_MIGRATIONS;
         $task = \core\task\manager::get_scheduled_task($taskname);
         if (!$task) {
             return [

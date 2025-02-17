@@ -25,9 +25,18 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Hooks callbacks for Totara.
 $callbacks = [
     [
         'hook' => \core\hook\after_config::class,
+        'callback' => [\local_intellidata\hook_callbacks::class, 'after_config'],
+    ],
+];
+
+// Hooks watchers for Totara.
+$watchers = [
+    [
+        'hookname' => \core\hook\after_config::class,
         'callback' => [\local_intellidata\hook_callbacks::class, 'after_config'],
     ],
 ];

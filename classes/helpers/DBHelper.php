@@ -633,6 +633,11 @@ class DBHelper {
                     // Ignore if connection already disposed.
                     $e->getMessage();
                 }
+
+                // Reset DI container because container already has a registered dependency \moodle_database.
+                if (class_exists('\core\di') && method_exists('\core\di', 'reset_container')) {
+                    \core\di::reset_container();
+                }
             }
 
             if (!isset(self::$customdbclient[$penetrationtype])) {

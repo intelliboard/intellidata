@@ -26,6 +26,8 @@
 namespace local_intellidata\task;
 
 
+use local_intellidata\helpers\MigrationHelper;
+use local_intellidata\helpers\TasksHelper;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\services\export_service;
 use local_intellidata\helpers\TrackingHelper;
@@ -64,6 +66,21 @@ class export_files_task extends \core\task\scheduled_task {
 
             $starttime = microtime();
             mtrace("Export Files process started at " . date('r') . "...");
+
+            $procresstasks = [
+                TasksHelper::TASK_CLASS_EXPORT_FILES,
+                TasksHelper::TASK_CLASS_MIGRATIONS,
+            ];
+
+            if (TasksHelper::tasks_in_process($procresstasks)) {
+
+                $a = new \stdClass();
+                $a->runningtasks = implode(",", $procresstasks);
+                $a->taskname = 'export';
+                mtrace(get_string('failedtaskinprogress', 'local_intellidata'), $a);
+
+                return true;
+            }
 
             $exportservice = new export_service();
             ExportHelper::process_files_export($exportservice);
