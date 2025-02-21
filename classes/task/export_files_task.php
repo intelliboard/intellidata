@@ -77,7 +77,7 @@ class export_files_task extends \core\task\scheduled_task {
                 $a = new \stdClass();
                 $a->runningtasks = implode(",", $procresstasks);
                 $a->taskname = 'export';
-                mtrace(get_string('failedtaskinprogress', 'local_intellidata'), $a);
+                mtrace(get_string('failedtaskinprogress', 'local_intellidata', $a));
 
                 return true;
             }
