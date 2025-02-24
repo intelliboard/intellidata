@@ -67,7 +67,7 @@ class export_data_task extends \core\task\scheduled_task {
                 TasksHelper::TASK_CLASS_MIGRATIONS,
             ];
 
-            if (TasksHelper::tasks_in_process($procresstasks)) {
+            if (TasksHelper::tasks_in_process($procresstasks, TasksHelper::TASK_CLASS_EXPORT_DATA)) {
 
                 $a = new \stdClass();
                 $a->runningtasks = implode(",", $procresstasks);

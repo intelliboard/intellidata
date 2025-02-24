@@ -235,20 +235,22 @@ class TasksHelper {
      * Returns true if at least one of the tasks passed in the parameter is in progress.
      *
      * @param array $tasksclasses
+     * @param null|string $current
      *
      * @return bool
      * @throws \dml_exception
      */
-    public static function tasks_in_process($tasksclasses) {
+    public static function tasks_in_process($tasksclasses, $current = null) {
         // Ignore validation for older 3.9 Moodle versions.
         if (!method_exists('\\core\\task\\manager', 'get_running_tasks')) {
             return false;
         }
 
+        $startednow = time();
         if ($tasks = task_manager::get_running_tasks()) {
             foreach ($tasks as $task) {
                 if (in_array($task->classname, $tasksclasses)) {
-                    return true;
+                    return !($task->classname == $current) && (($startednow - $task->timestarted) < 20);
                 }
             }
         }
