@@ -162,7 +162,6 @@ class system_tables_repository extends base_tables_repository {
             'h5p_contents_libraries',
             'infected_files',
             'license',
-            'local_intelliboard*',
             'local_intellidata*',
             'lock_db',
             'log',
