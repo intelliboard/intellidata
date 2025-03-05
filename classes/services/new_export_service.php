@@ -42,6 +42,8 @@ class new_export_service {
         'course_modules',
         'forum_posts',
         'questionnaire_question',
+        'user_lastaccess',
+        'badge_issued',
     ];
 
     /**
