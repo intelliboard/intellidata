@@ -150,6 +150,13 @@ class migration_task extends \core\task\scheduled_task {
         // Export tables.
         $exportservice->set_migration_mode();
         $migrationservice = new migration_service(null, $exportservice);
+
+        if (!$migrationdatatype && ($tables = $migrationservice->get_tables())) {
+            $keys = array_keys($tables);
+            $params['datatype'] = $keys[0];
+            SettingsHelper::set_setting('migrationdatatype', $keys[0]);
+        }
+
         $migrationservice->process($params, true);
 
         mtrace("IntelliData Migration CRON ended!");
