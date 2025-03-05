@@ -118,11 +118,6 @@ class migration_service {
                         }
                     }
                 } while ($continue);
-
-                // If it is processing by cron, we need to allow only one table processing.
-                if ($cronprocessing) {
-                    break;
-                }
             }
         }
     }
