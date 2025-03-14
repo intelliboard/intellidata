@@ -178,6 +178,8 @@ class local_intellidata_datalib extends external_api {
      * @throws restricted_context_exception
      */
     public static function set_lti_role($data) {
+        global $DB;
+
         try {
             apilib::check_auth();
         } catch (\moodle_exception $e) {
@@ -207,6 +209,13 @@ class local_intellidata_datalib extends external_api {
             'ids' => PARAM_RAW,
             'roles' => PARAM_RAW,
         ]);
+
+        if (!\local_intellidata\services\lti_service::get_lti_role()) {
+            return [
+                'data' => $encryptionservice->encrypt('LTI role not configured.'),
+                'status' => apilib::STATUS_SUCCESS,
+            ];
+        }
 
         $setltiroletask = new \local_intellidata\task\set_lti_role_adhoc_task();
         $setltiroletask->set_custom_data($params);

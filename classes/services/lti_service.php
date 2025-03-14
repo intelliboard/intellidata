@@ -99,6 +99,17 @@ class lti_service {
     }
 
     /**
+     * Get Lti role.
+     *
+     * @return \stdClass
+     */
+    public static function get_lti_role() {
+        global $DB;
+
+        return $DB->get_record('role', ['id' => get_config(ParamsHelper::PLUGIN, 'ibnltirole')]);
+    }
+
+    /**
      * Set Lti role.
      *
      * @param array $ids
@@ -109,7 +120,7 @@ class lti_service {
     public function set_lti_role($ids = [], $roles = []) {
         global $DB;
 
-        if (!$role = $DB->get_record('role', ['id' => get_config(ParamsHelper::PLUGIN, 'ibnltirole')])) {
+        if (!$role = self::get_lti_role()) {
             return;
         }
 
