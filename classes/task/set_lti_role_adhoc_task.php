@@ -42,10 +42,13 @@ class set_lti_role_adhoc_task extends \core\task\adhoc_task {
      * Throw exceptions on errors (the job will be retried).
      */
     public function execute() {
-
         mtrace("Start reassign users roles!");
 
         DebugHelper::enable_moodle_debug();
+
+        if (!\local_intellidata\services\lti_service::get_lti_role()) {
+            return;
+        }
 
         $data = $this->get_custom_data();
         $ids = !empty($data->ids) ? $data->ids : [];
