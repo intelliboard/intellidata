@@ -156,7 +156,6 @@ class system_tables_repository extends base_tables_repository {
             'grade_items_history',
             'grade_outcomes*',
             'grade_settings',
-            'grading*',
             'h5p_libraries*',
             'h5p_library*',
             'h5p_contents_libraries',

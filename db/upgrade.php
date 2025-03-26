@@ -48,7 +48,7 @@ use local_intellidata\helpers\DatatypesHelper;
  * @throws upgrade_exception
  */
 function xmldb_local_intellidata_upgrade($oldversion) {
-    global $DB;
+    global $DB, $CFG;
 
     $dbman = $DB->get_manager();
 
@@ -1591,6 +1591,21 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2024101800, 'local', 'intellidata');
+    }
+
+    if ($oldversion < 2025022601) {
+
+        try {
+            $timestampu = $CFG->dbtype == DBHelper::POSTGRES_TYPE ?
+                'EXTRACT(EPOCH FROM (TO_TIMESTAMP(time_points)::DATE))' :
+                'UNIX_TIMESTAMP(DATE(FROM_UNIXTIME(timepoint)))';
+
+            $DB->execute('UPDATE {local_intellidata_trlogs} SET timepoint = ' . $timestampu);
+        } catch (Throwable $e) {
+            DebugHelper::error_log($e->getMessage());
+        }
+
+        upgrade_plugin_savepoint(true, 2025022601, 'local', 'intellidata');
     }
 
     return true;

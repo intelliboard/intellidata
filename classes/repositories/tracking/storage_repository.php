@@ -137,6 +137,16 @@ abstract class storage_repository {
     }
 
     /**
+     * Returns the Unix timestamp for the start of the current day (00:00:00 UTC).
+     *
+     * @return int
+     */
+    protected function get_today_time() {
+        $datetime = new \DateTime('today', new \DateTimeZone('UTC'));
+        return $datetime->getTimestamp();
+    }
+
+    /**
      * Fill log.
      *
      * @param $log
