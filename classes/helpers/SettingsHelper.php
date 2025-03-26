@@ -284,24 +284,16 @@ class SettingsHelper {
         require_once($CFG->libdir.'/adminlib.php');
 
         $result = [];
-        $settingsvalues = $DB->get_records_menu(
-            'config_plugins', ['plugin' => $pluginame], '', 'name, value'
-        );
-
-        // Validate if settings exists.
-        if (!count($settingsvalues)) {
-            return $result;
-        }
 
         $adminroot = admin_get_root();
         $settingspage = $adminroot->locate($pluginsetting, true);
 
         if (isset($settingspage->children)) {
             foreach ($settingspage->children as $childpage) {
-                $result[] = self::prepare_settings_page($childpage, $settingsvalues);
+                $result[] = self::prepare_settings_page($childpage);
             }
         } else if ($settingspage) {
-            $result[] = self::prepare_settings_page($settingspage, $settingsvalues);
+            $result[] = self::prepare_settings_page($settingspage);
         }
 
         return $result;
@@ -326,7 +318,7 @@ class SettingsHelper {
      * @param $settingsvalues
      * @return array
      */
-    public static function prepare_settings_page($settingpage, $settingsvalues) {
+    public static function prepare_settings_page($settingpage) {
         global $CFG;
         require_once($CFG->libdir.'/adminlib.php');
 
@@ -360,7 +352,7 @@ class SettingsHelper {
                     } else {
                         if ($setting instanceof \admin_setting_configmultiselect) {
                             $selected = explode(
-                                ',', $settingsvalues[$setting->name]
+                                ',', $setting->get_setting()
                             );
 
                             $selected = array_filter(
@@ -377,13 +369,13 @@ class SettingsHelper {
                             $value = implode(', ', $selected);
                             $subtype = 'multiselect';
                         } else if ($setting instanceof \admin_setting_configselect) {
-                            $value = $setting->choices[$settingsvalues[$setting->name]];
+                            $value = $setting->choices[$setting->get_setting()];
                             $subtype = 'select';
                             if ($value instanceof \lang_string) {
                                 $value = $value->out();
                             }
                         } else if ($setting instanceof \admin_setting_configcheckbox) {
-                            $value = ($settingsvalues[$setting->name]) ? true : false;
+                            $value = (bool)$setting->get_setting();
                             $subtype = 'checkbox';
                         } else {
                             $subtype = 'other';

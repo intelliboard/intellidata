@@ -69,7 +69,7 @@ class live_storage_repository extends storage_repository {
             }
 
             if ($tracklogs) {
-                $currentstamp = strtotime('today');
+                $currentstamp = $this->get_today_time();
                 $trlogparams = [
                     'trackid' => $tracking->id,
                     'timepoint' => $currentstamp,

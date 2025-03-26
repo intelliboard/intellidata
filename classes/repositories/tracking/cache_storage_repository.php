@@ -58,57 +58,68 @@ class cache_storage_repository extends storage_repository {
             $cacherecord = ['tracking' => null, 'logs' => [], 'details' => []];
         }
 
-        if ($cacherecord['tracking'] != null) {
-            $data = $cacherecord['tracking'];
-        } else if (!$data = $DB->get_record('local_intellidata_tracking',
-            ['userid' => $trackdata->userid, 'page' => $trackdata->page, 'param' => $trackdata->param],
-            'id, visits, timespend, lastaccess')) {
-            $data = $this->get_default_tracking($trackdata);
-            $data->id = $DB->insert_record('local_intellidata_tracking', $data, true);
-        }
+        try {
+            $transaction = $DB->start_delegated_transaction();
 
-        $this->fill_tracking($data, $trackdata);
-
-        $tracklogs = SettingsHelper::get_setting('tracklogs');
-        $trackdetails = SettingsHelper::get_setting('trackdetails');
-        $currentstamp = strtotime('today');
-
-        if ($tracklogs) {
-            if (isset($cacherecord['logs'][$currentstamp])) {
-                $log = $cacherecord['logs'][$currentstamp];
-            } else if (!$log = $DB->get_record('local_intellidata_trlogs',
-                ['trackid' => $data->id, 'timepoint' => $currentstamp])) {
-                $log = $this->get_default_log($trackdata, $data, $currentstamp);
-                $log->id = $DB->insert_record('local_intellidata_trlogs', $log, true);
+            if ($cacherecord['tracking'] != null) {
+                $data = $cacherecord['tracking'];
+            } else if (!$data = $DB->get_record('local_intellidata_tracking',
+                ['userid' => $trackdata->userid, 'page' => $trackdata->page, 'param' => $trackdata->param],
+                'id, visits, timespend, lastaccess')) {
+                $data = $this->get_default_tracking($trackdata);
+                $data->id = $DB->insert_record('local_intellidata_tracking', $data, true);
             }
 
-            $this->fill_log($log, $trackdata);
+            $this->fill_tracking($data, $trackdata);
 
-            $cacherecord['logs'][$currentstamp] = $log;
+            $tracklogs = SettingsHelper::get_setting('tracklogs');
+            $trackdetails = SettingsHelper::get_setting('trackdetails');
+            $currentstamp = $this->get_today_time();
 
-            if ($trackdetails) {
-                $currenthour = date('G');
-
-                if (isset($cacherecord['details'][$currentstamp][$currenthour])) {
-                    $detail = $cacherecord['details'][$currentstamp][$currenthour];
-                } else if (!(isset($log->id) && $detail = $DB->get_record('local_intellidata_trdetails',
-                        ['logid' => $log->id, 'timepoint' => $currenthour]))) {
-                    $detail = $this->get_default_log_detail($trackdata, $log, $currenthour);
-                    $detail->id = $DB->insert_record('local_intellidata_trdetails', $detail, true);
+            if ($tracklogs) {
+                if (isset($cacherecord['logs'][$currentstamp])) {
+                    $log = $cacherecord['logs'][$currentstamp];
+                } else if (!$log = $DB->get_record('local_intellidata_trlogs',
+                    ['trackid' => $data->id, 'timepoint' => $currentstamp])) {
+                    $log = $this->get_default_log($trackdata, $data, $currentstamp);
+                    $log->id = $DB->insert_record('local_intellidata_trlogs', $log, true);
                 }
 
-                $this->fill_detail($detail, $trackdata);
+                $this->fill_log($log, $trackdata);
 
-                $cacherecord['details'][$currentstamp][$currenthour] = $detail;
+                $cacherecord['logs'][$currentstamp] = $log;
+
+                if ($trackdetails) {
+                    $currenthour = date('G');
+
+                    if (isset($cacherecord['details'][$currentstamp][$currenthour])) {
+                        $detail = $cacherecord['details'][$currentstamp][$currenthour];
+                    } else if (!(isset($log->id) && $detail = $DB->get_record('local_intellidata_trdetails',
+                            ['logid' => $log->id, 'timepoint' => $currenthour]))) {
+                        $detail = $this->get_default_log_detail($trackdata, $log, $currenthour);
+                        $detail->id = $DB->insert_record('local_intellidata_trdetails', $detail, true);
+                    }
+
+                    $this->fill_detail($detail, $trackdata);
+
+                    $cacherecord['details'][$currentstamp][$currenthour] = $detail;
+                }
             }
-        }
 
-        $cacherecord['tracking'] = $data;
+            $cacherecord['tracking'] = $data;
 
-        if (!$cache->set($userkey, $cacherecord)) {
-            // Something wrong.
-            DebugHelper::error_log("IntelliData compress tracking: error save track to cache,
-                key:{$userkey}, data:" . json_encode($cacherecord));
+            if (!$cache->set($userkey, $cacherecord)) {
+                // Something wrong.
+                DebugHelper::error_log("IntelliData compress tracking: error save track to cache,
+                    key:{$userkey}, data:" . json_encode($cacherecord));
+            } else {
+                $transaction->allow_commit();
+            }
+
+        } catch (\Exception $e) {
+            if (!empty($transaction) && !$transaction->is_disposed()) {
+                $transaction->rollback($e);
+            }
         }
     }
 
