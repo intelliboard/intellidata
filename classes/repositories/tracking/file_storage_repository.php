@@ -58,7 +58,7 @@ class file_storage_repository extends storage_repository {
         $tracklogs = SettingsHelper::get_setting('tracklogs');
         $trackdetails = SettingsHelper::get_setting( 'trackdetails');
 
-        $currentstamp = strtotime('today');
+        $currentstamp = $this->get_today_time();
         if ($tracklogs) {
             $log = $this->get_default_file_log($trackdata, $currentstamp);
             $trackingstorage->save_data(json_encode($log));
