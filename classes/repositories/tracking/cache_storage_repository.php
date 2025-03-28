@@ -29,6 +29,7 @@ namespace local_intellidata\repositories\tracking;
 use core_message\helper;
 use local_intellidata\helpers\DebugHelper;
 use local_intellidata\helpers\SettingsHelper;
+use local_intellidata\repositories\database_storage_repository;
 
 /**
  * This plugin provides access to Moodle data in form of analytics and reports in real time.
@@ -63,14 +64,17 @@ class cache_storage_repository extends storage_repository {
 
             if ($cacherecord['tracking'] != null) {
                 $data = $cacherecord['tracking'];
+                $this->fill_tracking($data, $trackdata);
+                $cacherecord['tracking'] = $data;
             } else if (!$data = $DB->get_record('local_intellidata_tracking',
                 ['userid' => $trackdata->userid, 'page' => $trackdata->page, 'param' => $trackdata->param],
                 'id, visits, timespend, lastaccess')) {
                 $data = $this->get_default_tracking($trackdata);
                 $data->id = $DB->insert_record('local_intellidata_tracking', $data, true);
+            } else {
+                $this->fill_tracking($data, $trackdata);
+                $cacherecord['tracking'] = $data;
             }
-
-            $this->fill_tracking($data, $trackdata);
 
             $tracklogs = SettingsHelper::get_setting('tracklogs');
             $trackdetails = SettingsHelper::get_setting('trackdetails');
@@ -79,15 +83,16 @@ class cache_storage_repository extends storage_repository {
             if ($tracklogs) {
                 if (isset($cacherecord['logs'][$currentstamp])) {
                     $log = $cacherecord['logs'][$currentstamp];
+                    $this->fill_log($log, $trackdata);
                 } else if (!$log = $DB->get_record('local_intellidata_trlogs',
                     ['trackid' => $data->id, 'timepoint' => $currentstamp])) {
                     $log = $this->get_default_log($trackdata, $data, $currentstamp);
                     $log->id = $DB->insert_record('local_intellidata_trlogs', $log, true);
+                } else {
+                    $this->fill_log($log, $trackdata);
+
+                    $cacherecord['logs'][$currentstamp] = $log;
                 }
-
-                $this->fill_log($log, $trackdata);
-
-                $cacherecord['logs'][$currentstamp] = $log;
 
                 if ($trackdetails) {
                     $currenthour = date('G');
@@ -105,8 +110,6 @@ class cache_storage_repository extends storage_repository {
                     $cacherecord['details'][$currentstamp][$currenthour] = $detail;
                 }
             }
-
-            $cacherecord['tracking'] = $data;
 
             if (!$cache->set($userkey, $cacherecord)) {
                 // Something wrong.
