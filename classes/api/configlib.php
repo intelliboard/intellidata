@@ -25,6 +25,9 @@ use local_intellidata\repositories\export_log_repository;
 use local_intellidata\persistent\datatypeconfig;
 use local_intellidata\helpers\MigrationHelper;
 use local_intellidata\task\migration_adhoc_task;
+use local_intellidata\output\tables\config_table;
+use local_intellidata\repositories\config_repository;
+use local_intellidata\services\datatypes_service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -590,6 +593,173 @@ class local_intellidata_configlib extends external_api {
         return new external_single_structure(
             [
                 'data' => new external_value(PARAM_TEXT, 'Response message.'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            ]
+        );
+    }
+
+    /**
+     * Get plugin datatypes config parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_plugin_datatypes_config_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Get plugin datatypes config.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_plugin_datatypes_config($data) {
+        global $DB;
+
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR,
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::set_plugin_config_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'limitnum' => PARAM_INT,
+            'limitfrom' => PARAM_INT,
+        ]);
+
+        $table = new config_table('config_table');
+        $sql = "SELECT
+                {$table->sql->fields}
+                FROM {$table->sql->from}
+                WHERE {$table->sql->where}";
+
+        $configs = $DB->get_records_sql($sql, $table->sql->params, $params['limitfrom'], $params['limitnum']);
+
+        $encryptionservice = new encryption_service();
+
+        return [
+            'data' => $encryptionservice->encrypt(json_encode($configs)),
+            'status' => apilib::STATUS_SUCCESS,
+        ];
+    }
+
+    /**
+     * Get plugin datatypes config returns.
+     *
+     * @return external_single_structure
+     */
+    public static function get_plugin_datatypes_config_returns() {
+        return new external_single_structure(
+            [
+                'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+            ]
+        );
+    }
+
+    /**
+     * Set plugin config parameters.
+     *
+     * @return external_function_parameters
+     */
+    public static function set_plugin_datatype_config_parameters() {
+        return new external_function_parameters([
+            'data'   => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Set plugin config.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function set_plugin_datatype_config($data) {
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR,
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::set_plugin_config_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'id' => PARAM_INT,
+            'status' => PARAM_INT,
+            'tabletype' => PARAM_INT,
+            'enableexport' => PARAM_INT,
+            'timemodified_field' => PARAM_RAW,
+            'events_tracking' => PARAM_INT,
+            'filterbyid' => PARAM_INT,
+            'rewritable' => PARAM_INT,
+        ]);
+
+        try {
+            $configrepository = new config_repository();
+            $configservice = new config_service();
+            $record = $configrepository->get_record(['id' => $params['id']]);
+
+            if (!$record) {
+                throw new \moodle_exception('wrongdatatype', 'local_intellidata');
+            }
+
+            $datatypeconfig = datatypes_service::get_datatype($record->get('datatype'));
+            $configservice->save_config($record, (object)$params, $datatypeconfig);
+            datatypes_service::get_datatypes(true, true);
+
+            return [
+                'data' => 'Updated',
+                'status' => apilib::STATUS_SUCCESS,
+            ];
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage() . $e->getTraceAsString(),
+                'status' => apilib::STATUS_ERROR,
+            ];
+        }
+    }
+
+    /**
+     * Set plugin config returns.
+     *
+     * @return external_single_structure
+     */
+    public static function set_plugin_datatype_config_returns() {
+        return new external_single_structure(
+            [
+                'data' => new external_value(PARAM_TEXT, 'Encrypted Logs'),
                 'status' => new external_value(PARAM_TEXT, 'Response status'),
             ]
         );

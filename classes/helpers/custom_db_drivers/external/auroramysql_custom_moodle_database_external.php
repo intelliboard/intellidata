@@ -135,7 +135,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function set_field_select($table, $newfield, $newvalue, $select, array $params = null) {
+    public function set_field_select($table, $newfield, $newvalue, $select, ?array $params = null) {
         $status = parent::set_field_select($table, $newfield, $newvalue, $select, $params);
 
         if ($select) {
@@ -167,7 +167,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
      * @return bool true.
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records($table, array $conditions = null) {
+    public function delete_records($table, ?array $conditions = null) {
         $status = parent::delete_records($table, $conditions);
         try {
             $exportservice = new new_export_service();
@@ -235,7 +235,7 @@ class auroramysql_custom_moodle_database_external extends \auroramysql_native_mo
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records_select($table, $select, array $params = null) {
+    public function delete_records_select($table, $select, ?array $params = null) {
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_records_select_event($table, $select, $params);

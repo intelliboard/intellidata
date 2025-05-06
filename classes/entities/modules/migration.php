@@ -47,8 +47,13 @@ class migration extends \local_intellidata\entities\migration {
      */
     public function prepare_records_iterable($records) {
         foreach ($records as $record) {
-            $record->title = get_string('modulename', 'mod_' . $record->name);
-            $record->titleplural = get_string('modulenameplural', 'mod_' . $record->name);
+            if (get_string_manager()->string_exists('modulename', 'mod_' . $record->name)) {
+                $record->title = get_string('modulename', 'mod_' . $record->name);
+                $record->titleplural = get_string('modulenameplural', 'mod_' . $record->name);
+            } else {
+                $record->title = '[[mod_' . $record->name . ']]';
+                $record->titleplural = '[[mod_' . $record->name . ']]';
+            }
 
             $entity = new $this->entity($record);
             $recorddata = $entity->export();

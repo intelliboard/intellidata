@@ -133,7 +133,7 @@ class oci_custom_moodle_database_external extends \oci_native_moodle_database {
      * @return bool true.
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records($table, array $conditions=null) {
+    public function delete_records($table, ?array $conditions=null) {
         $status = parent::delete_records($table, $conditions);
         try {
             $exportservice = new new_export_service();
@@ -180,7 +180,7 @@ class oci_custom_moodle_database_external extends \oci_native_moodle_database {
      * @throws dml_exception If there is any error
      */
     public function delete_records_subquery(string $table, string $field, string $alias,
-                                            string $subquery, array $params = []): void {
+                                            string $subquery, ?array $params = []): void {
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_records_select_event($table, $field . ' IN (' . $subquery . ')', $params);
@@ -201,7 +201,7 @@ class oci_custom_moodle_database_external extends \oci_native_moodle_database {
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
      */
-    public function delete_records_select($table, $select, array $params = null) {
+    public function delete_records_select($table, $select, ?array $params = null) {
         try {
             $exportservice = new new_export_service();
             $exportservice->delete_records_select_event($table, $select, $params);

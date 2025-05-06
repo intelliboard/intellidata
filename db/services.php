@@ -246,6 +246,22 @@ $functions = [
         'description'   => 'Save plugin task configuration.',
         'type'          => 'write',
     ],
+    'local_intellidata_get_plugin_datatypes_config' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'get_plugin_datatypes_config',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Get plugin datatypes config',
+        'type'          => 'read',
+        'loginrequired' => false,
+    ],
+    'local_intellidata_set_plugin_datatype_config' => [
+        'classname'     => 'local_intellidata_configlib',
+        'methodname'    => 'set_plugin_datatype_config',
+        'classpath'     => 'local/intellidata/classes/api/configlib.php',
+        'description'   => 'Set plugin datatype config',
+        'type'          => 'write',
+        'loginrequired' => false,
+    ],
 ];
 
 // We define the services to install as pre-build services. A pre-build service is not editable by administrator.
@@ -281,6 +297,8 @@ $services = [
             'local_intellidata_calculate_migration_progress',
             'local_intellidata_delete_adhoc_task',
             'local_intellidata_save_task',
+            'local_intellidata_get_plugin_datatypes_config',
+            'local_intellidata_set_plugin_datatype_config',
         ],
         'restrictedusers' => 0,
         'enabled' => 1,
