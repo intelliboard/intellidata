@@ -55,7 +55,7 @@ class auroramysql_custom_moodle_database_internal extends \auroramysql_native_mo
      * @see function get_recordset.
      *
      */
-    public function get_recordset_sql($sql, array $params = null, $limitfrom = 0, $limitnum = 0) {
+    public function get_recordset_sql($sql, ?array $params = null, $limitfrom = 0, $limitnum = 0) {
         list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
 
         if ($limitfrom || $limitnum) {
