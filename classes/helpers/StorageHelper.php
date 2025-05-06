@@ -381,7 +381,7 @@ class StorageHelper {
             case 'csv':
                 $stream = fopen('php://memory', 'r+');
 
-                fputcsv($stream, (array)$data);
+                fputcsv($stream, (array)$data, ",", '"', '\\');
                 rewind($stream);
 
                 $eventdata = rtrim(stream_get_contents($stream));

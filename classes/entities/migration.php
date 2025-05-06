@@ -74,7 +74,7 @@ abstract class migration {
      * @throws \dml_exception
      * @throws \moodle_exception
      */
-    public function __construct($datatype, string $forceformat = null, $initservices = true) {
+    public function __construct($datatype, ?string $forceformat = null, $initservices = true) {
         $this->datatype = $datatype;
         $this->writerecordslimits = (int)SettingsHelper::get_setting('migrationwriterecordslimit');
 
