@@ -108,6 +108,11 @@ class activity extends \local_intellidata\entities\entity {
                 'description' => 'Course module availability.',
                 'default' => '',
             ],
+            'idnumber' => [
+                'type' => PARAM_RAW,
+                'description' => 'Course module ID number.',
+                'default' => '',
+            ],
         ];
     }
 
@@ -149,6 +154,7 @@ class activity extends \local_intellidata\entities\entity {
             $activitdata->availability = isset($object->availability) ? $object->availability : '';
             $activitdata->completionexpected = isset($object->completionexpected) ? $object->completionexpected : 0;
             $activitdata->completion = isset($object->completion) ? $object->completion : 0;
+            $activitdata->idnumber = isset($object->idnumber) ? $object->idnumber : '';
         }
 
         return $activitdata;

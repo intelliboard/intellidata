@@ -143,7 +143,8 @@ class user extends \local_intellidata\entities\entity {
      */
     public static function prepare_export_data($object, $fields = [], $table = '') {
         $object->fullname = fullname($object);
-        $object->state = ($object->confirmed && (isset($object->suspended) && !$object->suspended)) ?
+        $object->state = ($object->confirmed && (isset($object->suspended) && !$object->suspended) &&
+            (!isset($object->deleted) || (isset($object->deleted) && !$object->deleted))) ?
             ParamsHelper::STATE_ACTIVE : ParamsHelper::STATE_INACTIVE;
         if (!empty($object->lastlogin) || !empty($object->currentlogin)) {
             $object->lastlogin = max($object->lastlogin, $object->currentlogin);

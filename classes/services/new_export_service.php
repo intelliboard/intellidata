@@ -258,11 +258,13 @@ class new_export_service {
             }
 
             if ($requiredatatype) {
-                $record = $entity::prepare_export_data($record);
+                $entityrecord = $entity::prepare_export_data($record);
+            } else {
+                $entityrecord = $record;
             }
 
-            $record->crud = 'u';
-            $entity->set_values($record);
+            $entityrecord->crud = 'u';
+            $entity->set_values($entityrecord);
 
             $this->export($entity);
         }
