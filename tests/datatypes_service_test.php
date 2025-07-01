@@ -165,9 +165,9 @@ class datatypes_service_test extends \advanced_testcase {
             'activitycompletions', 'usergrades', 'gradeitems', 'roles', 'modules', 'forumdiscussions',
             'forumposts', 'quizattempts', 'quizquestions', 'quizquestionrelations', 'quizquestionattempts',
             'quizquestionattemptsteps', 'quizquestionattemptstepsdata', 'assignmentsubmissions',
-            'ltisubmittion', 'coursesections', 'ltitypes', 'survey', 'surveyanswers', 'tracking',
+            'ltisubmittion', 'coursesections', 'ltitypes', 'tracking',
             'trackinglog', 'trackinglogdetail', 'userinfocategories', 'userinfofields',
-            'userinfodatas', 'participation', 'userlogins', 'syslogs',
+            'userinfodatas', 'participation', 'userlogins', 'syslogs', 'survey', 'surveyanswers',
         ];
         $this->assertEquals($defaultdatatypes, array_keys($datatypes));
 

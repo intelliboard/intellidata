@@ -64,17 +64,14 @@ class cache_storage_repository extends storage_repository {
 
             if ($cacherecord['tracking'] != null) {
                 $data = $cacherecord['tracking'];
-                $this->fill_tracking($data, $trackdata);
-                $cacherecord['tracking'] = $data;
             } else if (!$data = $DB->get_record('local_intellidata_tracking',
                 ['userid' => $trackdata->userid, 'page' => $trackdata->page, 'param' => $trackdata->param],
                 'id, visits, timespend, lastaccess')) {
                 $data = $this->get_default_tracking($trackdata);
                 $data->id = $DB->insert_record('local_intellidata_tracking', $data, true);
-            } else {
-                $this->fill_tracking($data, $trackdata);
-                $cacherecord['tracking'] = $data;
             }
+            $this->fill_tracking($data, $trackdata);
+            $cacherecord['tracking'] = $data;
 
             $tracklogs = SettingsHelper::get_setting('tracklogs');
             $trackdetails = SettingsHelper::get_setting('trackdetails');
@@ -83,16 +80,13 @@ class cache_storage_repository extends storage_repository {
             if ($tracklogs) {
                 if (isset($cacherecord['logs'][$currentstamp])) {
                     $log = $cacherecord['logs'][$currentstamp];
-                    $this->fill_log($log, $trackdata);
                 } else if (!$log = $DB->get_record('local_intellidata_trlogs',
                     ['trackid' => $data->id, 'timepoint' => $currentstamp])) {
                     $log = $this->get_default_log($trackdata, $data, $currentstamp);
                     $log->id = $DB->insert_record('local_intellidata_trlogs', $log, true);
-                } else {
-                    $this->fill_log($log, $trackdata);
-
-                    $cacherecord['logs'][$currentstamp] = $log;
                 }
+                $this->fill_log($log, $trackdata);
+                $cacherecord['logs'][$currentstamp] = $log;
 
                 if ($trackdetails) {
                     $currenthour = date('G');
@@ -104,9 +98,7 @@ class cache_storage_repository extends storage_repository {
                         $detail = $this->get_default_log_detail($trackdata, $log, $currenthour);
                         $detail->id = $DB->insert_record('local_intellidata_trdetails', $detail, true);
                     }
-
                     $this->fill_detail($detail, $trackdata);
-
                     $cacherecord['details'][$currentstamp][$currenthour] = $detail;
                 }
             }
@@ -170,5 +162,48 @@ class cache_storage_repository extends storage_repository {
             mtrace("Cache key processed: " . $key);
         }
         mtrace("IntelliData Tracking Cache Export CRON completed!");
+    }
+
+    /**
+     * Get default tracking record for cache storage.
+     *
+     * @param $trackdata
+     * @return \stdClass
+     */
+    protected function get_default_tracking($trackdata) {
+        $data = parent::get_default_tracking($trackdata);
+        $data->visits = 0;
+
+        return $data;
+    }
+
+    /**
+     * Get default log record for cache storage.
+     *
+     * @param $trackdata
+     * @param $tracking
+     * @param $currentstamp
+     * @return \stdClass
+     */
+    protected function get_default_log($trackdata, $tracking, $currentstamp) {
+        $log = parent::get_default_log($trackdata, $tracking, $currentstamp);
+        $log->visits = 0;
+
+        return $log;
+    }
+
+    /**
+     * Get default log detail record for cache storage.
+     *
+     * @param $trackdata
+     * @param $log
+     * @param $currenthour
+     * @return \stdClass
+     */
+    protected function get_default_log_detail($trackdata, $log, $currenthour) {
+        $detail = parent::get_default_log_detail($trackdata, $log, $currenthour);
+        $detail->visits = 0;
+
+        return $detail;
     }
 }

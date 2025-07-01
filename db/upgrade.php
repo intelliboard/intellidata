@@ -1608,5 +1608,37 @@ function xmldb_local_intellidata_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2025022601, 'local', 'intellidata');
     }
 
+    if ($oldversion < 2025050801) {
+
+        $DB->delete_records_select('local_intellidata_config', "datatype IN('survey', 'surveyanswers')");
+        $DB->delete_records_select('local_intellidata_export_log',
+                                   "datatype IN('survey', 'surveyanswers', 'db_survey', 'db_survey_analysis', 'db_survey_answers', 'db_survey_questions')");
+        $DB->delete_records_select('local_intellidata_export_ids', "datatype IN('survey', 'surveyanswers')");
+
+        upgrade_plugin_savepoint(true, 2025050801, 'local', 'intellidata');
+    }
+
+    // Reset/export "activities" datatypes.
+    if ($oldversion < 2025061300) {
+
+        $exportlogrepository = new export_log_repository();
+
+        $datatypes = ['activities'];
+
+        foreach ($datatypes as $datatype) {
+            // Insert or update log record for datatype.
+            $exportlogrepository->insert_datatype($datatype, export_logs::TABLE_TYPE_UNIFIED, true);
+
+            // Add new datatypes to export ad-hoc task.
+            $exporttask = new export_adhoc_task();
+            $exporttask->set_custom_data([
+                'datatypes' => [$datatype],
+            ]);
+            \core\task\manager::queue_adhoc_task($exporttask);
+        }
+
+        upgrade_plugin_savepoint(true, 2025061300, 'local', 'intellidata');
+    }
+
     return true;
 }

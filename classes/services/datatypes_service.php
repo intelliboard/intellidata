@@ -577,30 +577,6 @@ class datatypes_service {
                 'databaseexport' => true,
                 'exportids' => true,
             ],
-            'survey' => [
-                'name' => 'survey',
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'table' => 'survey',
-                'migration' => 'survey\surveymigration',
-                'entity' => 'survey\survey',
-                'rewritable' => false,
-                'timemodified_field' => 'timemodified',
-                'filterbyid' => true,
-                'databaseexport' => true,
-                'exportids' => true,
-            ],
-            'surveyanswers' => [
-                'name' => 'surveyanswers',
-                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
-                'table' => 'survey_answers',
-                'migration' => 'survey\surveyanswersmigration',
-                'entity' => 'survey\surveyanswers',
-                'rewritable' => false,
-                'timemodified_field' => 'time',
-                'filterbyid' => false,
-                'databaseexport' => true,
-                'exportids' => true,
-            ],
             'tracking' => [
                 'name' => 'tracking',
                 'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
@@ -716,6 +692,36 @@ class datatypes_service {
                 'canbedisabled' => true,
             ],
         ];
+
+        if (!ParamsHelper::compare_release('4.99')) {
+            $deprecateddatatypes = [
+                'survey' => [
+                    'name' => 'survey',
+                    'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                    'table' => 'survey',
+                    'migration' => 'survey\surveymigration',
+                    'entity' => 'survey\survey',
+                    'rewritable' => false,
+                    'timemodified_field' => 'timemodified',
+                    'filterbyid' => true,
+                    'databaseexport' => true,
+                    'exportids' => true,
+                ],
+                'surveyanswers' => [
+                    'name' => 'surveyanswers',
+                    'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                    'table' => 'survey_answers',
+                    'migration' => 'survey\surveyanswersmigration',
+                    'entity' => 'survey\surveyanswers',
+                    'rewritable' => false,
+                    'timemodified_field' => 'time',
+                    'filterbyid' => false,
+                    'databaseexport' => true,
+                    'exportids' => true,
+                ],
+            ];
+            $datatypes = array_merge($datatypes, $deprecateddatatypes);
+        }
 
         return self::format_required_datatypes($datatypes);
     }
