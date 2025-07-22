@@ -57,6 +57,10 @@ class ParamsHelper {
      * Status in active.
      */
     const STATE_INACTIVE = 0;
+    /**
+     * Status deleted.
+     */
+    const STATE_DELETE = 2;
 
     /**
      * Status system.

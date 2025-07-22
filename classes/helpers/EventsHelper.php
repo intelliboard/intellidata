@@ -81,9 +81,15 @@ class EventsHelper {
      * @return array
      */
     protected static function filter_deleted_events(array $eventslist) {
+        global $CFG;
+
         $filteredevents = [];
 
         if (count($eventslist)) {
+            // Sometimes we have warning for deprecated events
+            $originalvalue = $CFG->debug;
+            $CFG->debug = DEBUG_NONE;
+
             foreach ($eventslist as $eventclass => $eventname) {
                 try {
                     $eventdata = $eventclass::get_static_info();
@@ -97,6 +103,8 @@ class EventsHelper {
                     $filteredevents[$eventdata['objecttable']] = $eventclass;
                 }
             }
+
+            $CFG->debug = $originalvalue;
         }
 
         return $filteredevents;
