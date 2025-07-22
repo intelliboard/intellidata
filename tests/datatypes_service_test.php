@@ -25,6 +25,7 @@
 
 namespace local_intellidata;
 
+use local_intellidata\helpers\ParamsHelper;
 use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\repositories\config_repository;
 use local_intellidata\repositories\export_log_repository;
@@ -167,8 +168,14 @@ class datatypes_service_test extends \advanced_testcase {
             'quizquestionattemptsteps', 'quizquestionattemptstepsdata', 'assignmentsubmissions',
             'ltisubmittion', 'coursesections', 'ltitypes', 'tracking',
             'trackinglog', 'trackinglogdetail', 'userinfocategories', 'userinfofields',
-            'userinfodatas', 'participation', 'userlogins', 'syslogs', 'survey', 'surveyanswers',
+            'userinfodatas', 'participation', 'userlogins', 'syslogs',
         ];
+
+        if (!ParamsHelper::compare_release('4.99')) {
+            $defaultdatatypes[] = 'survey';
+            $defaultdatatypes[] = 'surveyanswers';
+        }
+
         $this->assertEquals($defaultdatatypes, array_keys($datatypes));
 
         foreach ($datatypes as $datatype) {

@@ -64,6 +64,6 @@ class lti_view implements renderable, templatable {
      * @throws \moodle_exception
      */
     public function export_for_template(renderer_base $output) {
-        return [];
+        return ['datasetid' => $this->params['datasetid'] ?? 0];
     }
 }

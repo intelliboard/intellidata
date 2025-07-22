@@ -29,8 +29,9 @@ use local_intellidata\helpers\SettingsHelper;
 
 $context = context_system::instance();
 $title = SettingsHelper::get_lti_title();
+$datasetid = optional_param('data_set_id', 0, PARAM_INT);
 
-$PAGE->set_url(new moodle_url("/local/intellidata/lti.php"));
+$PAGE->set_url(new moodle_url("/local/intellidata/lti.php", ['data_set_id' => $datasetid]));
 $PAGE->set_pagetype('home');
 $PAGE->set_context($context);
 $PAGE->set_pagelayout(SettingsHelper::get_page_layout());
@@ -46,7 +47,7 @@ $renderer = $PAGE->get_renderer("local_intellidata");
 // Print the page header.
 echo $OUTPUT->header();
 
-echo $renderer->render(new \local_intellidata\output\lti_view());
+echo $renderer->render(new \local_intellidata\output\lti_view(['datasetid' => $datasetid]));
 
 // Finish the page.
 echo $OUTPUT->footer();
