@@ -27,6 +27,7 @@ require_once("../../config.php");
 
 
 $context = context_system::instance();
+$datasetid = optional_param('data_set_id', 0, PARAM_INT);
 
 require_login();
 require_capability('local/intellidata:viewlti', $context);
@@ -34,7 +35,7 @@ require_capability('local/intellidata:viewlti', $context);
 $PAGE->set_context($context);
 
 $ltiservice = new \local_intellidata\services\lti_service();
-list($endpoint, $parms, $debug) = $ltiservice->lti_get_launch_data();
+list($endpoint, $parms, $debug) = $ltiservice->lti_get_launch_data(['custom_data_set_id' => $datasetid]);
 
 $renderer = $PAGE->get_renderer("local_intellidata");
 

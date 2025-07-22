@@ -25,6 +25,7 @@
 
 namespace local_intellidata\export_tests;
 
+use local_intellidata\helpers\SettingsHelper;
 use local_intellidata\helpers\StorageHelper;
 use local_intellidata\generator;
 use local_intellidata\setup_helper;
