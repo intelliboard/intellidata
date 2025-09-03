@@ -101,6 +101,11 @@ class submission extends \local_intellidata\entities\entity {
                 'description' => 'Submission Type.',
                 'default' => '',
             ],
+            'grade_instance_id' => [
+                'type' => PARAM_INT,
+                'description' => 'Submission Grade Id.',
+                'default' => '',
+            ],
         ];
     }
 
@@ -115,14 +120,25 @@ class submission extends \local_intellidata\entities\entity {
     public static function prepare_export_data($object, $fields = [], $table = '') {
         global $DB;
 
+        if ($table == 'assign_grades') {
+            $gradedata = $object;
+            $object = $DB->get_record('assign_submission', [
+                'assignment' => $gradedata->assignment,
+                'userid' => $gradedata->userid,
+                'attemptnumber' => $gradedata->attemptnumber,
+            ]);
+        } else {
+            $gradedata = $DB->get_record('assign_grades', [
+                'assignment' => $object->assignment,
+                'userid' => $object->userid,
+                'attemptnumber' => $object->attemptnumber,
+            ]);
+        }
+
         $object->submission_type = observer::get_submission_type($object->id);
-        $gradedata = $DB->get_record('assign_grades', [
-            'assignment' => $object->assignment,
-            'userid' => $object->userid,
-            'attemptnumber' => $object->attemptnumber,
-        ]);
 
         if (!empty($gradedata->grade)) {
+            $object->grade_instance_id = $gradedata->id;
             $object->grade = $gradedata->grade;
             $object->feedback_at = $gradedata->timemodified;
             $object->feedback_by = $gradedata->grader;

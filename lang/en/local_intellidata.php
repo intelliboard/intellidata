@@ -160,6 +160,7 @@ $string['datatype_migration_cohorts'] = 'Courses cohorts Migration';
 $string['datatype_migration_cohortmembers'] = 'Cohort Members Migration';
 $string['datatype_migration_coursegroups'] = 'Courses Groups Migration';
 $string['datatype_migration_coursegroupmembers'] = 'Courses Group Members Migration';
+$string['datatype_migration_rubrics'] = 'Grade Rubrics Migration';
 $string['datatype_migration_userinfofields'] = 'User Info Fields Migration';
 $string['datatype_migration_userinfodatas'] = 'User Info Data Migration';
 $string['datatype_migration_userinfocategories'] = 'User Info Categories Migration';
