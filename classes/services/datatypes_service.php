@@ -536,6 +536,7 @@ class datatypes_service {
                 'migration' => 'assignments\migration',
                 'entity' => 'assignments\submission',
                 'observer' => 'assignments\observer',
+                'additional_tables' => ['assign_grades'],
                 'rewritable' => false,
                 'timemodified_field' => 'timemodified',
                 'filterbyid' => false,
@@ -690,6 +691,18 @@ class datatypes_service {
                 'filterbyid' => false,
                 'databaseexport' => false,
                 'canbedisabled' => true,
+            ],
+            'rubrics' => [
+                'name' => 'rubrics',
+                'tabletype' => datatypeconfig::TABLETYPE_REQUIRED,
+                'table' => 'grading_definitions',
+                'migration' => 'rubrics\migration',
+                'entity' => 'rubrics\rubric',
+                'observer' => false,
+                'rewritable' => false,
+                'timemodified_field' => 'timemodified',
+                'filterbyid' => false,
+                'databaseexport' => true,
             ],
         ];
 

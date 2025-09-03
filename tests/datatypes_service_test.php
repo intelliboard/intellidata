@@ -168,7 +168,7 @@ class datatypes_service_test extends \advanced_testcase {
             'quizquestionattemptsteps', 'quizquestionattemptstepsdata', 'assignmentsubmissions',
             'ltisubmittion', 'coursesections', 'ltitypes', 'tracking',
             'trackinglog', 'trackinglogdetail', 'userinfocategories', 'userinfofields',
-            'userinfodatas', 'participation', 'userlogins', 'syslogs',
+            'userinfodatas', 'participation', 'userlogins', 'syslogs', 'rubrics',
         ];
 
         if (!ParamsHelper::compare_release('4.99')) {

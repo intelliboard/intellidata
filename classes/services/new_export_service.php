@@ -237,7 +237,7 @@ class new_export_service {
             return;
         }
 
-        $this->get_datatypes_observer($table);
+        $this->get_datatypes_observer($table, true);
         if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
         }
@@ -258,7 +258,7 @@ class new_export_service {
             }
 
             if ($requiredatatype) {
-                $entityrecord = $entity::prepare_export_data($record);
+                $entityrecord = $entity::prepare_export_data($record, [], $table);
             } else {
                 $entityrecord = $record;
             }

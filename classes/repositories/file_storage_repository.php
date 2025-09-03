@@ -169,7 +169,7 @@ class file_storage_repository {
                 return null;
             }
 
-            exec('for f in ' . $filesbyuser . '; do echo; cat $f; rm $f; done | tail -n +2 | tr -d \'\\0\' >> ' . $storagefile . '; ');
+            exec('for f in ' . $filesbyuser . '; do echo ""; cat $f; rm $f; done | tail -n +2 | tr -d \'\\0\' >> ' . $storagefile . '; echo "" >> ' . $storagefile . ';');
         }
 
         StorageHelper::rename_file($storagefile, $tempfile);
