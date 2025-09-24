@@ -716,7 +716,7 @@ class local_intellidata_configlib extends external_api {
 
         // Validate parameters.
         $params = apilib::validate_parameters($params['data'], [
-            'id' => PARAM_INT,
+            'datatype' => PARAM_TEXT,
             'status' => PARAM_INT,
             'tabletype' => PARAM_INT,
             'enableexport' => PARAM_INT,
@@ -729,7 +729,7 @@ class local_intellidata_configlib extends external_api {
         try {
             $configrepository = new config_repository();
             $configservice = new config_service();
-            $record = $configrepository->get_record(['id' => $params['id']]);
+            $record = $configrepository->get_record(['datatype' => $params['datatype']]);
 
             if (!$record) {
                 throw new \moodle_exception('wrongdatatype', 'local_intellidata');
@@ -737,6 +737,7 @@ class local_intellidata_configlib extends external_api {
 
             $datatypeconfig = datatypes_service::get_datatype($record->get('datatype'));
             $configservice->save_config($record, (object)$params, $datatypeconfig);
+
             datatypes_service::get_datatypes(true, true);
 
             return [
@@ -765,4 +766,94 @@ class local_intellidata_configlib extends external_api {
         );
     }
 
+    /**
+     * Get plugin datatype config params.
+     *
+     * @return external_function_parameters
+     */
+    public static function get_plugin_datatype_config_parameters() {
+        return new external_function_parameters([
+            'data' => new external_value(PARAM_RAW, 'Request params'),
+        ]);
+    }
+
+    /**
+     * Get plugin datatype config.
+     *
+     * @return array
+     * @throws dml_exception
+     * @throws invalid_parameter_exception
+     * @throws restricted_context_exception
+     */
+    public static function get_plugin_datatype_config($data) {
+        try {
+            apilib::check_auth();
+        } catch (\moodle_exception $e) {
+            return [
+                'data' => $e->getMessage(),
+                'status' => apilib::STATUS_ERROR,
+            ];
+        }
+
+        // Ensure the current user is allowed to run this function.
+        $context = context_system::instance();
+        self::validate_context($context);
+
+        $params = self::validate_parameters(
+            self::set_plugin_config_parameters(), [
+                'data' => $data,
+            ]
+        );
+
+        // Validate parameters.
+        $params = apilib::validate_parameters($params['data'], [
+            'datatype' => PARAM_TEXT,
+        ]);
+
+        $datatype = $params['datatype'];
+
+        $datatypeconfig = datatypes_service::get_datatype($datatype);
+
+        $configrepository = new config_repository();
+        $record = $configrepository->get_record(['datatype' => $datatype]);
+        if (!$record) {
+            return [
+                'status' => apilib::STATUS_ERROR,
+                'data' => 'Datatype config not found.',
+            ];
+        }
+        $isrequired = $record->is_required_by_default();
+
+        $exportlogrepository = new export_log_repository();
+        $exportlog = $exportlogrepository->get_datatype_export_log($datatype);
+
+        $encryptionservice = new encryption_service();
+
+        $params = [
+            'isrequire' => (int)$isrequired,
+            'canbedisabled' => (int)!empty($datatypeconfig['canbedisabled']),
+            'enableexport' => (!empty($exportlog)) ? 1 : 0,
+            'newtracking' => (int)\local_intellidata\helpers\TrackingHelper::new_tracking_enabled(),
+            'record' => (array)$record->to_record(),
+        ];
+
+        return [
+            'status' => apilib::STATUS_SUCCESS,
+            'data' => $encryptionservice->encrypt(json_encode($params)),
+        ];
+    }
+
+    /**
+     * Get plugin datatype config returns.
+     *
+     * @return external_single_structure
+     */
+    public static function get_plugin_datatype_config_returns() {
+        return new external_single_structure(
+            [
+                'status' => new external_value(PARAM_TEXT, 'Response status'),
+                'data' => new external_value(PARAM_RAW, 'Record data'),
+            ]
+        );
+    }
 }

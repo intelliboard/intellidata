@@ -40,27 +40,106 @@ var OTHERDATA = this.INIT_OTHERDATA;
         console.log('Events (touchstart, touchmove) registered...');
     }
 
+    // Helper function to analyze iframe source for known media services
+    function analyzeIframeSource(iframe) {
+        var src = iframe.src || '';
+        if (src.includes('youtube.com') || src.includes('youtu.be')) {
+            return { type: 'youtube', hasMedia: true };
+        }
+
+        if (src.includes('vimeo.com')) {
+            return { type: 'vimeo', hasMedia: true };
+        }
+
+        return { type: 'unknown', hasMedia: false };
+    }
+
+    // Helper function to check if element is visible
+    function isElementVisible(element) {
+        var rect = element.getBoundingClientRect();
+        var windowHeight = window.innerHeight || document.documentElement.clientHeight;
+        var windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+        return (
+            rect.top < windowHeight &&
+            rect.bottom > 0 &&
+            rect.left < windowWidth &&
+            rect.right > 0
+        );
+    }
+
     function mediaTracking() {
         var media = [];
         var status = false;
-        var internal = document.querySelectorAll('audio,video');
-        var frames = document.querySelectorAll('iframe');
-        if (frames.length) {
-            frames.forEach(function(frame) {
-                var elements = frame.contentWindow.document.querySelectorAll('audio,video');
-                if (elements.length) {
-                    elements.forEach(function(element) {
-                        media.push(element);
+
+        // Track Video.js players by checking for vjs-playing class
+        var videoJsPlayers = document.querySelectorAll('.video-js');
+        if (videoJsPlayers.length) {
+            videoJsPlayers.forEach(function(player) {
+                // Check if player has vjs-playing class (indicates it's currently playing)
+                var isPlaying = player.classList.contains('vjs-playing');
+                if (isPlaying) {
+                    media.push({
+                        paused: false,
+                        element: player,
+                        type: 'videojs'
                     });
                 }
             });
         }
+
+        // Track regular HTML5 media elements
+        var internal = document.querySelectorAll('audio,video');
         if (internal.length) {
             internal.forEach(function(element) {
-                media.push(element);
+                // Skip Video.js elements as they're handled above
+                if (!element.closest('.video-js')) {
+                    media.push(element);
+                }
             });
         }
 
+        // Track iframe media elements (for cross-origin content)
+        var frames = document.querySelectorAll('iframe');
+        if (frames.length) {
+            frames.forEach(function(frame) {
+                // Skip iframe if it's part of a Video.js player (already tracked above)
+                if (frame.closest('.video-js')) {
+                    return;
+                }
+
+                try {
+                    // Try to access same-origin iframe content
+                    var elements = frame.contentWindow.document.querySelectorAll('audio,video');
+                    if (elements.length) {
+                        elements.forEach(function(element) {
+                            media.push(element);
+                        });
+                    }
+                } catch (e) {
+                    // Cross-origin iframe - use alternative tracking methods
+                    console.log('IntelliData: Cross-origin iframe detected, using alternative tracking', frame.src);
+
+                    // Check if iframe contains known media services
+                    var iframeInfo = analyzeIframeSource(frame);
+                    if (iframeInfo.hasMedia) {
+                        // For known media services, we can assume potential media activity
+                        // when iframe is visible and user is active
+                        var isVisible = isElementVisible(frame);
+                        if (isVisible) {
+                            // Add a virtual media element for tracking purposes
+                            media.push({
+                                paused: false, // Assume playing if visible
+                                src: frame.src,
+                                type: iframeInfo.type
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        // Check if any media is playing
         if (media.length) {
             media.forEach(function(element) {
                 if (!element.paused) {

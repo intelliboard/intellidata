@@ -508,17 +508,6 @@ if ($ADMIN->locate('localplugins') && $ADMIN->locate('root')) {
     );
     $settings->add($setting);
 
-    $name = 'datavalidationenabled';
-    $setting = new admin_setting_configcheckbox(
-        $pluginname . '/' . $name,
-        get_string($name, $pluginname),
-        '',
-        SettingsHelper::get_defaut_config_value($name),
-        true,
-        false
-    );
-    $settings->add($setting);
-
     $name = 'enablecustomdbdriver';
     $setting = new admin_setting_configcheckbox(
         $pluginname . '/' . $name,
