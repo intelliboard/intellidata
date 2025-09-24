@@ -95,7 +95,6 @@ class SettingsHelper {
         'exportids' => 1,
         'exportdeletedrecords' => self::EXPORTDELETED_TRACKEVENTS,
         'debugenabled' => 0,
-        'datavalidationenabled' => 1,
         'intelliboardcopydatatype' => null,
         'intelliboardcopyprocessedlimit' => 0,
         'cacheconfig' => 1,
