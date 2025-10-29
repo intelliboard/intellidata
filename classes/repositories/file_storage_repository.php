@@ -286,9 +286,16 @@ class file_storage_repository {
         }
 
         $files = [];
+        $fs = get_file_storage();
+        $filesystem = $fs->get_file_system();
+
         $filerecords = $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
         foreach ($filerecords as $filerecord) {
             $areafile = $fs->get_file_instance($filerecord);
+            if (!$filesystem->is_file_readable_locally_by_storedfile($areafile)) {
+                // Skip files that don't have a physical content.
+                continue; 
+            }
 
             $file = [];
             $file['filename'] = $areafile->get_filename();
