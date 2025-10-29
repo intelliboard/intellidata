@@ -165,7 +165,7 @@ var OTHERDATA = this.INIT_OTHERDATA;
             },
             body: new URLSearchParams({
                 'wstoken': OTHERDATA.token,
-                'wsfunction': 'local_intelldata_save_mobile_tracking',
+                'wsfunction': 'local_intellidata_save_mobile_tracking',
                 'moodlewsrestformat': 'json',
                 'user': OTHERDATA.user_id,
                 'page': PARAMS.PAGE,

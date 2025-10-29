@@ -45,7 +45,7 @@ define(['jquery', 'core/ajax', 'core/log'], function($, ajax, log) {
         }
 
         ajax.call([{
-            methodname: 'local_intelldata_save_tracking', args: {
+            methodname: 'local_intellidata_save_tracking', args: {
                 page: page,
                 param: param,
                 useragent: useragent

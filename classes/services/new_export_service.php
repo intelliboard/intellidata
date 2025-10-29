@@ -46,6 +46,13 @@ class new_export_service {
         'badge_issued',
     ];
 
+    /** @var array */
+    public static $ignorecrudtables = [
+        'd' => [
+            'logstore_standard_log'
+        ]
+    ];
+
     /**
      * Insert record event.
      *
@@ -283,6 +290,10 @@ class new_export_service {
             return;
         }
 
+        if (in_array($table, self::$ignorecrudtables['d'])) {
+            return;
+        }
+
         $this->get_datatypes_observer($table);
         if (!$this->entityclases || !TrackingHelper::enabled()) {
             return;
@@ -312,6 +323,10 @@ class new_export_service {
         global $DB;
 
         if (!TrackingHelper::new_tracking_enabled()) {
+            return;
+        }
+
+        if (in_array($table, self::$ignorecrudtables['d'])) {
             return;
         }
 
@@ -358,6 +373,10 @@ class new_export_service {
         global $DB;
 
         if (!TrackingHelper::new_tracking_enabled()) {
+            return;
+        }
+
+        if (in_array($table, self::$ignorecrudtables['d'])) {
             return;
         }
 
