@@ -290,7 +290,7 @@ class new_export_service {
             return;
         }
 
-        if (!in_array($table, self::$ignorecrudtables['d'])) {
+        if (in_array($table, self::$ignorecrudtables['d'])) {
             return;
         }
 
@@ -326,7 +326,7 @@ class new_export_service {
             return;
         }
 
-        if (!in_array($table, self::$ignorecrudtables['d'])) {
+        if (in_array($table, self::$ignorecrudtables['d'])) {
             return;
         }
 
@@ -376,7 +376,7 @@ class new_export_service {
             return;
         }
 
-        if (!in_array($table, self::$ignorecrudtables['d'])) {
+        if (in_array($table, self::$ignorecrudtables['d'])) {
             return;
         }
 

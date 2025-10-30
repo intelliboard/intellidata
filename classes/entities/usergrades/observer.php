@@ -84,7 +84,11 @@ class observer {
      *
      * @return void
      */
-    public static function create_export_task() {
+    private static function create_export_task() {
+        if (!TrackingHelper::eventstracking_enabled()) { 
+            return;
+        }
+
         $exporttask = new export_adhoc_task();
         $exporttask->set_custom_data([
             'datatypes' => [usergrade::TYPE],

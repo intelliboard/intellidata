@@ -294,7 +294,7 @@ class file_storage_repository {
             $areafile = $fs->get_file_instance($filerecord);
             if (!$filesystem->is_file_readable_locally_by_storedfile($areafile)) {
                 // Skip files that don't have a physical content.
-                continue; 
+                continue;
             }
 
             $file = [];
