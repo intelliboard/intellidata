@@ -56,7 +56,7 @@ class oci_custom_moodle_database_external extends \oci_native_moodle_database {
 
         try {
             $exportservice = new new_export_service();
-            $data = (object)$params;
+            $data = is_object($params) ? clone $params : (object)$params;
             $data->id = $id;
             $exportservice->insert_record_event($table, $data);
         } catch (Throwable $e) {
@@ -64,7 +64,7 @@ class oci_custom_moodle_database_external extends \oci_native_moodle_database {
             DebugHelper::error_log($e->getTraceAsString());
         }
 
-        if (!$returnid) {
+        if (!$returnid || $customsequence) {
             return true;
         } else {
             return (int)$id;
