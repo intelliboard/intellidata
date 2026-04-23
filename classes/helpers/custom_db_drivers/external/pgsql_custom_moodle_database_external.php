@@ -55,7 +55,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
 
         try {
             $exportservice = new new_export_service();
-            $data = (object)$params;
+            $data = is_object($params) ? clone $params : (object)$params;
             $data->id = $id;
             $exportservice->insert_record_event($table, $data);
         } catch (Throwable $e) {
@@ -63,7 +63,7 @@ class pgsql_custom_moodle_database_external extends \pgsql_native_moodle_databas
             DebugHelper::error_log($e->getTraceAsString());
         }
 
-        if (!$returnid) {
+        if (!$returnid || $customsequence) {
             return true;
         } else {
             return (int)$id;
